@@ -4,6 +4,18 @@ import "../styles/Analytics.css";
 import SearchBar from "../components/SearchBar";
 import logo from "../assest/logo/zenve-logo-fashion.png";
 import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
+import {
   getAnalyticsOverview,
   getOrders,
   getProducts,
@@ -415,102 +427,84 @@ function buildConsolidatedReport(state) {
 }
 
 /* =========================================================
-   BAR CHART COMPONENT (GMV BY DESIGNER)
+   BAR CHART COMPONENT (GMV BY DESIGNER - EXACT LOVABLE)
 ========================================================= */
 
 function DesignerGmvChart({ data = [] }) {
-  const chartHeight = 220;
-  const paddingBottom = 40;
-  const paddingTop = 20;
-  const usableHeight = chartHeight - paddingBottom - paddingTop;
-
-  const validData = data.filter((d) => d.gmv > 0);
+  const validData = (data || []).filter((d) => Number(d.gmv) > 0);
   if (validData.length === 0) {
     return <div className="panel-empty">No sales recorded yet.</div>;
   }
 
-  const maxGmv = Math.max(...validData.map((d) => d.gmv), 1);
-  const barWidth = Math.min(60, Math.max(30, Math.floor(400 / validData.length)));
-  const gap = Math.min(30, Math.max(16, Math.floor(100 / validData.length)));
-  const totalSvgWidth = Math.max(480, validData.length * (barWidth + gap) + 60);
-
   return (
-    <div style={{ width: "100%", overflowX: "auto" }}>
-      <svg
-        className="svg-bar-chart"
-        viewBox={`0 0 ${totalSvgWidth} ${chartHeight}`}
-        style={{ minWidth: `${totalSvgWidth}px` }}
+    <ResponsiveContainer width="100%" height="100%">
+      <BarChart
+        data={validData}
+        margin={{ top: 16, right: 12, left: -16, bottom: 4 }}
       >
-        {/* Horizontal grid lines */}
-        {[0, 0.25, 0.5, 0.75, 1].map((pct, i) => {
-          const y = paddingTop + usableHeight * (1 - pct);
-          return (
-            <line
-              key={i}
-              x1="40"
-              y1={y}
-              x2={totalSvgWidth - 20}
-              y2={y}
-              className="chart-grid-line"
-            />
-          );
-        })}
-
-        {/* Bars */}
-        {validData.map((item, idx) => {
-          const barHeight = Math.max(4, (item.gmv / maxGmv) * usableHeight);
-          const x = 50 + idx * (barWidth + gap);
-          const y = paddingTop + (usableHeight - barHeight);
-
-          return (
-            <g key={item.name || idx}>
-              <title>{`${item.name}: ₹${item.gmv.toLocaleString()} (${item.orders || 1} orders)`}</title>
-              <rect
-                x={x}
-                y={y}
-                width={barWidth}
-                height={barHeight}
-                rx="4"
-                className="bar-rect"
-              />
-              {/* Value on top of bar */}
-              <text
-                x={x + barWidth / 2}
-                y={Math.max(14, y - 6)}
-                textAnchor="middle"
-                fontSize="10"
-                fill="#736b63"
-                fontWeight="500"
-              >
-                ₹{item.gmv >= 1000 ? `${Math.round(item.gmv / 1000)}k` : item.gmv}
-              </text>
-              {/* Designer brand label below */}
-              <text
-                x={x + barWidth / 2}
-                y={chartHeight - 12}
-                textAnchor="middle"
-                className="chart-axis-label"
-              >
-                {item.name.length > 12 ? `${item.name.slice(0, 10)}…` : item.name}
-              </text>
-            </g>
-          );
-        })}
-      </svg>
-    </div>
+        <CartesianGrid
+          strokeDasharray="3 3"
+          stroke="var(--lovable-border)"
+          vertical={false}
+        />
+        <XAxis
+          dataKey="name"
+          tick={{ fontSize: 12, fill: "var(--lovable-muted)" }}
+          tickLine={false}
+          axisLine={{ stroke: "var(--lovable-border)" }}
+          interval={0}
+          tickFormatter={(name) =>
+            name && name.length > 12 ? `${name.slice(0, 10)}…` : name
+          }
+        />
+        <YAxis
+          tick={{ fontSize: 12, fill: "var(--lovable-muted)" }}
+          tickLine={false}
+          axisLine={false}
+          tickFormatter={(v) =>
+            v >= 1000 ? `₹${Math.round(v / 1000)}k` : `₹${v}`
+          }
+        />
+        <Tooltip
+          formatter={(value) => [`₹${Number(value).toLocaleString()}`, "GMV"]}
+          contentStyle={{
+            backgroundColor: "var(--lovable-card)",
+            borderColor: "var(--lovable-border)",
+            borderRadius: "6px",
+            fontSize: "12px",
+            color: "var(--lovable-ink)",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+          }}
+          cursor={{ fill: "rgba(194, 139, 81, 0.08)" }}
+        />
+        <Bar
+          dataKey="gmv"
+          fill="var(--lovable-gold)"
+          radius={[4, 4, 0, 0]}
+          maxBarSize={52}
+        />
+      </BarChart>
+    </ResponsiveContainer>
   );
 }
 
 /* =========================================================
-   DONUT CHART COMPONENT (INVENTORY SPLIT)
+   DONUT CHART COMPONENT (INVENTORY SPLIT - EXACT LOVABLE)
 ========================================================= */
+
+const INVENTORY_COLORS = [
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-4)",
+  "var(--chart-3)",
+];
 
 function InventoryDonutChart({ split = {} }) {
   const segments = [
-    { name: "Available", value: split.available || 0, color: "var(--chart-1)" },
-    { name: "Reserved", value: split.reserved || 0, color: "var(--chart-2)" },
-    { name: "In transit", value: split.in_transit || 0, color: "var(--chart-3)" },
-    { name: "Blocked", value: split.damaged || 0, color: "var(--chart-4)" },
+    { name: "Available", value: split.available || 0 },
+    { name: "Reserved", value: split.reserved || 0 },
+    { name: "In transit", value: split.in_transit || 0 },
+    { name: "Blocked", value: split.damaged || 0 },
   ].filter((s) => s.value > 0);
 
   const total = segments.reduce((sum, s) => sum + s.value, 0);
@@ -519,54 +513,55 @@ function InventoryDonutChart({ split = {} }) {
     return <div className="panel-empty">No units on hand.</div>;
   }
 
-  const size = 180;
-  const strokeWidth = 22;
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-
-  let currentOffset = 0;
-
   return (
-    <div className="chart-container-box">
-      <svg className="donut-svg" viewBox={`0 0 ${size} ${size}`}>
-        <g transform={`rotate(-90 ${size / 2} ${size / 2})`}>
-          {segments.map((seg, i) => {
-            const strokeDash = (seg.value / total) * circumference;
-            const offset = currentOffset;
-            currentOffset -= strokeDash;
+    <div className="donut-flex-container">
+      <div className="donut-chart-area">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={segments}
+              dataKey="value"
+              nameKey="name"
+              innerRadius={55}
+              outerRadius={85}
+              paddingAngle={2}
+              cx="50%"
+              cy="50%"
+            >
+              {segments.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={INVENTORY_COLORS[index % INVENTORY_COLORS.length]}
+                  stroke="var(--lovable-card)"
+                  strokeWidth={2}
+                />
+              ))}
+            </Pie>
+            <Tooltip
+              formatter={(value, name) => [`${value} units`, name]}
+              contentStyle={{
+                backgroundColor: "var(--lovable-card)",
+                borderColor: "var(--lovable-border)",
+                borderRadius: "6px",
+                fontSize: "12px",
+                color: "var(--lovable-ink)",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+              }}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
 
-            return (
-              <circle
-                key={i}
-                cx={size / 2}
-                cy={size / 2}
-                r={radius}
-                fill="transparent"
-                stroke={seg.color}
-                strokeWidth={strokeWidth}
-                strokeDasharray={`${strokeDash} ${circumference}`}
-                strokeDashoffset={offset}
-                className="donut-segment"
-              >
-                <title>{`${seg.name}: ${seg.value} units (${Math.round((seg.value / total) * 100)}%)`}</title>
-              </circle>
-            );
-          })}
-        </g>
-        {/* Center Label */}
-        <text x="50%" y="46%" className="donut-center-text donut-center-val">
-          {total}
-        </text>
-        <text x="50%" y="62%" className="donut-center-text donut-center-lbl">
-          Units
-        </text>
-      </svg>
-
-      {/* Legend */}
+      {/* Lovable Exact Donut Legend */}
       <div className="donut-legend">
         {segments.map((seg, i) => (
-          <span key={i} className="legend-item">
-            <span className="legend-dot" style={{ backgroundColor: seg.color }} />
+          <span key={seg.name} className="legend-item">
+            <span
+              className="legend-dot"
+              style={{
+                backgroundColor: INVENTORY_COLORS[i % INVENTORY_COLORS.length],
+              }}
+            />
             <span>
               {seg.name} · {seg.value}
             </span>
