@@ -5,7 +5,12 @@ from products.models import Product
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
-    product_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    product_id = serializers.CharField(required=False, allow_blank=True, default="")
+    sku = serializers.CharField(read_only=True)
+    brand_name = serializers.CharField(read_only=True)
+    colour = serializers.CharField(source="color", required=False, allow_blank=True)
+    unit_price = serializers.DecimalField(source="price", max_digits=12, decimal_places=2, required=False)
+    total_price = serializers.DecimalField(source="total", max_digits=12, decimal_places=2, read_only=True)
     return_policy = serializers.SerializerMethodField()
     is_returnable = serializers.SerializerMethodField()
     returned_units = serializers.SerializerMethodField()
@@ -14,21 +19,26 @@ class OrderItemSerializer(serializers.ModelSerializer):
         model = OrderItem
         fields = [
             "id",
-            "product",
             "product_id",
             "product_name",
+            "product_image",
+            "product_data",
+            "quantity",
+            "price",
+            "total",
+            "size",
+            "color",
+            "colour",
             "sku",
             "brand_name",
-            "colour",
-            "size",
-            "quantity",
             "unit_price",
             "total_price",
+            "created_at",
             "return_policy",
             "is_returnable",
             "returned_units",
         ]
-        read_only_fields = ["id", "total_price", "return_policy", "is_returnable", "returned_units"]
+        read_only_fields = ["id", "total", "total_price", "created_at", "return_policy", "is_returnable", "returned_units"]
 
     def get_return_policy(self, obj):
         if obj.product:
@@ -43,7 +53,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
         policy = self.get_return_policy(obj)
         if policy != "RETURNABLE":
             return False
-        if obj.order.status != Order.OrderStatus.DELIVERED:
+        if obj.order.order_status not in [Order.OrderStatus.DELIVERED, "Delivered", "DELIVERED"]:
             return False
         return self.get_returned_units(obj) < obj.quantity
 
@@ -54,20 +64,48 @@ class OrderSerializer(serializers.ModelSerializer):
     is_open = serializers.ReadOnlyField()
     can_cancel = serializers.ReadOnlyField()
 
+    # Backwards-compatibility read/write mappings
+    status = serializers.CharField(source="order_status", required=False)
+    total_amount = serializers.DecimalField(source="total", max_digits=12, decimal_places=2, required=False)
+    customer_name = serializers.CharField(source="shipping_full_name", required=False, allow_blank=True)
+    customer_phone = serializers.CharField(source="shipping_phone", required=False, allow_blank=True)
+    customer_email = serializers.CharField(source="shipping_email", required=False, allow_blank=True, allow_null=True)
+    delivery_pincode = serializers.CharField(source="shipping_postal_code", required=False, allow_blank=True)
+    delivery_address = serializers.ReadOnlyField()
+    is_fast_delivery = serializers.ReadOnlyField()
+
     class Meta:
         model = Order
         fields = [
             "id",
+            "user",
+            "user_id_string",
             "order_number",
+            "subtotal",
+            "discount",
+            "shipping",
+            "total",
+            "total_amount",
+            "payment_status",
+            "payment_method",
+            "order_status",
+            "status",
+            "shipping_full_name",
             "customer_name",
-            "customer_email",
+            "shipping_phone",
             "customer_phone",
+            "shipping_email",
+            "customer_email",
+            "shipping_address_line1",
+            "shipping_address_line2",
+            "shipping_city",
+            "shipping_state",
+            "shipping_country",
+            "shipping_postal_code",
             "delivery_pincode",
             "delivery_address",
-            "status",
-            "total_amount",
+            "estimated_delivery",
             "is_fast_delivery",
-            "notes",
             "created_at",
             "updated_at",
             "items",
@@ -80,6 +118,8 @@ class OrderSerializer(serializers.ModelSerializer):
             "updated_at",
             "is_open",
             "can_cancel",
+            "delivery_address",
+            "is_fast_delivery",
         ]
 
     def create(self, validated_data):
@@ -87,36 +127,85 @@ class OrderSerializer(serializers.ModelSerializer):
         if "items" in validated_data:
             validated_data.pop("items")
 
+        # Map legacy inputs from initial_data if missing in validated_data
+        init_data = self.initial_data
+        if not validated_data.get("shipping_full_name"):
+            validated_data["shipping_full_name"] = init_data.get("customer_name") or "Guest Customer"
+        if not validated_data.get("shipping_phone"):
+            validated_data["shipping_phone"] = init_data.get("customer_phone") or ""
+        if not validated_data.get("shipping_email"):
+            validated_data["shipping_email"] = init_data.get("customer_email") or ""
+        if not validated_data.get("shipping_postal_code"):
+            validated_data["shipping_postal_code"] = init_data.get("delivery_pincode") or "400001"
+        if not validated_data.get("shipping_address_line1"):
+            validated_data["shipping_address_line1"] = init_data.get("delivery_address") or "Standard Address"
+        if not validated_data.get("estimated_delivery"):
+            if init_data.get("is_fast_delivery"):
+                validated_data["estimated_delivery"] = "Express (60 Mins)"
+            else:
+                validated_data["estimated_delivery"] = "3-5 Business Days"
+
+        # Status normalization
+        st = validated_data.get("order_status") or init_data.get("status") or "Pending"
+        status_map = {
+            "PLACED": "Pending",
+            "Placed": "Pending",
+            "Pending": "Pending",
+            "CONFIRMED": "Confirmed",
+            "Confirmed": "Confirmed",
+            "PACKED": "Processing",
+            "Processing": "Processing",
+            "SHIPPED": "Shipped",
+            "Shipped": "Shipped",
+            "OUT_FOR_DELIVERY": "Out for Delivery",
+            "Out for Delivery": "Out for Delivery",
+            "DELIVERED": "Delivered",
+            "Delivered": "Delivered",
+            "CANCELLED": "Cancelled",
+            "Cancelled": "Cancelled",
+            "RETURNED": "Returned",
+            "Returned": "Returned",
+        }
+        validated_data["order_status"] = status_map.get(st, "Pending")
+
         order = Order.objects.create(**validated_data)
         total_order_amount = Decimal("0.00")
 
         for item_data in items_data:
-            prod_id = item_data.get("product_id") or item_data.get("product")
+            prod_id = str(item_data.get("product_id") or item_data.get("product") or "")
             product = None
-            if prod_id:
-                product = Product.objects.filter(pk=prod_id).first()
+            if prod_id and prod_id.isdigit():
+                product = Product.objects.filter(pk=int(prod_id)).first()
 
             p_name = item_data.get("product_name") or (product.product_name if product else "Product")
+            p_image = item_data.get("product_image") or (
+                str(product.primary_image.url if product.primary_image else (product.image.url if product.image else ""))
+                if product else ""
+            )
             p_sku = item_data.get("sku") or (product.sku if product else f"SKU-{order.id}")
             brand = item_data.get("brand_name") or (getattr(product.designer, "brand_name", "") if (product and product.designer) else "")
-            color = item_data.get("colour") or (product.colour if product else "")
+            color = item_data.get("color") or item_data.get("colour") or (product.colour if product else "")
             size = item_data.get("size") or (product.size if product else "")
-            qty = int(item_data.get("quantity", 1))
-            unit_price = Decimal(str(item_data.get("unit_price") or (product.selling_price if product else "0.00")))
+            qty = int(item_data.get("quantity") or item_data.get("qty") or 1)
+            unit_price = Decimal(str(item_data.get("price") or item_data.get("unit_price") or (product.selling_price if product else "0.00")))
             item_total = unit_price * qty
             total_order_amount += item_total
 
+            p_data = item_data.get("product_data") or {}
+            if not p_data:
+                p_data = {"sku": p_sku, "brand_name": brand}
+
             OrderItem.objects.create(
                 order=order,
-                product=product,
+                product_id=prod_id,
                 product_name=p_name,
-                sku=p_sku,
-                brand_name=brand,
-                colour=color,
-                size=size,
+                product_image=p_image,
+                product_data=p_data,
                 quantity=qty,
-                unit_price=unit_price,
-                total_price=item_total,
+                price=unit_price,
+                total=item_total,
+                size=size,
+                color=color,
             )
 
             # Atomically reserve stock in inventory
@@ -124,13 +213,36 @@ class OrderSerializer(serializers.ModelSerializer):
                 product.reserved_quantity += qty
                 product.save()
 
-        order.total_amount = total_order_amount
+        order.subtotal = total_order_amount
+        order.total = total_order_amount + order.shipping - order.discount
         order.save()
         return order
 
     def update(self, instance, validated_data):
-        old_status = instance.status
-        new_status = validated_data.get("status", old_status)
+        old_status = instance.order_status
+        new_status = validated_data.get("order_status") or validated_data.get("status", old_status)
+
+        status_map = {
+            "PLACED": "Pending",
+            "Placed": "Pending",
+            "Pending": "Pending",
+            "CONFIRMED": "Confirmed",
+            "Confirmed": "Confirmed",
+            "PACKED": "Processing",
+            "Processing": "Processing",
+            "SHIPPED": "Shipped",
+            "Shipped": "Shipped",
+            "OUT_FOR_DELIVERY": "Out for Delivery",
+            "Out for Delivery": "Out for Delivery",
+            "DELIVERED": "Delivered",
+            "Delivered": "Delivered",
+            "CANCELLED": "Cancelled",
+            "Cancelled": "Cancelled",
+            "RETURNED": "Returned",
+            "Returned": "Returned",
+        }
+        new_status = status_map.get(new_status, new_status)
+        validated_data["order_status"] = new_status
 
         for attr, value in validated_data.items():
             if attr != "items":
@@ -147,18 +259,14 @@ class OrderSerializer(serializers.ModelSerializer):
                 qty = item.quantity
 
                 # Shipped: transfer from reserved to in-transit
-                if new_status == Order.OrderStatus.SHIPPED and old_status in [
-                    Order.OrderStatus.PLACED,
-                    Order.OrderStatus.CONFIRMED,
-                    Order.OrderStatus.PACKED,
-                ]:
+                if new_status == "Shipped" and old_status in ["Pending", "Confirmed", "Processing"]:
                     product.reserved_quantity = max(0, product.reserved_quantity - qty)
                     product.in_transit_quantity += qty
                     product.save()
 
                 # Delivered: deduct from in-transit and physical inventory
-                elif new_status == Order.OrderStatus.DELIVERED:
-                    if old_status == Order.OrderStatus.SHIPPED or old_status == Order.OrderStatus.OUT_FOR_DELIVERY:
+                elif new_status == "Delivered":
+                    if old_status in ["Shipped", "Out for Delivery"]:
                         product.in_transit_quantity = max(0, product.in_transit_quantity - qty)
                     else:
                         product.reserved_quantity = max(0, product.reserved_quantity - qty)
@@ -166,16 +274,12 @@ class OrderSerializer(serializers.ModelSerializer):
                     product.save()
 
                 # Cancelled before dispatch: unreserve inventory
-                elif new_status == Order.OrderStatus.CANCELLED and old_status in [
-                    Order.OrderStatus.PLACED,
-                    Order.OrderStatus.CONFIRMED,
-                    Order.OrderStatus.PACKED,
-                ]:
+                elif new_status == "Cancelled" and old_status in ["Pending", "Confirmed", "Processing"]:
                     product.reserved_quantity = max(0, product.reserved_quantity - qty)
                     product.save()
 
             # Automatic Settlement Generation upon Delivery
-            if new_status == Order.OrderStatus.DELIVERED:
+            if new_status == "Delivered":
                 for item in instance.items.all():
                     if not item.settlements.filter(is_reversal=False).exists():
                         designer = (item.product.designer if (item.product and item.product.designer) else None)
@@ -185,7 +289,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
                         if designer:
                             take_rate = getattr(designer, "take_rate", Decimal("15.00")) or Decimal("15.00")
-                            gmv = item.total_price
+                            gmv = item.total
                             commission = (gmv * take_rate) / Decimal("100")
                             payout = gmv - commission
                             Settlement.objects.create(
@@ -204,44 +308,69 @@ class OrderSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         steps = [
-            Order.OrderStatus.PLACED,
-            Order.OrderStatus.CONFIRMED,
-            Order.OrderStatus.PACKED,
-            Order.OrderStatus.SHIPPED,
-            Order.OrderStatus.OUT_FOR_DELIVERY,
-            Order.OrderStatus.DELIVERED,
+            "Pending",
+            "Confirmed",
+            "Processing",
+            "Shipped",
+            "Out for Delivery",
+            "Delivered",
         ]
         timeline = []
         created_iso = instance.created_at.isoformat() if instance.created_at else ""
         updated_iso = instance.updated_at.isoformat() if instance.updated_at else created_iso
 
-        if instance.status == Order.OrderStatus.CANCELLED:
-            timeline.append({"status": "PLACED", "at": created_iso})
-            timeline.append({"status": "CANCELLED", "at": updated_iso})
+        if instance.order_status == "Cancelled":
+            timeline.append({"status": "Pending", "at": created_iso})
+            timeline.append({"status": "Cancelled", "at": updated_iso})
         else:
             try:
-                curr_idx = steps.index(instance.status)
+                curr_idx = steps.index(instance.order_status)
                 for i in range(curr_idx + 1):
                     timeline.append({
                         "status": steps[i],
                         "at": created_iso if i == 0 else updated_iso,
                     })
             except ValueError:
-                timeline.append({"status": instance.status, "at": updated_iso})
+                timeline.append({"status": instance.order_status, "at": updated_iso})
 
         data["timeline"] = timeline
-        data["amount"] = float(instance.total_amount)
-        data["customer"] = instance.customer_name
-        data["pincode"] = instance.delivery_pincode
+        data["amount"] = float(instance.total)
+        data["total"] = float(instance.total)
+        data["subtotal"] = float(instance.subtotal)
+        data["discount"] = float(instance.discount)
+        data["shipping"] = float(instance.shipping)
+        data["customer"] = instance.shipping_full_name
+        data["customer_name"] = instance.shipping_full_name
+        data["customer_phone"] = instance.shipping_phone
+        data["customer_email"] = instance.shipping_email or ""
+        data["shipping_address_line1"] = instance.shipping_address_line1
+        data["shipping_address_line2"] = instance.shipping_address_line2
+        data["shipping_city"] = instance.shipping_city
+        data["shipping_state"] = instance.shipping_state
+        data["shipping_country"] = instance.shipping_country
+        data["shipping_postal_code"] = instance.shipping_postal_code
+        data["pincode"] = instance.shipping_postal_code
+        data["delivery_pincode"] = instance.shipping_postal_code
+        data["delivery_address"] = instance.delivery_address
+        data["payment_method"] = instance.payment_method
+        data["payment_status"] = instance.payment_status
+        data["order_status"] = instance.order_status
+        data["status"] = instance.order_status
         data["placedAt"] = created_iso
         data["fast"] = instance.is_fast_delivery
-        data["eta"] = "60 minutes" if instance.is_fast_delivery else "≤ 3 working days"
+        data["eta"] = instance.estimated_delivery or ("60 minutes" if instance.is_fast_delivery else "3-5 Business Days")
         data["lines"] = [
             {
-                "skuId": item.sku or f"SKU-{item.id}",
+                "id": item.id,
+                "skuId": item.sku,
                 "name": item.product_name,
                 "qty": item.quantity,
-                "price": float(item.unit_price),
+                "price": float(item.price),
+                "total": float(item.total),
+                "image": item.product_image or "",
+                "size": item.size,
+                "color": item.color,
+                "brand": item.brand_name,
             }
             for item in instance.items.all()
         ]
@@ -379,9 +508,9 @@ class ReturnRequestSerializer(serializers.ModelSerializer):
             if order_item.order_id != order.id:
                 raise serializers.ValidationError("The selected item does not belong to the specified order.")
 
-            if order.status != Order.OrderStatus.DELIVERED:
+            if order.order_status not in [Order.OrderStatus.DELIVERED, "DELIVERED", "Delivered"]:
                 raise serializers.ValidationError(
-                    f"Only delivered orders can be returned. Current order status: {order.status}"
+                    f"Only delivered orders can be returned. Current order status: {order.order_status}"
                 )
 
             product = order_item.product

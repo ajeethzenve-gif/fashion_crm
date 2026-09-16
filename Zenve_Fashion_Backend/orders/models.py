@@ -1,93 +1,201 @@
 import uuid
 from decimal import Decimal
+from django.utils import timezone
 from django.db import models
+from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 
 
+# ============================================================
+# ORDER
+# ============================================================
+
 class Order(models.Model):
-    class OrderStatus(models.TextChoices):
-        PLACED = "PLACED", "Placed"
-        CONFIRMED = "CONFIRMED", "Confirmed"
-        PACKED = "PACKED", "Packed"
-        SHIPPED = "SHIPPED", "Shipped"
-        OUT_FOR_DELIVERY = "OUT_FOR_DELIVERY", "Out for Delivery"
-        DELIVERED = "DELIVERED", "Delivered"
-        CANCELLED = "CANCELLED", "Cancelled"
+
+    PAYMENT_STATUS_CHOICES = (
+        ("Pending", "Pending"),
+        ("Paid", "Paid"),
+        ("Failed", "Failed"),
+        ("Refunded", "Refunded"),
+        ("Partially Refunded", "Partially Refunded"),
+    )
+
+    ORDER_STATUS_CHOICES = (
+        ("Pending", "Pending"),
+        ("Confirmed", "Confirmed"),
+        ("Processing", "Processing"),
+        ("Shipped", "Shipped"),
+        ("Out for Delivery", "Out for Delivery"),
+        ("Delivered", "Delivered"),
+        ("Cancelled", "Cancelled"),
+        ("Returned", "Returned"),
+    )
+
+    PAYMENT_METHOD_CHOICES = (
+        ("COD", "Cash on Delivery"),
+        ("Cash on Delivery", "Cash on Delivery"),
+        ("Razorpay", "Razorpay"),
+        ("Wallet", "Wallet"),
+        ("UPI", "UPI"),
+        ("Card", "Card"),
+        ("Net Banking", "Net Banking"),
+    )
+
+    # --------------------------------------------------------
+    # User
+    # --------------------------------------------------------
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="orders",
+    )
+
+    user_id_string = models.CharField(
+        max_length=100,
+        default="guest",
+        blank=True,
+    )
+
+    # --------------------------------------------------------
+    # Order identification
+    # --------------------------------------------------------
 
     order_number = models.CharField(
-        max_length=100,
+        max_length=50,
         unique=True,
-        db_index=True,
-        blank=True,
-        verbose_name="Order Number"
-    )
-
-    customer_name = models.CharField(
-        max_length=255,
-        default="Guest Customer",
-        verbose_name="Customer Name"
-    )
-
-    customer_email = models.EmailField(
         blank=True,
         null=True,
-        verbose_name="Customer Email"
     )
 
-    customer_phone = models.CharField(
-        max_length=20,
-        blank=True,
-        null=True,
-        verbose_name="Customer Phone"
-    )
+    # --------------------------------------------------------
+    # Amounts
+    # --------------------------------------------------------
 
-    delivery_pincode = models.CharField(
-        max_length=10,
-        default="400001",
-        verbose_name="Delivery Pincode"
-    )
-
-    delivery_address = models.TextField(
-        blank=True,
-        null=True,
-        verbose_name="Delivery Address"
-    )
-
-    status = models.CharField(
-        max_length=30,
-        choices=OrderStatus.choices,
-        default=OrderStatus.PLACED,
-        db_index=True,
-        verbose_name="Order Status"
-    )
-
-    total_amount = models.DecimalField(
+    subtotal = models.DecimalField(
         max_digits=12,
         decimal_places=2,
-        default=Decimal("0.00"),
-        validators=[MinValueValidator(Decimal("0.00"))],
-        verbose_name="Total Amount"
+        default=0,
     )
 
-    is_fast_delivery = models.BooleanField(
-        default=False,
-        verbose_name="Fast Delivery (60 Min)"
+    discount = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0,
     )
 
-    notes = models.TextField(
+    shipping = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0,
+    )
+
+    total = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0,
+    )
+
+    # --------------------------------------------------------
+    # Payment
+    # --------------------------------------------------------
+
+    payment_status = models.CharField(
+        max_length=30,
+        choices=PAYMENT_STATUS_CHOICES,
+        default="Pending",
+    )
+
+    payment_method = models.CharField(
+        max_length=50,
+        choices=PAYMENT_METHOD_CHOICES,
+        default="COD",
+    )
+
+    # --------------------------------------------------------
+    # Order status
+    # --------------------------------------------------------
+
+    order_status = models.CharField(
+        max_length=50,
+        choices=ORDER_STATUS_CHOICES,
+        default="Pending",
+    )
+
+    # --------------------------------------------------------
+    # Shipping address
+    # --------------------------------------------------------
+
+    shipping_full_name = models.CharField(
+        max_length=100,
+        default="",
+    )
+
+    shipping_phone = models.CharField(
+        max_length=15,
+        default="",
+    )
+
+    shipping_email = models.CharField(
+        max_length=255,
         blank=True,
         null=True,
-        verbose_name="Order Notes"
     )
+
+    shipping_address_line1 = models.CharField(
+        max_length=255,
+        default="",
+    )
+
+    shipping_address_line2 = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+    )
+
+    shipping_city = models.CharField(
+        max_length=100,
+        default="",
+    )
+
+    shipping_state = models.CharField(
+        max_length=100,
+        default="",
+    )
+
+    shipping_country = models.CharField(
+        max_length=100,
+        default="India",
+    )
+
+    shipping_postal_code = models.CharField(
+        max_length=10,
+        default="",
+    )
+
+    # --------------------------------------------------------
+    # Delivery
+    # --------------------------------------------------------
+
+    estimated_delivery = models.CharField(
+        max_length=100,
+        default="3-5 Business Days",
+        blank=True,
+        null=True,
+    )
+
+    # --------------------------------------------------------
+    # Timestamps
+    # --------------------------------------------------------
 
     created_at = models.DateTimeField(
         auto_now_add=True,
-        verbose_name="Created At"
     )
 
     updated_at = models.DateTimeField(
         auto_now=True,
-        verbose_name="Updated At"
     )
 
     class Meta:
@@ -97,92 +205,177 @@ class Order(models.Model):
         verbose_name_plural = "Orders"
 
     def __str__(self):
-        return f"{self.order_number} ({self.status})"
+        return self.order_number or f"Order {self.id}"
 
     def save(self, *args, **kwargs):
-        if not self.order_number:
-            self.order_number = f"ZNV-ORD-{uuid.uuid4().hex[:8].upper()}"
+        is_new = self.pk is None
         super().save(*args, **kwargs)
 
+        if is_new and not self.order_number:
+            import random
+            self.order_number = f"ZNV-{self.created_at.year}-{1000 + self.id}"
+            super().save(update_fields=["order_number"])
+
+    # --------------------------------------------------------
+    # Backwards-compatibility & CRM Helpers
+    # --------------------------------------------------------
+    class OrderStatus:
+        PENDING = "Pending"
+        CONFIRMED = "Confirmed"
+        PROCESSING = "Processing"
+        SHIPPED = "Shipped"
+        OUT_FOR_DELIVERY = "Out for Delivery"
+        DELIVERED = "Delivered"
+        CANCELLED = "Cancelled"
+        RETURNED = "Returned"
+
+        # Legacy uppercase aliases
+        PLACED = "Pending"
+        PACKED = "Processing"
+
     @property
-    def is_open(self): 
-        return self.status not in [self.OrderStatus.DELIVERED, self.OrderStatus.CANCELLED]
+    def status(self):
+        return self.order_status
+
+    @status.setter
+    def status(self, val):
+        self.order_status = val
+
+    @property
+    def total_amount(self):
+        return self.total
+
+    @total_amount.setter
+    def total_amount(self, val):
+        self.total = val
+
+    @property
+    def customer_name(self):
+        return self.shipping_full_name
+
+    @customer_name.setter
+    def customer_name(self, val):
+        self.shipping_full_name = val
+
+    @property
+    def customer_phone(self):
+        return self.shipping_phone
+
+    @customer_phone.setter
+    def customer_phone(self, val):
+        self.shipping_phone = val
+
+    @property
+    def customer_email(self):
+        return self.shipping_email
+
+    @customer_email.setter
+    def customer_email(self, val):
+        self.shipping_email = val
+
+    @property
+    def delivery_pincode(self):
+        return self.shipping_postal_code
+
+    @delivery_pincode.setter
+    def delivery_pincode(self, val):
+        self.shipping_postal_code = val
+
+    @property
+    def delivery_address(self):
+        parts = [p for p in [
+            self.shipping_address_line1,
+            self.shipping_address_line2,
+            self.shipping_city,
+            self.shipping_state,
+            self.shipping_postal_code,
+            self.shipping_country if self.shipping_country != "India" else None
+        ] if p]
+        return ", ".join(parts)
+
+    @property
+    def is_fast_delivery(self):
+        return "60" in (self.estimated_delivery or "") or "Express" in (self.estimated_delivery or "")
+
+    @property
+    def is_open(self):
+        return self.order_status not in [
+            self.OrderStatus.DELIVERED,
+            self.OrderStatus.CANCELLED,
+            self.OrderStatus.RETURNED,
+        ]
 
     @property
     def can_cancel(self):
-        return self.status in [
-            self.OrderStatus.PLACED,
+        return self.order_status in [
+            self.OrderStatus.PENDING,
             self.OrderStatus.CONFIRMED,
-            self.OrderStatus.PACKED,
+            self.OrderStatus.PROCESSING,
         ]
 
 
+# ============================================================
+# ORDER ITEM
+# ============================================================
+
 class OrderItem(models.Model):
+
     order = models.ForeignKey(
         Order,
         on_delete=models.CASCADE,
         related_name="items",
-        verbose_name="Order"
     )
 
-    product = models.ForeignKey(
-        "products.Product",
-        on_delete=models.SET_NULL,
-        related_name="order_items",
-        null=True,
-        blank=True,
-        verbose_name="Product"
+    product_id = models.CharField(
+        max_length=100,
+        default="",
     )
 
     product_name = models.CharField(
         max_length=255,
-        verbose_name="Product Name"
     )
 
-    sku = models.CharField(
-        max_length=100,
-        verbose_name="SKU"
-    )
-
-    brand_name = models.CharField(
-        max_length=255,
+    product_image = models.TextField(
         blank=True,
         null=True,
-        verbose_name="Brand Name"
     )
 
-    colour = models.CharField(
-        max_length=100,
+    product_data = models.JSONField(
+        default=dict,
         blank=True,
-        null=True,
-        verbose_name="Colour"
-    )
-
-    size = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        verbose_name="Size"
     )
 
     quantity = models.PositiveIntegerField(
         default=1,
-        validators=[MinValueValidator(1)],
-        verbose_name="Quantity"
     )
 
-    unit_price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        default=Decimal("0.00"),
-        verbose_name="Unit Price"
-    )
-
-    total_price = models.DecimalField(
+    price = models.DecimalField(
         max_digits=12,
         decimal_places=2,
-        default=Decimal("0.00"),
-        verbose_name="Total Price"
+        default=0,
+    )
+
+    total = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0,
+    )
+
+    # Optional variant information
+    size = models.CharField(
+        max_length=50,
+        blank=True,
+        default="",
+    )
+
+    color = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+    )
+
+    created_at = models.DateTimeField(
+        default=timezone.now,
     )
 
     class Meta:
@@ -190,14 +383,70 @@ class OrderItem(models.Model):
         verbose_name = "Order Item"
         verbose_name_plural = "Order Items"
 
-    def __str__(self):
-        return f"{self.product_name} x {self.quantity} ({self.order.order_number})"
-
     def save(self, *args, **kwargs):
-        if not self.total_price:
-            self.total_price = self.unit_price * self.quantity
+        self.total = self.price * self.quantity
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        return f"{self.product_name} x {self.quantity}"
+
+    # --------------------------------------------------------
+    # Backwards-compatibility & CRM Helpers
+    # --------------------------------------------------------
+    @property
+    def product(self):
+        if not hasattr(self, "_cached_product"):
+            from products.models import Product
+            if self.product_id and str(self.product_id).isdigit():
+                self._cached_product = Product.objects.filter(pk=int(self.product_id)).first()
+            else:
+                self._cached_product = None
+        return self._cached_product
+
+    @property
+    def unit_price(self):
+        return self.price
+
+    @unit_price.setter
+    def unit_price(self, val):
+        self.price = val
+
+    @property
+    def total_price(self):
+        return self.total
+
+    @total_price.setter
+    def total_price(self, val):
+        self.total = val
+
+    @property
+    def colour(self):
+        return self.color
+
+    @colour.setter
+    def colour(self, val):
+        self.color = val
+
+    @property
+    def sku(self):
+        if self.product_data and isinstance(self.product_data, dict) and self.product_data.get("sku"):
+            return self.product_data["sku"]
+        if self.product:
+            return self.product.sku
+        return f"SKU-{self.product_id or self.id}"
+
+    @property
+    def brand_name(self):
+        if self.product_data and isinstance(self.product_data, dict) and self.product_data.get("brand_name"):
+            return self.product_data["brand_name"]
+        if self.product and self.product.designer:
+            return self.product.designer.brand_name
+        return ""
+
+
+# ============================================================
+# RETURN REQUEST
+# ============================================================
 
 class ReturnRequest(models.Model):
     class ReturnStatus(models.TextChoices):
@@ -316,13 +565,17 @@ class ReturnRequest(models.Model):
         if not self.return_number:
             self.return_number = f"ZNV-RTN-{uuid.uuid4().hex[:8].upper()}"
         if not self.refund_amount and self.order_item:
-            self.refund_amount = self.order_item.unit_price * self.quantity
+            self.refund_amount = self.order_item.price * self.quantity
         if not self.pickup_pincode and self.order:
-            self.pickup_pincode = self.order.delivery_pincode
+            self.pickup_pincode = self.order.shipping_postal_code
         if not self.pickup_address and self.order:
             self.pickup_address = self.order.delivery_address
         super().save(*args, **kwargs)
 
+
+# ============================================================
+# SETTLEMENT
+# ============================================================
 
 class Settlement(models.Model):
     class SettlementStatus(models.TextChoices):
@@ -474,4 +727,3 @@ class Settlement(models.Model):
             self.payout_amount = self.gmv - self.commission_amount - self.tax_amount
 
         super().save(*args, **kwargs)
-

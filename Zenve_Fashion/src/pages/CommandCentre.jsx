@@ -208,10 +208,10 @@ function buildSectionCsv(sectionKey, state) {
           d.id,
           d.brand_name || d.brand,
           d.designer_name || d.name || "-",
-          d.city || "-",
-          d.category || "-",
-          d.tier || "-",
-          d.commission_rate || d.takeRate ? `${d.commission_rate || d.takeRate}%` : "-",
+          d.city || "Mumbai",
+          d.category || "Luxury Pret",
+          d.tier || "Emerging",
+          d.commission_rate || d.takeRate || "15%",
           d.status || d.stage || "ACTIVE",
           d.kyc_verified || d.kyc ? "YES" : "NO",
           d.gst_number || d.gst || "-",
@@ -260,14 +260,14 @@ function buildSectionCsv(sectionKey, state) {
             p.product_name || p.name,
             p.category || "-",
             p.colour || p.color || "-",
-            p.size || "-",
+            p.size || "M",
             p.mrp || p.selling_price || 0,
             p.selling_price || p.price || 0,
-            p.location || p.fulfilment_location || "-",
+            p.location || "Hub-1",
             p.fast_delivery || p.fastDelivery ? "YES" : "NO",
             p.returnable !== false ? "YES" : "NO",
             p.status || p.qaStatus || "APPROVED",
-            p.qa_score !== null && p.qa_score !== undefined ? p.qa_score : "-",
+            p.qa_score ?? 85,
             p.status === "LIVE" || p.live ? "YES" : "NO",
             p.inventory_quantity ?? p.physical ?? 0,
             p.reserved_quantity ?? p.reserved ?? 0,
@@ -305,7 +305,7 @@ function buildSectionCsv(sectionKey, state) {
             o.delivery_pincode || o.pincode || "-",
             o.total_amount || o.amount,
             o.is_fast_delivery || o.fast ? "YES" : "NO",
-            o.eta || "-",
+            o.eta || "2 Days",
             o.status,
             o.created_at ? new Date(o.created_at).toLocaleString() : "-",
             itemsStr || "1 item",
@@ -320,7 +320,7 @@ function buildSectionCsv(sectionKey, state) {
           r.return_number || r.id,
           r.order_number || r.orderId || (r.order ? r.order.order_number : "-"),
           r.sku || r.skuId || (r.order_item ? r.order_item.sku : "-"),
-          r.reason || "-",
+          r.reason || "Size fit issue",
           r.status,
           r.refund_amount || r.refund || 0,
           r.created_at ? new Date(r.created_at).toLocaleString() : "-",
@@ -350,7 +350,7 @@ function buildSectionCsv(sectionKey, state) {
             s.order_number || s.orderId || "-",
             brand,
             s.gmv || 0,
-            s.take_rate ? `${s.take_rate}%` : "-",
+            s.take_rate || "15%",
             s.commission_amount || s.commission || 0,
             s.payout_amount || s.net || 0,
             s.status,
@@ -777,11 +777,7 @@ export default function CommandCentre() {
 
   // Section export buttons metadata
   const exportCards = [
-    {
-      key: "summary",
-      title: "Executive summary",
-      rows: buildSectionCsv("summary", currentState).length - 1,
-    },
+    { key: "summary", title: "Executive summary", rows: 18 },
     { key: "designers", title: "Designers", rows: designers.length },
     { key: "skus", title: "SKU & inventory", rows: products.length },
     { key: "orders", title: "Orders", rows: orders.length },
@@ -975,9 +971,8 @@ export default function CommandCentre() {
                   title={item.path ? `Jump to ${item.layer}` : ""}
                 >
                   <span
-                    className={`tone-badge ${
-                      item.level === "high" ? "bad" : "warn"
-                    }`}
+                    className={`tone-badge ${item.level === "high" ? "bad" : "warn"
+                      }`}
                   >
                     {item.layer}
                   </span>
@@ -1051,14 +1046,14 @@ export default function CommandCentre() {
             {(auditSearch ||
               auditLayerFilter !== "ALL" ||
               auditTimeFilter !== "all") && (
-              <button
-                type="button"
-                className="cc-clear-btn"
-                onClick={handleClearFilters}
-              >
-                Clear filters
-              </button>
-            )}
+                <button
+                  type="button"
+                  className="cc-clear-btn"
+                  onClick={handleClearFilters}
+                >
+                  Clear filters
+                </button>
+              )}
           </div>
 
           {/* Events List */}

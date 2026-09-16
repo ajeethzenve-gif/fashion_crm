@@ -302,19 +302,32 @@ export default function Storefront() {
       });
 
       const orderPayload = {
+        shipping_full_name: cleanCustomer,
         customer_name: cleanCustomer,
+        shipping_postal_code: cleanPincode,
         delivery_pincode: cleanPincode,
+        shipping_address_line1: `Standard Delivery Address (${cleanPincode})`,
+        shipping_city: "Mumbai",
+        shipping_state: "Maharashtra",
+        shipping_country: "India",
+        payment_method: "Cash on Delivery",
+        payment_status: "Pending",
+        order_status: "Pending",
+        estimated_delivery: isOrderFast ? "Express 60 Minutes" : "3-5 Business Days",
         is_fast_delivery: isOrderFast,
         items: cart.map((item) => {
           const prod = normalizedProducts.find((p) => p.id === item.skuId) || item.product;
           return {
-            product_id: prod.id,
+            product_id: String(prod.id),
             product_name: prod.name,
+            product_image: prod.image || "",
             sku: prod.sku,
             brand_name: prod.brand,
-            colour: prod.colour,
-            size: prod.size,
+            color: prod.colour || "Standard",
+            colour: prod.colour || "Standard",
+            size: prod.size || "M",
             quantity: item.qty,
+            price: prod.price,
             unit_price: prod.price,
           };
         }),

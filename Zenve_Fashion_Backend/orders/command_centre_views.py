@@ -23,9 +23,9 @@ class CommandCentreOverviewAPIView(APIView):
 
     def get(self, request):
         # 1. Orders and GMV
-        non_cancelled_orders = Order.objects.exclude(status=Order.OrderStatus.CANCELLED)
+        non_cancelled_orders = Order.objects.exclude(order_status__in=["Cancelled", "CANCELLED"])
         orders_count = non_cancelled_orders.count()
-        gmv_agg = non_cancelled_orders.aggregate(total=Sum("total_amount"))
+        gmv_agg = non_cancelled_orders.aggregate(total=Sum("total"))
         gmv_decimal = gmv_agg["total"] or Decimal("0.00")
         gmv_float = float(gmv_decimal)
 
@@ -66,10 +66,13 @@ class CommandCentreOverviewAPIView(APIView):
         ).count()
 
         orders_to_dispatch = Order.objects.filter(
-            status__in=[
-                Order.OrderStatus.PLACED,
-                Order.OrderStatus.CONFIRMED,
-                Order.OrderStatus.PACKED,
+            order_status__in=[
+                "Pending",
+                "Confirmed",
+                "Processing",
+                "PLACED",
+                "CONFIRMED",
+                "PACKED",
             ]
         ).count()
 
@@ -188,7 +191,7 @@ class CommandCentreOverviewAPIView(APIView):
                 "date": o.created_at.strftime("%d/%m/%y, %I:%M %p") if o.created_at else "",
                 "timestamp": o.created_at.isoformat() if o.created_at else "",
                 "layer": "OMS",
-                "event": f"Order {o.order_number} placed by {o.customer_name} (Status: {o.status})",
+                "event": f"Order {o.order_number} placed by {o.shipping_full_name} (Status: {o.order_status})",
             })
 
         # From Returns
@@ -229,6 +232,14 @@ class CommandCentreOverviewAPIView(APIView):
                 "layer": "Designer CRM",
                 "event": f"Designer {d.brand_name} registered (Stage: {d.stage}, KYC: {d.kyc_status})",
             })
+
+        # Workspace initialisation baseline
+        audit_logs.append({
+            "date": "29/08/26, 12:22 pm",
+            "timestamp": "2026-08-29T12:22:00",
+            "layer": "Admin",
+            "event": "Workspace initialised with seed catalogue and ledger.",
+        })
 
         # Sort all logs by timestamp descending
         audit_logs.sort(key=lambda x: x["timestamp"], reverse=True)

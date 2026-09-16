@@ -22,19 +22,36 @@ class OrderListCreateAPIView(APIView):
         status_filter = request.query_params.get("status")
         search = request.query_params.get("search")
 
-        orders = Order.objects.all().prefetch_related("items", "items__product").order_by("-created_at")
+        orders = Order.objects.all().prefetch_related("items").order_by("-created_at")
 
         if status_filter:
-            orders = orders.filter(status__iexact=status_filter.strip())
+            sf = status_filter.strip()
+            status_map = {
+                "PLACED": "Pending",
+                "CONFIRMED": "Confirmed",
+                "PACKED": "Processing",
+                "PROCESSING": "Processing",
+                "SHIPPED": "Shipped",
+                "OUT_FOR_DELIVERY": "Out for Delivery",
+                "DELIVERED": "Delivered",
+                "CANCELLED": "Cancelled",
+                "RETURNED": "Returned",
+            }
+            mapped = status_map.get(sf.upper(), sf)
+            orders = orders.filter(
+                Q(order_status__iexact=sf) | Q(order_status__iexact=mapped)
+            )
 
         if search:
             query = search.strip()
             orders = orders.filter(
                 Q(order_number__icontains=query) |
-                Q(customer_name__icontains=query) |
-                Q(delivery_pincode__icontains=query) |
-                Q(items__product_name__icontains=query) |
-                Q(items__sku__icontains=query)
+                Q(shipping_full_name__icontains=query) |
+                Q(shipping_phone__icontains=query) |
+                Q(shipping_email__icontains=query) |
+                Q(shipping_postal_code__icontains=query) |
+                Q(shipping_city__icontains=query) |
+                Q(items__product_name__icontains=query)
             ).distinct()
 
         serializer = OrderSerializer(orders, many=True)
@@ -99,15 +116,15 @@ class OrderStatsAPIView(APIView):
     def get(self, request):
         total_orders = Order.objects.count()
         open_orders = Order.objects.exclude(
-            status__in=[Order.OrderStatus.DELIVERED, Order.OrderStatus.CANCELLED]
+            order_status__in=["Delivered", "DELIVERED", "Cancelled", "CANCELLED", "Returned", "RETURNED"]
         ).count()
         delivered_orders = Order.objects.filter(
-            status=Order.OrderStatus.DELIVERED
+            order_status__in=["Delivered", "DELIVERED"]
         ).count()
 
         gmv_agg = Order.objects.exclude(
-            status=Order.OrderStatus.CANCELLED
-        ).aggregate(total=Sum("total_amount"))
+            order_status__in=["Cancelled", "CANCELLED"]
+        ).aggregate(total=Sum("total"))
         gmv = gmv_agg["total"] or Decimal("0.00")
 
         return Response({
@@ -121,18 +138,18 @@ class OrderStatsAPIView(APIView):
 class OrderTransitionAPIView(APIView):
     """
     POST /api/orders/<id>/transition/
-    Body: {"status": "CONFIRMED"|"PACKED"|"SHIPPED"|"OUT_FOR_DELIVERY"|"DELIVERED"|"CANCELLED"}
+    Body: {"status": "Confirmed"|"Processing"|"Shipped"|"Out for Delivery"|"Delivered"|"Cancelled"}
     Or no body to advance to the next step.
     """
     permission_classes = [AllowAny]
 
     LIFECYCLE_SEQUENCE = [
-        Order.OrderStatus.PLACED,
-        Order.OrderStatus.CONFIRMED,
-        Order.OrderStatus.PACKED,
-        Order.OrderStatus.SHIPPED,
-        Order.OrderStatus.OUT_FOR_DELIVERY,
-        Order.OrderStatus.DELIVERED,
+        "Pending",
+        "Confirmed",
+        "Processing",
+        "Shipped",
+        "Out for Delivery",
+        "Delivered",
     ]
 
     def post(self, request, pk):
@@ -141,26 +158,42 @@ class OrderTransitionAPIView(APIView):
         except Order.DoesNotExist:
             return Response({"detail": "Order not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        target_status = request.data.get("status")
+        target_status = request.data.get("status") or request.data.get("order_status")
+
+        status_map = {
+            "PLACED": "Pending",
+            "CONFIRMED": "Confirmed",
+            "PACKED": "Processing",
+            "PROCESSING": "Processing",
+            "SHIPPED": "Shipped",
+            "OUT_FOR_DELIVERY": "Out for Delivery",
+            "DELIVERED": "Delivered",
+            "CANCELLED": "Cancelled",
+            "RETURNED": "Returned",
+        }
+
+        if target_status:
+            target_status = status_map.get(str(target_status).strip().upper(), str(target_status).strip())
 
         if not target_status:
             # Advance to next sequence
+            curr_status = status_map.get(str(order.order_status).strip().upper(), str(order.order_status).strip())
             try:
-                curr_idx = self.LIFECYCLE_SEQUENCE.index(order.status)
+                curr_idx = self.LIFECYCLE_SEQUENCE.index(curr_status)
                 if curr_idx < len(self.LIFECYCLE_SEQUENCE) - 1:
                     target_status = self.LIFECYCLE_SEQUENCE[curr_idx + 1]
                 else:
                     return Response({"detail": "Order is already at final state."}, status=status.HTTP_400_BAD_REQUEST)
             except ValueError:
-                return Response({"detail": f"Order status {order.status} cannot be auto-advanced."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"detail": f"Order status {order.order_status} cannot be auto-advanced."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Validation for cancellation: can only cancel before dispatch
-        if target_status == Order.OrderStatus.CANCELLED and not order.can_cancel:
+        if target_status == "Cancelled" and not order.can_cancel:
             return Response({
                 "detail": "Order cannot be cancelled after dispatch/shipping."
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = OrderSerializer(order, data={"status": target_status}, partial=True)
+        serializer = OrderSerializer(order, data={"order_status": target_status, "status": target_status}, partial=True)
         if serializer.is_valid():
             updated = serializer.save()
             return Response(OrderSerializer(updated).data, status=status.HTTP_200_OK)
@@ -179,7 +212,7 @@ class ReturnListCreateAPIView(APIView):
         search = request.query_params.get("search")
         order_id = request.query_params.get("order_id")
 
-        returns = ReturnRequest.objects.all().select_related("order", "order_item", "order_item__product").order_by("-created_at")
+        returns = ReturnRequest.objects.all().select_related("order", "order_item").order_by("-created_at")
 
         if status_filter:
             returns = returns.filter(status__iexact=status_filter.strip())
@@ -548,7 +581,7 @@ class SettlementGenerateAPIView(APIView):
     def post(self, request):
         from designers.models import Designer
 
-        delivered_orders = Order.objects.filter(status=Order.OrderStatus.DELIVERED).prefetch_related("items", "items__product")
+        delivered_orders = Order.objects.filter(order_status__in=["Delivered", "DELIVERED"]).prefetch_related("items")
         created_settlements = 0
         created_reversals = 0
 
@@ -558,7 +591,7 @@ class SettlementGenerateAPIView(APIView):
                     designer = item.product.designer if (item.product and item.product.designer) else Designer.objects.first()
                     if designer:
                         take_rate = getattr(designer, "take_rate", Decimal("15.00")) or Decimal("15.00")
-                        gmv = item.total_price
+                        gmv = item.total
                         commission = (gmv * take_rate) / Decimal("100")
                         payout = gmv - commission
                         Settlement.objects.create(
@@ -573,7 +606,7 @@ class SettlementGenerateAPIView(APIView):
                         )
                         created_settlements += 1
 
-        refunded_returns = ReturnRequest.objects.filter(status=ReturnRequest.ReturnStatus.REFUNDED).select_related("order", "order_item", "order_item__product")
+        refunded_returns = ReturnRequest.objects.filter(status=ReturnRequest.ReturnStatus.REFUNDED).select_related("order", "order_item")
         for rtn in refunded_returns:
             if not rtn.reversal_settlements.exists():
                 product = rtn.order_item.product if rtn.order_item else None

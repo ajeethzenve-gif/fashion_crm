@@ -22,23 +22,28 @@ function BackIcon() {
    CONSTANTS & LIFECYCLE
 ========================================================= */
 
+/* =========================================================
+   CONSTANTS & LIFECYCLE
+========================================================= */
+
 const ORDER_LIFECYCLE = [
-  "PLACED",
-  "CONFIRMED",
-  "PACKED",
-  "SHIPPED",
-  "OUT_FOR_DELIVERY",
-  "DELIVERED",
+  "Pending",
+  "Confirmed",
+  "Processing",
+  "Shipped",
+  "Out for Delivery",
+  "Delivered",
 ];
 
 function getStatusTone(status) {
-  if (["APPROVED", "DELIVERED", "PASSED", "PAID", "RECONCILED", "ACTIVE", "LIVE"].includes(status)) {
+  const s = String(status || "").toUpperCase();
+  if (["APPROVED", "DELIVERED", "PASSED", "PAID", "RECONCILED", "ACTIVE", "LIVE"].includes(s)) {
     return "good";
   }
-  if (["REJECTED", "CANCELLED", "FAILED", "REVERSED"].includes(status)) {
+  if (["REJECTED", "CANCELLED", "FAILED", "REVERSED"].includes(s)) {
     return "bad";
   }
-  if (["PENDING_QA", "CORRECTION", "PENDING", "REQUESTED", "RECEIVED"].includes(status)) {
+  if (["PENDING_QA", "CORRECTION", "PENDING", "REQUESTED", "RECEIVED", "PROCESSING", "CONFIRMED", "PLACED", "PACKED"].includes(s)) {
     return "warn";
   }
   return "info";
@@ -97,31 +102,51 @@ export default function Orders() {
   const normalizedOrders = useMemo(() => {
     return orders.map((o) => {
       const id = o.order_number || (o.id ? `ZO-${o.id}` : "ZO-0000");
-      const status = o.status || "PLACED";
-      const amount = Number(o.total_amount ?? o.amount ?? 0);
-      const customer = o.customer_name || o.customer || "Customer";
-      const pincode = o.delivery_pincode || o.pincode || "400001";
+      const status = o.order_status || o.status || "Pending";
+      const amount = Number(o.total ?? o.total_amount ?? o.amount ?? 0);
+      const subtotal = Number(o.subtotal ?? amount);
+      const discount = Number(o.discount ?? 0);
+      const shipping = Number(o.shipping ?? 0);
+      const customer = o.shipping_full_name || o.customer_name || o.customer || "Guest Customer";
+      const phone = o.shipping_phone || o.customer_phone || "";
+      const email = o.shipping_email || o.customer_email || "";
+      const address = o.delivery_address || [
+        o.shipping_address_line1,
+        o.shipping_address_line2,
+        o.shipping_city,
+        o.shipping_state,
+        o.shipping_postal_code,
+      ].filter(Boolean).join(", ");
+      const pincode = o.shipping_postal_code || o.delivery_pincode || o.pincode || "400001";
+      const paymentMethod = o.payment_method || "COD";
+      const paymentStatus = o.payment_status || "Pending";
       const placedAt = o.created_at || o.placedAt || new Date().toISOString();
-      const fast = Boolean(o.is_fast_delivery ?? o.fast);
-      const eta = o.eta || (fast ? "60 minutes" : "≤ 3 working days");
+      const fast = Boolean(o.is_fast_delivery ?? o.fast ?? (o.estimated_delivery && o.estimated_delivery.includes("60")));
+      const eta = o.estimated_delivery || o.eta || (fast ? "Express (60 mins)" : "3-5 Business Days");
 
       // Lines
       const rawLines = o.lines || o.items || [];
       const lines = rawLines.map((l) => ({
+        id: l.id,
         skuId: l.sku || l.skuId || `SKU-${l.id}`,
         name: l.product_name || l.name || "Product",
         qty: Number(l.quantity ?? l.qty ?? 1),
-        price: Number(l.unit_price ?? l.price ?? 0),
+        price: Number(l.price ?? l.unit_price ?? 0),
+        total: Number(l.total ?? (Number(l.price ?? l.unit_price ?? 0) * Number(l.quantity ?? l.qty ?? 1))),
+        size: l.size || "",
+        color: l.color || l.colour || "",
+        brand: l.brand || l.brand_name || "",
+        image: l.image || l.product_image || "",
       }));
 
       // Timeline
       let timeline = o.timeline;
       if (!timeline || !timeline.length) {
         const currIdx = ORDER_LIFECYCLE.indexOf(status);
-        if (status === "CANCELLED") {
+        if (["Cancelled", "CANCELLED"].includes(status)) {
           timeline = [
-            { status: "PLACED", at: placedAt },
-            { status: "CANCELLED", at: o.updated_at || placedAt },
+            { status: "Pending", at: placedAt },
+            { status: "Cancelled", at: o.updated_at || placedAt },
           ];
         } else if (currIdx >= 0) {
           timeline = ORDER_LIFECYCLE.slice(0, currIdx + 1).map((s, idx) => ({
@@ -139,8 +164,16 @@ export default function Orders() {
         id,
         status,
         amount,
+        subtotal,
+        discount,
+        shipping,
         customer,
+        phone,
+        email,
+        address,
         pincode,
+        paymentMethod,
+        paymentStatus,
         placedAt,
         fast,
         eta,
@@ -155,17 +188,17 @@ export default function Orders() {
   ------------------------------------------------------- */
   const openCount = useMemo(() => {
     return normalizedOrders.filter(
-      (o) => o.status !== "DELIVERED" && o.status !== "CANCELLED"
+      (o) => !["DELIVERED", "Delivered", "CANCELLED", "Cancelled", "RETURNED", "Returned"].includes(o.status)
     ).length;
   }, [normalizedOrders]);
 
   const deliveredCount = useMemo(() => {
-    return normalizedOrders.filter((o) => o.status === "DELIVERED").length;
+    return normalizedOrders.filter((o) => ["DELIVERED", "Delivered"].includes(o.status)).length;
   }, [normalizedOrders]);
 
   const totalGmv = useMemo(() => {
     return normalizedOrders
-      .filter((o) => o.status !== "CANCELLED")
+      .filter((o) => !["CANCELLED", "Cancelled"].includes(o.status))
       .reduce((acc, o) => acc + o.amount, 0);
   }, [normalizedOrders]);
 
@@ -179,7 +212,10 @@ export default function Orders() {
       (o) =>
         o.id.toLowerCase().includes(q) ||
         o.customer.toLowerCase().includes(q) ||
+        (o.phone && o.phone.toLowerCase().includes(q)) ||
+        (o.email && o.email.toLowerCase().includes(q)) ||
         o.pincode.toLowerCase().includes(q) ||
+        (o.paymentMethod && o.paymentMethod.toLowerCase().includes(q)) ||
         o.lines.some(
           (l) =>
             l.name.toLowerCase().includes(q) ||
@@ -192,17 +228,28 @@ export default function Orders() {
      ACTION HANDLERS (ADVANCE & CANCEL)
   ------------------------------------------------------- */
   const handleAdvance = async (order) => {
-    const currIdx = ORDER_LIFECYCLE.indexOf(order.status);
-    const nextStep = currIdx >= 0 ? ORDER_LIFECYCLE[currIdx + 1] : null;
+    const statusMap = {
+      "PLACED": "Pending",
+      "CONFIRMED": "Confirmed",
+      "PACKED": "Processing",
+      "PROCESSING": "Processing",
+      "SHIPPED": "Shipped",
+      "OUT_FOR_DELIVERY": "Out for Delivery",
+      "DELIVERED": "Delivered",
+      "CANCELLED": "Cancelled",
+    };
+    const currentNorm = statusMap[order.status.toUpperCase()] || order.status;
+    const currIdx = ORDER_LIFECYCLE.indexOf(currentNorm);
+    const nextStep = currIdx >= 0 && currIdx < ORDER_LIFECYCLE.length - 1 ? ORDER_LIFECYCLE[currIdx + 1] : null;
 
     if (!nextStep) return;
 
     try {
       setProcessingId(order.rawId);
-      await transitionOrder(order.rawId);
+      await transitionOrder(order.rawId, nextStep);
       setAlert({
         type: "success",
-        text: `${order.id} → ${nextStep.replace(/_/g, " ")}`,
+        text: `Order ${order.id} transitioned to ${nextStep}`,
       });
       await loadOrders();
     } catch (err) {
@@ -214,8 +261,8 @@ export default function Orders() {
   };
 
   const handleCancel = async (order) => {
-    if (["CANCELLED", "DELIVERED", "SHIPPED", "OUT_FOR_DELIVERY"].includes(order.status)) {
-      setAlert({ type: "error", text: "Cancellation window closed — use Returns" });
+    if (["CANCELLED", "Cancelled", "DELIVERED", "Delivered", "SHIPPED", "Shipped", "OUT_FOR_DELIVERY", "Out for Delivery"].includes(order.status)) {
+      setAlert({ type: "error", text: "Cancellation window closed — order is already in transit or delivered" });
       return;
     }
 
@@ -364,16 +411,31 @@ export default function Orders() {
           ) : (
             <div className="lovable-orders-stack">
               {filteredOrders.map((n) => {
-                const currIdx = ORDER_LIFECYCLE.indexOf(n.status);
+                const statusMap = {
+                  "PLACED": "Pending",
+                  "CONFIRMED": "Confirmed",
+                  "PACKED": "Processing",
+                  "PROCESSING": "Processing",
+                  "SHIPPED": "Shipped",
+                  "OUT_FOR_DELIVERY": "Out for Delivery",
+                  "DELIVERED": "Delivered",
+                  "CANCELLED": "Cancelled",
+                };
+                const currentNorm = statusMap[n.status.toUpperCase()] || n.status;
+                const currIdx = ORDER_LIFECYCLE.indexOf(currentNorm);
                 const nextStep = currIdx >= 0 && currIdx < ORDER_LIFECYCLE.length - 1
                   ? ORDER_LIFECYCLE[currIdx + 1]
                   : null;
 
                 const isCancelDisabled = [
                   "CANCELLED",
+                  "Cancelled",
                   "DELIVERED",
+                  "Delivered",
                   "SHIPPED",
+                  "Shipped",
                   "OUT_FOR_DELIVERY",
+                  "Out for Delivery",
                 ].includes(n.status);
 
                 const isProcessing = processingId === n.rawId;
@@ -382,35 +444,99 @@ export default function Orders() {
                   <div key={n.rawId || n.id} className="lovable-order-card">
                     {/* HEADER ROW */}
                     <div className="lovable-order-top-row">
-                      <h3 className="lovable-order-id-title">{n.id}</h3>
-                      <span className={`lovable-tone-badge ${getStatusTone(n.status)}`}>
-                        {n.status.replace(/_/g, " ")}
-                      </span>
-                      <span className={`lovable-tone-badge ${n.fast ? "good" : "neutral"}`}>
-                        {n.eta}
-                      </span>
+                      <div className="lovable-order-id-group">
+                        <h3 className="lovable-order-id-title">{n.id}</h3>
+                        <span className="lovable-order-date">
+                          {new Date(n.placedAt).toLocaleDateString("en-IN", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </div>
+
+                      <div className="lovable-order-badges-group">
+                        <span className={`lovable-tone-badge ${getStatusTone(n.status)}`}>
+                          {n.status.replace(/_/g, " ")}
+                        </span>
+                        <span className={`lovable-tone-badge ${n.paymentStatus === "Paid" ? "good" : "warn"}`}>
+                          Payment: {n.paymentStatus} ({n.paymentMethod})
+                        </span>
+                        <span className={`lovable-tone-badge ${n.fast ? "good" : "neutral"}`}>
+                          {n.eta}
+                        </span>
+                      </div>
                     </div>
 
-                    {/* METADATA LINE */}
-                    <p className="lovable-order-meta-line">
-                      {n.customer} · {n.pincode} · {formatInr(n.amount)} ·{" "}
-                      {new Date(n.placedAt).toLocaleString()}
-                    </p>
+                    {/* CUSTOMER & SHIPPING DETAILS SECTION */}
+                    <div className="lovable-order-customer-box">
+                      <div className="lovable-customer-grid">
+                        <div className="lovable-customer-col">
+                          <span className="lovable-detail-label">Customer Details</span>
+                          <strong className="lovable-customer-name">{n.customer}</strong>
+                          {n.phone && <span className="lovable-customer-contact">📞 {n.phone}</span>}
+                          {n.email && <span className="lovable-customer-contact">✉️ {n.email}</span>}
+                        </div>
 
-                    {/* ORDER LINES LIST */}
-                    <ul className="lovable-order-lines-list">
-                      {n.lines.map((t, idx) => (
-                        <li key={idx} className="lovable-order-line-item">
-                          <span className="lovable-line-name-qty">
-                            {t.name} × {t.qty}
-                          </span>
-                          <span className="lovable-line-sku">{t.skuId}</span>
-                          <span className="lovable-line-price">
-                            {formatInr(t.price * t.qty)}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
+                        <div className="lovable-customer-col">
+                          <span className="lovable-detail-label">Shipping Destination</span>
+                          <span className="lovable-customer-address">{n.address || "Standard Address"}</span>
+                          <span className="lovable-customer-pincode">PIN Code: <strong>{n.pincode}</strong></span>
+                        </div>
+
+                        <div className="lovable-customer-col lovable-payment-col">
+                          <span className="lovable-detail-label">Order Financials</span>
+                          <div className="lovable-financial-rows">
+                            <span className="lovable-subtotal-line">Subtotal: {formatInr(n.subtotal)}</span>
+                            {n.discount > 0 && <span className="lovable-discount-line">Discount: -{formatInr(n.discount)}</span>}
+                            {n.shipping > 0 ? (
+                              <span className="lovable-shipping-line">Shipping: {formatInr(n.shipping)}</span>
+                            ) : (
+                              <span className="lovable-shipping-free">Shipping: Free</span>
+                            )}
+                            <strong className="lovable-grand-total">Total: {formatInr(n.amount)}</strong>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* ORDER ITEMS LIST */}
+                    <div className="lovable-order-items-wrapper">
+                      <span className="lovable-detail-label">Order Items ({n.lines.length})</span>
+                      <ul className="lovable-order-lines-list">
+                        {n.lines.map((t, idx) => (
+                          <li key={idx} className="lovable-order-line-item">
+                            <div className="lovable-line-item-left">
+                              {t.image ? (
+                                <img src={t.image} alt={t.name} className="lovable-line-item-thumb" />
+                              ) : (
+                                <div className="lovable-line-item-thumb-placeholder">👗</div>
+                              )}
+                              <div className="lovable-line-item-info">
+                                <span className="lovable-line-name">{t.name}</span>
+                                <div className="lovable-line-item-meta">
+                                  <span className="lovable-line-sku">{t.skuId}</span>
+                                  {t.brand && <span className="lovable-line-brand">{t.brand}</span>}
+                                  {t.size && <span className="lovable-line-tag">Size: {t.size}</span>}
+                                  {t.color && <span className="lovable-line-tag">Color: {t.color}</span>}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="lovable-line-item-right">
+                              <span className="lovable-line-qty-price">
+                                {t.qty} × {formatInr(t.price)}
+                              </span>
+                              <strong className="lovable-line-price">
+                                {formatInr(t.total || t.price * t.qty)}
+                              </strong>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
 
                     {/* TIMELINE BADGES */}
                     <div className="lovable-timeline-row">
@@ -420,7 +546,7 @@ export default function Orders() {
                           className={`lovable-tone-badge ${getStatusTone(step.status)}`}
                         >
                           {step.status.replace(/_/g, " ")} ·{" "}
-                          {new Date(step.at).toLocaleTimeString()}
+                          {new Date(step.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                         </span>
                       ))}
                     </div>

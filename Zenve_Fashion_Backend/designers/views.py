@@ -264,8 +264,8 @@ class DesignerPortalDashboardAPIView(APIView):
         settlements = Settlement.objects.filter(designer=designer).order_by("-created_at")
 
         # Metrics calculation
-        delivered_items = order_items.filter(order__status=Order.OrderStatus.DELIVERED)
-        delivered_gmv = delivered_items.aggregate(total=Sum("total_price"))["total"] or Decimal("0.00")
+        delivered_items = order_items.filter(order__order_status__in=["Delivered", "DELIVERED"])
+        delivered_gmv = delivered_items.aggregate(total=Sum("total"))["total"] or Decimal("0.00")
         monthly_gmv = delivered_gmv if delivered_gmv > 0 else (designer.monthly_gmv or Decimal("0.00"))
 
         units_sold = order_items.aggregate(total=Sum("quantity"))["total"] or 0
@@ -310,7 +310,7 @@ class DesignerPortalDashboardAPIView(APIView):
         
         now = timezone.now()
         for ord_obj in orders:
-            if ord_obj.status not in [Order.OrderStatus.DELIVERED, Order.OrderStatus.CANCELLED]:
+            if ord_obj.order_status not in ["Delivered", "DELIVERED", "Cancelled", "CANCELLED"]:
                 delta = (now - ord_obj.created_at).total_seconds()
                 if delta > 259200:  # older than 3 days
                     pending_actions.append(f"{ord_obj.order_number} is running late")
@@ -349,9 +349,9 @@ class DesignerPortalDashboardAPIView(APIView):
         orders_data = [
             {
                 "id": o.order_number,
-                "customer": o.customer_name,
-                "amount": float(o.total_amount),
-                "status": o.status
+                "customer": o.shipping_full_name,
+                "amount": float(o.total),
+                "status": o.order_status
             }
             for o in orders[:10]
         ]
