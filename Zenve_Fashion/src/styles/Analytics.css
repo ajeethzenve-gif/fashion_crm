@@ -1,14 +1,7 @@
 /* =========================================================
    ZENVE FASHION - 11 BI DASHBOARDS & ANALYTICS
-   Exact Lovable Design Tokens & Aesthetic Alignment
-   Full Responsive Multi-Screen Support:
-   - Mobile XS & Compact (320px - 420px)
-   - Mobile / Phablet (421px - 640px)
-   - Tablet Portrait (641px - 768px)
-   - Tablet Landscape (769px - 1024px)
-   - Laptop / Standard Desktop (1025px - 1440px)
-   - Large Desktop (1441px - 1920px)
-   - 4K Ultra HD & Ultrawide (1921px - 3840px+)
+   Exact Lovable Design Tokens & Even Multi-Screen Layout
+   Directly matching https://zenvefashioncm.lovable.app/analytics
 ========================================================= */
 
 :root {
@@ -53,7 +46,7 @@
 }
 
 /* =========================================================
-   HEADER
+   HEADER (EXACT LOVABLE ALIGNMENT)
 ========================================================= */
 
 .lovable-header {
@@ -66,9 +59,9 @@
 }
 
 .lovable-header-inner {
-  max-width: 1440px;
+  max-width: 1152px;
   margin: 0 auto;
-  padding: 16px 28px;
+  padding: 16px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -78,7 +71,7 @@
 .lovable-header-left {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
   min-width: 0;
 }
 
@@ -90,7 +83,7 @@
 }
 
 .lovable-portal-logo img {
-  height: 38px;
+  height: 48px;
   width: auto;
   display: block;
 }
@@ -98,7 +91,7 @@
 .lovable-header-title-block {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   min-width: 0;
 }
 
@@ -125,18 +118,18 @@
 
 .lovable-portal-title {
   margin: 0;
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 500;
   font-family: var(--font-serif);
   color: var(--lovable-ink);
   display: flex;
   align-items: baseline;
-  gap: 10px;
-  line-height: 1.15;
+  gap: 8px;
+  line-height: 1.2;
 }
 
 .lovable-layer-num {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 500;
   font-family: inherit;
   color: var(--lovable-gold);
@@ -160,7 +153,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 14px;
+  padding: 6px 12px;
   background-color: var(--lovable-card);
   border: 1px solid var(--lovable-border);
   border-radius: 6px;
@@ -192,14 +185,14 @@
 }
 
 /* =========================================================
-   CONTAINER & LAYOUT
+   CONTAINER & LAYOUT (EXACT max-w-6xl space-y-6 px-5 py-7)
 ========================================================= */
 
 .analytics-container {
   width: 100%;
-  max-width: 1380px;
+  max-width: 1152px;
   margin: 0 auto;
-  padding: 24px 28px 60px;
+  padding: 28px 20px 60px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -229,7 +222,7 @@
 }
 
 /* =========================================================
-   TOP 6 KPI METRICS GRID
+   1. TOP 6 KPI METRICS GRID (EXACT EVEN CARD HEIGHTS)
 ========================================================= */
 
 .analytics-kpi-grid {
@@ -243,11 +236,11 @@
   background-color: var(--lovable-card);
   border: 1px solid var(--lovable-border);
   border-radius: 8px;
-  padding: 14px 16px;
+  padding: 12px 16px;
+  min-height: 82px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 4px;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -263,6 +256,7 @@
   text-transform: uppercase;
   color: var(--lovable-muted);
   margin: 0;
+  line-height: 1;
 }
 
 .analytics-kpi-value {
@@ -270,26 +264,27 @@
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--lovable-ink);
-  margin: 0;
+  margin: 4px 0 0;
   line-height: 1.15;
   font-family: var(--font-display);
 }
 
 .analytics-kpi-hint {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--lovable-muted);
-  margin: 0;
+  margin: 2px 0 0;
+  line-height: 1;
 }
 
 /* =========================================================
-   PANELS & SECTIONS
+   PANELS & SECTIONS (panel p-5)
 ========================================================= */
 
 .analytics-panel {
   background-color: var(--lovable-card);
   border: 1px solid var(--lovable-border);
   border-radius: 8px;
-  padding: 20px 22px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -299,7 +294,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
@@ -311,20 +306,20 @@
 
 .panel-title {
   margin: 0;
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--lovable-ink);
 }
 
 .panel-desc {
-  margin: 0;
-  font-size: 13px;
+  margin: 2px 0 0;
+  font-size: 14px;
   color: var(--lovable-muted);
   line-height: 1.4;
 }
 
 .panel-empty {
-  padding: 40px 16px;
+  padding: 36px 16px;
   text-align: center;
   color: var(--lovable-muted);
   font-size: 13.5px;
@@ -334,18 +329,25 @@
 }
 
 /* =========================================================
-   2-COLUMN CHARTS GRID
+   2. 2-COLUMN CHARTS GRID (EXACT EQUAL PANEL HEIGHTS)
 ========================================================= */
 
 .analytics-charts-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 24px;
   width: 100%;
 }
 
-.chart-container-box {
-  min-height: 250px;
+.analytics-panel.chart-panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.chart-h-wrap {
+  height: 260px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -384,6 +386,14 @@
 }
 
 /* SVG Donut Chart */
+.chart-container-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .donut-svg {
   width: 180px;
   height: 180px;
@@ -424,10 +434,10 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 16px;
+  gap: 12px;
   font-size: 12px;
   color: var(--lovable-muted);
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 .legend-item {
@@ -445,14 +455,12 @@
 }
 
 /* =========================================================
-   SKU PERFORMANCE TABLE
+   3. SKU PERFORMANCE TABLE (EXACT LOVABLE TABLE)
 ========================================================= */
 
 .sku-table-container {
   width: 100%;
   overflow-x: auto;
-  border: 1px solid var(--lovable-border);
-  border-radius: 6px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: var(--lovable-border) transparent;
@@ -474,27 +482,26 @@
 
 .sku-table {
   width: 100%;
-  min-width: 680px;
+  min-width: 650px;
   border-collapse: collapse;
-  font-size: 13.5px;
+  font-size: 14px;
   text-align: left;
 }
 
 .sku-table th {
-  background-color: var(--lovable-paper);
-  color: var(--lovable-muted);
+  padding: 8px 16px 8px 0;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 10px 14px;
+  color: var(--lovable-muted);
   border-bottom: 1px solid var(--lovable-border);
   white-space: nowrap;
 }
 
 .sku-table td {
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--lovable-border-light);
+  padding: 10px 16px 10px 0;
+  border-bottom: 1px solid var(--lovable-border);
   color: var(--lovable-ink);
   vertical-align: middle;
 }
@@ -503,7 +510,7 @@
   border-bottom: none;
 }
 
-.sku-table tbody tr:hover {
+.sku-table tbody tr:hover td {
   background-color: #faf7f2;
 }
 
@@ -520,29 +527,12 @@
 
 .sku-code-text {
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--lovable-muted);
 }
 
-.sku-returns-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2px 8px;
-  border-radius: 9999px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-
-.sku-returns-badge.has-returns {
-  background-color: rgba(239, 68, 68, 0.12);
-  color: #dc2626;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
 /* =========================================================
-   OPERATIONAL REPORT EXPORT
+   4. OPERATIONAL REPORT EXPORT (grid gap-2 sm:grid-cols-2 lg:grid-cols-3)
 ========================================================= */
 
 .btn-export-full {
@@ -554,8 +544,9 @@
   border: 1px solid var(--lovable-ink);
   border-radius: 6px;
   padding: 8px 16px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
+  height: 36px;
   cursor: pointer;
   transition: all 0.15s ease;
   white-space: nowrap;
@@ -574,7 +565,7 @@
 .reports-buttons-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 8px;
   width: 100%;
 }
 
@@ -582,12 +573,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
+  padding: 10px 12px;
   background-color: var(--lovable-card);
   border: 1px solid var(--lovable-border);
   border-radius: 6px;
   color: var(--lovable-ink);
-  font-size: 13px;
+  font-size: 14px;
   text-align: left;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -595,7 +586,6 @@
 
 .report-download-btn:hover {
   border-color: var(--lovable-gold);
-  background-color: var(--lovable-gold-light);
 }
 
 .report-download-btn:disabled {
@@ -611,12 +601,12 @@
 }
 
 .report-btn-title {
-  font-weight: 500;
+  font-weight: 400;
   white-space: nowrap;
 }
 
 .report-btn-rows {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--lovable-muted);
   white-space: nowrap;
 }
@@ -634,7 +624,7 @@
 }
 
 /* =========================================================
-   TOP MOVERS
+   5. TOP MOVERS (space-y-2 text-sm)
 ========================================================= */
 
 .top-movers-list {
@@ -650,11 +640,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
+  padding: 8px 12px;
   background-color: var(--lovable-card);
   border: 1px solid var(--lovable-border);
   border-radius: 6px;
-  font-size: 13.5px;
+  font-size: 14px;
   transition: border-color 0.15s ease;
   gap: 12px;
 }
@@ -664,13 +654,13 @@
 }
 
 .mover-name-rank {
-  font-weight: 500;
+  font-weight: 400;
   color: var(--lovable-ink);
 }
 
 .mover-stats-subtext {
   color: var(--lovable-muted);
-  font-size: 12.5px;
+  font-size: 13px;
   white-space: nowrap;
 }
 
@@ -701,11 +691,11 @@
 @media (min-width: 1921px) {
   .lovable-header-inner {
     padding: 24px 60px;
-    max-width: 2800px;
+    max-width: 2600px;
   }
 
   .lovable-portal-logo img {
-    height: 48px;
+    height: 56px;
   }
 
   .lovable-back-link {
@@ -715,11 +705,11 @@
 
   .lovable-portal-title,
   .lovable-layer-num {
-    font-size: 38px;
+    font-size: 36px;
   }
 
   .lovable-portal-desc {
-    font-size: 16.5px;
+    font-size: 16px;
   }
 
   .analytics-refresh-btn {
@@ -728,7 +718,7 @@
   }
 
   .analytics-container {
-    max-width: 2600px;
+    max-width: 2500px;
     padding: 36px 60px 100px;
     gap: 32px;
   }
@@ -738,7 +728,8 @@
   }
 
   .analytics-kpi-card {
-    padding: 20px 22px;
+    padding: 18px 20px;
+    min-height: 104px;
     border-radius: 12px;
   }
 
@@ -747,7 +738,7 @@
   }
 
   .analytics-kpi-value {
-    font-size: 38px;
+    font-size: 36px;
   }
 
   .analytics-kpi-hint {
@@ -755,7 +746,7 @@
   }
 
   .analytics-panel {
-    padding: 28px 32px;
+    padding: 26px 30px;
     border-radius: 12px;
     gap: 20px;
   }
@@ -772,8 +763,12 @@
     gap: 32px;
   }
 
+  .chart-h-wrap {
+    height: 300px;
+  }
+
   .svg-bar-chart {
-    height: 280px;
+    height: 260px;
   }
 
   .chart-axis-label {
@@ -781,31 +776,31 @@
   }
 
   .donut-svg {
-    width: 240px;
-    height: 240px;
+    width: 220px;
+    height: 220px;
   }
 
   .donut-center-val {
-    font-size: 30px;
+    font-size: 28px;
   }
 
   .donut-center-lbl {
-    font-size: 14px;
+    font-size: 13.5px;
   }
 
   .donut-legend {
-    font-size: 14.5px;
-    gap: 24px;
+    font-size: 14px;
+    gap: 20px;
   }
 
   .sku-table th {
-    font-size: 12.5px;
-    padding: 14px 18px;
+    font-size: 13px;
+    padding: 12px 18px 12px 0;
   }
 
   .sku-table td {
     font-size: 15.5px;
-    padding: 16px 18px;
+    padding: 14px 18px 14px 0;
   }
 
   .sku-name-text {
@@ -817,27 +812,28 @@
   }
 
   .btn-export-full {
-    padding: 11px 22px;
+    padding: 10px 20px;
     font-size: 15px;
+    height: 42px;
     border-radius: 8px;
   }
 
   .reports-buttons-grid {
-    gap: 14px;
+    gap: 12px;
   }
 
   .report-download-btn {
-    padding: 14px 18px;
+    padding: 14px 16px;
     font-size: 15px;
   }
 
   .mover-row-item {
-    padding: 14px 18px;
-    font-size: 16px;
+    padding: 12px 16px;
+    font-size: 15.5px;
   }
 
   .mover-stats-subtext {
-    font-size: 14.5px;
+    font-size: 14px;
   }
 }
 
@@ -847,31 +843,23 @@
 
 @media (min-width: 1441px) and (max-width: 1920px) {
   .lovable-header-inner {
-    padding: 18px 36px;
-    max-width: 1560px;
+    padding: 18px 32px;
+    max-width: 1380px;
   }
 
   .analytics-container {
-    max-width: 1560px;
-    padding: 28px 36px 70px;
+    max-width: 1380px;
+    padding: 28px 32px 70px;
     gap: 26px;
   }
 
   .lovable-portal-title,
   .lovable-layer-num {
-    font-size: 28px;
+    font-size: 26px;
   }
 
   .analytics-kpi-value {
     font-size: 26px;
-  }
-
-  .analytics-panel {
-    padding: 22px 24px;
-  }
-
-  .panel-title {
-    font-size: 18.5px;
   }
 }
 
@@ -881,7 +869,7 @@
 
 @media (min-width: 1025px) and (max-width: 1440px) {
   .analytics-container {
-    max-width: 1280px;
+    max-width: 1152px;
   }
 }
 
@@ -891,12 +879,63 @@
 
 @media (min-width: 769px) and (max-width: 1024px) {
   .lovable-header-inner {
-    padding: 14px 22px;
+    padding: 14px 20px;
   }
 
   .analytics-container {
-    padding: 20px 22px 50px;
+    padding: 22px 20px 50px;
     gap: 20px;
+  }
+
+  .analytics-kpi-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .analytics-kpi-card {
+    min-height: 80px;
+  }
+
+  .analytics-charts-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .reports-buttons-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN: TABLET PORTRAIT (641px - 768px)
+========================================================= */
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .lovable-header-inner {
+    padding: 14px 16px;
+  }
+
+  .lovable-header-left {
+    gap: 12px;
+  }
+
+  .lovable-portal-logo img {
+    height: 38px;
+  }
+
+  .lovable-portal-title,
+  .lovable-layer-num {
+    font-size: 22px;
+  }
+
+  .lovable-portal-desc {
+    font-size: 13px;
+  }
+
+  .analytics-container {
+    padding: 18px 16px 48px;
+    gap: 18px;
   }
 
   .analytics-kpi-grid {
@@ -905,7 +944,8 @@
   }
 
   .analytics-kpi-card {
-    padding: 12px 14px;
+    min-height: 78px;
+    padding: 10px 14px;
   }
 
   .analytics-kpi-value {
@@ -919,62 +959,7 @@
 
   .reports-buttons-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-}
-
-/* =========================================================
-   RESPONSIVE DESIGN: TABLET PORTRAIT (641px - 768px)
-========================================================= */
-
-@media (min-width: 641px) and (max-width: 768px) {
-  .lovable-header-inner {
-    padding: 14px 18px;
-  }
-
-  .lovable-header-left {
-    gap: 14px;
-  }
-
-  .lovable-portal-logo img {
-    height: 34px;
-  }
-
-  .lovable-portal-title,
-  .lovable-layer-num {
-    font-size: 23px;
-  }
-
-  .lovable-portal-desc {
-    font-size: 13px;
-  }
-
-  .analytics-container {
-    padding: 18px 18px 48px;
-    gap: 18px;
-  }
-
-  .analytics-kpi-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
-
-  .analytics-kpi-card {
-    padding: 12px 14px;
-  }
-
-  .analytics-kpi-value {
-    font-size: 21px;
-  }
-
-  .analytics-charts-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .reports-buttons-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 8px;
   }
 }
 
@@ -984,7 +969,7 @@
 
 @media (max-width: 640px) {
   .lovable-header-inner {
-    padding: 12px 16px;
+    padding: 12px 14px;
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
@@ -996,7 +981,7 @@
   }
 
   .lovable-portal-logo img {
-    height: 32px;
+    height: 36px;
   }
 
   .lovable-portal-title,
@@ -1035,7 +1020,8 @@
   }
 
   .analytics-kpi-card {
-    padding: 11px 12px;
+    padding: 10px 12px;
+    min-height: 74px;
   }
 
   .label-caps {
@@ -1052,37 +1038,37 @@
 
   .analytics-charts-grid {
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 16px;
   }
 
   .analytics-panel {
-    padding: 15px 14px;
+    padding: 16px 14px;
     gap: 14px;
   }
 
   .panel-title {
-    font-size: 16px;
+    font-size: 16.5px;
   }
 
   .panel-desc {
-    font-size: 12.5px;
+    font-size: 13px;
   }
 
   .sku-table th {
-    padding: 8px 10px;
+    padding: 8px 12px 8px 0;
     font-size: 10.5px;
   }
 
   .sku-table td {
-    padding: 10px 10px;
+    padding: 10px 12px 10px 0;
     font-size: 13px;
   }
 
   .btn-export-full {
     width: 100%;
     justify-content: center;
-    padding: 9px 14px;
-    font-size: 12.5px;
+    padding: 8px 14px;
+    font-size: 13px;
   }
 
   .reports-buttons-grid {
@@ -1091,13 +1077,13 @@
   }
 
   .report-download-btn {
-    padding: 9px 12px;
-    font-size: 12.5px;
+    padding: 10px 12px;
+    font-size: 13.5px;
   }
 
   .mover-row-item {
     padding: 9px 12px;
-    font-size: 13px;
+    font-size: 13.5px;
   }
 }
 
@@ -1112,7 +1098,7 @@
   }
 
   .lovable-portal-logo img {
-    height: 28px;
+    height: 32px;
   }
 
   .lovable-portal-title,
@@ -1135,7 +1121,8 @@
   }
 
   .analytics-kpi-card {
-    padding: 9px 10px;
+    padding: 8px 10px;
+    min-height: 70px;
   }
 
   .label-caps {
@@ -1152,12 +1139,12 @@
   }
 
   .analytics-panel {
-    padding: 12px 12px;
+    padding: 14px 12px;
     gap: 12px;
   }
 
   .panel-title {
-    font-size: 15px;
+    font-size: 15.5px;
   }
 
   .panel-desc {
@@ -1165,12 +1152,12 @@
   }
 
   .sku-table th {
-    padding: 7px 8px;
+    padding: 7px 8px 7px 0;
     font-size: 10px;
   }
 
   .sku-table td {
-    padding: 8px 8px;
+    padding: 8px 8px 8px 0;
     font-size: 12px;
   }
 
@@ -1182,27 +1169,23 @@
     font-size: 10.5px;
   }
 
-  .sku-returns-badge {
-    font-size: 10px;
-    padding: 2px 6px;
-  }
-
   .btn-export-full {
-    font-size: 12px;
+    font-size: 12.5px;
     padding: 8px 12px;
+    height: 34px;
   }
 
   .report-download-btn {
     padding: 8px 10px;
-    font-size: 12px;
+    font-size: 12.5px;
   }
 
   .mover-row-item {
     padding: 8px 10px;
-    font-size: 12px;
+    font-size: 12.5px;
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
+    gap: 3px;
   }
 
   .mover-stats-subtext {
