@@ -379,7 +379,7 @@ class OrderItem(models.Model):
     )
 
     class Meta:
-        db_table = "orders_order_item"
+        db_table = "orders_orderitem"
         verbose_name = "Order Item"
         verbose_name_plural = "Order Items"
 

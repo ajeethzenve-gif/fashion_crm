@@ -114,22 +114,22 @@ export default function DesignerCRM() {
   // New task inputs per designer
   const [taskInputs, setTaskInputs] = useState({});
 
-  // Add lead form state (14 fields)
+  // Add lead form state (clean initial state)
   const [newLead, setNewLead] = useState({
     name: "",
     brand: "",
     contact: "",
-    city: "Mumbai",
-    category: "Pet Occasion Wear",
+    city: "",
+    category: "",
     tier: "Emerging",
-    takeRate: 32,
+    takeRate: "",
     gst: "",
     contractEnds: "",
     source: "Referral",
     owner: "Nisha Kapoor",
     nextFollowUp: "",
-    cac: 8000,
-    renewalProbability: 50,
+    cac: "",
+    renewalProbability: "",
   });
 
   const showToast = (msg) => {
@@ -144,14 +144,13 @@ export default function DesignerCRM() {
       else setLoading(true);
       setError(null);
 
+      const designersRes = await getDesigners();
       const [
-        designersRes,
         ordersRes,
         productsRes,
         returnsRes,
         settlementsRes,
       ] = await Promise.all([
-        getDesigners().catch(() => []),
         getOrders().catch(() => []),
         getProducts().catch(() => []),
         getReturns().catch(() => []),
@@ -167,7 +166,7 @@ export default function DesignerCRM() {
       if (isManual) showToast("Live designer pipeline refreshed.");
     } catch (err) {
       console.error("Failed to load CRM data:", err);
-      setError("Failed to connect to backend.");
+      setError(err.message || "Failed to connect to backend server.");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -203,6 +202,22 @@ export default function DesignerCRM() {
     return count;
   }, [designers]);
 
+  const allSalesOwners = useMemo(() => {
+    const list = new Set(SALES_OWNERS);
+    designers.forEach((d) => {
+      if (d.sales_owner) list.add(d.sales_owner);
+    });
+    return Array.from(list);
+  }, [designers]);
+
+  const allLeadSources = useMemo(() => {
+    const list = new Set(LEAD_SOURCES);
+    designers.forEach((d) => {
+      if (d.lead_source) list.add(d.lead_source);
+    });
+    return Array.from(list);
+  }, [designers]);
+
   const partnershipRevenue = useMemo(() => {
     return settlements
       .filter((s) => s.status !== "REVERSED" && !s.is_reversal)
@@ -212,84 +227,140 @@ export default function DesignerCRM() {
       );
   }, [settlements]);
 
-  // Designer Economics & Health Score calculation
+  // Designer Economics & Health Score calculation from live DB metrics
   const getDesignerEconomics = (designer) => {
-    const designerSkus = products
-      .filter(
-        (p) =>
-          p.designer === designer.id ||
-          p.designerId === designer.id ||
-          p.designer_name === designer.brand_name
-      )
-      .map((p) => p.sku || p.id);
+    const isKyc =
+      designer.is_kyc_verified ??
+      (designer.kyc_verified || designer.kyc_status === "VERIFIED");
 
-    const designerOrders = orders.filter((o) =>
-      (o.lines || o.items || []).some((l) =>
-        designerSkus.includes(l.sku || l.skuId)
-      )
-    );
-
-    const nonCancelled = designerOrders.filter((o) => o.status !== "CANCELLED");
-    const gmv = nonCancelled.reduce(
-      (sum, o) => sum + (Number(o.amount || o.total_amount) || 0),
-      0
-    );
-
-    const monthAgo = Date.now() - 30 * 24 * 3600 * 1000;
-    const monthlyGmv = nonCancelled
-      .filter(
-        (o) =>
-          o.created_at &&
-          new Date(o.created_at).getTime() >= monthAgo
-      )
-      .reduce(
-        (sum, o) => sum + (Number(o.amount || o.total_amount) || 0),
-        0
-      );
-
-    const takeRatePct = Number(designer.take_rate) || 32;
-    const ltv = Math.round((gmv * takeRatePct) / 100);
-    const cac = Number(designer.acquisition_cost) || 8000;
-    const roi = cac > 0 ? Math.round((ltv / cac) * 100) / 100 : null;
-
-    const liveSkus = products.filter(
-      (p) =>
-        (p.designer === designer.id ||
-          p.designerId === designer.id ||
-          p.designer_name === designer.brand_name) &&
-        (p.status === "LIVE" || p.live)
-    ).length;
-
-    const skuProductivity =
-      liveSkus > 0 ? Math.round(gmv / liveSkus) : Math.round(gmv);
-
-    // Health score formula (matches Lovable)
-    const dProducts = products.filter(
+    // Match all products belonging to this designer
+    const designerProducts = products.filter(
       (p) =>
         p.designer === designer.id ||
         p.designerId === designer.id ||
-        p.designer_name === designer.brand_name
+        p.designer_code === designer.designer_code ||
+        p.designer_brand === designer.brand_name ||
+        p.designer_name === designer.brand_name ||
+        p.designer_name === designer.designer_name ||
+        p.designer_name === designer.owner_name
     );
-    const qaApproved = dProducts.filter((p) => p.status === "LIVE" || p.status === "APPROVED").length;
-    const qaRate = dProducts.length ? (qaApproved / dProducts.length) * 100 : 80;
-    const inStock = dProducts.filter((p) => Number(p.available_quantity || 0) > 0).length;
-    const stockRate = dProducts.length ? (inStock / dProducts.length) * 100 : 80;
-    const isKyc = designer.kyc_verified || designer.kyc_status === "VERIFIED";
-    const renewalProb = designer.renewal_likelihood ?? 50;
+    const designerProductIds = designerProducts.map((p) => String(p.id));
+    const designerSkus = designerProducts.map((p) => p.sku).filter(Boolean);
 
-    const health = Math.max(
-      0,
-      Math.min(
-        100,
-        Math.round(
-          qaRate * 0.25 +
-            stockRate * 0.2 +
-            Math.min(100, monthlyGmv / 500) * 0.25 +
-            (isKyc ? 100 : 0) * 0.1 +
-            renewalProb * 0.2
-        )
-      )
-    );
+    // Calculate line-item totals from database orders
+    let orderItemsSum = 0;
+    let orderItemsMonthlySum = 0;
+    const monthAgo = Date.now() - 30 * 24 * 3600 * 1000;
+
+    orders.forEach((o) => {
+      const isCancelled =
+        String(o.status || o.order_status || "").toUpperCase() === "CANCELLED";
+      if (isCancelled) return;
+
+      const orderTime = o.created_at ? new Date(o.created_at).getTime() : 0;
+      const isRecent = orderTime >= monthAgo;
+
+      const items = o.items || o.lines || [];
+      items.forEach((item) => {
+        const matches =
+          (item.brand_name && item.brand_name === designer.brand_name) ||
+          (item.brand && item.brand === designer.brand_name) ||
+          (item.product_id && designerProductIds.includes(String(item.product_id))) ||
+          (item.sku && designerSkus.includes(item.sku)) ||
+          (item.skuId && designerSkus.includes(item.skuId));
+
+        if (matches) {
+          const itemTotal =
+            Number(
+              item.total ||
+                item.total_price ||
+                (Number(item.price || 0) * Number(item.quantity || item.qty || 1))
+            ) || 0;
+          orderItemsSum += itemTotal;
+          if (isRecent) {
+            orderItemsMonthlySum += itemTotal;
+          }
+        }
+      });
+    });
+
+    // Prefer backend calculated DB metrics if available, fallback to computed items
+    const gmv =
+      designer.lifetime_gmv !== undefined && Number(designer.lifetime_gmv) > 0
+        ? Number(designer.lifetime_gmv)
+        : orderItemsSum;
+
+    const monthlyGmv =
+      designer.monthly_gmv !== undefined && Number(designer.monthly_gmv) > 0
+        ? Number(designer.monthly_gmv)
+        : (orderItemsMonthlySum > 0 ? orderItemsMonthlySum : gmv);
+
+    const takeRatePct = Number(designer.take_rate) || 0;
+    const ltv =
+      designer.designer_ltv !== undefined && Number(designer.designer_ltv) > 0
+        ? Number(designer.designer_ltv)
+        : Math.round((gmv * takeRatePct) / 100);
+
+    const cac = Number(designer.designer_cac ?? designer.acquisition_cost) || 0;
+    const roi =
+      designer.ltv_cac_ratio ||
+      (cac > 0 && ltv > 0
+        ? `${Math.round((ltv / cac) * 100) / 100}×`
+        : "0×");
+
+    const liveSkus = designerProducts.filter(
+      (p) => p.status === "LIVE" || p.status === "APPROVED" || p.is_live
+    ).length;
+
+    const skuProductivity =
+      designer.effective_sku_productivity !== undefined &&
+      Number(designer.effective_sku_productivity) > 0
+        ? Number(designer.effective_sku_productivity)
+        : (liveSkus > 0 ? Math.round(gmv / liveSkus) : Math.round(gmv));
+
+    // Health score from real DB data
+    const totalProds = designerProducts.length;
+    const qaApproved = designerProducts.filter(
+      (p) =>
+        p.status === "LIVE" ||
+        p.status === "APPROVED" ||
+        p.qa_status === "APPROVED"
+    ).length;
+    const qaRate = totalProds > 0 ? (qaApproved / totalProds) * 100 : 0;
+    const inStock = designerProducts.filter(
+      (p) => Number(p.available_quantity || p.inventory_quantity || 0) > 0
+    ).length;
+    const stockRate = totalProds > 0 ? (inStock / totalProds) * 100 : 0;
+    const renewalProb = Number(designer.renewal_likelihood ?? 0);
+
+    const health =
+      designer.health_score !== undefined && Number(designer.health_score) > 0
+        ? Number(designer.health_score)
+        : totalProds > 0 || gmv > 0
+        ? Math.max(
+            0,
+            Math.min(
+              100,
+              Math.round(
+                qaRate * 0.25 +
+                  stockRate * 0.2 +
+                  Math.min(100, monthlyGmv / 500) * 0.25 +
+                  (isKyc ? 100 : 0) * 0.1 +
+                  renewalProb * 0.2
+              )
+            )
+          )
+        : Math.max(
+            0,
+            Math.min(
+              100,
+              Math.round(
+                (isKyc ? 100 : 0) * 0.3 +
+                  renewalProb * 0.4 +
+                  (designer.contract_signed ? 30 : 0)
+              )
+            )
+          );
 
     return {
       monthlyGmv,
@@ -451,18 +522,18 @@ export default function DesignerCRM() {
       brand_name: newLead.brand.trim(),
       owner_name: newLead.name.trim(),
       email: isEmail ? newLead.contact.trim() : `${newLead.name.toLowerCase().replace(/\s+/g, "")}@example.com`,
-      phone: !isEmail ? newLead.contact.trim() : "9876543210",
-      city: newLead.city || "Mumbai",
-      primary_category: newLead.category || "Pet Occasion Wear",
+      phone: !isEmail ? newLead.contact.trim() : "",
+      city: newLead.city.trim() || "",
+      primary_category: newLead.category.trim() || "",
       tier: newLead.tier.toUpperCase(),
-      take_rate: Number(newLead.takeRate) || 32,
-      gst_number: newLead.gst || "",
+      take_rate: newLead.takeRate !== "" ? Number(newLead.takeRate) : 0,
+      gst_number: newLead.gst.trim() || "",
       contract_end_date: newLead.contractEnds || null,
       lead_source: newLead.source,
       sales_owner: newLead.owner,
       next_followup_date: newLead.nextFollowUp || null,
-      acquisition_cost: Number(newLead.cac) || 8000,
-      renewal_likelihood: Number(newLead.renewalProbability) || 50,
+      acquisition_cost: newLead.cac !== "" ? Number(newLead.cac) : 0,
+      renewal_likelihood: newLead.renewalProbability !== "" ? Number(newLead.renewalProbability) : 0,
       stage: "LEAD",
       kyc_status: "PENDING",
       kyc_verified: false,
@@ -477,17 +548,17 @@ export default function DesignerCRM() {
         name: "",
         brand: "",
         contact: "",
-        city: "Mumbai",
-        category: "Pet Occasion Wear",
+        city: "",
+        category: "",
         tier: "Emerging",
-        takeRate: 32,
+        takeRate: "",
         gst: "",
         contractEnds: "",
         source: "Referral",
         owner: "Nisha Kapoor",
         nextFollowUp: "",
-        cac: 8000,
-        renewalProbability: 50,
+        cac: "",
+        renewalProbability: "",
       });
     } catch (err) {
       console.error("Failed to create designer lead:", err);
@@ -664,9 +735,9 @@ export default function DesignerCRM() {
                           {designer.designer_code || `DSG-${designer.id}`} ·{" "}
                           {designer.designer_name || designer.owner_name || "—"} ·{" "}
                           {designer.email || designer.phone || "—"} ·{" "}
-                          {designer.city || "Mumbai"} ·{" "}
-                          {designer.primary_category || "Pet Occasion Wear"} · take
-                          rate {designer.take_rate ?? 32}%
+                          {designer.city || "—"} ·{" "}
+                          {designer.primary_category || "—"} · take
+                          rate {designer.take_rate != null ? `${Number(designer.take_rate)}%` : "0%"}
                           {designer.contract_end_date
                             ? ` · contract ends ${designer.contract_end_date}`
                             : ""}
@@ -682,7 +753,7 @@ export default function DesignerCRM() {
                               ).toLocaleDateString()
                             : "not set"}{" "}
                           · renewal likelihood{" "}
-                          {designer.renewal_likelihood ?? 50}%
+                          {designer.renewal_likelihood != null ? `${designer.renewal_likelihood}%` : "—"}
                           {designer.lost_reason
                             ? ` · lost: ${designer.lost_reason}`
                             : ""}
@@ -870,7 +941,7 @@ export default function DesignerCRM() {
                               })
                             }
                           >
-                            {SALES_OWNERS.map((owner) => (
+                            {allSalesOwners.map((owner) => (
                               <option key={owner} value={owner}>
                                 {owner}
                               </option>
@@ -885,10 +956,10 @@ export default function DesignerCRM() {
                             className="crm-input-num"
                             min="0"
                             max="100"
-                            value={designer.renewal_likelihood ?? 50}
+                            value={designer.renewal_likelihood ?? ""}
                             onChange={(e) =>
                               handleUpdateField(designer.id, {
-                                renewal_likelihood: Number(e.target.value),
+                                renewal_likelihood: e.target.value === "" ? 0 : Number(e.target.value),
                               })
                             }
                           />
@@ -985,7 +1056,7 @@ export default function DesignerCRM() {
                   setNewLead({ ...newLead, source: e.target.value })
                 }
               >
-                {LEAD_SOURCES.map((s) => (
+                {allLeadSources.map((s) => (
                   <option key={s} value={s}>
                     {s}
                   </option>
@@ -1002,7 +1073,7 @@ export default function DesignerCRM() {
                   setNewLead({ ...newLead, owner: e.target.value })
                 }
               >
-                {SALES_OWNERS.map((o) => (
+                {allSalesOwners.map((o) => (
                   <option key={o} value={o}>
                     {o}
                   </option>

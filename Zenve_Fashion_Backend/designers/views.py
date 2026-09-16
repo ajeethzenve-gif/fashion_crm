@@ -241,6 +241,7 @@ class DesignerPortalDashboardAPIView(APIView):
 
     def get(self, request, designer_id):
         from decimal import Decimal
+        from django.db import models
         from django.db.models import Sum
         from django.utils import timezone
         from products.models import Product
@@ -256,7 +257,13 @@ class DesignerPortalDashboardAPIView(APIView):
         sku_serializer = ProductSerializer(skus, many=True)
 
         # Order items for this designer
-        order_items = OrderItem.objects.filter(product__designer=designer)
+        p_ids = [str(p.id) for p in skus]
+        p_skus = [p.sku for p in skus if p.sku]
+        order_items = OrderItem.objects.filter(
+            models.Q(product_id__in=p_ids) |
+            models.Q(product_data__sku__in=p_skus) |
+            models.Q(product_data__brand_name=designer.brand_name)
+        )
         order_ids = order_items.values_list("order_id", flat=True).distinct()
         orders = Order.objects.filter(id__in=order_ids).order_by("-created_at")
 
@@ -281,7 +288,7 @@ class DesignerPortalDashboardAPIView(APIView):
         net_payable = pending_settlements.aggregate(total=Sum("payout_amount"))["total"] or Decimal("0.00")
 
         # Returns
-        returns_count = ReturnRequest.objects.filter(order_item__product__designer=designer).count()
+        returns_count = ReturnRequest.objects.filter(order_item__in=order_items).count()
         return_rate = round((returns_count / max(1, units_sold)) * 100, 1) if units_sold > 0 else 0
 
         # Best seller
