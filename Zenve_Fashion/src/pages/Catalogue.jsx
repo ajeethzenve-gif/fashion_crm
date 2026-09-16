@@ -1,0 +1,552 @@
+import React, { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import "../styles/Catalogue.css";
+import SearchBar from "../components/SearchBar";
+import logo from "../assest/logo/zenve-logo-fashion.png";
+import { getProducts, updateProduct } from "../services/api";
+
+/* =========================================================
+   ICONS & SWITCH
+========================================================= */
+
+function BackIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19 12H5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M10 7L5 12L10 17" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function Switch({ checked, onChange }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      className={`lovable-cat-switch ${checked ? "checked" : ""}`}
+      onClick={() => onChange(!checked)}
+    >
+      <span className="lovable-cat-switch-thumb" />
+    </button>
+  );
+}
+
+/* =========================================================
+   FIELD METADATA DEFINITIONS
+========================================================= */
+
+const RECORD_SECTIONS = [
+  {
+    title: "Compliance & logistics",
+    fields: [
+      { key: "barcode", label: "Barcode / EAN" },
+      { key: "hsn", label: "HSN code" },
+      { key: "gstRate", label: "GST rate %", number: true },
+      { key: "weightG", label: "Weight (g)", number: true },
+      { key: "dimensions", label: "Dimensions" },
+      { key: "origin", label: "Country of origin" },
+      { key: "manufacturer", label: "Manufacturing information" },
+    ],
+  },
+  {
+    title: "Product detail",
+    fields: [
+      { key: "fabric", label: "Fabric / material" },
+      { key: "care", label: "Care instructions" },
+      { key: "petSafety", label: "Pet safety information" },
+    ],
+  },
+  {
+    title: "Media",
+    fields: [
+      { key: "image", label: "Image URL" },
+      { key: "video", label: "Video URL" },
+      { key: "altText", label: "Image alt text" },
+    ],
+  },
+  {
+    title: "Discovery & SEO",
+    fields: [
+      { key: "seoTitle", label: "SEO title" },
+      { key: "seoDescription", label: "Meta description" },
+      { key: "keywords", label: "Search keywords" },
+      { key: "collection", label: "Collection" },
+      { key: "occasion", label: "Occasion" },
+      { key: "season", label: "Season" },
+    ],
+  },
+];
+
+const MERCHANDISING_FLAGS = [
+  { key: "bestseller", label: "Bestseller" },
+  { key: "newArrival", label: "New arrival" },
+  { key: "featured", label: "Featured" },
+  { key: "limitedEdition", label: "Limited edition" },
+];
+
+const ALL_RECORD_KEYS = RECORD_SECTIONS.flatMap((s) => s.fields.map((f) => f.key));
+
+function computeCompletion(sku) {
+  const filled = ALL_RECORD_KEYS.filter((k) => {
+    const val = sku[k];
+    return typeof val === "number" ? val > 0 : !!(val && String(val).trim());
+  }).length;
+  return Math.round((filled / ALL_RECORD_KEYS.length) * 100);
+}
+
+function formatInr(val) {
+  const num = Number(val) || 0;
+  return `₹${Math.round(num).toLocaleString("en-IN")}`;
+}
+
+/* =========================================================
+   MAIN COMPONENT: 04 CATALOGUE & MERCHANDISING
+========================================================= */
+
+export default function Catalogue() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [priceInputs, setPriceInputs] = useState({});
+  const [expandedSkuId, setExpandedSkuId] = useState(null);
+  const [alert, setAlert] = useState(null);
+
+  /* =======================================================
+     FETCH PRODUCTS FROM BACKEND
+  ======================================================= */
+  const loadProducts = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const data = await getProducts();
+      const list = Array.isArray(data) ? data : data.results || [];
+      setProducts(list);
+    } catch (err) {
+      console.error("Failed to load products:", err);
+      setError("Unable to connect to Django backend to fetch products.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  /* =======================================================
+     UPDATE SINGLE PRICE
+  ======================================================= */
+  const handlePriceUpdate = async (skuItem) => {
+    const inputVal = priceInputs[skuItem.id];
+    const numeric = Number(inputVal);
+
+    if (!numeric || numeric <= 0) {
+      setAlert({ type: "error", text: "Enter a valid price" });
+      return;
+    }
+
+    if (numeric > Number(skuItem.mrp)) {
+      setAlert({ type: "error", text: "Selling price cannot exceed MRP" });
+      return;
+    }
+
+    try {
+      await updateProduct(skuItem.id, { selling_price: numeric });
+      setAlert({ type: "success", text: `Price updated to ${formatInr(numeric)}` });
+      setPriceInputs((prev) => ({ ...prev, [skuItem.id]: "" }));
+      // Update local product list
+      setProducts((prev) =>
+        prev.map((p) => (p.id === skuItem.id ? { ...p, selling_price: numeric, price: numeric } : p))
+      );
+    } catch (err) {
+      setAlert({ type: "error", text: `Failed to update price: ${err.message}` });
+    }
+  };
+
+  /* =======================================================
+     TOGGLE FAST DELIVERY
+  ======================================================= */
+  const handleToggleFast = async (skuItem) => {
+    const nextVal = !skuItem.fastDelivery;
+    try {
+      await updateProduct(skuItem.id, { fast_delivery: nextVal });
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === skuItem.id ? { ...p, fast_delivery: nextVal, fastDelivery: nextVal } : p
+        )
+      );
+      setAlert({
+        type: "success",
+        text: `Fast delivery flag ${nextVal ? "enabled" : "disabled"} for ${skuItem.sku}`,
+      });
+    } catch (err) {
+      setAlert({ type: "error", text: `Failed to toggle fast delivery: ${err.message}` });
+    }
+  };
+
+  /* =======================================================
+     UPDATE RECORD FIELD (ON BLUR)
+  ======================================================= */
+  const handleFieldBlur = async (skuItem, fieldKey, fieldLabel, newVal) => {
+    const oldVal = skuItem[fieldKey];
+    if (String(oldVal ?? "") === String(newVal ?? "")) return;
+
+    try {
+      await updateProduct(skuItem.id, { [fieldKey]: newVal });
+      setProducts((prev) =>
+        prev.map((p) => (p.id === skuItem.id ? { ...p, [fieldKey]: newVal } : p))
+      );
+      setAlert({ type: "success", text: `${fieldLabel} saved` });
+    } catch (err) {
+      console.error(`Failed to save ${fieldLabel}:`, err);
+      setAlert({ type: "error", text: `Failed to save ${fieldLabel}` });
+    }
+  };
+
+  /* =======================================================
+     TOGGLE MERCHANDISING FLAG
+  ======================================================= */
+  const handleToggleMerchFlag = async (skuItem, flagKey, flagLabel) => {
+    const nextVal = !skuItem[flagKey];
+    try {
+      await updateProduct(skuItem.id, { [flagKey]: nextVal });
+      setProducts((prev) =>
+        prev.map((p) => (p.id === skuItem.id ? { ...p, [flagKey]: nextVal } : p))
+      );
+      setAlert({
+        type: "success",
+        text: `${flagLabel} ${nextVal ? "enabled" : "disabled"}`,
+      });
+    } catch (err) {
+      setAlert({ type: "error", text: `Failed to toggle ${flagLabel}` });
+    }
+  };
+
+  /* =======================================================
+     FILTERED SKUS & METRICS
+  ======================================================= */
+  const filteredProducts = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return products;
+    return products.filter((p) => {
+      const haystack = [
+        p.sku,
+        p.product_name || p.name,
+        p.category,
+        p.colour,
+        p.size,
+        p.collection,
+        p.occasion,
+        p.designer_brand,
+        p.designer_name,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(term);
+    });
+  }, [products, searchTerm]);
+
+  const kpis = useMemo(() => {
+    const totalSkus = products.length;
+    const liveSkus = products.filter((p) => p.live || p.is_live || p.status === "LIVE").length;
+    const inQa = products.filter((p) => (p.qaStatus || p.status) === "PENDING_QA").length;
+    const finalSale = products.filter(
+      (p) => !p.returnable || p.return_policy === "FINAL_SALE"
+    ).length;
+    return { totalSkus, liveSkus, inQa, finalSale };
+  }, [products]);
+
+  /* =======================================================
+     RENDER
+  ======================================================= */
+  return (
+    <div className="lovable-catalogue-layout">
+      {/* =====================================================
+          HEADER SECTION
+      ===================================================== */}
+      <header className="lovable-catalogue-header">
+        <div className="lovable-header-left">
+          <Link to="/" className="lovable-portal-logo">
+            <img src={logo} alt="Zenve Fashion" />
+          </Link>
+
+          <div className="lovable-header-title-block">
+            <Link to="/" className="lovable-back-link">
+              <BackIcon />
+              <span>ALL 12 LAYERS</span>
+            </Link>
+
+            <h1 className="lovable-portal-title">
+              <span className="lovable-layer-num">03</span>
+              Product / SKU
+            </h1>
+
+            <p className="lovable-portal-subtitle">
+              Catalogue layer · Variants, attributes, media, pricing, policy
+            </p>
+          </div>
+        </div>
+
+        <div className="lovable-header-right">
+          <SearchBar />
+        </div>
+      </header>
+
+      {/* FEEDBACK BANNER */}
+      {alert && (
+        <div className={`lovable-alert lovable-alert-${alert.type}`}>
+          <span>{alert.text}</span>
+          <button type="button" className="lovable-alert-close" onClick={() => setAlert(null)}>
+            ×
+          </button>
+        </div>
+      )}
+
+      {/* ERROR BANNER */}
+      {error && (
+        <div className="lovable-alert lovable-alert-error">
+          <span>{error}</span>
+          <button type="button" className="lovable-alert-close" onClick={loadProducts}>
+            Retry
+          </button>
+        </div>
+      )}
+
+      <main className="lovable-catalogue-main">
+        {/* ===================================================
+            TOP 4 KPI CARDS
+        =================================================== */}
+        <div className="lovable-catalogue-kpis">
+          <div className="lovable-kpi-tile">
+            <div className="lovable-tile-label">SKUs</div>
+            <div className="lovable-tile-value">{loading ? "—" : kpis.totalSkus}</div>
+          </div>
+
+          <div className="lovable-kpi-tile">
+            <div className="lovable-tile-label">Live</div>
+            <div className="lovable-tile-value">{loading ? "—" : kpis.liveSkus}</div>
+          </div>
+
+          <div className="lovable-kpi-tile">
+            <div className="lovable-tile-label">In QA</div>
+            <div className="lovable-tile-value">{loading ? "—" : kpis.inQa}</div>
+          </div>
+
+          <div className="lovable-kpi-tile">
+            <div className="lovable-tile-label">Final sale</div>
+            <div className="lovable-tile-value">{loading ? "—" : kpis.finalSale}</div>
+          </div>
+        </div>
+
+        {/* ===================================================
+            SKU MASTER SECTION
+        =================================================== */}
+        <section className="lovable-portal-card">
+          <div className="lovable-card-header">
+            <div>
+              <h2 className="lovable-card-title">SKU master</h2>
+              <p className="lovable-card-description">
+                Pattern: ZNV-DESIGNER-CATEGORY-PRODUCT-COLOUR-SIZE. Price edits and record edits are written to the audit log.
+              </p>
+            </div>
+
+            <div className="lovable-search-action-wrap">
+              <input
+                type="text"
+                placeholder="Search SKU, name, colour, collection…"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="lovable-cat-search-input"
+              />
+            </div>
+          </div>
+
+          {loading ? (
+            <div className="lovable-item-empty">Loading SKUs from Django...</div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="lovable-item-empty">No SKUs match this search.</div>
+          ) : (
+            <div className="lovable-sku-card-stack">
+              {filteredProducts.map((sku) => {
+                const completion = computeCompletion(sku);
+                const isExpanded = expandedSkuId === sku.id;
+                const qaStatus = sku.qaStatus || sku.status || "PENDING_QA";
+                const isLive = sku.live || sku.is_live || sku.status === "LIVE";
+                const isReturnable = sku.returnable ?? sku.return_policy === "RETURNABLE";
+                const designerBrand = sku.designer_brand || sku.designer_name || "—";
+                const fulfilmentText = `${sku.location || sku.fulfilment_location || "Mumbai FC"} · ${
+                  sku.available_quantity ?? sku.inventory_quantity ?? 0
+                } available`;
+                const collectionText =
+                  [sku.collection, sku.occasion, sku.season].filter(Boolean).join(" · ") || "—";
+
+                return (
+                  <div key={sku.id} className="lovable-sku-item-card">
+                    {/* TOP BADGE HEADER */}
+                    <div className="lovable-sku-top-bar">
+                      <h3 className="lovable-sku-title">{sku.product_name || sku.name}</h3>
+
+                      <span className={`lovable-qa-badge tone-${qaStatus.toLowerCase()}`}>
+                        {qaStatus}
+                      </span>
+
+                      <span className={`lovable-tone-badge ${isLive ? "good" : "neutral"}`}>
+                        {isLive ? "LIVE" : "NOT LIVE"}
+                      </span>
+
+                      <span className={`lovable-tone-badge ${isReturnable ? "info" : "warn"}`}>
+                        {isReturnable ? "Returnable" : "Final sale"}
+                      </span>
+
+                      <span className={`lovable-tone-badge ${completion >= 80 ? "good" : "warn"}`}>
+                        Record {completion}% complete
+                      </span>
+
+                      {/* ACTIVE MERCHANDISING FLAGS */}
+                      {MERCHANDISING_FLAGS.filter((f) => sku[f.key]).map((f) => (
+                        <span key={f.key} className="lovable-tone-badge info">
+                          {f.label}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* SKU ID MONO */}
+                    <div className="lovable-sku-id-mono">{sku.sku}</div>
+
+                    {/* QUICK METADATA GRID */}
+                    <div className="lovable-sku-meta-grid">
+                      <div>
+                        <span className="lovable-label-caps">Designer</span>
+                        <p>{designerBrand}</p>
+                      </div>
+
+                      <div>
+                        <span className="lovable-label-caps">Category</span>
+                        <p>{`${sku.category} · ${sku.colour} · ${sku.size}`}</p>
+                      </div>
+
+                      <div>
+                        <span className="lovable-label-caps">MRP / price</span>
+                        <p>{`${formatInr(sku.mrp)} → ${formatInr(sku.price || sku.selling_price)}`}</p>
+                      </div>
+
+                      <div>
+                        <span className="lovable-label-caps">Fulfilment</span>
+                        <p>{fulfilmentText}</p>
+                      </div>
+
+                      <div>
+                        <span className="lovable-label-caps">Barcode / HSN</span>
+                        <p>{`${sku.barcode || "—"} · ${sku.hsn || "—"}`}</p>
+                      </div>
+
+                      <div>
+                        <span className="lovable-label-caps">GST</span>
+                        <p>{sku.gstRate || sku.gst_rate || 0}%</p>
+                      </div>
+
+                      <div>
+                        <span className="lovable-label-caps">Fabric</span>
+                        <p>{sku.fabric || sku.material || "—"}</p>
+                      </div>
+
+                      <div>
+                        <span className="lovable-label-caps">Collection</span>
+                        <p>{collectionText}</p>
+                      </div>
+                    </div>
+
+                    {/* ACTION CONTROLS */}
+                    <div className="lovable-sku-actions-row">
+                      <input
+                        type="number"
+                        placeholder="New price"
+                        value={priceInputs[sku.id] ?? ""}
+                        onChange={(e) =>
+                          setPriceInputs({ ...priceInputs, [sku.id]: e.target.value })
+                        }
+                        className="lovable-price-input"
+                      />
+
+                      <button
+                        type="button"
+                        className="lovable-btn-outline-sm"
+                        onClick={() => handlePriceUpdate(sku)}
+                      >
+                        Update price
+                      </button>
+
+                      <label className="lovable-fast-delivery-label">
+                        <Switch
+                          checked={sku.fastDelivery || sku.fast_delivery}
+                          onChange={() => handleToggleFast(sku)}
+                        />
+                        <span>Fast delivery flag</span>
+                      </label>
+
+                      <button
+                        type="button"
+                        className="lovable-btn-outline-sm"
+                        onClick={() => setExpandedSkuId(isExpanded ? null : sku.id)}
+                      >
+                        {isExpanded ? "Close full record" : "Edit full record"}
+                      </button>
+                    </div>
+
+                    {/* EXPANDED FULL RECORD EDITOR */}
+                    {isExpanded && (
+                      <div className="lovable-record-editor-box">
+                        {RECORD_SECTIONS.map((sec) => (
+                          <div key={sec.title} className="lovable-editor-section">
+                            <span className="lovable-label-caps">{sec.title}</span>
+                            <div className="lovable-editor-fields-grid">
+                              {sec.fields.map((f) => (
+                                <div key={f.key} className="lovable-editor-field">
+                                  <label className="lovable-field-sublabel">{f.label}</label>
+                                  <input
+                                    type={f.number ? "number" : "text"}
+                                    defaultValue={String(sku[f.key] ?? "")}
+                                    onBlur={(e) => {
+                                      const val = f.number
+                                        ? Number(e.target.value)
+                                        : e.target.value;
+                                      handleFieldBlur(sku, f.key, f.label, val);
+                                    }}
+                                    className="lovable-editor-input"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+
+                        {/* MERCHANDISING FLAGS SWITCHES */}
+                        <div className="lovable-editor-section">
+                          <span className="lovable-label-caps">Merchandising flags</span>
+                          <div className="lovable-merch-flags-grid">
+                            {MERCHANDISING_FLAGS.map((f) => (
+                              <label key={f.key} className="lovable-merch-flag-item">
+                                <span>{f.label}</span>
+                                <Switch
+                                  checked={!!sku[f.key]}
+                                  onChange={() => handleToggleMerchFlag(sku, f.key, f.label)}
+                                />
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      </main>
+    </div>
+  );
+}

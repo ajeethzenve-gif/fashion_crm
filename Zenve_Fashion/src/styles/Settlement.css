@@ -1,0 +1,969 @@
+/* =========================================================
+   SETTLEMENT & PAYOUTS STYLESHEET (10)
+   Zenve Fashion Operations
+   Exact match to https://zenvefashioncm.lovable.app/settlement
+   Full Responsive Support for All Screen Sizes:
+   - Mobile XS & Compact (320px - 420px)
+   - Mobile / Phablet (421px - 640px)
+   - Tablet Portrait & Small Tablet (641px - 768px)
+   - Tablet Landscape (769px - 1024px)
+   - Laptop / Standard Desktop (1025px - 1440px)
+   - Large Desktop (1441px - 1920px)
+   - 4K Ultra HD & Ultrawide (1921px - 3840px+)
+========================================================= */
+
+:root {
+  --lovable-paper: #fbf9f5;
+  --lovable-panel: #ffffff;
+  --lovable-line: #e8e3da;
+  --lovable-line-light: #f0ece5;
+  --lovable-ink: #17130f;
+  --lovable-muted: #736b63;
+  --lovable-gold: #c28b51;
+  --lovable-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --lovable-font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --lovable-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --lovable-font-display: "Outfit", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* =========================================================
+   BASE LAYOUT
+========================================================= */
+
+.lovable-settlement-layout {
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--lovable-paper);
+  color: var(--lovable-ink);
+  font-family: var(--lovable-font-sans);
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* =========================================================
+   HEADER SECTION
+========================================================= */
+
+.lovable-settlement-header {
+  width: 100%;
+  background: var(--lovable-panel);
+  border-bottom: 1px solid var(--lovable-line);
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.lovable-header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+}
+
+.lovable-portal-logo {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.lovable-portal-logo img {
+  height: 38px;
+  width: auto;
+  display: block;
+}
+
+.lovable-header-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.lovable-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lovable-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.lovable-back-link:hover {
+  color: var(--lovable-ink);
+}
+
+.lovable-back-link svg {
+  flex-shrink: 0;
+}
+
+.lovable-portal-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 500;
+  font-family: var(--lovable-font-serif);
+  color: var(--lovable-ink);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  line-height: 1.15;
+}
+
+.lovable-layer-num {
+  font-size: 26px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--lovable-gold);
+}
+
+.lovable-portal-desc {
+  margin: 0;
+  font-size: 14px;
+  color: var(--lovable-muted);
+  line-height: 1.4;
+}
+
+.lovable-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
+
+.lovable-settlement-main {
+  width: 100%;
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 24px 28px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   ALERT / TOAST BANNER
+========================================================= */
+
+.lovable-settlement-alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-radius: 6px;
+  font-size: 13.5px;
+  font-weight: 500;
+  animation: fadeIn 0.2s ease-in-out;
+  box-sizing: border-box;
+}
+
+.lovable-settlement-alert.success {
+  background-color: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.lovable-settlement-alert.error {
+  background-color: #fff1f2;
+  color: #9f1239;
+  border: 1px solid #fecdd3;
+}
+
+.lovable-alert-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  color: currentColor;
+  cursor: pointer;
+  padding: 0 4px;
+  opacity: 0.7;
+  transition: opacity 0.15s ease;
+}
+
+.lovable-alert-close:hover {
+  opacity: 1;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================
+   TOP 4 KPI CARDS
+========================================================= */
+
+.lovable-settlement-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.lovable-kpi-card {
+  background: var(--lovable-panel);
+  border: 1px solid var(--lovable-line);
+  border-radius: 8px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+  box-sizing: border-box;
+}
+
+.lovable-kpi-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.lovable-kpi-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--lovable-muted);
+}
+
+.lovable-kpi-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--lovable-ink);
+  line-height: 1.15;
+  font-family: var(--lovable-font-display);
+}
+
+.lovable-kpi-hint {
+  font-size: 12px;
+  color: var(--lovable-muted);
+}
+
+/* =========================================================
+   PANEL / SECTION CARD
+========================================================= */
+
+.lovable-panel-card {
+  background: var(--lovable-panel);
+  border: 1px solid var(--lovable-line);
+  border-radius: 8px;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.lovable-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.lovable-panel-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lovable-panel-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--lovable-ink);
+}
+
+.lovable-panel-desc {
+  margin: 0;
+  font-size: 13px;
+  color: var(--lovable-muted);
+  line-height: 1.4;
+}
+
+/* =========================================================
+   SETTLEMENT TABLE
+========================================================= */
+
+.lovable-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 6px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--lovable-line) transparent;
+}
+
+.lovable-table-wrap::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.lovable-table-wrap::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.lovable-table-wrap::-webkit-scrollbar-thumb {
+  background-color: var(--lovable-line);
+  border-radius: 4px;
+}
+
+.lovable-settlement-table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13.5px;
+}
+
+.lovable-settlement-table th {
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lovable-muted);
+  border-bottom: 1px solid var(--lovable-line);
+  white-space: nowrap;
+}
+
+.lovable-settlement-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--lovable-line-light);
+  color: var(--lovable-ink);
+  vertical-align: middle;
+}
+
+.lovable-settlement-table tr:last-child td {
+  border-bottom: none;
+}
+
+.lovable-settlement-table tr:hover td {
+  background-color: #faf7f2;
+}
+
+.settlement-cell-id {
+  margin: 0;
+  font-weight: 600;
+  color: var(--lovable-ink);
+  font-family: var(--lovable-font-mono);
+}
+
+.settlement-cell-order {
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--lovable-muted);
+}
+
+.net-payable-text {
+  font-weight: 600;
+  color: var(--lovable-ink);
+}
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+.lovable-btn-sm {
+  height: 32px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.lovable-btn-sm.outline {
+  background-color: #ffffff;
+  border-color: var(--lovable-line);
+  color: var(--lovable-ink);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.lovable-btn-sm.outline:hover:not(:disabled) {
+  background-color: #faf7f2;
+  border-color: #d6cfc4;
+}
+
+.lovable-btn-sm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #fdfdfc;
+  border-color: var(--lovable-line);
+}
+
+/* =========================================================
+   TONE BADGES
+========================================================= */
+
+.lovable-tone-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2.5px 9px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.lovable-tone-badge.good {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.lovable-tone-badge.warn {
+  background-color: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.lovable-tone-badge.bad {
+  background-color: rgba(239, 68, 68, 0.12);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.lovable-tone-badge.info {
+  background-color: rgba(59, 130, 246, 0.12);
+  color: #1d4ed8;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.lovable-tone-badge.neutral {
+  background-color: #f5f2ec;
+  color: #5c554e;
+  border: 1px solid #e5dfd5;
+}
+
+/* =========================================================
+   EMPTY STATE BOX
+========================================================= */
+
+.lovable-empty-box {
+  padding: 36px 16px;
+  text-align: center;
+  border: 1px dashed var(--lovable-line);
+  border-radius: 6px;
+  color: var(--lovable-muted);
+  font-size: 13.5px;
+  background-color: #fdfbf8;
+}
+
+/* =========================================================
+   WHAT IS INCLUDED SECTION
+========================================================= */
+
+.lovable-included-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 24px;
+  padding: 4px 0 0;
+  margin: 0;
+  list-style: none;
+}
+
+.lovable-included-item {
+  font-size: 13.5px;
+  color: var(--lovable-muted);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  line-height: 1.45;
+}
+
+.lovable-included-bullet {
+  color: var(--lovable-ink);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN: 4K ULTRA HD & ULTRAWIDE (1921px - 3840px+)
+========================================================= */
+
+@media (min-width: 1921px) {
+  .lovable-settlement-header {
+    padding: 24px 60px;
+    max-width: 2800px;
+    margin: 0 auto;
+  }
+
+  .lovable-portal-logo img {
+    height: 48px;
+  }
+
+  .lovable-back-link {
+    font-size: 13px;
+    gap: 8px;
+  }
+
+  .lovable-back-link svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .lovable-portal-title,
+  .lovable-layer-num {
+    font-size: 38px;
+  }
+
+  .lovable-portal-desc {
+    font-size: 16.5px;
+  }
+
+  .lovable-settlement-main {
+    max-width: 2600px;
+    padding: 36px 60px 100px;
+    gap: 32px;
+  }
+
+  .lovable-settlement-kpi-grid {
+    gap: 18px;
+  }
+
+  .lovable-kpi-card {
+    padding: 22px 26px;
+    border-radius: 12px;
+  }
+
+  .lovable-kpi-label {
+    font-size: 13px;
+  }
+
+  .lovable-kpi-value {
+    font-size: 38px;
+  }
+
+  .lovable-kpi-hint {
+    font-size: 14.5px;
+  }
+
+  .lovable-panel-card {
+    padding: 28px 32px;
+    border-radius: 12px;
+    gap: 20px;
+  }
+
+  .lovable-panel-title {
+    font-size: 22px;
+  }
+
+  .lovable-panel-desc {
+    font-size: 15.5px;
+  }
+
+  .lovable-settlement-table th {
+    font-size: 13px;
+    padding: 14px 18px;
+  }
+
+  .lovable-settlement-table td {
+    font-size: 15.5px;
+    padding: 16px 18px;
+  }
+
+  .settlement-cell-id {
+    font-size: 16px;
+  }
+
+  .settlement-cell-order {
+    font-size: 13.5px;
+  }
+
+  .lovable-tone-badge {
+    font-size: 12.5px;
+    padding: 4px 12px;
+  }
+
+  .lovable-btn-sm {
+    height: 38px;
+    font-size: 13.5px;
+    padding: 0 16px;
+    border-radius: 7px;
+  }
+
+  .lovable-included-grid {
+    gap: 14px 36px;
+  }
+
+  .lovable-included-item {
+    font-size: 16px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN: LARGE DESKTOP (1441px - 1920px)
+========================================================= */
+
+@media (min-width: 1441px) and (max-width: 1920px) {
+  .lovable-settlement-header {
+    padding: 18px 36px;
+  }
+
+  .lovable-settlement-main {
+    max-width: 1560px;
+    padding: 28px 36px 70px;
+    gap: 26px;
+  }
+
+  .lovable-portal-title,
+  .lovable-layer-num {
+    font-size: 28px;
+  }
+
+  .lovable-kpi-card {
+    padding: 18px 20px;
+  }
+
+  .lovable-kpi-value {
+    font-size: 28px;
+  }
+
+  .lovable-panel-card {
+    padding: 22px 24px;
+  }
+
+  .lovable-panel-title {
+    font-size: 18.5px;
+  }
+
+  .lovable-settlement-table td {
+    padding: 13px 16px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN: LAPTOP / DESKTOP (1025px - 1440px)
+========================================================= */
+
+@media (min-width: 1025px) and (max-width: 1440px) {
+  .lovable-settlement-main {
+    max-width: 1280px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN: TABLET LANDSCAPE (769px - 1024px)
+========================================================= */
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .lovable-settlement-header {
+    padding: 14px 22px;
+  }
+
+  .lovable-settlement-main {
+    padding: 20px 22px 50px;
+    gap: 20px;
+  }
+
+  .lovable-settlement-kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .lovable-kpi-card {
+    padding: 14px 15px;
+  }
+
+  .lovable-kpi-value {
+    font-size: 23px;
+  }
+
+  .lovable-portal-title,
+  .lovable-layer-num {
+    font-size: 24px;
+  }
+
+  .lovable-panel-card {
+    padding: 18px 20px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN: TABLET PORTRAIT (641px - 768px)
+========================================================= */
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .lovable-settlement-header {
+    padding: 14px 18px;
+  }
+
+  .lovable-header-left {
+    gap: 14px;
+  }
+
+  .lovable-portal-logo img {
+    height: 34px;
+  }
+
+  .lovable-portal-title,
+  .lovable-layer-num {
+    font-size: 23px;
+  }
+
+  .lovable-portal-desc {
+    font-size: 13px;
+  }
+
+  .lovable-settlement-main {
+    padding: 18px 18px 48px;
+    gap: 18px;
+  }
+
+  .lovable-settlement-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .lovable-kpi-card {
+    padding: 14px 16px;
+  }
+
+  .lovable-kpi-value {
+    font-size: 23px;
+  }
+
+  .lovable-panel-card {
+    padding: 16px 18px;
+  }
+
+  .lovable-included-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px 18px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN: MOBILE / PHABLET (421px - 640px)
+========================================================= */
+
+@media (max-width: 640px) {
+  .lovable-settlement-header {
+    padding: 12px 16px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .lovable-header-left {
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .lovable-portal-logo img {
+    height: 32px;
+  }
+
+  .lovable-portal-title,
+  .lovable-layer-num {
+    font-size: 22px;
+  }
+
+  .lovable-portal-desc {
+    font-size: 12.5px;
+  }
+
+  .lovable-header-right {
+    width: 100%;
+  }
+
+  .lovable-header-right .search-user-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .lovable-settlement-main {
+    padding: 16px 14px 44px;
+    gap: 16px;
+  }
+
+  .lovable-settlement-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .lovable-kpi-card {
+    padding: 12px 14px;
+  }
+
+  .lovable-kpi-label {
+    font-size: 10.5px;
+  }
+
+  .lovable-kpi-value {
+    font-size: 21px;
+  }
+
+  .lovable-kpi-hint {
+    font-size: 11px;
+  }
+
+  .lovable-panel-card {
+    padding: 15px 14px;
+    gap: 14px;
+  }
+
+  .lovable-panel-title {
+    font-size: 16px;
+  }
+
+  .lovable-panel-desc {
+    font-size: 12.5px;
+  }
+
+  .lovable-settlement-table th {
+    padding: 8px 10px;
+    font-size: 10.5px;
+  }
+
+  .lovable-settlement-table td {
+    padding: 10px 10px;
+    font-size: 13px;
+  }
+
+  .lovable-btn-sm {
+    height: 30px;
+    padding: 0 10px;
+    font-size: 11.5px;
+  }
+
+  .lovable-included-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .lovable-included-item {
+    font-size: 12.5px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN: MOBILE XS & COMPACT (320px - 420px)
+========================================================= */
+
+@media (max-width: 420px) {
+  .lovable-settlement-header {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .lovable-portal-logo img {
+    height: 28px;
+  }
+
+  .lovable-portal-title,
+  .lovable-layer-num {
+    font-size: 20px;
+  }
+
+  .lovable-portal-desc {
+    font-size: 12px;
+  }
+
+  .lovable-settlement-main {
+    padding: 12px 10px 36px;
+    gap: 14px;
+  }
+
+  .lovable-settlement-kpi-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .lovable-kpi-card {
+    padding: 10px 10px;
+  }
+
+  .lovable-kpi-label {
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+
+  .lovable-kpi-value {
+    font-size: 19px;
+  }
+
+  .lovable-kpi-hint {
+    font-size: 10.5px;
+  }
+
+  .lovable-panel-card {
+    padding: 12px 12px;
+    gap: 12px;
+  }
+
+  .lovable-panel-title {
+    font-size: 15px;
+  }
+
+  .lovable-panel-desc {
+    font-size: 12px;
+  }
+
+  .lovable-settlement-table th {
+    padding: 8px 8px;
+    font-size: 10px;
+  }
+
+  .lovable-settlement-table td {
+    padding: 9px 8px;
+    font-size: 12.5px;
+  }
+
+  .settlement-cell-id {
+    font-size: 12.5px;
+  }
+
+  .settlement-cell-order {
+    font-size: 11px;
+  }
+
+  .lovable-tone-badge {
+    font-size: 10px;
+    padding: 2px 7px;
+  }
+
+  .lovable-btn-sm {
+    height: 28px;
+    padding: 0 8px;
+    font-size: 11px;
+  }
+
+  .lovable-included-item {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+}

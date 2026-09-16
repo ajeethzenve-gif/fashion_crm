@@ -1,0 +1,985 @@
+/* =========================================================
+   CATALOGUE QA STYLESHEET (04)
+   Zenve Fashion Operations
+   Exact match to https://zenvefashioncm.lovable.app/catalogue-qa
+   Comprehensive Multi-Screen Responsiveness (Mobile 320-640px, Tablet 641-1024px, Laptop 1025-1440px, Desktop 1441-1920px, 4K UHD 1921-3840px)
+========================================================= */
+
+.lovable-qa-layout {
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--lovable-paper, #fbf9f5);
+  color: var(--lovable-ink, #17130f);
+  font-family: var(--lovable-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.lovable-qa-header {
+  width: 100%;
+  background: var(--lovable-panel, #ffffff);
+  border-bottom: 1px solid var(--lovable-line, #e8e3da);
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.lovable-header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+}
+
+.lovable-portal-logo {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.lovable-portal-logo img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.lovable-header-title-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.lovable-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--lovable-muted, #736b63);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  margin-bottom: 3px;
+  transition: color 0.15s ease;
+}
+
+.lovable-back-link:hover {
+  color: var(--lovable-ink, #17130f);
+}
+
+.lovable-portal-title {
+  margin: 0;
+  font-family: var(--lovable-font-serif, Georgia, serif);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--lovable-ink, #17130f);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lovable-layer-num {
+  font-weight: 400;
+  color: #92400e;
+}
+
+.lovable-portal-subtitle {
+  margin: 3px 0 0;
+  font-size: 12.5px;
+  color: var(--lovable-muted, #736b63);
+}
+
+.lovable-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* =========================================================
+   FEEDBACK BANNERS
+========================================================= */
+
+.lovable-alert {
+  margin: 16px 28px 0;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 13.5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lovable-alert-success {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+}
+
+.lovable-alert-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
+.lovable-alert-close {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: inherit;
+  padding: 0 4px;
+}
+
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
+
+.lovable-qa-main {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 24px 28px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   TOP 4 KPI CARDS
+========================================================= */
+
+.lovable-qa-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.lovable-kpi-card {
+  background: var(--lovable-panel, #ffffff);
+  border: 1px solid var(--lovable-line, #e8e3da);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.lovable-label-caps {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lovable-muted, #736b63);
+}
+
+.lovable-kpi-val {
+  margin: 6px 0 0;
+  font-family: var(--lovable-font-serif, Georgia, serif);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--lovable-ink, #17130f);
+  line-height: 1.15;
+}
+
+.lovable-kpi-sub {
+  margin: 3px 0 0;
+  font-size: 11.5px;
+  color: var(--lovable-muted, #736b63);
+}
+
+/* =========================================================
+   PANELS
+========================================================= */
+
+.lovable-portal-card {
+  background: var(--lovable-panel, #ffffff);
+  border: 1px solid var(--lovable-line, #e8e3da);
+  border-radius: 8px;
+  padding: 22px 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.lovable-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+
+.lovable-card-title {
+  margin: 0;
+  font-family: var(--lovable-font-serif, Georgia, serif);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--lovable-ink, #17130f);
+}
+
+.lovable-card-description {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--lovable-muted, #736b63);
+}
+
+.lovable-item-empty {
+  padding: 28px;
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--lovable-muted, #736b63);
+  border: 1px dashed var(--lovable-line, #e8e3da);
+  border-radius: 6px;
+}
+
+/* =========================================================
+   QA QUEUE STACK
+========================================================= */
+
+.lovable-qa-queue-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.lovable-qa-card {
+  background: var(--lovable-panel, #ffffff);
+  border: 1px solid var(--lovable-line, #e8e3da);
+  border-radius: 8px;
+  padding: 18px 20px;
+  transition: box-shadow 0.15s ease;
+}
+
+.lovable-qa-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.lovable-qa-top-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.lovable-qa-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--lovable-ink, #17130f);
+}
+
+.lovable-sku-id-mono {
+  font-family: monospace;
+  font-size: 11.5px;
+  color: var(--lovable-muted, #736b63);
+  margin-top: 4px;
+}
+
+.lovable-qa-meta-line {
+  margin: 6px 0 0;
+  font-size: 13.5px;
+  color: var(--lovable-muted, #736b63);
+  line-height: 1.4;
+}
+
+/* BADGES */
+.lovable-qa-badge {
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.lovable-qa-badge.tone-approved {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.lovable-qa-badge.tone-pending_qa {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.lovable-qa-badge.tone-correction {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.lovable-qa-badge.tone-rejected {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.lovable-tone-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.lovable-tone-badge.good {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.lovable-tone-badge.warn {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.lovable-tone-badge.bad {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+/* DIMENSIONS GRID (10 Dimensions) */
+.lovable-dimensions-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.lovable-dimension-tile {
+  background: #f8f6f0;
+  border: 1px solid var(--lovable-line, #e8e3da);
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lovable-dim-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--lovable-muted, #736b63);
+  line-height: 1.2;
+}
+
+.lovable-dim-input {
+  height: 32px;
+  border: 1px solid var(--lovable-line, #e8e3da);
+  border-radius: 4px;
+  padding: 0 8px;
+  font-size: 13px;
+  background: #ffffff;
+  color: var(--lovable-ink, #17130f);
+  outline: none;
+  width: 100%;
+}
+
+.lovable-dim-input:focus {
+  border-color: #92400e;
+}
+
+/* ACTIONS ROW */
+.lovable-qa-actions-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #f3efe8;
+}
+
+.lovable-note-input {
+  width: 280px;
+  height: 36px;
+  border: 1px solid var(--lovable-line, #e8e3da);
+  border-radius: 6px;
+  padding: 0 12px;
+  font-size: 13px;
+  background: var(--lovable-panel, #ffffff);
+  color: var(--lovable-ink, #17130f);
+  outline: none;
+}
+
+.lovable-note-input:focus {
+  border-color: #92400e;
+}
+
+.lovable-btn-primary-sm {
+  background: #17130f;
+  color: #ffffff;
+  border: 1px solid #17130f;
+  padding: 7px 14px;
+  border-radius: 5px;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+}
+
+.lovable-btn-primary-sm:hover {
+  background: #2d2621;
+}
+
+.lovable-btn-outline-sm {
+  background: transparent;
+  border: 1px solid var(--lovable-line, #e8e3da);
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--lovable-ink, #17130f);
+  cursor: pointer;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lovable-btn-outline-sm:hover {
+  background: #f8f6f0;
+}
+
+/* =========================================================
+   REVIEWED SKUS
+========================================================= */
+
+.lovable-reviewed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lovable-reviewed-row {
+  border: 1px solid var(--lovable-line, #e8e3da);
+  border-radius: 6px;
+  padding: 12px 14px;
+  background: var(--lovable-panel, #ffffff);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lovable-reviewed-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 13.5px;
+}
+
+.lovable-reviewed-name {
+  font-weight: 600;
+  color: var(--lovable-ink, #17130f);
+}
+
+.lovable-reviewed-score {
+  font-weight: 500;
+  color: #92400e;
+}
+
+.lovable-reviewed-breakdown {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--lovable-muted, #736b63);
+  line-height: 1.4;
+}
+
+.lovable-reviewed-note {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  color: var(--lovable-ink, #17130f);
+  font-style: italic;
+}
+
+/* =========================================================
+   AUDIT TRAIL
+========================================================= */
+
+.lovable-audit-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lovable-audit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  font-size: 13px;
+}
+
+.lovable-audit-time {
+  color: var(--lovable-muted, #736b63);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.lovable-audit-msg {
+  color: var(--lovable-ink, #17130f);
+}
+
+/* =========================================================
+   COMPREHENSIVE MULTI-SCREEN RESPONSIVE MEDIA QUERIES
+========================================================= */
+
+/* ---------------------------------------------------------
+   1. MOBILE PHONES (320px - 640px)
+   Smartphones like iPhone, Pixel, Galaxy
+--------------------------------------------------------- */
+@media (max-width: 640px) {
+  .lovable-qa-header {
+    padding: 12px 16px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .lovable-header-left {
+    gap: 12px;
+  }
+
+  .lovable-portal-logo {
+    width: 34px;
+    height: 34px;
+  }
+
+  .lovable-portal-title {
+    font-size: 20px;
+    gap: 6px;
+  }
+
+  .lovable-layer-num {
+    font-size: 20px;
+  }
+
+  .lovable-portal-subtitle {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .lovable-header-right {
+    width: 100%;
+  }
+
+  .lovable-header-right .search-container,
+  .lovable-header-right form {
+    width: 100%;
+  }
+
+  .lovable-header-right .search-input {
+    width: 100%;
+  }
+
+  .lovable-alert {
+    margin: 12px 14px 0;
+    font-size: 12.5px;
+    padding: 8px 12px;
+  }
+
+  .lovable-qa-main {
+    padding: 14px 12px 48px;
+    gap: 16px;
+  }
+
+  /* Top 4 KPIs on Mobile: 2-column grid */
+  .lovable-qa-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .lovable-kpi-card {
+    padding: 10px 12px;
+  }
+
+  .lovable-kpi-val {
+    font-size: 20px;
+  }
+
+  .lovable-portal-card {
+    padding: 16px 14px;
+  }
+
+  .lovable-card-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  /* QA Card on Mobile */
+  .lovable-qa-card {
+    padding: 14px 12px;
+    gap: 12px;
+  }
+
+  .lovable-qa-top-bar {
+    gap: 6px;
+  }
+
+  .lovable-qa-title {
+    font-size: 15px;
+  }
+
+  .lovable-qa-badge,
+  .lovable-tone-badge {
+    font-size: 10.5px;
+    padding: 2px 6px;
+  }
+
+  .lovable-sku-id-mono {
+    font-size: 11px;
+    word-break: break-all;
+  }
+
+  .lovable-qa-meta-line {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  /* 10 Dimensions Grid on Mobile: 2 columns */
+  .lovable-dimensions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .lovable-dimension-tile {
+    padding: 6px 8px;
+  }
+
+  .lovable-dim-label {
+    font-size: 10px;
+  }
+
+  .lovable-dim-input {
+    height: 28px;
+    font-size: 12px;
+  }
+
+  /* Actions Row on Mobile: Vertical Stack */
+  .lovable-qa-actions-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+
+  .lovable-note-input {
+    width: 100%;
+    height: 36px;
+  }
+
+  .lovable-btn-primary-sm,
+  .lovable-btn-outline-sm {
+    width: 100%;
+    height: 36px;
+    justify-content: center;
+  }
+
+  /* Reviewed Row on Mobile */
+  .lovable-reviewed-row {
+    padding: 10px 12px;
+  }
+
+  .lovable-reviewed-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .lovable-reviewed-breakdown {
+    font-size: 11.5px;
+  }
+
+  /* Audit List on Mobile */
+  .lovable-audit-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+}
+
+/* Extra small mobile (< 380px) */
+@media (max-width: 380px) {
+  .lovable-qa-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lovable-dimensions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------------------------------------------------------
+   2. TABLETS (641px - 1024px)
+   iPad, iPad Pro, Android Tablets
+--------------------------------------------------------- */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .lovable-qa-header {
+    padding: 16px 24px;
+  }
+
+  .lovable-qa-main {
+    max-width: 980px;
+    padding: 20px 24px 60px;
+    gap: 20px;
+  }
+
+  .lovable-qa-kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  /* 10 Dimensions Grid: 3 columns */
+  .lovable-dimensions-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .lovable-note-input {
+    flex: 1;
+    min-width: 220px;
+  }
+}
+
+/* ---------------------------------------------------------
+   3. STANDARD LAPTOPS (1025px - 1440px)
+   MacBook Air, MacBook Pro 14", Ultrabooks
+--------------------------------------------------------- */
+@media (min-width: 1025px) and (max-width: 1440px) {
+  .lovable-qa-header {
+    padding: 16px 32px;
+  }
+
+  .lovable-qa-main {
+    max-width: 1280px;
+    padding: 24px 32px 60px;
+  }
+
+  .lovable-qa-kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .lovable-dimensions-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+}
+
+/* ---------------------------------------------------------
+   4. WIDESCREEN DESKTOPS (1441px - 1920px)
+   Full HD 1080p and 1440p Monitors
+--------------------------------------------------------- */
+@media (min-width: 1441px) and (max-width: 1920px) {
+  .lovable-qa-header {
+    padding: 18px 40px;
+  }
+
+  .lovable-qa-main {
+    max-width: 1540px;
+    padding: 28px 40px 60px;
+  }
+
+  .lovable-qa-kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+
+  .lovable-dimensions-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+}
+
+/* ---------------------------------------------------------
+   5. 4K ULTRA HD DISPLAYS (1921px - 3840px+)
+   Studio Displays, 4K UHD Monitors, Retina 4K/5K
+--------------------------------------------------------- */
+@media (min-width: 1921px) {
+  .lovable-qa-header {
+    padding: 24px 64px;
+  }
+
+  .lovable-portal-logo {
+    width: 54px;
+    height: 54px;
+  }
+
+  .lovable-back-link {
+    font-size: 13px;
+  }
+
+  .lovable-portal-title {
+    font-size: 34px;
+    gap: 12px;
+  }
+
+  .lovable-layer-num {
+    font-size: 34px;
+  }
+
+  .lovable-portal-subtitle {
+    font-size: 16px;
+  }
+
+  .lovable-qa-main {
+    max-width: 2800px;
+    padding: 36px 64px 80px;
+    gap: 32px;
+  }
+
+  /* 4K Top 4 KPIs */
+  .lovable-qa-kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .lovable-kpi-card {
+    padding: 20px 24px;
+    border-radius: 10px;
+  }
+
+  .lovable-label-caps {
+    font-size: 12.5px;
+  }
+
+  .lovable-kpi-val {
+    font-size: 36px;
+  }
+
+  .lovable-kpi-sub {
+    font-size: 13.5px;
+  }
+
+  .lovable-portal-card {
+    padding: 28px 32px;
+    border-radius: 10px;
+  }
+
+  .lovable-card-title {
+    font-size: 24px;
+  }
+
+  .lovable-card-description {
+    font-size: 15.5px;
+  }
+
+  /* 4K QA Card */
+  .lovable-qa-card {
+    padding: 24px 28px;
+    border-radius: 10px;
+    gap: 18px;
+  }
+
+  .lovable-qa-title {
+    font-size: 20px;
+  }
+
+  .lovable-qa-badge,
+  .lovable-tone-badge {
+    font-size: 12.5px;
+    padding: 4px 10px;
+  }
+
+  .lovable-sku-id-mono {
+    font-size: 13px;
+  }
+
+  .lovable-qa-meta-line {
+    font-size: 15px;
+  }
+
+  /* 4K Dimensions */
+  .lovable-dimensions-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-top: 18px;
+  }
+
+  .lovable-dimension-tile {
+    padding: 12px 14px;
+    border-radius: 8px;
+  }
+
+  .lovable-dim-label {
+    font-size: 12px;
+  }
+
+  .lovable-dim-input {
+    height: 38px;
+    font-size: 14px;
+    border-radius: 6px;
+  }
+
+  /* 4K Actions Row */
+  .lovable-qa-actions-row {
+    gap: 14px;
+    padding-top: 18px;
+  }
+
+  .lovable-note-input {
+    width: 360px;
+    height: 42px;
+    font-size: 14.5px;
+    border-radius: 6px;
+  }
+
+  .lovable-btn-primary-sm,
+  .lovable-btn-outline-sm {
+    height: 42px;
+    padding: 0 18px;
+    font-size: 13.5px;
+    border-radius: 6px;
+  }
+
+  /* 4K Reviewed Rows */
+  .lovable-reviewed-row {
+    padding: 16px 20px;
+    border-radius: 8px;
+    gap: 6px;
+  }
+
+  .lovable-reviewed-name {
+    font-size: 15.5px;
+  }
+
+  .lovable-reviewed-breakdown {
+    font-size: 13px;
+  }
+}
+
+/* Extreme 4K Resolution (3200px - 3840px Native) */
+@media (min-width: 3200px) {
+  .lovable-qa-main {
+    max-width: 3400px;
+  }
+
+  .lovable-kpi-val {
+    font-size: 42px;
+  }
+
+  .lovable-qa-title {
+    font-size: 22px;
+  }
+}

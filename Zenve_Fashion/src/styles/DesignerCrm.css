@@ -1,0 +1,1205 @@
+/* =========================================================
+   ZENVE FASHION - 01 DESIGNER CRM
+   Exact Lovable Design Tokens & Complete Multi-Screen Responsiveness
+   (Mobile 320-640px, Tablet 641-1024px, Laptop 1025-1440px, Desktop 1441-1920px, 4K UHD 1921-3840px)
+========================================================= */
+
+:root {
+  --lovable-paper: #fbf9f5;
+  --lovable-card: #ffffff;
+  --lovable-ink: #17130f;
+  --lovable-muted: #736b63;
+  --lovable-border: #e8e3da;
+  --lovable-border-hover: #c28b51;
+  --lovable-gold: #c28b51;
+  --lovable-gold-light: #fdfaf6;
+  --lovable-secondary: #f5f2ec;
+  --lovable-font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+.designer-crm-page,
+.designer-crm-page *,
+.designer-crm-page *::before,
+.designer-crm-page *::after {
+  box-sizing: border-box;
+}
+
+.designer-crm-page {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--lovable-paper);
+  color: var(--lovable-ink);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+  padding-bottom: 60px;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.lovable-header {
+  width: 100%;
+  background-color: var(--lovable-card);
+  border-bottom: 1px solid var(--lovable-border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.lovable-header-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.lovable-header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+}
+
+.lovable-portal-logo img {
+  height: 38px;
+  width: auto;
+  display: block;
+}
+
+.lovable-header-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.lovable-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lovable-muted);
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.lovable-back-link:hover {
+  color: var(--lovable-ink);
+}
+
+.lovable-portal-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 500;
+  font-family: var(--lovable-font-serif);
+  color: var(--lovable-ink);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.lovable-layer-num {
+  font-size: 26px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--lovable-gold);
+}
+
+.lovable-portal-desc {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--lovable-muted);
+}
+
+.lovable-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.crm-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background-color: var(--lovable-card);
+  border: 1px solid var(--lovable-border);
+  border-radius: 6px;
+  color: var(--lovable-ink);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.crm-refresh-btn:hover {
+  border-color: var(--lovable-gold);
+  background-color: var(--lovable-gold-light);
+}
+
+.crm-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* =========================================================
+   CONTAINER & LAYOUT
+========================================================= */
+
+.crm-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.crm-error-banner {
+  background-color: #fdf2f2;
+  border: 1px solid #f8b4b4;
+  color: #9b1c1c;
+  padding: 12px 16px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.crm-error-banner button {
+  background: #9b1c1c;
+  color: white;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* =========================================================
+   TOP 5 KPIS GRID
+========================================================= */
+
+.crm-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.crm-kpi-card {
+  background-color: var(--lovable-card);
+  border: 1px solid var(--lovable-border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: border-color 0.15s ease;
+}
+
+.crm-kpi-card:hover {
+  border-color: #d1c8be;
+}
+
+.label-caps {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lovable-muted);
+  margin: 0 0 6px 0;
+}
+
+.crm-kpi-value {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--lovable-ink);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.crm-kpi-hint {
+  font-size: 11.5px;
+  color: var(--lovable-muted);
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+
+/* =========================================================
+   PANELS & SECTIONS
+========================================================= */
+
+.crm-panel {
+  background-color: var(--lovable-card);
+  border: 1px solid var(--lovable-border);
+  border-radius: 8px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.crm-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.crm-panel-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.crm-panel-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--lovable-ink);
+}
+
+.crm-panel-desc {
+  margin: 0;
+  font-size: 13px;
+  color: var(--lovable-muted);
+}
+
+.crm-empty-state {
+  padding: 36px 16px;
+  text-align: center;
+  color: var(--lovable-muted);
+  font-size: 13.5px;
+  background-color: var(--lovable-paper);
+  border: 1px dashed var(--lovable-border);
+  border-radius: 6px;
+}
+
+/* =========================================================
+   TONE BADGES
+========================================================= */
+
+.tone-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tone-badge.warn {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.tone-badge.good {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.tone-badge.bad {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.tone-badge.info {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.tone-badge.neutral {
+  background-color: #f3f0ea;
+  color: #574f46;
+}
+
+/* =========================================================
+   DESIGNER PIPELINE CARDS
+========================================================= */
+
+.designer-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.designer-card {
+  background-color: var(--lovable-card);
+  border: 1px solid var(--lovable-border);
+  border-radius: 8px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: border-color 0.15s ease;
+}
+
+.designer-card:hover {
+  border-color: #d1c8be;
+}
+
+.designer-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.designer-info-left {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.designer-header-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.designer-brand-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--lovable-ink);
+}
+
+.designer-subtext-line {
+  margin: 0;
+  font-size: 13px;
+  color: var(--lovable-muted);
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.designer-actions-right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.designer-stage-select {
+  padding: 6px 10px;
+  background-color: var(--lovable-card);
+  border: 1px solid var(--lovable-border);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--lovable-ink);
+  outline: none;
+  cursor: pointer;
+  min-width: 130px;
+}
+
+.designer-stage-select:focus {
+  border-color: var(--lovable-gold);
+}
+
+.btn-crm-action {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-crm-action.outline {
+  background-color: var(--lovable-card);
+  border: 1px solid var(--lovable-border);
+  color: var(--lovable-ink);
+}
+
+.btn-crm-action.outline:hover {
+  border-color: var(--lovable-gold);
+  background-color: var(--lovable-gold-light);
+}
+
+.btn-crm-action.primary {
+  background-color: var(--lovable-ink);
+  border: 1px solid var(--lovable-ink);
+  color: #ffffff;
+}
+
+.btn-crm-action.primary:hover {
+  background-color: #2b2520;
+}
+
+/* Economics 6 Boxes Row */
+.designer-economics-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.econ-box {
+  background-color: var(--lovable-secondary);
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.econ-val {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--lovable-ink);
+  margin-top: 2px;
+}
+
+/* Bottom 2 Columns: Tasks + CRM Settings */
+.designer-bottom-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding-top: 4px;
+}
+
+.crm-col-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Tasks */
+.tasks-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.task-row-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.task-row-item input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.task-title {
+  color: var(--lovable-ink);
+}
+
+.task-title.done {
+  text-decoration: line-through;
+  color: var(--lovable-muted);
+}
+
+.task-due {
+  font-size: 11.5px;
+  color: var(--lovable-muted);
+}
+
+.task-add-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.task-input-text {
+  flex: 1;
+  min-width: 170px;
+  padding: 6px 10px;
+  background-color: var(--lovable-card);
+  border: 1px solid var(--lovable-border);
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: var(--lovable-ink);
+  outline: none;
+}
+
+.task-input-text:focus {
+  border-color: var(--lovable-gold);
+}
+
+.task-input-date {
+  width: 135px;
+  padding: 6px 8px;
+  background-color: var(--lovable-card);
+  border: 1px solid var(--lovable-border);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--lovable-ink);
+  outline: none;
+}
+
+.task-input-date:focus {
+  border-color: var(--lovable-gold);
+}
+
+.btn-add-task {
+  padding: 6px 12px;
+  background-color: var(--lovable-card);
+  border: 1px solid var(--lovable-border);
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--lovable-ink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-add-task:hover {
+  border-color: var(--lovable-gold);
+  background-color: var(--lovable-gold-light);
+}
+
+/* Controls Column */
+.crm-controls-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.crm-control-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.crm-control-item.full-width {
+  grid-column: span 2;
+}
+
+.crm-select,
+.crm-input-num {
+  padding: 6px 10px;
+  background-color: var(--lovable-card);
+  border: 1px solid var(--lovable-border);
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: var(--lovable-ink);
+  outline: none;
+  width: 100%;
+}
+
+.crm-select:focus,
+.crm-input-num:focus {
+  border-color: var(--lovable-gold);
+}
+
+/* =========================================================
+   ADD DESIGNER LEAD FORM
+========================================================= */
+
+.lead-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.lead-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lead-input,
+.lead-select {
+  padding: 8px 12px;
+  background-color: var(--lovable-card);
+  border: 1px solid var(--lovable-border);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--lovable-ink);
+  outline: none;
+  transition: border-color 0.15s ease;
+  width: 100%;
+}
+
+.lead-input:focus,
+.lead-select:focus {
+  border-color: var(--lovable-gold);
+}
+
+.btn-create-lead {
+  align-self: flex-start;
+  margin-top: 8px;
+  padding: 8px 18px;
+  background-color: var(--lovable-ink);
+  color: #ffffff;
+  border: 1px solid var(--lovable-ink);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-create-lead:hover {
+  background-color: #2b2520;
+}
+
+.btn-create-lead:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Toast */
+.crm-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background-color: #17130f;
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 13px;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================================
+   COMPREHENSIVE ALL-SCREEN-SIZE RESPONSIVE MEDIA QUERIES
+========================================================= */
+
+/* ---------------------------------------------------------
+   1. MOBILE PHONES (320px - 640px)
+   Smartphones like iPhone, Pixel, Galaxy
+--------------------------------------------------------- */
+@media (max-width: 640px) {
+  .lovable-header-inner {
+    padding: 12px 16px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .lovable-header-left {
+    gap: 12px;
+  }
+
+  .lovable-portal-logo img {
+    height: 32px;
+  }
+
+  .lovable-portal-title {
+    font-size: 20px;
+    gap: 6px;
+  }
+
+  .lovable-layer-num {
+    font-size: 20px;
+  }
+
+  .lovable-portal-desc {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .lovable-header-right {
+    width: 100%;
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .lovable-header-right .search-container,
+  .lovable-header-right form {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .lovable-header-right .search-input {
+    width: 100%;
+  }
+
+  .crm-refresh-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .crm-container {
+    padding: 14px 12px;
+    gap: 16px;
+  }
+
+  /* Top 5 KPIs on Mobile: 2-column grid with 5th card spanning across */
+  .crm-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .crm-kpi-card {
+    padding: 12px 14px;
+  }
+
+  .crm-kpi-card:nth-child(5) {
+    grid-column: span 2;
+  }
+
+  .crm-kpi-value {
+    font-size: 20px;
+  }
+
+  .crm-panel {
+    padding: 16px 14px;
+    gap: 14px;
+  }
+
+  /* Designer Card Mobile Stack */
+  .designer-card {
+    padding: 14px 12px;
+    gap: 12px;
+  }
+
+  .designer-card-top {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .designer-brand-name {
+    font-size: 15px;
+  }
+
+  .designer-header-row {
+    gap: 6px;
+  }
+
+  .tone-badge {
+    font-size: 11px;
+    padding: 2px 6px;
+  }
+
+  .designer-subtext-line {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .designer-actions-right {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .designer-stage-select {
+    grid-column: span 2;
+    width: 100%;
+    min-width: unset;
+  }
+
+  .btn-crm-action {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    min-height: 36px;
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  /* Economics: 2 columns on phones */
+  .designer-economics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .econ-box {
+    padding: 6px 10px;
+  }
+
+  .econ-val {
+    font-size: 14px;
+  }
+
+  /* Bottom Row: Stack Tasks & Controls vertically */
+  .designer-bottom-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .task-add-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  .task-input-text,
+  .task-input-date,
+  .btn-add-task {
+    width: 100%;
+  }
+
+  .crm-controls-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .crm-control-item.full-width {
+    grid-column: span 1;
+  }
+
+  /* Lead Form: 1 column */
+  .lead-form-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .btn-create-lead {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Extra small mobile (< 380px) */
+@media (max-width: 380px) {
+  .crm-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .crm-kpi-card:nth-child(5) {
+    grid-column: span 1;
+  }
+
+  .designer-economics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .designer-actions-right {
+    grid-template-columns: 1fr;
+  }
+
+  .designer-stage-select {
+    grid-column: span 1;
+  }
+}
+
+/* ---------------------------------------------------------
+   2. TABLETS (641px - 1024px)
+   iPad 10.2", iPad Air, iPad Pro, Android Tablets
+--------------------------------------------------------- */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .lovable-header-inner {
+    padding: 16px 24px;
+  }
+
+  .crm-container {
+    padding: 20px 24px;
+    gap: 20px;
+  }
+
+  /* Top 5 KPIs on Tablet: 3 columns */
+  .crm-kpi-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .crm-kpi-card:nth-child(4) {
+    grid-column: span 1;
+  }
+
+  .crm-kpi-card:nth-child(5) {
+    grid-column: span 2;
+  }
+
+  .designer-card {
+    padding: 16px 18px;
+  }
+
+  .designer-card-top {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .designer-actions-right {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .designer-economics-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .designer-bottom-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .lead-form-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+/* ---------------------------------------------------------
+   3. STANDARD LAPTOPS (1025px - 1440px)
+   MacBook Air, MacBook Pro 14", Ultrabooks
+--------------------------------------------------------- */
+@media (min-width: 1025px) and (max-width: 1440px) {
+  .lovable-header-inner {
+    max-width: 1400px;
+    padding: 16px 32px;
+  }
+
+  .crm-container {
+    max-width: 1400px;
+    padding: 24px 32px;
+  }
+
+  .crm-kpi-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .designer-economics-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .lead-form-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ---------------------------------------------------------
+   4. WIDESCREEN DESKTOPS (1441px - 1920px)
+   Full HD 1080p and 1440p Monitors
+--------------------------------------------------------- */
+@media (min-width: 1441px) and (max-width: 1920px) {
+  .lovable-header-inner {
+    max-width: 1620px;
+    padding: 18px 40px;
+  }
+
+  .crm-container {
+    max-width: 1620px;
+    padding: 28px 40px;
+  }
+
+  .crm-kpi-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+  }
+
+  .designer-economics-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+  }
+}
+
+/* ---------------------------------------------------------
+   5. 4K ULTRA HD DISPLAYS (1921px - 3840px+)
+   Studio Displays, 4K UHD Monitors, Retina 4K/5K
+--------------------------------------------------------- */
+@media (min-width: 1921px) {
+  .lovable-header-inner {
+    max-width: 2800px;
+    padding: 24px 64px;
+  }
+
+  .lovable-portal-logo img {
+    height: 48px;
+  }
+
+  .lovable-back-link {
+    font-size: 13px;
+  }
+
+  .lovable-portal-title {
+    font-size: 34px;
+    gap: 12px;
+  }
+
+  .lovable-layer-num {
+    font-size: 34px;
+  }
+
+  .lovable-portal-desc {
+    font-size: 16px;
+  }
+
+  .crm-refresh-btn {
+    padding: 10px 20px;
+    font-size: 14.5px;
+    border-radius: 8px;
+  }
+
+  .crm-container {
+    max-width: 2800px;
+    padding: 36px 64px;
+    gap: 32px;
+  }
+
+  /* 4K Expansive Top 5 KPIs */
+  .crm-kpi-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+  }
+
+  .crm-kpi-card {
+    padding: 20px 24px;
+    border-radius: 10px;
+  }
+
+  .label-caps {
+    font-size: 12.5px;
+    margin-bottom: 8px;
+  }
+
+  .crm-kpi-value {
+    font-size: 36px;
+  }
+
+  .crm-kpi-hint {
+    font-size: 14px;
+    margin-top: 6px;
+  }
+
+  .crm-panel {
+    padding: 28px 32px;
+    border-radius: 10px;
+    gap: 22px;
+  }
+
+  .crm-panel-title {
+    font-size: 22px;
+  }
+
+  .crm-panel-desc {
+    font-size: 15px;
+  }
+
+  /* 4K Designer Cards */
+  .designer-card {
+    padding: 24px 28px;
+    border-radius: 10px;
+    gap: 20px;
+  }
+
+  .designer-brand-name {
+    font-size: 22px;
+  }
+
+  .tone-badge {
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 16px;
+  }
+
+  .designer-subtext-line {
+    font-size: 14.5px;
+    line-height: 1.6;
+  }
+
+  .designer-stage-select {
+    padding: 10px 16px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+
+  .btn-crm-action {
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+
+  /* 4K Economics Grid */
+  .designer-economics-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+  }
+
+  .econ-box {
+    padding: 12px 18px;
+    border-radius: 8px;
+  }
+
+  .econ-val {
+    font-size: 20px;
+  }
+
+  /* 4K Bottom Row */
+  .designer-bottom-grid {
+    gap: 28px;
+  }
+
+  .task-row-item {
+    font-size: 15px;
+    gap: 12px;
+  }
+
+  .task-input-text,
+  .task-input-date,
+  .btn-add-task,
+  .crm-select,
+  .crm-input-num {
+    padding: 10px 14px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+
+  /* 4K Lead Form: 4 Columns */
+  .lead-form-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+
+  .lead-input,
+  .lead-select {
+    padding: 11px 16px;
+    font-size: 14.5px;
+    border-radius: 8px;
+  }
+
+  .btn-create-lead {
+    padding: 12px 28px;
+    font-size: 15px;
+    border-radius: 8px;
+  }
+}
+
+/* Extreme 4K Resolution (3200px - 3840px Native) */
+@media (min-width: 3200px) {
+  .lovable-header-inner,
+  .crm-container {
+    max-width: 3400px;
+  }
+
+  .crm-kpi-value {
+    font-size: 42px;
+  }
+
+  .designer-brand-name {
+    font-size: 24px;
+  }
+}
