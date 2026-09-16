@@ -22,6 +22,7 @@ import {
   getDesigners,
   getReturns,
   getSettlements,
+  exportAnalyticsReport,
 } from "../services/api";
 
 /* =========================================================
@@ -786,8 +787,16 @@ export default function Analytics() {
     });
   }, [backendOverview, products, returns]);
 
-  // 5. Top Movers
+  // 5. Top Movers from Database
   const topMovers = useMemo(() => {
+    if (backendOverview?.top_movers && backendOverview.top_movers.length > 0) {
+      return backendOverview.top_movers.map((item) => ({
+        name: item.name,
+        units: Number(item.units) || 0,
+        views: Number(item.views) || 0,
+      }));
+    }
+
     const list = [...products].sort((a, b) => {
       const unitsA = Number(a.units_sold || a.units || 0);
       const unitsB = Number(b.units_sold || b.units || 0);
@@ -800,41 +809,60 @@ export default function Analytics() {
       units: Number(p.units_sold || p.units || 0),
       views: Number(p.views || 0),
     }));
-  }, [products]);
+  }, [backendOverview, products]);
 
   // Section export buttons metadata
-  const exportCards = [
-    {
-      key: "summary",
-      title: "Executive summary",
-      rows: buildSectionCsv("summary", currentState).length - 1,
-    },
-    { key: "designers", title: "Designers", rows: designers.length },
-    { key: "skus", title: "SKU & inventory", rows: products.length },
-    { key: "orders", title: "Orders", rows: orders.length },
-    { key: "returns", title: "Returns", rows: returns.length },
-    { key: "settlements", title: "Settlements", rows: settlements.length },
-    {
-      key: "audit",
-      title: "Audit log",
-      rows: orders.length + returns.length + settlements.length,
-    },
-  ];
+  const exportCards = useMemo(() => {
+    if (backendOverview?.reports && backendOverview.reports.length > 0) {
+      const keyMap = {
+        executive_summary: "summary",
+        sku_inventory: "skus",
+        audit_log: "audit",
+      };
+      return backendOverview.reports.map((r) => ({
+        key: keyMap[r.id] || r.id,
+        title: r.name,
+        rows: r.count,
+      }));
+    }
 
-  // CSV Exporters
+    return [
+      {
+        key: "summary",
+        title: "Executive summary",
+        rows: buildSectionCsv("summary", currentState).length - 1,
+      },
+      { key: "designers", title: "Designers", rows: designers.length },
+      { key: "skus", title: "SKU & inventory", rows: products.length },
+      { key: "orders", title: "Orders", rows: orders.length },
+      { key: "returns", title: "Returns", rows: returns.length },
+      { key: "settlements", title: "Settlements", rows: settlements.length },
+      {
+        key: "audit",
+        title: "Audit log",
+        rows: orders.length + returns.length + settlements.length,
+      },
+    ];
+  }, [backendOverview, currentState, designers, products, orders, returns, settlements]);
+
+  // Database-backed CSV Exporters
   const handleExportSection = (key) => {
-    const data = buildSectionCsv(key, currentState);
-    const content = formatCsvRows(data);
-    const filename = `zenve-${key}-${getTimestampString()}.csv`;
-    downloadCsvBlob(filename, content);
-    showToast(`Downloaded ${SECTION_TITLES[key]} report.`);
+    const reportTypeMap = {
+      summary: "executive_summary",
+      designers: "designers",
+      skus: "sku_inventory",
+      orders: "orders",
+      returns: "returns",
+      settlements: "settlements",
+      audit: "audit_log",
+    };
+    exportAnalyticsReport(reportTypeMap[key] || key);
+    showToast(`Exported ${SECTION_TITLES[key]} report from database.`);
   };
 
   const handleExportFullReport = () => {
-    const content = buildConsolidatedReport(currentState);
-    const filename = `zenve-operational-report-${getTimestampString()}.csv`;
-    downloadCsvBlob(filename, content);
-    showToast("Downloaded full operational report.");
+    exportAnalyticsReport("full");
+    showToast("Exported full operational report from database.");
   };
 
   return (
@@ -889,34 +917,46 @@ export default function Analytics() {
           <div className="analytics-kpi-card">
             <p className="label-caps">GMV</p>
             <p className="analytics-kpi-value">
-              ₹{gmv >= 1000 ? gmv.toLocaleString() : gmv.toFixed(2)}
+              {loading ? "..." : (backendOverview?.kpis?.[0]?.value || (gmv >= 1000 ? `₹${gmv.toLocaleString()}` : `₹${gmv.toFixed(2)}`))}
             </p>
           </div>
 
           <div className="analytics-kpi-card">
             <p className="label-caps">Orders</p>
-            <p className="analytics-kpi-value">{ordersCount}</p>
+            <p className="analytics-kpi-value">
+              {loading ? "..." : (backendOverview?.kpis?.[1]?.value || ordersCount)}
+            </p>
           </div>
 
           <div className="analytics-kpi-card">
             <p className="label-caps">AOV</p>
-            <p className="analytics-kpi-value">₹{aov.toLocaleString()}</p>
+            <p className="analytics-kpi-value">
+              {loading ? "..." : (backendOverview?.kpis?.[2]?.value || `₹${aov.toLocaleString()}`)}
+            </p>
           </div>
 
           <div className="analytics-kpi-card">
             <p className="label-caps">CVR</p>
-            <p className="analytics-kpi-value">{cvr}%</p>
-            <p className="analytics-kpi-hint">{totalViews.toLocaleString()} views</p>
+            <p className="analytics-kpi-value">
+              {loading ? "..." : (backendOverview?.kpis?.[3]?.value || `${cvr}%`)}
+            </p>
+            <p className="analytics-kpi-hint">
+              {loading ? "..." : (backendOverview?.kpis?.[3]?.description || `${totalViews.toLocaleString()} views`)}
+            </p>
           </div>
 
           <div className="analytics-kpi-card">
             <p className="label-caps">Units sold</p>
-            <p className="analytics-kpi-value">{unitsSold}</p>
+            <p className="analytics-kpi-value">
+              {loading ? "..." : (backendOverview?.kpis?.[4]?.value || unitsSold)}
+            </p>
           </div>
 
           <div className="analytics-kpi-card">
             <p className="label-caps">Return rate</p>
-            <p className="analytics-kpi-value">{returnRate}%</p>
+            <p className="analytics-kpi-value">
+              {loading ? "..." : (backendOverview?.kpis?.[5]?.value || `${returnRate}%`)}
+            </p>
           </div>
         </section>
 
