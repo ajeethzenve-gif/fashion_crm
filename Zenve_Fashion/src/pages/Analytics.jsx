@@ -66,25 +66,7 @@ function FileDownIcon() {
   );
 }
 
-function RefreshIcon({ spinning }) {
-  return (
-    <svg
-      className={spinning ? "refresh-spinner" : ""}
-      width="15"
-      height="15"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M23 4v6h-6" />
-      <path d="M1 20v-6h6" />
-      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-    </svg>
-  );
-}
+
 
 /* =========================================================
    CSV EXPORT ENGINE (RFC-4180 COMPLIANT)
@@ -873,27 +855,16 @@ export default function Analytics() {
 
               <h1 className="lovable-portal-title">
                 <span className="lovable-layer-num">11</span>
-                <span>Analytics & BI</span>
+                <span>BI Dashboards</span>
               </h1>
 
               <p className="lovable-portal-desc">
-                Analytics layer · GMV, velocity, margins, conversion, exportable BI
+                Analytics layer · Designer, SKU, inventory, customer, marketing KPIs
               </p>
             </div>
           </div>
 
           <div className="lovable-header-right">
-            <button
-              type="button"
-              className="analytics-refresh-btn"
-              onClick={() => loadData(true)}
-              disabled={refreshing}
-              title="Refresh live metrics from database"
-            >
-              <RefreshIcon spinning={refreshing} />
-              <span>{refreshing ? "Refreshing..." : "Refresh"}</span>
-            </button>
-
             <SearchBar />
           </div>
         </div>
