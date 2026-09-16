@@ -39,7 +39,7 @@ class AnalyticsOverviewAPIView(APIView):
         # Tracked storefront views across catalog
         products = Product.objects.all()
         products_count = products.count()
-        total_views = sum(getattr(p, "views", 0) for p in products)
+        total_views = sum(getattr(p, "views", 0) or 0 for p in products)
         cvr = round((orders_count / total_views) * 100, 1) if total_views > 0 else 0.0
 
         # Units Sold
@@ -177,8 +177,7 @@ class AnalyticsOverviewAPIView(APIView):
             s_units = sku_sales_map.get(p.sku, {}).get("units", 0)
             s_rev = sku_sales_map.get(p.sku, {}).get("revenue", 0.0)
             s_ret = sku_returns_map.get(p.sku, 0)
-            # Actual views from database or default 0
-            s_views = getattr(p, "views", 0)
+            s_views = getattr(p, "views", 0) or 0
 
             sku_performance.append({
                 "id": p.id,
@@ -211,8 +210,8 @@ class AnalyticsOverviewAPIView(APIView):
             {
                 "id": "executive_summary",
                 "name": "Executive summary",
-                "rows": "16 rows",
-                "count": 16,
+                "rows": f"{len(kpis) + len(gmv_by_designer) + 4} rows",
+                "count": len(kpis) + len(gmv_by_designer) + 4,
             },
             {
                 "id": "designers",

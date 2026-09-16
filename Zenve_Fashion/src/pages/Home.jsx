@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { layers } from "../data/layers";
 import { useAuth } from "../context/AuthContext";
 import "../styles/Home.css";
 import SearchBar from "../components/SearchBar";
 import logo from "../assest/logo/zenve-logo-fashion.png";
+import {
+  getDesigners,
+  getProducts,
+  getOrders,
+  getCommandCentreOverview,
+} from "../services/api";
 
 /* =========================================================
    HOME PAGE
@@ -12,6 +18,39 @@ import logo from "../assest/logo/zenve-logo-fashion.png";
 
 function Home() {
   const { currentUser, hasAccess } = useAuth();
+  const [designers, setDesigners] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [overview, setOverview] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    async function loadHomeData() {
+      try {
+        setLoading(true);
+        const [desRes, prodRes, ordRes, ovRes] = await Promise.all([
+          getDesigners().catch(() => []),
+          getProducts().catch(() => []),
+          getOrders().catch(() => []),
+          getCommandCentreOverview().catch(() => null),
+        ]);
+        if (!mounted) return;
+        setDesigners(Array.isArray(desRes) ? desRes : desRes?.results || []);
+        setProducts(Array.isArray(prodRes) ? prodRes : prodRes?.results || []);
+        setOrders(Array.isArray(ordRes) ? ordRes : ordRes?.results || []);
+        if (ovRes) setOverview(ovRes);
+      } catch (err) {
+        console.error("Failed to load home page live metrics:", err);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+    loadHomeData();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   /*
    * Remove duplicate layers based on layer number.
@@ -26,6 +65,54 @@ function Home() {
 
   // Only show authorized layers for the logged-in designation
   const accessibleLayers = uniqueLayers.filter((layer) => hasAccess(layer.n));
+
+  // Dynamic KPI Computations
+  const designersCount = designers.length;
+
+  const liveSkusCount = useMemo(() => {
+    return products.filter(
+      (p) =>
+        p.status === "LIVE" ||
+        p.status === "APPROVED" ||
+        p.live === true ||
+        p.is_live === true
+    ).length;
+  }, [products]);
+
+  const brandsCount = useMemo(() => {
+    const brands = new Set();
+    products.forEach((p) => {
+      const b = p.designer_name || p.brand_name || p.brand;
+      if (b) brands.add(b);
+    });
+    return brands.size || designers.length;
+  }, [products, designers]);
+
+  const physicalStock = useMemo(() => {
+    return products.reduce((sum, p) => {
+      const qty =
+        p.inventory_quantity !== undefined && p.inventory_quantity !== null
+          ? Number(p.inventory_quantity)
+          : Number(p.available_quantity || p.available || 0);
+      return sum + (isNaN(qty) ? 0 : qty);
+    }, 0);
+  }, [products]);
+
+  const ordersCount = orders.length;
+
+  const exceptionsCount = useMemo(() => {
+    if (overview?.exceptions && Array.isArray(overview.exceptions)) {
+      return overview.exceptions.length;
+    }
+    // Fallback live check
+    const qaPending = products.filter(
+      (p) => (p.status || p.qaStatus) === "PENDING_QA"
+    ).length;
+    const lowStock = products.filter(
+      (p) => (p.status === "LIVE" || p.live) && Number(p.available_quantity || 0) <= 2
+    ).length;
+    return qaPending + lowStock;
+  }, [overview, products]);
 
   return (
     <main className="home-page">
@@ -78,7 +165,7 @@ function Home() {
 
 
         {/* ===================================================
-            KPI SECTION
+            KPI SECTION (AUTHENTIC LIVE METRICS)
         =================================================== */}
 
         <section className="kpi-section">
@@ -92,7 +179,7 @@ function Home() {
             </div>
 
             <div className="kpi-value">
-              3
+              {loading ? "..." : designersCount}
             </div>
 
             <div className="kpi-subtitle">
@@ -111,11 +198,11 @@ function Home() {
             </div>
 
             <div className="kpi-value">
-              2
+              {loading ? "..." : liveSkusCount}
             </div>
 
             <div className="kpi-subtitle">
-              Across 2 brands
+              {brandsCount > 0 ? `Across ${brandsCount} ${brandsCount === 1 ? "brand" : "brands"}` : "In catalogue"}
             </div>
 
           </div>
@@ -130,7 +217,7 @@ function Home() {
             </div>
 
             <div className="kpi-value">
-              44
+              {loading ? "..." : physicalStock}
             </div>
 
             <div className="kpi-subtitle">
@@ -149,7 +236,7 @@ function Home() {
             </div>
 
             <div className="kpi-value">
-              0
+              {loading ? "..." : ordersCount}
             </div>
 
             <div className="kpi-subtitle">
@@ -180,13 +267,13 @@ function Home() {
             </h2>
 
             <span className="layers-count">
-              {uniqueLayers.length} layers · {currentUser?.shortRole || "Admin"} clearance
+              {accessibleLayers.length} layers · {currentUser?.shortRole || "Admin"} clearance
             </span>
 
           </div>
 
           <div className="exception-badge">
-            5 open exceptions
+            {loading ? "..." : `${exceptionsCount} open exceptions`}
           </div>
 
         </div>

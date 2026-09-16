@@ -68,13 +68,7 @@ export default function CatalogueQa() {
   const [notesState, setNotesState] = useState({});
 
   // Audit trail list of decisions
-  const [auditLog, setAuditLog] = useState([
-    {
-      id: "log-init-1",
-      at: new Date(Date.now() - 3600000).toISOString(),
-      message: "Ivory Silk Dog Kurta approved with 95/100 by QA Auditor",
-    },
-  ]);
+  const [auditLog, setAuditLog] = useState([]);
 
   /* =======================================================
      FETCH PRODUCTS FROM BACKEND

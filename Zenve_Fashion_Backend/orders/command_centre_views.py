@@ -230,14 +230,6 @@ class CommandCentreOverviewAPIView(APIView):
                 "event": f"Designer {d.brand_name} registered (Stage: {d.stage}, KYC: {d.kyc_status})",
             })
 
-        # Workspace initialisation baseline
-        audit_logs.append({
-            "date": "29/08/26, 12:22 pm",
-            "timestamp": "2026-08-29T12:22:00",
-            "layer": "Admin",
-            "event": "Workspace initialised with seed catalogue and ledger.",
-        })
-
         # Sort all logs by timestamp descending
         audit_logs.sort(key=lambda x: x["timestamp"], reverse=True)
 

@@ -69,48 +69,6 @@ const ACTION_LABELS = {
   PAID: "Reconcile",
 };
 
-const DEFAULT_SETTLEMENTS = [
-  {
-    id: "demo-stl-2001",
-    settlement_number: "STL-2001",
-    order_number: "ZO-1001",
-    designer: "Aarav Pet Atelier",
-    brand_name: "Aarav Pet Atelier",
-    gmv: 6998,
-    take_rate: 28,
-    commission_amount: 1959,
-    payout_amount: 5039,
-    status: "PAID",
-    is_reversal: false,
-  },
-  {
-    id: "demo-stl-2002",
-    settlement_number: "STL-2002",
-    order_number: "ZO-1002",
-    designer: "Studio Ira Pets",
-    brand_name: "Studio Ira Pets",
-    gmv: 1299,
-    take_rate: 32,
-    commission_amount: 416,
-    payout_amount: 883,
-    status: "RECONCILED",
-    is_reversal: false,
-  },
-  {
-    id: "demo-stl-2003",
-    settlement_number: "STL-2003",
-    order_number: "ZO-1003",
-    designer: "Studio Ira Pets",
-    brand_name: "Studio Ira Pets",
-    gmv: 1299,
-    take_rate: 32,
-    commission_amount: 416,
-    payout_amount: 883,
-    status: "REVERSED",
-    is_reversal: true,
-  },
-];
-
 const INCLUDED_POINTS = [
   "GMV — customer realised merchandise value",
   "Take rate — designer/category specific",
@@ -152,7 +110,7 @@ export default function Settlement() {
       const [settlementsData, designersData] = await Promise.all([
         getSettlements().catch((err) => {
           console.error("Failed to load settlements:", err);
-          return null;
+          return [];
         }),
         getDesigners().catch((err) => {
           console.error("Failed to load designers:", err);
@@ -160,18 +118,12 @@ export default function Settlement() {
         }),
       ]);
 
-      if (Array.isArray(settlementsData) && settlementsData.length > 0) {
-        setSettlements(settlementsData);
-      } else {
-        // Use default Lovable reference settlements if backend has none yet
-        setSettlements(DEFAULT_SETTLEMENTS);
-      }
-
+      setSettlements(Array.isArray(settlementsData) ? settlementsData : []);
       setDesigners(Array.isArray(designersData) ? designersData : []);
     } catch (err) {
       console.error("Failed to load settlement data:", err);
-      setError("Failed to connect to backend server. Showing demo data.");
-      setSettlements(DEFAULT_SETTLEMENTS);
+      setError("Failed to connect to backend server.");
+      setSettlements([]);
     } finally {
       setLoading(false);
     }
@@ -185,7 +137,7 @@ export default function Settlement() {
      NORMALIZED SETTLEMENT ITEMS
   ------------------------------------------------------- */
   const normalizedSettlements = useMemo(() => {
-    const sourceList = settlements.length > 0 ? settlements : DEFAULT_SETTLEMENTS;
+    const sourceList = settlements;
     return sourceList.map((item) => {
       const id = item.settlement_number || `STL-${2000 + Number(item.id || 0)}`;
       const orderId =
