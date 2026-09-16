@@ -202,10 +202,10 @@ function buildSectionCsv(sectionKey, state) {
           d.id,
           d.brand_name || d.brand,
           d.designer_name || d.name || "-",
-          d.city || "Mumbai",
-          d.category || "Luxury Pret",
-          d.tier || "Emerging",
-          d.commission_rate || d.takeRate || "15%",
+          d.city || "-",
+          d.category || "-",
+          d.tier || "-",
+          d.commission_rate || d.takeRate || "-",
           d.status || d.stage || "ACTIVE",
           d.kyc_verified || d.kyc ? "YES" : "NO",
           d.gst_number || d.gst || "-",
@@ -257,11 +257,11 @@ function buildSectionCsv(sectionKey, state) {
             p.size || "M",
             p.mrp || p.selling_price || 0,
             p.selling_price || p.price || 0,
-            p.location || "Hub-1",
+            p.location || "-",
             p.fast_delivery || p.fastDelivery ? "YES" : "NO",
             p.returnable !== false ? "YES" : "NO",
             p.status || p.qaStatus || "APPROVED",
-            p.qa_score ?? 85,
+            p.qa_score ?? "-",
             p.status === "LIVE" || p.live ? "YES" : "NO",
             p.inventory_quantity ?? p.physical ?? 0,
             p.reserved_quantity ?? p.reserved ?? 0,
@@ -299,10 +299,10 @@ function buildSectionCsv(sectionKey, state) {
             o.delivery_pincode || o.pincode || "-",
             o.total_amount || o.amount,
             o.is_fast_delivery || o.fast ? "YES" : "NO",
-            o.eta || "2 Days",
+            o.eta || "-",
             o.status,
             o.created_at ? new Date(o.created_at).toLocaleString() : "-",
-            itemsStr || "1 item",
+            itemsStr || "-",
           ];
         }),
       ];
@@ -314,7 +314,7 @@ function buildSectionCsv(sectionKey, state) {
           r.return_number || r.id,
           r.order_number || r.orderId || (r.order ? r.order.order_number : "-"),
           r.sku || r.skuId || (r.order_item ? r.order_item.sku : "-"),
-          r.reason || "Size fit issue",
+          r.reason || "-",
           r.status,
           r.refund_amount || r.refund || 0,
           r.created_at ? new Date(r.created_at).toLocaleString() : "-",
@@ -344,7 +344,7 @@ function buildSectionCsv(sectionKey, state) {
             s.order_number || s.orderId || "-",
             brand,
             s.gmv || 0,
-            s.take_rate || "15%",
+            s.take_rate || "-",
             s.commission_amount || s.commission || 0,
             s.payout_amount || s.net || 0,
             s.status,
@@ -654,18 +654,22 @@ export default function Analytics() {
   const aov = ordersCount ? Math.round(gmv / ordersCount) : 0;
 
   const totalViews = useMemo(() => {
+    if (backendOverview?.total_views !== undefined) {
+      return backendOverview.total_views;
+    }
     return products.reduce((acc, p) => {
-      const estimated =
-        (Number(p.units_sold || 0) * 320) +
-        (Number(p.available_quantity || 0) * 45) +
-        120;
-      return acc + (Number(p.views) || estimated);
+      return acc + (Number(p.views) || 0);
     }, 0);
-  }, [products]);
+  }, [backendOverview, products]);
 
-  const cvr = totalViews
-    ? ((ordersCount / totalViews) * 100).toFixed(1)
-    : "0.0";
+  const cvr = useMemo(() => {
+    if (backendOverview?.kpis?.[3]?.raw_value !== undefined) {
+      return String(backendOverview.kpis[3].raw_value);
+    }
+    return totalViews > 0
+      ? ((ordersCount / totalViews) * 100).toFixed(1)
+      : "0.0";
+  }, [backendOverview, ordersCount, totalViews]);
 
   const unitsSold = useMemo(() => {
     if (backendOverview?.kpis?.[4]?.raw_value !== undefined) {
@@ -775,8 +779,7 @@ export default function Analytics() {
           r.skuId === p.sku ||
           r.order_item?.sku === p.sku
       ).length;
-      const sViews =
-        Number(p.views) || sUnits * 320 + Number(p.available_quantity || 0) * 45 + 120;
+      const sViews = Number(p.views || 0);
 
       return {
         id: p.id,
@@ -793,6 +796,14 @@ export default function Analytics() {
 
   // 5. Top Movers
   const topMovers = useMemo(() => {
+    if (backendOverview?.top_movers?.length) {
+      return backendOverview.top_movers.map((item) => ({
+        name: item.name,
+        units: Number(item.units || 0),
+        views: Number(item.views || 0),
+      }));
+    }
+
     const list = [...products].sort((a, b) => {
       const unitsA = Number(a.units_sold || a.units || 0);
       const unitsB = Number(b.units_sold || b.units || 0);
@@ -803,24 +814,41 @@ export default function Analytics() {
     return list.slice(0, 5).map((p) => ({
       name: p.product_name || p.name,
       units: Number(p.units_sold || p.units || 0),
-      views: Number(p.views || 0) || (Number(p.units_sold || 0) * 320 + 120),
+      views: Number(p.views || 0),
     }));
-  }, [products]);
+  }, [backendOverview, products]);
 
   // Section export buttons metadata
-  const exportCards = [
-    { key: "summary", title: "Executive summary", rows: 18 },
-    { key: "designers", title: "Designers", rows: designers.length },
-    { key: "skus", title: "SKU & inventory", rows: products.length },
-    { key: "orders", title: "Orders", rows: orders.length },
-    { key: "returns", title: "Returns", rows: returns.length },
-    { key: "settlements", title: "Settlements", rows: settlements.length },
-    {
-      key: "audit",
-      title: "Audit log",
-      rows: orders.length + returns.length + settlements.length,
-    },
-  ];
+  const exportCards = useMemo(() => {
+    if (backendOverview?.reports?.length) {
+      return backendOverview.reports.map((r) => ({
+        key:
+          r.id === "sku_inventory"
+            ? "skus"
+            : r.id === "executive_summary"
+            ? "summary"
+            : r.id === "audit_log"
+            ? "audit"
+            : r.id,
+        title: r.name,
+        rows: r.count,
+      }));
+    }
+
+    return [
+      { key: "summary", title: "Executive summary", rows: 16 },
+      { key: "designers", title: "Designers", rows: designers.length },
+      { key: "skus", title: "SKU & inventory", rows: products.length },
+      { key: "orders", title: "Orders", rows: orders.length },
+      { key: "returns", title: "Returns", rows: returns.length },
+      { key: "settlements", title: "Settlements", rows: settlements.length },
+      {
+        key: "audit",
+        title: "Audit log",
+        rows: orders.length + returns.length + settlements.length,
+      },
+    ];
+  }, [backendOverview, designers, products, orders, returns, settlements]);
 
   // CSV Exporters
   const handleExportSection = (key) => {

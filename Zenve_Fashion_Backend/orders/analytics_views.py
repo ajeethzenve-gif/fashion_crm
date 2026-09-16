@@ -36,11 +36,11 @@ class AnalyticsOverviewAPIView(APIView):
 
         aov = round(gmv_float / orders_count, 2) if orders_count > 0 else 0.0
 
-        # Estimated/tracked storefront views across catalog
+        # Tracked storefront views across catalog
         products = Product.objects.all()
         products_count = products.count()
-        estimated_views = (products_count * 850) + (orders_count * 150) + 420 if products_count > 0 else 0
-        cvr = round((orders_count / estimated_views) * 100, 1) if estimated_views > 0 else 0.0
+        total_views = sum(getattr(p, "views", 0) for p in products)
+        cvr = round((orders_count / total_views) * 100, 1) if total_views > 0 else 0.0
 
         # Units Sold
         sold_items = OrderItem.objects.exclude(order__status=Order.OrderStatus.CANCELLED)
@@ -77,7 +77,7 @@ class AnalyticsOverviewAPIView(APIView):
                 "label": "CVR",
                 "value": f"{cvr}%",
                 "raw_value": cvr,
-                "description": f"{estimated_views} views",
+                "description": f"{total_views} views",
             },
             {
                 "label": "UNITS SOLD",
@@ -177,8 +177,8 @@ class AnalyticsOverviewAPIView(APIView):
             s_units = sku_sales_map.get(p.sku, {}).get("units", 0)
             s_rev = sku_sales_map.get(p.sku, {}).get("revenue", 0.0)
             s_ret = sku_returns_map.get(p.sku, 0)
-            # Estimate views dynamically based on available stock and sales
-            s_views = (s_units * 320) + (p.available_quantity * 45) + (120 * (idx + 1))
+            # Actual views from database or default 0
+            s_views = getattr(p, "views", 0)
 
             sku_performance.append({
                 "id": p.id,
@@ -205,14 +205,14 @@ class AnalyticsOverviewAPIView(APIView):
         orders_total_count = Order.objects.count()
         returns_count = ReturnRequest.objects.count()
         settlements_count = Settlement.objects.count()
-        audit_count = orders_total_count + returns_count + settlements_count + 5
+        audit_count = orders_total_count + returns_count + settlements_count
 
         reports = [
             {
                 "id": "executive_summary",
                 "name": "Executive summary",
-                "rows": f"{len(kpis) + len(gmv_by_designer) + 4} rows",
-                "count": len(kpis) + len(gmv_by_designer) + 4,
+                "rows": "16 rows",
+                "count": 16,
             },
             {
                 "id": "designers",
