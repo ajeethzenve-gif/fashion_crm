@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { layers } from "../data/layers";
 import { useAuth } from "../context/AuthContext";
@@ -6,33 +6,468 @@ import "../styles/Home.css";
 import SearchBar from "../components/SearchBar";
 import logo from "../assest/logo/zenve-logo-fashion.png";
 
+import {
+  getDesigners,
+  getOrders,
+  getProducts,
+} from "../services/api";
+
 /* =========================================================
    HOME PAGE
-========================================================= */
+   ========================================================= */
 
 function Home() {
   const { currentUser, hasAccess } = useAuth();
 
-  /*
-   * Remove duplicate layers based on layer number.
-   */
-  const uniqueLayers = Array.from(
-    new Map(
-      layers.map((layer) => [layer.n, layer])
-    ).values()
-  ).sort(
-    (a, b) => Number(a.n) - Number(b.n)
-  );
+  /* =========================================================
+     DASHBOARD DATA
+     ========================================================= */
 
-  // Only show authorized layers for the logged-in designation
-  const accessibleLayers = uniqueLayers.filter((layer) => hasAccess(layer.n));
+  const [dashboardData, setDashboardData] = useState({
+    designers: 0,
+    liveSkus: 0,
+    physicalStock: 0,
+    orders: 0,
+    totalGmv: 0,
+    brands: 0,
+  });
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  /* =========================================================
+     API RESPONSE HELPER
+
+     Supports:
+
+     1. Normal array
+
+        [
+          {...},
+          {...}
+        ]
+
+     2. Django REST Framework pagination
+
+        {
+          count: 10,
+          results: [...]
+        }
+
+     3. Axios response
+
+        {
+          data: [...]
+        }
+     ========================================================= */
+
+  const getCollection = (response) => {
+    if (!response) {
+      return [];
+    }
+
+    const data = response?.data ?? response;
+
+    // DRF paginated response
+    if (Array.isArray(data?.results)) {
+      return data.results;
+    }
+
+    // Normal array response
+    if (Array.isArray(data)) {
+      return data;
+    }
+
+    return [];
+  };
+
+  /* =========================================================
+     NUMBER HELPER
+     ========================================================= */
+
+  const getNumber = (value) => {
+    if (
+      value === null ||
+      value === undefined ||
+      value === ""
+    ) {
+      return 0;
+    }
+
+    // Remove commas and currency symbols if returned as string
+    if (typeof value === "string") {
+      const cleanedValue = value
+        .replace(/₹/g, "")
+        .replace(/,/g, "")
+        .trim();
+
+      const number = Number(cleanedValue);
+
+      return Number.isFinite(number) ? number : 0;
+    }
+
+    const number = Number(value);
+
+    return Number.isFinite(number) ? number : 0;
+  };
+
+  /* =========================================================
+     GET PRODUCT STOCK
+     ========================================================= */
+
+  const getProductStock = (product) => {
+    return getNumber(
+      product?.stock ??
+        product?.quantity ??
+        product?.stock_quantity ??
+        product?.physical_stock ??
+        product?.inventory ??
+        product?.available_quantity ??
+        0
+    );
+  };
+
+  /* =========================================================
+     GET PRODUCT ACTIVE STATUS
+     ========================================================= */
+
+  const isLiveProduct = (product) => {
+    /* -------------------------------------------------------
+       is_active
+       ------------------------------------------------------- */
+
+    if (typeof product?.is_active === "boolean") {
+      return product.is_active;
+    }
+
+    /* -------------------------------------------------------
+       active
+       ------------------------------------------------------- */
+
+    if (typeof product?.active === "boolean") {
+      return product.active;
+    }
+
+    /* -------------------------------------------------------
+       status
+       ------------------------------------------------------- */
+
+    if (product?.status) {
+      const status = String(product.status).toLowerCase();
+
+      if (
+        status === "inactive" ||
+        status === "disabled" ||
+        status === "draft" ||
+        status === "archived"
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  /* =========================================================
+     GET BRAND
+     ========================================================= */
+
+  const getBrand = (product) => {
+    const brand =
+      product?.brand ??
+      product?.brand_name ??
+      product?.brandName ??
+      product?.designer?.brand ??
+      product?.designer?.brand_name;
+
+    if (!brand) {
+      return null;
+    }
+
+    /* -------------------------------------------------------
+       Brand returned as object
+       ------------------------------------------------------- */
+
+    if (typeof brand === "object") {
+      return (
+        brand?.name ??
+        brand?.brand_name ??
+        brand?.title ??
+        brand?.id ??
+        null
+      );
+    }
+
+    return String(brand).trim();
+  };
+
+  /* =========================================================
+     GET ORDER GMV
+
+     Supports common backend field names.
+     ========================================================= */
+
+  const getOrderGmv = (order) => {
+    return getNumber(
+      order?.total_amount ??
+        order?.grand_total ??
+        order?.order_total ??
+        order?.total ??
+        order?.amount ??
+        order?.gmv ??
+        order?.total_price ??
+        order?.final_amount ??
+        order?.order_value ??
+        0
+    );
+  };
+
+  /* =========================================================
+     LOAD DASHBOARD DATA
+     ========================================================= */
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadDashboardData = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        /* ---------------------------------------------------
+           GET DATA FROM DJANGO BACKEND
+           --------------------------------------------------- */
+
+        const [
+          designersResponse,
+          productsResponse,
+          ordersResponse,
+        ] = await Promise.all([
+          getDesigners(),
+          getProducts(),
+          getOrders(),
+        ]);
+
+        if (!mounted) {
+          return;
+        }
+
+        /* ---------------------------------------------------
+           DESIGNERS
+           --------------------------------------------------- */
+
+        const designers =
+          getCollection(designersResponse);
+
+        /* ---------------------------------------------------
+           PRODUCTS
+           --------------------------------------------------- */
+
+        const products =
+          getCollection(productsResponse);
+
+        /* ---------------------------------------------------
+           ORDERS
+           --------------------------------------------------- */
+
+        const orders =
+          getCollection(ordersResponse);
+
+        /* ===================================================
+           LIVE SKUS
+           =================================================== */
+
+        const liveProducts = products.filter(
+          (product) => isLiveProduct(product)
+        );
+
+        const liveSkus =
+          liveProducts.length;
+
+        /* ===================================================
+           PHYSICAL STOCK
+           =================================================== */
+
+        const physicalStock =
+          products.reduce(
+            (total, product) => {
+              return (
+                total +
+                getProductStock(product)
+              );
+            },
+            0
+          );
+
+        /* ===================================================
+           BRANDS
+           =================================================== */
+
+        const brandSet = new Set();
+
+        products.forEach((product) => {
+          const brand = getBrand(product);
+
+          if (
+            brand !== null &&
+            brand !== ""
+          ) {
+            brandSet.add(
+              String(brand).toLowerCase()
+            );
+          }
+        });
+
+        const brands =
+          brandSet.size;
+
+        /* ===================================================
+           TOTAL GMV
+
+           Add the GMV / order amount of every order.
+           =================================================== */
+
+        const totalGmv =
+          orders.reduce(
+            (total, order) => {
+              return (
+                total +
+                getOrderGmv(order)
+              );
+            },
+            0
+          );
+
+        /* ===================================================
+           UPDATE DASHBOARD
+           =================================================== */
+
+        setDashboardData({
+          designers: designers.length,
+          liveSkus: liveSkus,
+          physicalStock: physicalStock,
+          orders: orders.length,
+          totalGmv: totalGmv,
+          brands: brands,
+        });
+
+      } catch (err) {
+        console.error(
+          "Failed to load dashboard data:",
+          err
+        );
+
+        if (mounted) {
+          setError(
+            "Unable to load dashboard data from the backend."
+          );
+
+          setDashboardData({
+            designers: 0,
+            liveSkus: 0,
+            physicalStock: 0,
+            orders: 0,
+            totalGmv: 0,
+            brands: 0,
+          });
+        }
+
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadDashboardData();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  /* =========================================================
+     UNIQUE LAYERS
+     ========================================================= */
+
+  const uniqueLayers = useMemo(() => {
+    return Array.from(
+      new Map(
+        layers.map((layer) => [
+          layer.n,
+          layer,
+        ])
+      ).values()
+    ).sort(
+      (a, b) =>
+        Number(a.n) - Number(b.n)
+    );
+  }, []);
+
+  /* =========================================================
+     ACCESSIBLE LAYERS
+     ========================================================= */
+
+  const accessibleLayers =
+    uniqueLayers.filter((layer) =>
+      hasAccess(layer.n)
+    );
+
+  /* =========================================================
+     DISPLAY VALUES
+     ========================================================= */
+
+  const designerCount = loading
+    ? "..."
+    : dashboardData.designers;
+
+  const liveSkuCount = loading
+    ? "..."
+    : dashboardData.liveSkus;
+
+  const physicalStockCount = loading
+    ? "..."
+    : dashboardData.physicalStock;
+
+  const orderCount = loading
+    ? "..."
+    : dashboardData.orders;
+
+  const brandCount = loading
+    ? "..."
+    : dashboardData.brands;
+
+  const totalGmv = loading
+    ? "..."
+    : dashboardData.totalGmv;
+
+  /* =========================================================
+     FORMAT GMV
+     ========================================================= */
+
+  const formattedGmv =
+    loading
+      ? "..."
+      : `₹${Number(
+          totalGmv
+        ).toLocaleString(
+          "en-IN",
+          {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2,
+          }
+        )}`;
+
+  /* =========================================================
+     RETURN
+     ========================================================= */
 
   return (
     <main className="home-page">
 
       {/* =====================================================
           HEADER
-      ===================================================== */}
+          ===================================================== */}
 
       <div className="header-content">
 
@@ -40,13 +475,16 @@ function Home() {
 
           {/* =================================================
               LEFT SIDE
-          ================================================= */}
+              ================================================= */}
 
           <div className="header-left">
 
             {/* LOGO */}
 
-            <Link to="/" className="zenve-logo">
+            <Link
+              to="/"
+              className="zenve-logo"
+            >
               <img
                 src={logo}
                 alt="Zenve Fashion"
@@ -61,14 +499,11 @@ function Home() {
 
           </div>
 
-
           {/* =================================================
               RIGHT SIDE
-          ================================================= */}
+              ================================================= */}
 
           <div className="header-right">
-
-            {/* SEARCH + USER */}
 
             <SearchBar />
 
@@ -76,14 +511,25 @@ function Home() {
 
         </header>
 
+        {/* ===================================================
+            ERROR MESSAGE
+            =================================================== */}
+
+        {error && (
+          <div className="dashboard-error">
+            {error}
+          </div>
+        )}
 
         {/* ===================================================
             KPI SECTION
-        =================================================== */}
+            =================================================== */}
 
         <section className="kpi-section">
 
-          {/* DESIGNERS */}
+          {/* =================================================
+              DESIGNERS
+              ================================================= */}
 
           <div className="kpi-card">
 
@@ -92,7 +538,7 @@ function Home() {
             </div>
 
             <div className="kpi-value">
-              3
+              {designerCount}
             </div>
 
             <div className="kpi-subtitle">
@@ -101,8 +547,9 @@ function Home() {
 
           </div>
 
-
-          {/* LIVE SKUS */}
+          {/* =================================================
+              LIVE SKUS
+              ================================================= */}
 
           <div className="kpi-card">
 
@@ -111,49 +558,57 @@ function Home() {
             </div>
 
             <div className="kpi-value">
-              2
+              {liveSkuCount}
             </div>
 
             <div className="kpi-subtitle">
-              Across 2 brands
+              Across {brandCount}{" "}
+              {Number(brandCount) === 1
+                ? "brand"
+                : "brands"}
             </div>
 
           </div>
 
-
-          {/* PHYSICAL STOCK */}
-
-          <div className="kpi-card">
-
-            <div className="kpi-label">
+          {/* =================================================
               PHYSICAL STOCK
-            </div>
-
-            <div className="kpi-value">
-              44
-            </div>
-
-            <div className="kpi-subtitle">
-              In FCs
-            </div>
-
-          </div>
-
-
-          {/* ORDERS */}
+              ================================================= */}
 
           <div className="kpi-card">
 
             <div className="kpi-label">
-              ORDERS
+              Sellable units
             </div>
 
             <div className="kpi-value">
-              0
+              {physicalStockCount}
             </div>
 
             <div className="kpi-subtitle">
-              Total placed
+              Available inventory
+            </div>
+
+          </div>
+
+          {/* =================================================
+              GMV BOOKED
+              ================================================= */}
+
+          <div className="kpi-card">
+
+            <div className="kpi-label">
+              GMV BOOKED
+            </div>
+
+            <div className="kpi-value">
+              {formattedGmv}
+            </div>
+
+            <div className="kpi-subtitle">
+              {orderCount}{" "}
+              {Number(orderCount) === 1
+                ? "Total placed"
+                : "Total placed"}
             </div>
 
           </div>
@@ -162,14 +617,15 @@ function Home() {
 
       </div>
 
-
       {/* =====================================================
           LAYERS SECTION
-      ===================================================== */}
+          ===================================================== */}
 
       <section className="layers-section">
 
-        {/* SECTION HEADER */}
+        {/* ===================================================
+            SECTION HEADER
+            =================================================== */}
 
         <div className="layers-header">
 
@@ -180,7 +636,11 @@ function Home() {
             </h2>
 
             <span className="layers-count">
-              {uniqueLayers.length} layers · {currentUser?.shortRole || "Admin"} clearance
+              {accessibleLayers.length}{" "}
+              layers ·{" "}
+              {currentUser?.shortRole ||
+                "Admin"}{" "}
+              clearance
             </span>
 
           </div>
@@ -191,50 +651,51 @@ function Home() {
 
         </div>
 
-
         {/* ===================================================
-            LAYER GRID (EXACT REPLICATED VIEW: 12 OPERATIONAL LAYERS)
-        =================================================== */}
+            LAYER GRID
+            =================================================== */}
 
         <div className="layers-grid">
 
-          {uniqueLayers.map((layer) => (
-            <Link
-              key={layer.n}
-              to={layer.path}
-              className="layer-card"
-            >
+          {accessibleLayers.map(
+            (layer) => (
 
-              {/* TOP ROW */}
+              <Link
+                key={layer.n}
+                to={layer.path}
+                className="layer-card"
+              >
 
-              <div className="layer-top">
+                {/* TOP ROW */}
 
-                <span className="layer-group">
-                  {layer.group}
-                </span>
+                <div className="layer-top">
 
-                <span className="layer-number">
-                  {layer.n}
-                </span>
+                  <span className="layer-group">
+                    {layer.group}
+                  </span>
 
-              </div>
+                  <span className="layer-number">
+                    {layer.n}
+                  </span>
 
+                </div>
 
-              {/* TITLE */}
+                {/* TITLE */}
 
-              <h3 className="layer-name">
-                {layer.name}
-              </h3>
+                <h3 className="layer-name">
+                  {layer.name}
+                </h3>
 
+                {/* DESCRIPTION */}
 
-              {/* DESCRIPTION */}
+                <p className="layer-blurb">
+                  {layer.blurb}
+                </p>
 
-              <p className="layer-blurb">
-                {layer.blurb}
-              </p>
+              </Link>
 
-            </Link>
-          ))}
+            )
+          )}
 
         </div>
 
