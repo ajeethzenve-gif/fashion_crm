@@ -53,6 +53,7 @@
   align-items: center;
   gap: 20px;
   min-width: 0;
+  flex-shrink: 0;
 }
 
 .lovable-portal-logo {
@@ -882,6 +883,7 @@
     gap: 10px;
   }
 
+  .lovable-form-group.span-2,
   .lovable-form-group.col-span-2 {
     grid-column: span 1;
   }
@@ -925,24 +927,99 @@
 }
 
 /* ---------------------------------------------------------
-   2. TABLETS (641px - 1024px)
-   iPad, iPad Pro, Android Tablets
+   2. TABLETS & MEDIUM SCREENS (641px - 1140px)
+   iPad, iPad Air, iPad Pro, Android Tablets, Surface Pro
 --------------------------------------------------------- */
-@media (min-width: 641px) and (max-width: 1024px) {
+@media (min-width: 641px) and (max-width: 1140px) {
   .lovable-portal-header {
-    padding: 16px 24px;
+    padding: 14px 24px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .lovable-header-left {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .lovable-portal-logo {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+  }
+
+  .lovable-header-title-block {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .lovable-portal-title {
+    font-size: 22px;
+    line-height: 1.25;
+    white-space: nowrap;
+  }
+
+  .lovable-portal-subtitle {
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--lovable-muted);
+    white-space: normal;
+    margin-top: 2px;
+  }
+
+  .lovable-header-right {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--lovable-line);
+  }
+
+  .lovable-header-right .search-user-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: flex-start;
+    min-width: 0;
+  }
+
+  .lovable-header-right .search-bar-wrapper {
+    flex: 1;
+    max-width: 320px;
+    min-width: 160px;
+  }
+
+  .lovable-signed-in-box {
+    min-width: 200px;
+    max-width: 260px;
+    flex-shrink: 0;
   }
 
   .lovable-portal-main {
-    max-width: 980px;
+    max-width: 100%;
     padding: 20px 24px 60px;
     gap: 20px;
   }
 
-  /* 10 KPIs on Tablet: 3 columns */
+  /* 10 KPIs on Tablet: 5 columns on landscape, 2 on portrait */
   .lovable-kpi-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 10px;
+  }
+
+  .lovable-kpi-tile {
+    padding: 12px 10px;
+  }
+
+  .lovable-tile-value {
+    font-size: 20px;
   }
 
   .lovable-profile-dl {
@@ -952,9 +1029,10 @@
 
   .lovable-form-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 14px;
   }
 
+  .lovable-form-group.span-2,
   .lovable-form-group.col-span-2 {
     grid-column: span 2;
   }
@@ -962,14 +1040,66 @@
   .lovable-table-responsive {
     border: 1px solid var(--lovable-line);
     border-radius: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .lovable-table th,
+  .lovable-table td {
+    padding: 10px 12px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .lovable-order-row,
+  .lovable-settlement-row {
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+}
+
+/* Tablet portrait & narrow tablets (641px - 840px) */
+@media (min-width: 641px) and (max-width: 840px) {
+  .lovable-portal-header {
+    padding: 12px 18px;
+    gap: 10px;
+  }
+
+  .lovable-header-right {
+    gap: 12px;
+    padding-top: 10px;
+  }
+
+  .lovable-header-right .search-user-wrapper {
+    gap: 8px;
+  }
+
+  .lovable-header-right .search-bar-wrapper {
+    max-width: 230px;
+    min-width: 130px;
+  }
+
+  .lovable-signed-in-box {
+    min-width: 170px;
+    max-width: 220px;
+  }
+
+  .lovable-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .lovable-profile-dl {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
 }
 
 /* ---------------------------------------------------------
-   3. STANDARD LAPTOPS (1025px - 1440px)
+   3. STANDARD LAPTOPS (1141px - 1440px)
    MacBook Air, MacBook Pro 14", Ultrabooks
 --------------------------------------------------------- */
-@media (min-width: 1025px) and (max-width: 1440px) {
+@media (min-width: 1141px) and (max-width: 1440px) {
   .lovable-portal-header {
     padding: 16px 32px;
   }
