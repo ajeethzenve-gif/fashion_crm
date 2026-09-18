@@ -1,17 +1,17 @@
 /* =========================================================
    STOREFRONT STYLESHEET (06)
    Zenve Fashion Operations
-   Exact match to https://zenvefashioncm.lovable.app/storefront
+   Exact match to https://zenvefashioncm.ZENVE.app/storefront
    Fully Responsive: Mobile (320px-640px), Tablet (641px-1024px),
    Laptop (1025px-1440px), Desktop (1441px-1920px), 4K UHD (1921px-3840px+)
 ========================================================= */
 
-.lovable-storefront-layout {
+.ZENVE-storefront-layout {
   min-height: 100vh;
   width: 100%;
-  background-color: var(--lovable-paper, #fbf9f5);
-  color: var(--lovable-ink, #17130f);
-  font-family: var(--lovable-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  background-color: var(--ZENVE-paper, #fbf9f5);
+  color: var(--ZENVE-ink, #17130f);
+  font-family: var(--ZENVE-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
   box-sizing: border-box;
 }
 
@@ -19,10 +19,10 @@
    HEADER SECTION
 ========================================================= */
 
-.lovable-sf-header {
+.ZENVE-sf-header {
   width: 100%;
-  background: var(--lovable-panel, #ffffff);
-  border-bottom: 1px solid var(--lovable-line, #e8e3da);
+  background: var(--ZENVE-panel, #ffffff);
+  border-bottom: 1px solid var(--ZENVE-line, #e8e3da);
   padding: 16px 28px;
   display: flex;
   align-items: center;
@@ -31,27 +31,32 @@
   box-sizing: border-box;
 }
 
-.lovable-header-left {
+.ZENVE-header-left {
   display: flex;
   align-items: center;
   gap: 20px;
   min-width: 0;
+  flex-shrink: 0;
 }
 
-.lovable-portal-logo img {
+.ZENVE-portal-logo {
+  flex-shrink: 0;
+}
+
+.ZENVE-portal-logo img {
   height: 38px;
   width: auto;
   display: block;
   object-fit: contain;
 }
 
-.lovable-header-title-block {
+.ZENVE-header-title-block {
   display: flex;
   flex-direction: column;
   gap: 3px;
 }
 
-.lovable-back-link {
+.ZENVE-back-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -59,40 +64,40 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
-.lovable-back-link:hover {
-  color: var(--lovable-ink, #17130f);
+.ZENVE-back-link:hover {
+  color: var(--ZENVE-ink, #17130f);
 }
 
-.lovable-portal-title {
+.ZENVE-portal-title {
   margin: 0;
   font-size: 26px;
   font-weight: 500;
   font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  color: var(--lovable-ink, #17130f);
+  color: var(--ZENVE-ink, #17130f);
   display: flex;
   align-items: baseline;
   gap: 10px;
 }
 
-.lovable-layer-num {
+.ZENVE-layer-num {
   font-size: 26px;
   font-weight: 500;
   font-family: inherit;
   color: #c28b51;
 }
 
-.lovable-portal-desc {
+.ZENVE-portal-desc {
   margin: 0;
   font-size: 14px;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
 }
 
-.lovable-header-right {
+.ZENVE-header-right {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -100,7 +105,7 @@
 }
 
 /* DELIVERY PINCODE ASIDE */
-.lovable-pincode-aside {
+.ZENVE-pincode-aside {
   width: 220px;
   display: flex;
   flex-direction: column;
@@ -108,28 +113,28 @@
   box-sizing: border-box;
 }
 
-.lovable-pincode-label {
+.ZENVE-pincode-label {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
 }
 
-.lovable-pincode-input {
+.ZENVE-pincode-input {
   height: 36px;
-  border: 1px solid var(--lovable-line, #e8e3da);
+  border: 1px solid var(--ZENVE-line, #e8e3da);
   border-radius: 6px;
   padding: 0 12px;
   font-size: 13px;
-  background: var(--lovable-panel, #ffffff);
-  color: var(--lovable-ink, #17130f);
+  background: var(--ZENVE-panel, #ffffff);
+  color: var(--ZENVE-ink, #17130f);
   outline: none;
   box-sizing: border-box;
   transition: border-color 0.15s ease;
 }
 
-.lovable-pincode-input:focus {
+.ZENVE-pincode-input:focus {
   border-color: #92400e;
 }
 
@@ -137,7 +142,7 @@
    MAIN CONTAINER
 ========================================================= */
 
-.lovable-sf-main {
+.ZENVE-sf-main {
   max-width: 1480px;
   margin: 0 auto;
   padding: 24px 28px 60px;
@@ -151,7 +156,7 @@
    ALERT / TOAST BANNER
 ========================================================= */
 
-.lovable-sf-alert {
+.ZENVE-sf-alert {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -162,19 +167,19 @@
   animation: fadeIn 0.2s ease-in-out;
 }
 
-.lovable-sf-alert.success {
+.ZENVE-sf-alert.success {
   background-color: #ecfdf5;
   color: #065f46;
   border: 1px solid #a7f3d0;
 }
 
-.lovable-sf-alert.error {
+.ZENVE-sf-alert.error {
   background-color: #fff1f2;
   color: #9f1239;
   border: 1px solid #fecdd3;
 }
 
-.lovable-alert-close {
+.ZENVE-alert-close {
   background: none;
   border: none;
   font-size: 18px;
@@ -185,7 +190,7 @@
   opacity: 0.7;
 }
 
-.lovable-alert-close:hover {
+.ZENVE-alert-close:hover {
   opacity: 1;
 }
 
@@ -198,16 +203,16 @@
    TOP 3 KPI CARDS
 ========================================================= */
 
-.lovable-sf-kpi-grid {
+.ZENVE-sf-kpi-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   width: 100%;
 }
 
-.lovable-kpi-card {
-  background: var(--lovable-panel, #ffffff);
-  border: 1px solid var(--lovable-line, #e8e3da);
+.ZENVE-kpi-card {
+  background: var(--ZENVE-panel, #ffffff);
+  border: 1px solid var(--ZENVE-line, #e8e3da);
   border-radius: 8px;
   padding: 16px 18px;
   display: flex;
@@ -217,38 +222,38 @@
   box-sizing: border-box;
 }
 
-.lovable-kpi-card:hover {
+.ZENVE-kpi-card:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-.lovable-kpi-label {
+.ZENVE-kpi-label {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
 }
 
-.lovable-kpi-value {
+.ZENVE-kpi-value {
   font-size: 26px;
   font-weight: 700;
-  color: var(--lovable-ink, #17130f);
+  color: var(--ZENVE-ink, #17130f);
   line-height: 1.15;
-  font-family: var(--lovable-font-display, "Outfit", sans-serif);
+  font-family: var(--ZENVE-font-display, "Outfit", sans-serif);
 }
 
-.lovable-kpi-hint {
+.ZENVE-kpi-hint {
   font-size: 12px;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
 }
 
 /* =========================================================
    PANEL / SECTION CARD
 ========================================================= */
 
-.lovable-panel-card {
-  background: var(--lovable-panel, #ffffff);
-  border: 1px solid var(--lovable-line, #e8e3da);
+.ZENVE-panel-card {
+  background: var(--ZENVE-panel, #ffffff);
+  border: 1px solid var(--ZENVE-line, #e8e3da);
   border-radius: 8px;
   padding: 20px 22px;
   display: flex;
@@ -257,7 +262,7 @@
   box-sizing: border-box;
 }
 
-.lovable-panel-header {
+.ZENVE-panel-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -265,7 +270,7 @@
   gap: 12px;
 }
 
-.lovable-panel-title-block {
+.ZENVE-panel-title-block {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -273,125 +278,125 @@
   min-width: 240px;
 }
 
-.lovable-panel-title {
+.ZENVE-panel-title {
   margin: 0;
   font-size: 17px;
   font-weight: 600;
-  color: var(--lovable-ink, #17130f);
+  color: var(--ZENVE-ink, #17130f);
 }
 
-.lovable-panel-desc {
+.ZENVE-panel-desc {
   margin: 0;
   font-size: 13px;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
 }
 
 /* =========================================================
    SHOP SECTION & PRODUCT GRID
 ========================================================= */
 
-.lovable-cat-search-box {
+.ZENVE-cat-search-box {
   width: 240px;
   height: 36px;
-  border: 1px solid var(--lovable-line, #e8e3da);
+  border: 1px solid var(--ZENVE-line, #e8e3da);
   border-radius: 6px;
   padding: 0 12px;
   font-size: 13px;
-  background: var(--lovable-panel, #ffffff);
-  color: var(--lovable-ink, #17130f);
+  background: var(--ZENVE-panel, #ffffff);
+  color: var(--ZENVE-ink, #17130f);
   outline: none;
   box-sizing: border-box;
   transition: border-color 0.15s ease;
 }
 
-.lovable-cat-search-box:focus {
+.ZENVE-cat-search-box:focus {
   border-color: #92400e;
 }
 
-.lovable-product-grid {
+.ZENVE-product-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   width: 100%;
 }
 
-.lovable-product-card {
+.ZENVE-product-card {
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--lovable-line, #e8e3da);
+  border: 1px solid var(--ZENVE-line, #e8e3da);
   border-radius: 8px;
   padding: 16px 18px;
-  background: var(--lovable-panel, #ffffff);
+  background: var(--ZENVE-panel, #ffffff);
   transition: box-shadow 0.15s ease, transform 0.15s ease;
   box-sizing: border-box;
 }
 
-.lovable-product-card:hover {
+.ZENVE-product-card:hover {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
 }
 
-.lovable-prod-top-row {
+.ZENVE-prod-top-row {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 8px;
 }
 
-.lovable-prod-title {
+.ZENVE-prod-title {
   margin: 0;
   font-size: 15.5px;
   font-weight: 600;
-  color: var(--lovable-ink, #17130f);
+  color: var(--ZENVE-ink, #17130f);
   line-height: 1.3;
 }
 
-.lovable-prod-meta {
+.ZENVE-prod-meta {
   margin: 4px 0 0;
   font-size: 13px;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
 }
 
-.lovable-prod-price-row {
+.ZENVE-prod-price-row {
   margin: 12px 0 0;
   font-size: 20px;
   font-weight: 700;
-  font-family: var(--lovable-font-display, "Outfit", sans-serif);
-  color: var(--lovable-ink, #17130f);
+  font-family: var(--ZENVE-font-display, "Outfit", sans-serif);
+  color: var(--ZENVE-ink, #17130f);
   display: flex;
   align-items: baseline;
   gap: 8px;
 }
 
-.lovable-prod-mrp {
+.ZENVE-prod-mrp {
   font-size: 13px;
   font-weight: 400;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
   text-decoration: line-through;
 }
 
-.lovable-prod-delivery {
+.ZENVE-prod-delivery {
   margin: 8px 0 0;
   font-size: 13px;
-  color: var(--lovable-ink, #17130f);
+  color: var(--ZENVE-ink, #17130f);
 }
 
-.lovable-delivery-label {
-  color: var(--lovable-muted, #736b63);
+.ZENVE-delivery-label {
+  color: var(--ZENVE-muted, #736b63);
 }
 
-.lovable-prod-stock {
+.ZENVE-prod-stock {
   margin: 2px 0 0;
   font-size: 13px;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
 }
 
-.lovable-prod-policy {
+.ZENVE-prod-policy {
   margin: 2px 0 0;
   font-size: 11.5px;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
 }
 
-.lovable-add-bag-btn {
+.ZENVE-add-bag-btn {
   margin-top: 16px;
   width: 100%;
   height: 36px;
@@ -401,20 +406,20 @@
   border-radius: 6px;
   font-size: 13px;
   font-weight: 500;
-  background: var(--lovable-ink, #17130f);
+  background: var(--ZENVE-ink, #17130f);
   color: #ffffff;
-  border: 1px solid var(--lovable-ink, #17130f);
+  border: 1px solid var(--ZENVE-ink, #17130f);
   cursor: pointer;
   box-sizing: border-box;
   transition: all 0.15s ease;
 }
 
-.lovable-add-bag-btn:hover:not(:disabled) {
+.ZENVE-add-bag-btn:hover:not(:disabled) {
   background: #332d26;
   border-color: #332d26;
 }
 
-.lovable-add-bag-btn:disabled {
+.ZENVE-add-bag-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   background: #e8e3da;
@@ -426,74 +431,74 @@
    BAG & CHECKOUT SECTION
 ========================================================= */
 
-.lovable-bag-stack {
+.ZENVE-bag-stack {
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: 100%;
 }
 
-.lovable-bag-item-row {
+.ZENVE-bag-item-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 8px;
   padding: 10px 14px;
-  border: 1px solid var(--lovable-line, #e8e3da);
+  border: 1px solid var(--ZENVE-line, #e8e3da);
   border-radius: 6px;
   font-size: 13.5px;
-  background: var(--lovable-paper, #fbf9f5);
+  background: var(--ZENVE-paper, #fbf9f5);
   box-sizing: border-box;
 }
 
-.lovable-bag-item-name {
+.ZENVE-bag-item-name {
   font-weight: 500;
-  color: var(--lovable-ink, #17130f);
+  color: var(--ZENVE-ink, #17130f);
   flex: 1;
   min-width: 160px;
 }
 
-.lovable-bag-item-qty {
-  color: var(--lovable-muted, #736b63);
+.ZENVE-bag-item-qty {
+  color: var(--ZENVE-muted, #736b63);
   font-size: 13px;
   margin: 0 12px;
 }
 
-.lovable-bag-item-price {
+.ZENVE-bag-item-price {
   font-weight: 600;
-  color: var(--lovable-ink, #17130f);
+  color: var(--ZENVE-ink, #17130f);
   margin-right: 12px;
 }
 
-.lovable-btn-ghost {
+.ZENVE-btn-ghost {
   background: none;
   border: none;
   font-size: 12.5px;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 4px;
   transition: all 0.15s ease;
 }
 
-.lovable-btn-ghost:hover {
+.ZENVE-btn-ghost:hover {
   color: #9f1239;
   background: #fff1f2;
 }
 
-.lovable-bag-total-row {
+.ZENVE-bag-total-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding-top: 12px;
-  border-top: 1px solid var(--lovable-line, #e8e3da);
+  border-top: 1px solid var(--ZENVE-line, #e8e3da);
   font-size: 14px;
   font-weight: 600;
-  color: var(--lovable-ink, #17130f);
+  color: var(--ZENVE-ink, #17130f);
 }
 
-.lovable-checkout-controls-row {
+.ZENVE-checkout-controls-row {
   display: flex;
   align-items: flex-end;
   flex-wrap: wrap;
@@ -502,38 +507,38 @@
   width: 100%;
 }
 
-.lovable-checkout-input-group {
+.ZENVE-checkout-input-group {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.lovable-checkout-input-group label {
+.ZENVE-checkout-input-group label {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
 }
 
-.lovable-customer-input {
+.ZENVE-customer-input {
   width: 240px;
   height: 36px;
-  border: 1px solid var(--lovable-line, #e8e3da);
+  border: 1px solid var(--ZENVE-line, #e8e3da);
   border-radius: 6px;
   padding: 0 12px;
   font-size: 13px;
-  background: var(--lovable-panel, #ffffff);
-  color: var(--lovable-ink, #17130f);
+  background: var(--ZENVE-panel, #ffffff);
+  color: var(--ZENVE-ink, #17130f);
   outline: none;
   box-sizing: border-box;
 }
 
-.lovable-customer-input:focus {
+.ZENVE-customer-input:focus {
   border-color: #92400e;
 }
 
-.lovable-btn {
+.ZENVE-btn {
   height: 36px;
   padding: 0 16px;
   font-size: 13px;
@@ -549,29 +554,29 @@
   box-sizing: border-box;
 }
 
-.lovable-btn:disabled {
+.ZENVE-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.lovable-btn-primary {
-  background: var(--lovable-ink, #17130f);
+.ZENVE-btn-primary {
+  background: var(--ZENVE-ink, #17130f);
   color: #ffffff;
-  border: 1px solid var(--lovable-ink, #17130f);
+  border: 1px solid var(--ZENVE-ink, #17130f);
 }
 
-.lovable-btn-primary:hover:not(:disabled) {
+.ZENVE-btn-primary:hover:not(:disabled) {
   background: #332d26;
   border-color: #332d26;
 }
 
-.lovable-btn-outline {
-  background: var(--lovable-panel, #ffffff);
-  color: var(--lovable-ink, #17130f);
-  border: 1px solid var(--lovable-line, #e8e3da);
+.ZENVE-btn-outline {
+  background: var(--ZENVE-panel, #ffffff);
+  color: var(--ZENVE-ink, #17130f);
+  border: 1px solid var(--ZENVE-line, #e8e3da);
 }
 
-.lovable-btn-outline:hover:not(:disabled) {
+.ZENVE-btn-outline:hover:not(:disabled) {
   background: #f7f4ef;
   border-color: #d6cfc4;
 }
@@ -580,7 +585,7 @@
    BADGES / TONES
 ========================================================= */
 
-.lovable-tone-badge {
+.ZENVE-tone-badge {
   display: inline-flex;
   align-items: center;
   padding: 3px 8px;
@@ -590,7 +595,7 @@
   line-height: 1.2;
 }
 
-.lovable-tone-badge.good {
+.ZENVE-tone-badge.good {
   background-color: #ecfdf5;
   color: #065f46;
   border: 1px solid #a7f3d0;
@@ -600,284 +605,434 @@
    EMPTY STATE
 ========================================================= */
 
-.lovable-empty-state {
+.ZENVE-empty-state {
   padding: 32px 16px;
   text-align: center;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
   font-size: 14px;
 }
 
-.lovable-empty-state p {
+.ZENVE-empty-state p {
   margin: 4px 0 0;
   font-size: 13px;
   opacity: 0.8;
 }
 
 /* =========================================================
-   RESPONSIVE BREAKPOINTS: MOBILE (320px - 640px)
+   COMPREHENSIVE ALL-SCREEN-SIZE RESPONSIVE MEDIA QUERIES
 ========================================================= */
 
+/* ---------------------------------------------------------
+   1. MOBILE PHONES (320px - 640px)
+   Smartphones like iPhone, Pixel, Galaxy
+--------------------------------------------------------- */
+
 @media (max-width: 640px) {
-  .lovable-sf-header {
+  .ZENVE-sf-header {
     flex-direction: column;
     align-items: stretch;
     padding: 12px 14px;
     gap: 12px;
   }
 
-  .lovable-header-left {
+  .ZENVE-header-left {
+    display: flex;
+    align-items: flex-start;
     gap: 12px;
-  }
-
-  .lovable-portal-logo img {
-    height: 30px;
-  }
-
-  .lovable-portal-title {
-    font-size: 21px;
-    gap: 8px;
-  }
-
-  .lovable-layer-num {
-    font-size: 21px;
-  }
-
-  .lovable-portal-desc {
-    font-size: 12px;
-    line-height: 1.35;
-  }
-
-  .lovable-header-right {
     width: 100%;
+  }
+
+  .ZENVE-portal-logo {
+    flex-shrink: 0;
+  }
+
+  .ZENVE-portal-logo img {
+    height: 32px;
+    width: auto;
+  }
+
+  .ZENVE-header-title-block {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ZENVE-portal-title {
+    font-size: 20px;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .ZENVE-layer-num {
+    font-size: 20px;
+  }
+
+  .ZENVE-portal-desc {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .ZENVE-header-right {
+    width: 100%;
+    display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
   }
 
-  .lovable-pincode-aside {
+  .ZENVE-pincode-aside {
     width: 100%;
   }
 
-  .lovable-header-right .search-bar-container {
+  .ZENVE-pincode-input {
     width: 100%;
+    height: 36px;
   }
 
-  .lovable-sf-main {
+  .ZENVE-header-right .search-user-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .ZENVE-header-right .search-bar-wrapper {
+    width: 100%;
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .ZENVE-header-right .search-box {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .ZENVE-header-right .home-user {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .ZENVE-sf-main {
     padding: 14px 12px 48px;
     gap: 16px;
   }
 
   /* Top 3 KPI Cards: 1 column stack on mobile for clear readability */
-  .lovable-sf-kpi-grid {
+  .ZENVE-sf-kpi-grid {
     grid-template-columns: 1fr;
     gap: 8px;
   }
 
-  .lovable-kpi-card {
+  .ZENVE-kpi-card {
     padding: 12px 14px;
   }
 
-  .lovable-kpi-label {
+  .ZENVE-kpi-label {
     font-size: 10px;
   }
 
-  .lovable-kpi-value {
+  .ZENVE-kpi-value {
     font-size: 22px;
   }
 
-  .lovable-kpi-hint {
+  .ZENVE-kpi-hint {
     font-size: 11px;
   }
 
-  .lovable-panel-card {
+  .ZENVE-panel-card {
     padding: 14px 14px;
     gap: 14px;
   }
 
-  .lovable-panel-header {
+  .ZENVE-panel-header {
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
   }
 
-  .lovable-cat-search-box {
+  .ZENVE-cat-search-box {
     width: 100%;
     height: 36px;
   }
 
   /* Product grid on mobile: 1 column */
-  .lovable-product-grid {
+  .ZENVE-product-grid {
     grid-template-columns: 1fr;
     gap: 12px;
   }
 
-  .lovable-product-card {
+  .ZENVE-product-card {
     padding: 14px 14px;
   }
 
-  .lovable-prod-title {
+  .ZENVE-prod-title {
     font-size: 15px;
   }
 
-  .lovable-prod-price-row {
+  .ZENVE-prod-price-row {
     font-size: 18px;
     margin: 8px 0 0;
   }
 
-  .lovable-add-bag-btn {
+  .ZENVE-add-bag-btn {
     height: 38px;
     font-size: 13px;
     margin-top: 14px;
   }
 
   /* Bag item row on mobile */
-  .lovable-bag-item-row {
+  .ZENVE-bag-item-row {
     flex-direction: column;
     align-items: flex-start;
     padding: 10px 12px;
     gap: 6px;
+    position: relative;
   }
 
-  .lovable-bag-item-qty,
-  .lovable-bag-item-price {
+  .ZENVE-bag-item-qty,
+  .ZENVE-bag-item-price {
     margin: 0;
   }
 
-  .lovable-btn-ghost {
+  .ZENVE-btn-ghost {
     align-self: flex-end;
     margin-top: -24px;
   }
 
   /* Checkout controls on mobile */
-  .lovable-checkout-controls-row {
+  .ZENVE-checkout-controls-row {
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
   }
 
-  .lovable-checkout-input-group {
+  .ZENVE-checkout-input-group {
     width: 100%;
   }
 
-  .lovable-customer-input {
+  .ZENVE-customer-input {
     width: 100%;
     height: 38px;
   }
 
-  .lovable-checkout-controls-row .lovable-btn {
+  .ZENVE-checkout-controls-row .ZENVE-btn {
     width: 100%;
     height: 38px;
+    justify-content: center;
   }
 }
 
 /* Extra small mobile (< 380px) */
 @media (max-width: 380px) {
-  .lovable-sf-header {
+  .ZENVE-sf-header {
     padding: 10px 10px;
   }
 
-  .lovable-sf-main {
+  .ZENVE-sf-main {
     padding: 10px 8px 36px;
     gap: 12px;
   }
 
-  .lovable-portal-title {
+  .ZENVE-portal-title {
     font-size: 19px;
   }
 
-  .lovable-layer-num {
+  .ZENVE-layer-num {
     font-size: 19px;
   }
 
-  .lovable-kpi-value {
+  .ZENVE-kpi-value {
     font-size: 20px;
+  }
+
+  .ZENVE-product-card {
+    padding: 12px 10px;
   }
 }
 
-/* =========================================================
-   RESPONSIVE BREAKPOINTS: TABLET PORTRAIT (641px - 768px)
-========================================================= */
+/* ---------------------------------------------------------
+   2. TABLETS & MEDIUM SCREENS (641px - 1140px)
+   iPad, iPad Air, iPad Pro, Android Tablets, Surface Pro
+--------------------------------------------------------- */
 
-@media (min-width: 641px) and (max-width: 768px) {
-  .lovable-sf-header {
-    padding: 14px 20px;
+@media (min-width: 641px) and (max-width: 1140px) {
+  .ZENVE-sf-header {
+    padding: 14px 24px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
   }
 
-  .lovable-portal-title {
-    font-size: 23px;
+  .ZENVE-header-left {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
   }
 
-  .lovable-portal-desc {
-    font-size: 13px;
+  .ZENVE-portal-logo {
+    flex-shrink: 0;
   }
 
-  .lovable-sf-main {
-    padding: 18px 20px 48px;
+  .ZENVE-portal-logo img {
+    height: 36px;
+    width: auto;
+  }
+
+  .ZENVE-header-title-block {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ZENVE-portal-title {
+    font-size: 22px;
+    line-height: 1.25;
+    white-space: nowrap;
+  }
+
+  .ZENVE-portal-desc {
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--ZENVE-muted, #736b63);
+    white-space: normal;
+    margin-top: 2px;
+  }
+
+  .ZENVE-header-right {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--ZENVE-line, #e8e3da);
+    flex-wrap: wrap;
+  }
+
+  .ZENVE-pincode-aside {
+    width: 180px;
+    flex-shrink: 0;
+  }
+
+  .ZENVE-header-right .search-user-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 14px;
+    min-width: 260px;
+  }
+
+  .ZENVE-header-right .search-bar-wrapper {
+    flex: 1;
+    max-width: 300px;
+    min-width: 160px;
+  }
+
+  .ZENVE-header-right .home-user {
+    flex-shrink: 0;
+  }
+
+  .ZENVE-sf-main {
+    max-width: 100%;
+    padding: 20px 24px 60px;
     gap: 20px;
   }
 
   /* Top 3 KPIs: 3 columns */
-  .lovable-sf-kpi-grid {
+  .ZENVE-sf-kpi-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
   }
 
-  .lovable-kpi-card {
-    padding: 12px 14px;
+  .ZENVE-kpi-card {
+    padding: 14px 16px;
   }
 
-  .lovable-kpi-value {
-    font-size: 22px;
+  .ZENVE-kpi-value {
+    font-size: 24px;
   }
 
-  /* Product grid: 2 columns */
-  .lovable-product-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-  }
-
-  .lovable-customer-input {
-    width: 200px;
-  }
-}
-
-/* =========================================================
-   RESPONSIVE BREAKPOINTS: TABLET LANDSCAPE (769px - 1024px)
-========================================================= */
-
-@media (min-width: 769px) and (max-width: 1024px) {
-  .lovable-sf-header {
-    padding: 16px 24px;
-  }
-
-  .lovable-sf-main {
-    padding: 20px 24px 52px;
-    gap: 22px;
-  }
-
-  .lovable-sf-kpi-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-  }
-
-  /* Product grid: 2 columns */
-  .lovable-product-grid {
+  /* Product grid: 2 columns on tablet */
+  .ZENVE-product-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
   }
+
+  .ZENVE-customer-input {
+    width: 220px;
+  }
 }
 
-/* =========================================================
-   RESPONSIVE BREAKPOINTS: LAPTOP / DESKTOP (1025px - 1440px)
-   Standard reference baseline
-========================================================= */
+/* Tablet portrait & narrow tablets (641px - 840px) */
+@media (min-width: 641px) and (max-width: 840px) {
+  .ZENVE-sf-header {
+    padding: 12px 18px;
+    gap: 10px;
+  }
 
-@media (min-width: 1025px) and (max-width: 1440px) {
-  .lovable-sf-main {
+  .ZENVE-header-right {
+    gap: 12px;
+    padding-top: 10px;
+  }
+
+  .ZENVE-pincode-aside {
+    width: 100%;
+  }
+
+  .ZENVE-header-right .search-user-wrapper {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .ZENVE-header-right .search-bar-wrapper {
+    max-width: none;
+  }
+
+  .ZENVE-sf-main {
+    padding: 16px 18px 48px;
+    gap: 16px;
+  }
+
+  .ZENVE-panel-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .ZENVE-cat-search-box {
+    width: 100%;
+  }
+
+  .ZENVE-checkout-controls-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .ZENVE-customer-input {
+    width: 100%;
+  }
+
+  .ZENVE-checkout-controls-row .ZENVE-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ---------------------------------------------------------
+   3. LAPTOP & STANDARD DESKTOP (1141px - 1440px)
+   MacBook Pro, ThinkPad, Standard 1080p Desktop
+--------------------------------------------------------- */
+
+@media (min-width: 1141px) and (max-width: 1440px) {
+  .ZENVE-sf-main {
     max-width: 1380px;
   }
 
-  .lovable-product-grid {
+  .ZENVE-product-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
@@ -887,37 +1042,37 @@
 ========================================================= */
 
 @media (min-width: 1441px) and (max-width: 1920px) {
-  .lovable-sf-header {
+  .ZENVE-sf-header {
     padding: 18px 36px;
   }
 
-  .lovable-portal-title {
+  .ZENVE-portal-title {
     font-size: 28px;
   }
 
-  .lovable-layer-num {
+  .ZENVE-layer-num {
     font-size: 28px;
   }
 
-  .lovable-sf-main {
+  .ZENVE-sf-main {
     max-width: 1640px;
     padding: 28px 36px 64px;
     gap: 26px;
   }
 
-  .lovable-kpi-card {
+  .ZENVE-kpi-card {
     padding: 18px 22px;
   }
 
-  .lovable-kpi-value {
+  .ZENVE-kpi-value {
     font-size: 28px;
   }
 
-  .lovable-panel-card {
+  .ZENVE-panel-card {
     padding: 22px 26px;
   }
 
-  .lovable-product-grid {
+  .ZENVE-product-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
   }
@@ -928,93 +1083,93 @@
 ========================================================= */
 
 @media (min-width: 1921px) {
-  .lovable-sf-header {
+  .ZENVE-sf-header {
     padding: 24px 64px;
   }
 
-  .lovable-portal-logo img {
+  .ZENVE-portal-logo img {
     height: 52px;
   }
 
-  .lovable-back-link {
+  .ZENVE-back-link {
     font-size: 13.5px;
     gap: 8px;
   }
 
-  .lovable-portal-title {
+  .ZENVE-portal-title {
     font-size: 34px;
     gap: 12px;
   }
 
-  .lovable-layer-num {
+  .ZENVE-layer-num {
     font-size: 34px;
   }
 
-  .lovable-portal-desc {
+  .ZENVE-portal-desc {
     font-size: 16.5px;
   }
 
-  .lovable-pincode-aside {
+  .ZENVE-pincode-aside {
     width: 300px;
     gap: 6px;
   }
 
-  .lovable-pincode-label {
+  .ZENVE-pincode-label {
     font-size: 13px;
   }
 
-  .lovable-pincode-input {
+  .ZENVE-pincode-input {
     height: 44px;
     font-size: 15px;
     border-radius: 8px;
   }
 
-  .lovable-sf-main {
+  .ZENVE-sf-main {
     max-width: 2800px;
     padding: 36px 64px 80px;
     gap: 32px;
   }
 
   /* 4K Top 3 KPI Cards */
-  .lovable-sf-kpi-grid {
+  .ZENVE-sf-kpi-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
   }
 
-  .lovable-kpi-card {
+  .ZENVE-kpi-card {
     padding: 22px 26px;
     border-radius: 10px;
     gap: 6px;
   }
 
-  .lovable-kpi-label {
+  .ZENVE-kpi-label {
     font-size: 13px;
   }
 
-  .lovable-kpi-value {
+  .ZENVE-kpi-value {
     font-size: 36px;
   }
 
-  .lovable-kpi-hint {
+  .ZENVE-kpi-hint {
     font-size: 14px;
   }
 
   /* 4K Panels */
-  .lovable-panel-card {
+  .ZENVE-panel-card {
     padding: 28px 32px;
     border-radius: 10px;
     gap: 22px;
   }
 
-  .lovable-panel-title {
+  .ZENVE-panel-title {
     font-size: 22px;
   }
 
-  .lovable-panel-desc {
+  .ZENVE-panel-desc {
     font-size: 15.5px;
   }
 
-  .lovable-cat-search-box {
+  .ZENVE-cat-search-box {
     width: 340px;
     height: 44px;
     font-size: 15px;
@@ -1022,76 +1177,76 @@
   }
 
   /* 4K Product Grid: 4 columns */
-  .lovable-product-grid {
+  .ZENVE-product-grid {
     grid-template-columns: repeat(4, 1fr);
     gap: 24px;
   }
 
-  .lovable-product-card {
+  .ZENVE-product-card {
     padding: 22px 24px;
     border-radius: 10px;
   }
 
-  .lovable-prod-title {
+  .ZENVE-prod-title {
     font-size: 18px;
   }
 
-  .lovable-prod-meta {
+  .ZENVE-prod-meta {
     font-size: 14.5px;
   }
 
-  .lovable-prod-price-row {
+  .ZENVE-prod-price-row {
     font-size: 24px;
     gap: 10px;
   }
 
-  .lovable-prod-mrp {
+  .ZENVE-prod-mrp {
     font-size: 15px;
   }
 
-  .lovable-prod-delivery,
-  .lovable-prod-stock {
+  .ZENVE-prod-delivery,
+  .ZENVE-prod-stock {
     font-size: 14.5px;
   }
 
-  .lovable-prod-policy {
+  .ZENVE-prod-policy {
     font-size: 13px;
   }
 
-  .lovable-add-bag-btn {
+  .ZENVE-add-bag-btn {
     height: 42px;
     font-size: 14.5px;
     border-radius: 8px;
   }
 
   /* 4K Bag Items & Checkout */
-  .lovable-bag-stack {
+  .ZENVE-bag-stack {
     gap: 12px;
   }
 
-  .lovable-bag-item-row {
+  .ZENVE-bag-item-row {
     padding: 14px 20px;
     font-size: 15.5px;
     border-radius: 8px;
   }
 
-  .lovable-bag-item-qty {
+  .ZENVE-bag-item-qty {
     font-size: 15px;
   }
 
-  .lovable-bag-total-row {
+  .ZENVE-bag-total-row {
     font-size: 17px;
     padding-top: 16px;
   }
 
-  .lovable-customer-input {
+  .ZENVE-customer-input {
     width: 320px;
     height: 44px;
     font-size: 15px;
     border-radius: 8px;
   }
 
-  .lovable-checkout-controls-row .lovable-btn {
+  .ZENVE-checkout-controls-row .ZENVE-btn {
     height: 44px;
     padding: 0 22px;
     font-size: 15px;
@@ -1101,32 +1256,32 @@
 
 /* Extreme 4K Resolution (3200px - 3840px Native) */
 @media (min-width: 3200px) {
-  .lovable-sf-main {
+  .ZENVE-sf-main {
     max-width: 3400px;
   }
 
-  .lovable-portal-title {
+  .ZENVE-portal-title {
     font-size: 40px;
   }
 
-  .lovable-layer-num {
+  .ZENVE-layer-num {
     font-size: 40px;
   }
 
-  .lovable-kpi-value {
+  .ZENVE-kpi-value {
     font-size: 42px;
   }
 
-  .lovable-product-grid {
+  .ZENVE-product-grid {
     grid-template-columns: repeat(4, 1fr);
     gap: 28px;
   }
 
-  .lovable-prod-title {
+  .ZENVE-prod-title {
     font-size: 21px;
   }
 
-  .lovable-prod-price-row {
+  .ZENVE-prod-price-row {
     font-size: 28px;
   }
 }

@@ -38,7 +38,7 @@ function BackIcon() {
 
 /* =========================================================
    HELPERS & LOGISTICS ENGINE LOGIC
-   Direct match to https://zenvefashioncm.lovable.app/delivery
+   Direct match to https://zenvefashioncm.ZENVE.app/delivery
 ========================================================= */
 
 function formatLocation(loc) {
@@ -226,34 +226,34 @@ export default function DeliveryEngine() {
   }, [liveSkus]);
 
   return (
-    <div className="lovable-delivery-layout">
+    <div className="ZENVE-delivery-layout">
       {/* =====================================================
           HEADER SECTION
       ===================================================== */}
-      <header className="lovable-delivery-header">
-        <div className="lovable-header-left">
-          <Link to="/" className="lovable-portal-logo" aria-label="Go to home">
+      <header className="ZENVE-delivery-header">
+        <div className="ZENVE-header-left">
+          <Link to="/" className="ZENVE-portal-logo" aria-label="Go to home">
             <img src={zenveLogo} alt="Zenve Fashion" />
           </Link>
 
-          <div className="lovable-header-title-block">
-            <Link to="/" className="lovable-back-link">
+          <div className="ZENVE-header-title-block">
+            <Link to="/" className="ZENVE-back-link">
               <BackIcon />
               <span>ALL 12 LAYERS</span>
             </Link>
 
-            <h1 className="lovable-portal-title">
-              <span className="lovable-layer-num">08</span>
+            <h1 className="ZENVE-portal-title">
+              <span className="ZENVE-layer-num">08</span>
               <span>Delivery Engine</span>
             </h1>
 
-            <p className="lovable-portal-desc">
+            <p className="ZENVE-portal-desc">
               Logistics layer · Pincode, ETA, 60-min eligibility, 3-day target
             </p>
           </div>
         </div>
 
-        <div className="lovable-header-right">
+        <div className="ZENVE-header-right">
           <SearchBar />
         </div>
       </header>
@@ -261,14 +261,14 @@ export default function DeliveryEngine() {
       {/* =====================================================
           MAIN CONTENT AREA
       ===================================================== */}
-      <main className="lovable-delivery-main">
+      <main className="ZENVE-delivery-main">
         {/* ALERT NOTIFICATION BANNER */}
         {alert && (
-          <div className={`lovable-delivery-alert ${alert.type}`}>
+          <div className={`ZENVE-delivery-alert ${alert.type}`}>
             <span>{alert.text}</span>
             <button
               type="button"
-              className="lovable-alert-close"
+              className="ZENVE-alert-close"
               onClick={() => setAlert(null)}
               aria-label="Close alert"
             >
@@ -279,11 +279,11 @@ export default function DeliveryEngine() {
 
         {/* ERROR BANNER */}
         {error && (
-          <div className="lovable-delivery-alert error">
+          <div className="ZENVE-delivery-alert error">
             <span>{error}</span>
             <button
               type="button"
-              className="lovable-alert-close"
+              className="ZENVE-alert-close"
               onClick={loadDeliveryProducts}
               aria-label="Retry loading products"
             >
@@ -295,36 +295,36 @@ export default function DeliveryEngine() {
         {/* ===================================================
             TOP 3 KPI METRIC CARDS
         =================================================== */}
-        <section className="lovable-delivery-kpi-grid">
+        <section className="ZENVE-delivery-kpi-grid">
           {/* ZONE */}
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Zone</span>
-            <strong className="lovable-kpi-value">
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Zone</span>
+            <strong className="ZENVE-kpi-value">
               {isValidPincode ? (isFastCity ? "Fast city" : "Rest of India") : "—"}
             </strong>
-            <span className="lovable-kpi-hint">
+            <span className="ZENVE-kpi-hint">
               {isFastCity ? "Mumbai / Bangalore" : "≤ 3 working days"}
             </span>
           </div>
 
           {/* FAST-ELIGIBLE SKUS */}
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Fast-eligible SKUs</span>
-            <strong className="lovable-kpi-value">
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Fast-eligible SKUs</span>
+            <strong className="ZENVE-kpi-value">
               {fastEligibleSkus.length}
             </strong>
-            <span className="lovable-kpi-hint">
+            <span className="ZENVE-kpi-hint">
               For this pincode, right now
             </span>
           </div>
 
           {/* FAST FLAG AT RISK */}
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Fast flag at risk</span>
-            <strong className="lovable-kpi-value">
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Fast flag at risk</span>
+            <strong className="ZENVE-kpi-value">
               {riskSkus.length}
             </strong>
-            <span className="lovable-kpi-hint">
+            <span className="ZENVE-kpi-hint">
               Flagged but no stock
             </span>
           </div>
@@ -333,18 +333,18 @@ export default function DeliveryEngine() {
         {/* ===================================================
             SERVICEABILITY CHECK PANEL
         =================================================== */}
-        <section className="lovable-panel-card">
-          <div className="lovable-panel-header">
-            <div className="lovable-panel-title-block">
-              <h2 className="lovable-panel-title">Serviceability check</h2>
-              <p className="lovable-panel-desc">
+        <section className="ZENVE-panel-card">
+          <div className="ZENVE-panel-header">
+            <div className="ZENVE-panel-title-block">
+              <h2 className="ZENVE-panel-title">Serviceability check</h2>
+              <p className="ZENVE-panel-desc">
                 Rule chain: pincode → serviceable → nearest eligible location → SKU available → fast flag → live ETA.
               </p>
             </div>
 
             {/* PINCODE INPUT ACTION */}
-            <div className="lovable-pincode-control">
-              <label htmlFor="customer-pincode" className="lovable-pincode-label">
+            <div className="ZENVE-pincode-control">
+              <label htmlFor="customer-pincode" className="ZENVE-pincode-label">
                 Customer pincode
               </label>
               <input
@@ -352,7 +352,7 @@ export default function DeliveryEngine() {
                 type="text"
                 inputMode="numeric"
                 maxLength={6}
-                className="lovable-pincode-input"
+                className="ZENVE-pincode-input"
                 placeholder="400001"
                 value={pincode}
                 onChange={(e) =>
@@ -364,16 +364,16 @@ export default function DeliveryEngine() {
 
           {/* SKUS TABLE */}
           {loading ? (
-            <div className="lovable-empty-state">
+            <div className="ZENVE-empty-state">
               Loading live SKUs from logistics engine...
             </div>
           ) : liveSkus.length === 0 ? (
-            <div className="lovable-empty-state">
+            <div className="ZENVE-empty-state">
               No live SKUs to quote yet.
             </div>
           ) : (
-            <div className="lovable-table-wrap">
-              <table className="lovable-delivery-table">
+            <div className="ZENVE-table-wrap">
+              <table className="ZENVE-delivery-table">
                 <thead>
                   <tr>
                     <th>SKU</th>
@@ -411,18 +411,18 @@ export default function DeliveryEngine() {
                             type="button"
                             role="switch"
                             aria-checked={item.fastDelivery}
-                            className={`lovable-switch-btn ${
+                            className={`ZENVE-switch-btn ${
                               item.fastDelivery ? "checked" : ""
                             }`}
                             disabled={updatingId === item.id}
                             onClick={() => handleToggleFast(item)}
                             aria-label={`Toggle fast delivery for ${item.name}`}
                           >
-                            <span className="lovable-switch-thumb" />
+                            <span className="ZENVE-switch-thumb" />
                           </button>
                         </td>
                         <td>
-                          <span className={`lovable-tone-badge ${tone}`}>
+                          <span className={`ZENVE-tone-badge ${tone}`}>
                             {promise.eta}
                           </span>
                         </td>
@@ -438,35 +438,35 @@ export default function DeliveryEngine() {
         {/* ===================================================
             PROMISE POLICY PANEL
         =================================================== */}
-        <section className="lovable-panel-card">
-          <div className="lovable-panel-title-block">
-            <h2 className="lovable-panel-title">Promise policy</h2>
-            <p className="lovable-panel-desc">
+        <section className="ZENVE-panel-card">
+          <div className="ZENVE-panel-title-block">
+            <h2 className="ZENVE-panel-title">Promise policy</h2>
+            <p className="ZENVE-panel-desc">
               What the business is allowed to show a customer.
             </p>
           </div>
 
-          <ul className="lovable-policy-grid">
-            <li className="lovable-policy-item">
-              <span className="lovable-policy-bullet" aria-hidden="true">•</span>
+          <ul className="ZENVE-policy-grid">
+            <li className="ZENVE-policy-item">
+              <span className="ZENVE-policy-bullet" aria-hidden="true">•</span>
               <span>
                 60 minutes applies only to fast-flagged stock inside Mumbai (400xxx) and Bangalore (560xxx).
               </span>
             </li>
-            <li className="lovable-policy-item">
-              <span className="lovable-policy-bullet" aria-hidden="true">•</span>
+            <li className="ZENVE-policy-item">
+              <span className="ZENVE-policy-bullet" aria-hidden="true">•</span>
               <span>
                 Every other serviceable pincode shows a ≤ 3 working-day target.
               </span>
             </li>
-            <li className="lovable-policy-item">
-              <span className="lovable-policy-bullet" aria-hidden="true">•</span>
+            <li className="ZENVE-policy-item">
+              <span className="ZENVE-policy-bullet" aria-hidden="true">•</span>
               <span>
                 Zero available units removes the fast promise automatically.
               </span>
             </li>
-            <li className="lovable-policy-item">
-              <span className="lovable-policy-bullet" aria-hidden="true">•</span>
+            <li className="ZENVE-policy-item">
+              <span className="ZENVE-policy-bullet" aria-hidden="true">•</span>
               <span>
                 Designer-studio stock never carries the 60-minute promise.
               </span>

@@ -75,26 +75,6 @@ function getStageTone(stage) {
   }
 }
 
-function RefreshIcon({ spinning }) {
-  return (
-    <svg
-      className={spinning ? "crm-spinner" : ""}
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M23 4v6h-6" />
-      <path d="M1 20v-6h6" />
-      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-    </svg>
-  );
-}
-
 /* =========================================================
    MAIN COMPONENT: 01 DESIGNER CRM
 ========================================================= */
@@ -569,41 +549,30 @@ export default function DesignerCRM() {
   return (
     <div className="designer-crm-page">
       {/* HEADER */}
-      <header className="lovable-header">
-        <div className="lovable-header-inner">
-          <div className="lovable-header-left">
-            <div className="lovable-portal-logo">
+      <header className="ZENVE-header">
+        <div className="ZENVE-header-inner">
+          <div className="ZENVE-header-left">
+            <div className="ZENVE-portal-logo">
               <img src={logo} alt="Zenve Fashion" />
             </div>
 
-            <div className="lovable-header-title-block">
-              <Link to="/command-centre" className="lovable-back-link">
+            <div className="ZENVE-header-title-block">
+              <Link to="/command-centre" className="ZENVE-back-link">
                 ← ALL 12 LAYERS
               </Link>
 
-              <h1 className="lovable-portal-title">
-                <span className="lovable-layer-num">01</span>
+              <h1 className="ZENVE-portal-title">
+                <span className="ZENVE-layer-num">01</span>
                 <span>Designer CRM</span>
               </h1>
 
-              <p className="lovable-portal-desc">
+              <p className="ZENVE-portal-desc">
                 Supply layer · Lead, qualification, approval, KYC, contract, status
               </p>
             </div>
           </div>
 
-          <div className="lovable-header-right">
-            <button
-              type="button"
-              className="crm-refresh-btn"
-              onClick={() => loadData(true)}
-              disabled={refreshing}
-              title="Refresh live designer metrics"
-            >
-              <RefreshIcon spinning={refreshing} />
-              <span>{refreshing ? "Refreshing..." : "Refresh"}</span>
-            </button>
-
+          <div className="ZENVE-header-right">
             <SearchBar />
           </div>
         </div>

@@ -415,7 +415,7 @@ function buildConsolidatedReport(state) {
 }
 
 /* =========================================================
-   TIME FILTER RANGES (MATCHING LOVABLE)
+   TIME FILTER RANGES (MATCHING ZENVE)
 ========================================================= */
 
 const TIME_RANGES = [
@@ -830,50 +830,30 @@ export default function CommandCentre() {
   return (
     <div className="command-centre-page">
       {/* HEADER */}
-      <header className="lovable-header">
-        <div className="lovable-header-inner">
-          <div className="lovable-header-left">
-            <div className="lovable-portal-logo">
+      <header className="ZENVE-header">
+        <div className="ZENVE-header-inner">
+          <div className="ZENVE-header-left">
+            <div className="ZENVE-portal-logo">
               <img src={logo} alt="Zenve Fashion" />
             </div>
 
-            <div className="lovable-header-title-block">
-              <Link to="/" className="lovable-back-link">
+            <div className="ZENVE-header-title-block">
+              <Link to="/" className="ZENVE-back-link">
                 ← ALL 12 LAYERS
               </Link>
 
-              <h1 className="lovable-portal-title">
-                <span className="lovable-layer-num">12</span>
+              <h1 className="ZENVE-portal-title">
+                <span className="ZENVE-layer-num">12</span>
                 <span>Command Centre</span>
               </h1>
 
-              <p className="lovable-portal-desc">
-                Command Centre · Cross-layer visibility, exceptions, audit log & exports
+              <p className="ZENVE-portal-desc">
+                Admin layer · Approvals, controls, exceptions
               </p>
             </div>
           </div>
 
-          <div className="lovable-header-right">
-            <button
-              type="button"
-              className="cc-header-btn primary"
-              onClick={handleExportFullReport}
-            >
-              <FileDownIcon />
-              <span>Export full report</span>
-            </button>
-
-            <button
-              type="button"
-              className="cc-header-btn"
-              onClick={() => fetchAllData(true)}
-              disabled={refreshing}
-              title="Refresh live metrics from database"
-            >
-              <RefreshIcon spinning={refreshing} />
-              <span>{refreshing ? "Refreshing..." : "Refresh data"}</span>
-            </button>
-
+          <div className="ZENVE-header-right">
             <SearchBar />
           </div>
         </div>
@@ -994,14 +974,27 @@ export default function CommandCentre() {
               </p>
             </div>
 
-            <button
-              type="button"
-              className="cc-header-btn"
-              onClick={handleExportFilteredAudit}
-            >
-              <DownloadIcon className="cc-report-icon" />
-              <span>Export filtered</span>
-            </button>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+              <button
+                type="button"
+                className="cc-header-btn"
+                onClick={() => fetchAllData(true)}
+                disabled={refreshing}
+                title="Refresh live metrics from database"
+              >
+                <RefreshIcon spinning={refreshing} />
+                <span>{refreshing ? "Refreshing..." : "Refresh data"}</span>
+              </button>
+
+              <button
+                type="button"
+                className="cc-header-btn"
+                onClick={handleExportFilteredAudit}
+              >
+                <DownloadIcon className="cc-report-icon" />
+                <span>Export filtered</span>
+              </button>
+            </div>
           </div>
 
           {/* Filter Bar */}

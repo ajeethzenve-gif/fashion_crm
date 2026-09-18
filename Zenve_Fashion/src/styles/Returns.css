@@ -1,17 +1,17 @@
 /* =========================================================
    REVERSE LOGISTICS / RETURNS STYLESHEET (09)
    Zenve Fashion Operations
-   Exact match to https://zenvefashioncm.lovable.app/returns
+   Exact match to https://zenvefashioncm.ZENVE.app/returns
    Fully Responsive: Mobile (320px-640px), Tablet (641px-1024px),
    Laptop (1025px-1440px), Desktop (1441px-1920px), 4K UHD (1921px-3840px+)
 ========================================================= */
 
-.lovable-returns-layout {
+.ZENVE-returns-layout {
   min-height: 100vh;
   width: 100%;
-  background-color: var(--lovable-paper, #fbf9f5);
-  color: var(--lovable-ink, #17130f);
-  font-family: var(--lovable-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  background-color: var(--ZENVE-paper, #fbf9f5);
+  color: var(--ZENVE-ink, #17130f);
+  font-family: var(--ZENVE-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
   box-sizing: border-box;
 }
 
@@ -19,10 +19,10 @@
    HEADER SECTION
 ========================================================= */
 
-.lovable-returns-header {
+.ZENVE-returns-header {
   width: 100%;
-  background: var(--lovable-panel, #ffffff);
-  border-bottom: 1px solid var(--lovable-line, #e8e3da);
+  background: var(--ZENVE-panel, #ffffff);
+  border-bottom: 1px solid var(--ZENVE-line, #e8e3da);
   padding: 16px 28px;
   display: flex;
   align-items: center;
@@ -31,27 +31,32 @@
   box-sizing: border-box;
 }
 
-.lovable-header-left {
+.ZENVE-header-left {
   display: flex;
   align-items: center;
   gap: 20px;
   min-width: 0;
+  flex-shrink: 0;
 }
 
-.lovable-portal-logo img {
+.ZENVE-portal-logo {
+  flex-shrink: 0;
+}
+
+.ZENVE-portal-logo img {
   height: 38px;
   width: auto;
   display: block;
   object-fit: contain;
 }
 
-.lovable-header-title-block {
+.ZENVE-header-title-block {
   display: flex;
   flex-direction: column;
   gap: 3px;
 }
 
-.lovable-back-link {
+.ZENVE-back-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -59,40 +64,40 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
-.lovable-back-link:hover {
-  color: var(--lovable-ink, #17130f);
+.ZENVE-back-link:hover {
+  color: var(--ZENVE-ink, #17130f);
 }
 
-.lovable-portal-title {
+.ZENVE-portal-title {
   margin: 0;
   font-size: 26px;
   font-weight: 500;
   font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  color: var(--lovable-ink, #17130f);
+  color: var(--ZENVE-ink, #17130f);
   display: flex;
   align-items: baseline;
   gap: 10px;
 }
 
-.lovable-layer-num {
+.ZENVE-layer-num {
   font-size: 26px;
   font-weight: 500;
   font-family: inherit;
   color: #c28b51;
 }
 
-.lovable-portal-desc {
+.ZENVE-portal-desc {
   margin: 0;
   font-size: 14px;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
 }
 
-.lovable-header-right {
+.ZENVE-header-right {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -103,7 +108,7 @@
    MAIN CONTAINER
 ========================================================= */
 
-.lovable-returns-main {
+.ZENVE-returns-main {
   max-width: 1480px;
   margin: 0 auto;
   padding: 24px 28px 60px;
@@ -117,7 +122,7 @@
    ALERT / TOAST BANNER
 ========================================================= */
 
-.lovable-returns-alert {
+.ZENVE-returns-alert {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -128,19 +133,19 @@
   animation: fadeIn 0.2s ease-in-out;
 }
 
-.lovable-returns-alert.success {
+.ZENVE-returns-alert.success {
   background-color: #ecfdf5;
   color: #065f46;
   border: 1px solid #a7f3d0;
 }
 
-.lovable-returns-alert.error {
+.ZENVE-returns-alert.error {
   background-color: #fff1f2;
   color: #9f1239;
   border: 1px solid #fecdd3;
 }
 
-.lovable-alert-close {
+.ZENVE-alert-close {
   background: none;
   border: none;
   font-size: 18px;
@@ -151,7 +156,7 @@
   opacity: 0.7;
 }
 
-.lovable-alert-close:hover {
+.ZENVE-alert-close:hover {
   opacity: 1;
 }
 
@@ -164,16 +169,16 @@
    TOP 4 KPI CARDS
 ========================================================= */
 
-.lovable-returns-kpi-grid {
+.ZENVE-returns-kpi-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   width: 100%;
 }
 
-.lovable-kpi-card {
-  background: var(--lovable-panel, #ffffff);
-  border: 1px solid var(--lovable-line, #e8e3da);
+.ZENVE-kpi-card {
+  background: var(--ZENVE-panel, #ffffff);
+  border: 1px solid var(--ZENVE-line, #e8e3da);
   border-radius: 8px;
   padding: 16px 18px;
   display: flex;
@@ -183,38 +188,38 @@
   box-sizing: border-box;
 }
 
-.lovable-kpi-card:hover {
+.ZENVE-kpi-card:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-.lovable-kpi-label {
+.ZENVE-kpi-label {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
 }
 
-.lovable-kpi-value {
+.ZENVE-kpi-value {
   font-size: 26px;
   font-weight: 700;
-  color: var(--lovable-ink, #17130f);
+  color: var(--ZENVE-ink, #17130f);
   line-height: 1.15;
-  font-family: var(--lovable-font-display, "Outfit", sans-serif);
+  font-family: var(--ZENVE-font-display, "Outfit", sans-serif);
 }
 
-.lovable-kpi-hint {
+.ZENVE-kpi-hint {
   font-size: 12px;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
 }
 
 /* =========================================================
    PANEL / SECTION CARD
 ========================================================= */
 
-.lovable-panel-card {
-  background: var(--lovable-panel, #ffffff);
-  border: 1px solid var(--lovable-line, #e8e3da);
+.ZENVE-panel-card {
+  background: var(--ZENVE-panel, #ffffff);
+  border: 1px solid var(--ZENVE-line, #e8e3da);
   border-radius: 8px;
   padding: 20px 22px;
   display: flex;
@@ -223,7 +228,7 @@
   box-sizing: border-box;
 }
 
-.lovable-panel-header {
+.ZENVE-panel-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -231,23 +236,23 @@
   gap: 12px;
 }
 
-.lovable-panel-title-block {
+.ZENVE-panel-title-block {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.lovable-panel-title {
+.ZENVE-panel-title {
   margin: 0;
   font-size: 17px;
   font-weight: 600;
-  color: var(--lovable-ink, #17130f);
+  color: var(--ZENVE-ink, #17130f);
 }
 
-.lovable-panel-desc {
+.ZENVE-panel-desc {
   margin: 0;
   font-size: 13px;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
   line-height: 1.4;
 }
 
@@ -255,7 +260,7 @@
    RAISE A RETURN FORM
 ========================================================= */
 
-.lovable-raise-return-form {
+.ZENVE-raise-return-form {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end !important;
@@ -264,7 +269,7 @@
   width: 100%;
 }
 
-.lovable-form-field {
+.ZENVE-form-field {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -272,53 +277,53 @@
   padding: 0;
 }
 
-.lovable-form-field label {
+.ZENVE-form-field label {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
   line-height: 1.2;
   margin: 0;
   padding: 0;
 }
 
-.lovable-select,
-.lovable-input {
+.ZENVE-select,
+.ZENVE-input {
   height: 38px !important;
-  border: 1px solid var(--lovable-line, #e8e3da);
+  border: 1px solid var(--ZENVE-line, #e8e3da);
   border-radius: 6px;
   padding: 0 12px;
   font-size: 13.5px;
-  background-color: var(--lovable-panel, #ffffff);
-  color: var(--lovable-ink, #17130f);
+  background-color: var(--ZENVE-panel, #ffffff);
+  color: var(--ZENVE-ink, #17130f);
   outline: none;
   box-sizing: border-box;
   margin: 0 !important;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.lovable-select:focus,
-.lovable-input:focus {
+.ZENVE-select:focus,
+.ZENVE-input:focus {
   border-color: #92400e;
   box-shadow: 0 0 0 2px rgba(146, 64, 14, 0.1);
 }
 
-.lovable-select:disabled,
-.lovable-input:disabled {
+.ZENVE-select:disabled,
+.ZENVE-input:disabled {
   background-color: #f7f5f0;
   color: #a8a29e;
   cursor: not-allowed;
 }
 
-.lovable-btn-primary {
+.ZENVE-btn-primary {
   height: 38px !important;
   padding: 0 18px;
   font-size: 13.5px;
   font-weight: 600;
   border-radius: 6px;
-  border: 1px solid var(--lovable-ink, #17130f);
-  background-color: var(--lovable-ink, #17130f) !important;
+  border: 1px solid var(--ZENVE-ink, #17130f);
+  background-color: var(--ZENVE-ink, #17130f) !important;
   color: #ffffff !important;
   cursor: pointer;
   display: inline-flex;
@@ -332,17 +337,17 @@
   transition: background-color 0.15s ease, opacity 0.15s ease;
 }
 
-.lovable-btn-primary:hover:not(:disabled) {
+.ZENVE-btn-primary:hover:not(:disabled) {
   background-color: #332d26 !important;
   border-color: #332d26 !important;
 }
 
-.lovable-btn-primary:disabled {
+.ZENVE-btn-primary:disabled {
   opacity: 0.85;
   cursor: not-allowed;
 }
 
-.lovable-btn-sm {
+.ZENVE-btn-sm {
   height: 32px;
   padding: 0 14px;
   font-size: 12.5px;
@@ -357,37 +362,37 @@
   box-sizing: border-box;
 }
 
-.lovable-btn-sm.primary {
-  background-color: var(--lovable-ink, #17130f);
+.ZENVE-btn-sm.primary {
+  background-color: var(--ZENVE-ink, #17130f);
   color: #ffffff;
 }
 
-.lovable-btn-sm.primary:hover:not(:disabled) {
+.ZENVE-btn-sm.primary:hover:not(:disabled) {
   background-color: #332d26;
 }
 
-.lovable-btn-sm.outline {
+.ZENVE-btn-sm.outline {
   background-color: transparent;
-  border-color: var(--lovable-line, #e8e3da);
-  color: var(--lovable-ink, #17130f);
+  border-color: var(--ZENVE-line, #e8e3da);
+  color: var(--ZENVE-ink, #17130f);
 }
 
-.lovable-btn-sm.outline:hover:not(:disabled) {
+.ZENVE-btn-sm.outline:hover:not(:disabled) {
   background-color: #faf7f2;
   border-color: #d6cfc4;
 }
 
-.lovable-btn-sm.danger-outline {
+.ZENVE-btn-sm.danger-outline {
   background-color: transparent;
   border-color: #fecdd3;
   color: #be123c;
 }
 
-.lovable-btn-sm.danger-outline:hover:not(:disabled) {
+.ZENVE-btn-sm.danger-outline:hover:not(:disabled) {
   background-color: #fff1f2;
 }
 
-.lovable-btn-sm:disabled {
+.ZENVE-btn-sm:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -396,15 +401,15 @@
    RETURN WORKFLOW LIST
 ========================================================= */
 
-.lovable-returns-list {
+.ZENVE-returns-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
   width: 100%;
 }
 
-.lovable-return-card {
-  border: 1px solid var(--lovable-line, #e8e3da);
+.ZENVE-return-card {
+  border: 1px solid var(--ZENVE-line, #e8e3da);
   border-radius: 6px;
   padding: 16px 18px;
   background: #ffffff;
@@ -415,33 +420,33 @@
   box-sizing: border-box;
 }
 
-.lovable-return-card:hover {
+.ZENVE-return-card:hover {
   border-color: #d6cfc4;
 }
 
-.lovable-return-top {
+.ZENVE-return-top {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-.lovable-return-id {
+.ZENVE-return-id {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
-  color: var(--lovable-ink, #17130f);
+  color: var(--ZENVE-ink, #17130f);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-.lovable-return-details {
+.ZENVE-return-details {
   margin: 0;
   font-size: 13.5px;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
   line-height: 1.4;
 }
 
-.lovable-return-actions {
+.ZENVE-return-actions {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -453,7 +458,7 @@
    TONE BADGES
 ========================================================= */
 
-.lovable-tone-badge {
+.ZENVE-tone-badge {
   display: inline-flex;
   align-items: center;
   padding: 2.5px 8px;
@@ -465,31 +470,31 @@
   line-height: 1.2;
 }
 
-.lovable-tone-badge.good {
+.ZENVE-tone-badge.good {
   background-color: #ecfdf5;
   color: #065f46;
   border: 1px solid #a7f3d0;
 }
 
-.lovable-tone-badge.warn {
+.ZENVE-tone-badge.warn {
   background-color: #fffbeb;
   color: #92400e;
   border: 1px solid #fde68a;
 }
 
-.lovable-tone-badge.bad {
+.ZENVE-tone-badge.bad {
   background-color: #fff1f2;
   color: #9f1239;
   border: 1px solid #fecdd3;
 }
 
-.lovable-tone-badge.info {
+.ZENVE-tone-badge.info {
   background-color: #eff6ff;
   color: #1e40af;
   border: 1px solid #bfdbfe;
 }
 
-.lovable-tone-badge.neutral {
+.ZENVE-tone-badge.neutral {
   background-color: #f5f2ec;
   color: #5c554e;
   border: 1px solid #e5dfd5;
@@ -499,361 +504,553 @@
    EMPTY STATE BOX
 ========================================================= */
 
-.lovable-empty-box {
+.ZENVE-empty-box {
   padding: 32px 16px;
   text-align: center;
-  border: 1px dashed var(--lovable-line, #e8e3da);
+  border: 1px dashed var(--ZENVE-line, #e8e3da);
   border-radius: 6px;
-  color: var(--lovable-muted, #736b63);
+  color: var(--ZENVE-muted, #736b63);
   font-size: 13.5px;
   background-color: #fdfbf8;
 }
 
 /* =========================================================
-   RESPONSIVE BREAKPOINTS: MOBILE (320px - 640px)
+   COMPREHENSIVE ALL-SCREEN-SIZE RESPONSIVE MEDIA QUERIES
 ========================================================= */
 
+/* ---------------------------------------------------------
+   1. MOBILE PHONES (320px - 640px)
+   Smartphones like iPhone, Pixel, Galaxy
+--------------------------------------------------------- */
+
 @media (max-width: 640px) {
-  .lovable-returns-header {
+  .ZENVE-returns-header {
     flex-direction: column;
     align-items: stretch;
     padding: 12px 14px;
     gap: 12px;
   }
 
-  .lovable-header-left {
+  .ZENVE-header-left {
+    display: flex;
+    align-items: flex-start;
     gap: 12px;
+    width: 100%;
   }
 
-  .lovable-portal-logo img {
-    height: 30px;
+  .ZENVE-portal-logo {
+    flex-shrink: 0;
   }
 
-  .lovable-portal-title {
-    font-size: 21px;
+  .ZENVE-portal-logo img {
+    height: 32px;
+    width: auto;
+  }
+
+  .ZENVE-header-title-block {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ZENVE-portal-title {
+    font-size: 20px;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .ZENVE-layer-num {
+    font-size: 20px;
+  }
+
+  .ZENVE-portal-desc {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .ZENVE-header-right {
+    width: 100%;
+  }
+
+  .ZENVE-header-right .search-user-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     gap: 8px;
   }
 
-  .lovable-layer-num {
-    font-size: 21px;
-  }
-
-  .lovable-portal-desc {
-    font-size: 12px;
-    line-height: 1.35;
-  }
-
-  .lovable-header-right {
+  .ZENVE-header-right .search-bar-wrapper {
     width: 100%;
-    justify-content: stretch;
+    flex: 1 1 100%;
+    max-width: 100%;
   }
 
-  .lovable-header-right .search-bar-container {
+  .ZENVE-header-right .search-box {
     width: 100%;
+    box-sizing: border-box;
   }
 
-  .lovable-returns-main {
+  .ZENVE-header-right .home-user {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .ZENVE-returns-main {
     padding: 14px 12px 48px;
     gap: 16px;
   }
 
   /* Top 4 KPI Cards: 2x2 grid */
-  .lovable-returns-kpi-grid {
+  .ZENVE-returns-kpi-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
 
-  .lovable-kpi-card {
+  .ZENVE-kpi-card {
     padding: 12px 14px;
   }
 
-  .lovable-kpi-label {
+  .ZENVE-kpi-label {
     font-size: 10px;
   }
 
-  .lovable-kpi-value {
+  .ZENVE-kpi-value {
     font-size: 22px;
   }
 
-  .lovable-panel-card {
+  .ZENVE-panel-card {
     padding: 14px 14px;
     gap: 14px;
   }
 
+  .ZENVE-panel-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  .ZENVE-panel-title {
+    font-size: 16px;
+  }
+
+  .ZENVE-panel-desc {
+    font-size: 12.5px;
+    line-height: 1.4;
+  }
+
   /* Raise Return Form on Mobile */
-  .lovable-raise-return-form {
+  .ZENVE-raise-return-form {
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
-  }
-
-  .lovable-form-field {
     width: 100%;
   }
 
-  .lovable-select,
-  .lovable-input {
+  .ZENVE-form-field {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ZENVE-select,
+  .ZENVE-input {
     width: 100% !important;
     min-width: 0 !important;
+    box-sizing: border-box;
     height: 38px;
+    font-size: 13.5px;
   }
 
-  .lovable-btn-primary {
+  .ZENVE-btn-primary {
     width: 100%;
     height: 38px;
+    font-size: 13px;
+    justify-content: center;
   }
 
   /* Return Card on Mobile */
-  .lovable-return-card {
-    padding: 14px 12px;
-    gap: 8px;
+  .ZENVE-returns-list {
+    gap: 10px;
   }
 
-  .lovable-return-id {
+  .ZENVE-return-card {
+    padding: 14px 12px;
+    gap: 10px;
+  }
+
+  .ZENVE-return-top {
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .ZENVE-return-id {
     font-size: 14px;
   }
 
-  .lovable-return-details {
+  .ZENVE-return-details {
     font-size: 12.5px;
+    line-height: 1.45;
+    word-break: break-word;
   }
 
-  .lovable-return-actions {
+  .ZENVE-return-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     width: 100%;
   }
 
-  .lovable-return-actions .lovable-btn-sm {
+  .ZENVE-return-actions .ZENVE-btn-sm {
     width: 100%;
     height: 36px;
     font-size: 12px;
+    justify-content: center;
   }
 
-  .lovable-return-actions > button:only-child {
+  .ZENVE-return-actions > button:only-child {
     grid-column: 1 / -1;
   }
 }
 
 /* Extra small mobile (< 380px) */
 @media (max-width: 380px) {
-  .lovable-returns-header {
+  .ZENVE-returns-header {
     padding: 10px 10px;
   }
 
-  .lovable-returns-main {
+  .ZENVE-returns-main {
     padding: 10px 8px 36px;
     gap: 12px;
   }
 
-  .lovable-returns-kpi-grid {
+  .ZENVE-returns-kpi-grid {
     grid-template-columns: 1fr;
     gap: 6px;
   }
 
-  .lovable-kpi-value {
+  .ZENVE-kpi-value {
     font-size: 20px;
   }
 
-  .lovable-return-actions {
+  .ZENVE-return-actions {
     grid-template-columns: 1fr;
   }
 }
 
-/* =========================================================
-   RESPONSIVE BREAKPOINTS: TABLET PORTRAIT (641px - 768px)
-========================================================= */
+/* ---------------------------------------------------------
+   2. TABLETS & MEDIUM SCREENS (641px - 1140px)
+   iPad, iPad Air, iPad Pro, Android Tablets, Surface Pro
+--------------------------------------------------------- */
 
-@media (min-width: 641px) and (max-width: 768px) {
-  .lovable-returns-header {
-    padding: 14px 20px;
+@media (min-width: 641px) and (max-width: 1140px) {
+  .ZENVE-returns-header {
+    padding: 14px 24px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
   }
 
-  .lovable-portal-title {
-    font-size: 23px;
+  .ZENVE-header-left {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
   }
 
-  .lovable-portal-desc {
-    font-size: 13px;
+  .ZENVE-portal-logo {
+    flex-shrink: 0;
   }
 
-  .lovable-returns-main {
-    padding: 18px 20px 48px;
+  .ZENVE-portal-logo img {
+    height: 36px;
+    width: auto;
+  }
+
+  .ZENVE-header-title-block {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ZENVE-portal-title {
+    font-size: 22px;
+    line-height: 1.25;
+    white-space: nowrap;
+  }
+
+  .ZENVE-portal-desc {
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--ZENVE-muted, #736b63);
+    white-space: normal;
+    margin-top: 2px;
+  }
+
+  .ZENVE-header-right {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--ZENVE-line, #e8e3da);
+  }
+
+  .ZENVE-header-right .search-user-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    min-width: 0;
+  }
+
+  .ZENVE-header-right .search-bar-wrapper {
+    flex: 1;
+    max-width: 340px;
+    min-width: 180px;
+  }
+
+  .ZENVE-header-right .home-user {
+    flex-shrink: 0;
+  }
+
+  .ZENVE-returns-main {
+    max-width: 100%;
+    padding: 20px 24px 60px;
     gap: 20px;
   }
 
-  /* Top 4 KPIs: 4 columns */
-  .lovable-returns-kpi-grid {
+  /* Top 4 KPIs: 4 columns on landscape tablet */
+  .ZENVE-returns-kpi-grid {
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
   }
 
-  .lovable-kpi-card {
-    padding: 12px 14px;
+  .ZENVE-kpi-card {
+    padding: 14px 16px;
   }
 
-  .lovable-kpi-value {
-    font-size: 22px;
+  .ZENVE-kpi-value {
+    font-size: 24px;
   }
 
-  .lovable-select,
-  .lovable-input {
-    min-width: 180px !important;
+  /* Raise return form flex */
+  .ZENVE-raise-return-form {
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
+  }
+
+  .ZENVE-select,
+  .ZENVE-input {
+    min-width: 160px !important;
+  }
+
+  .ZENVE-return-card {
+    padding: 16px 18px;
   }
 }
 
-/* =========================================================
-   RESPONSIVE BREAKPOINTS: TABLET LANDSCAPE (769px - 1024px)
-========================================================= */
-
-@media (min-width: 769px) and (max-width: 1024px) {
-  .lovable-returns-header {
-    padding: 16px 24px;
+/* Tablet portrait & narrow tablets (641px - 840px) */
+@media (min-width: 641px) and (max-width: 840px) {
+  .ZENVE-returns-header {
+    padding: 12px 18px;
+    gap: 10px;
   }
 
-  .lovable-returns-main {
-    padding: 20px 24px 52px;
-    gap: 22px;
+  .ZENVE-header-right {
+    gap: 12px;
+    padding-top: 10px;
   }
 
-  .lovable-returns-kpi-grid {
+  .ZENVE-returns-main {
+    padding: 16px 18px 48px;
+    gap: 16px;
+  }
+
+  /* Top 4 KPIs: 2x2 grid on portrait tablet */
+  .ZENVE-returns-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  /* Stack form elements vertically */
+  .ZENVE-raise-return-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .ZENVE-form-field {
+    width: 100%;
+  }
+
+  .ZENVE-select,
+  .ZENVE-input {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .ZENVE-btn-primary {
+    width: 100%;
+  }
+}
+
+/* ---------------------------------------------------------
+   3. LAPTOP & STANDARD DESKTOP (1141px - 1440px)
+   MacBook Pro, ThinkPad, Standard 1080p Desktop
+--------------------------------------------------------- */
+
+@media (min-width: 1141px) and (max-width: 1440px) {
+  .ZENVE-returns-main {
+    max-width: 1380px;
+  }
+
+  .ZENVE-returns-kpi-grid {
     grid-template-columns: repeat(4, 1fr);
     gap: 12px;
   }
 }
 
-/* =========================================================
-   RESPONSIVE BREAKPOINTS: LAPTOP / DESKTOP (1025px - 1440px)
-   Standard reference baseline
-========================================================= */
-
-@media (min-width: 1025px) and (max-width: 1440px) {
-  .lovable-returns-main {
-    max-width: 1380px;
-  }
-}
-
-/* =========================================================
-   RESPONSIVE BREAKPOINTS: LARGE DESKTOP (1441px - 1920px)
-========================================================= */
+/* ---------------------------------------------------------
+   4. LARGE DESKTOP & WIDE MONITORS (1441px - 1920px)
+   iMac 24", 27" QHD, Studio Display
+--------------------------------------------------------- */
 
 @media (min-width: 1441px) and (max-width: 1920px) {
-  .lovable-returns-header {
+  .ZENVE-returns-header {
     padding: 18px 36px;
   }
 
-  .lovable-portal-title {
+  .ZENVE-portal-title {
     font-size: 28px;
   }
 
-  .lovable-layer-num {
+  .ZENVE-layer-num {
     font-size: 28px;
   }
 
-  .lovable-returns-main {
+  .ZENVE-returns-main {
     max-width: 1640px;
     padding: 28px 36px 64px;
     gap: 26px;
   }
 
-  .lovable-kpi-card {
-    padding: 18px 22px;
+  .ZENVE-returns-kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
   }
 
-  .lovable-kpi-value {
+  .ZENVE-kpi-card {
+    padding: 18px 22px;
+    gap: 8px;
+  }
+
+  .ZENVE-kpi-label {
+    font-size: 12px;
+  }
+
+  .ZENVE-kpi-value {
     font-size: 28px;
   }
 
-  .lovable-panel-card {
+  .ZENVE-panel-card {
     padding: 22px 26px;
+    gap: 18px;
   }
 }
 
-/* =========================================================
-   RESPONSIVE BREAKPOINTS: 4K ULTRA HD (1921px - 3840px+)
-========================================================= */
+/* ---------------------------------------------------------
+   5. 4K ULTRA HD SCREENS (1921px - 3840px+)
+   Ultra-high resolution displays, 4K/5K Monitors
+--------------------------------------------------------- */
 
 @media (min-width: 1921px) {
-  .lovable-returns-header {
+  .ZENVE-returns-header {
     padding: 24px 64px;
   }
 
-  .lovable-portal-logo img {
+  .ZENVE-portal-logo img {
     height: 52px;
   }
 
-  .lovable-back-link {
+  .ZENVE-back-link {
     font-size: 13.5px;
     gap: 8px;
   }
 
-  .lovable-portal-title {
+  .ZENVE-portal-title {
     font-size: 34px;
     gap: 12px;
   }
 
-  .lovable-layer-num {
+  .ZENVE-layer-num {
     font-size: 34px;
   }
 
-  .lovable-portal-desc {
+  .ZENVE-portal-desc {
     font-size: 16.5px;
   }
 
-  .lovable-returns-main {
+  .ZENVE-returns-main {
     max-width: 2800px;
     padding: 36px 64px 80px;
     gap: 32px;
   }
 
   /* 4K Top 4 KPI Cards */
-  .lovable-returns-kpi-grid {
+  .ZENVE-returns-kpi-grid {
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
   }
 
-  .lovable-kpi-card {
+  .ZENVE-kpi-card {
     padding: 22px 26px;
     border-radius: 10px;
-    gap: 6px;
+    gap: 8px;
   }
 
-  .lovable-kpi-label {
+  .ZENVE-kpi-label {
     font-size: 13px;
   }
 
-  .lovable-kpi-value {
+  .ZENVE-kpi-value {
     font-size: 36px;
   }
 
   /* 4K Panels */
-  .lovable-panel-card {
+  .ZENVE-panel-card {
     padding: 28px 32px;
     border-radius: 10px;
     gap: 22px;
   }
 
-  .lovable-panel-title {
+  .ZENVE-panel-title {
     font-size: 22px;
   }
 
-  .lovable-panel-desc {
+  .ZENVE-panel-desc {
     font-size: 15.5px;
   }
 
   /* 4K Form */
-  .lovable-form-field label {
+  .ZENVE-form-field label {
     font-size: 13px;
   }
 
-  .lovable-select,
-  .lovable-input {
+  .ZENVE-select,
+  .ZENVE-input {
     height: 44px;
     font-size: 15px;
     border-radius: 8px;
   }
 
-  .lovable-btn-primary {
+  .ZENVE-btn-primary {
     height: 44px;
     padding: 0 24px;
     font-size: 15px;
@@ -861,30 +1058,30 @@
   }
 
   /* 4K Return Card */
-  .lovable-returns-list {
+  .ZENVE-returns-list {
     gap: 16px;
   }
 
-  .lovable-return-card {
+  .ZENVE-return-card {
     padding: 22px 26px;
     border-radius: 10px;
-    gap: 12px;
+    gap: 14px;
   }
 
-  .lovable-return-id {
+  .ZENVE-return-id {
     font-size: 18px;
   }
 
-  .lovable-return-details {
+  .ZENVE-return-details {
     font-size: 15.5px;
   }
 
-  .lovable-tone-badge {
+  .ZENVE-tone-badge {
     font-size: 13px;
     padding: 4px 10px;
   }
 
-  .lovable-btn-sm {
+  .ZENVE-btn-sm {
     height: 38px;
     padding: 0 18px;
     font-size: 14px;
@@ -894,23 +1091,23 @@
 
 /* Extreme 4K Resolution (3200px - 3840px Native) */
 @media (min-width: 3200px) {
-  .lovable-returns-main {
+  .ZENVE-returns-main {
     max-width: 3400px;
   }
 
-  .lovable-portal-title {
+  .ZENVE-portal-title {
     font-size: 40px;
   }
 
-  .lovable-layer-num {
+  .ZENVE-layer-num {
     font-size: 40px;
   }
 
-  .lovable-kpi-value {
+  .ZENVE-kpi-value {
     font-size: 42px;
   }
 
-  .lovable-return-id {
+  .ZENVE-return-id {
     font-size: 20px;
   }
-}
+}

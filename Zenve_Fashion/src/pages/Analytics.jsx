@@ -409,7 +409,7 @@ function buildConsolidatedReport(state) {
 }
 
 /* =========================================================
-   BAR CHART COMPONENT (GMV BY DESIGNER - EXACT LOVABLE)
+   BAR CHART COMPONENT (GMV BY DESIGNER - EXACT ZENVE)
 ========================================================= */
 
 function DesignerGmvChart({ data = [] }) {
@@ -426,21 +426,21 @@ function DesignerGmvChart({ data = [] }) {
       >
         <CartesianGrid
           strokeDasharray="3 3"
-          stroke="var(--lovable-border)"
+          stroke="var(--ZENVE-border)"
           vertical={false}
         />
         <XAxis
           dataKey="name"
-          tick={{ fontSize: 12, fill: "var(--lovable-muted)" }}
+          tick={{ fontSize: 12, fill: "var(--ZENVE-muted)" }}
           tickLine={false}
-          axisLine={{ stroke: "var(--lovable-border)" }}
+          axisLine={{ stroke: "var(--ZENVE-border)" }}
           interval={0}
           tickFormatter={(name) =>
             name && name.length > 12 ? `${name.slice(0, 10)}…` : name
           }
         />
         <YAxis
-          tick={{ fontSize: 12, fill: "var(--lovable-muted)" }}
+          tick={{ fontSize: 12, fill: "var(--ZENVE-muted)" }}
           tickLine={false}
           axisLine={false}
           tickFormatter={(v) =>
@@ -450,18 +450,18 @@ function DesignerGmvChart({ data = [] }) {
         <Tooltip
           formatter={(value) => [`₹${Number(value).toLocaleString()}`, "GMV"]}
           contentStyle={{
-            backgroundColor: "var(--lovable-card)",
-            borderColor: "var(--lovable-border)",
+            backgroundColor: "var(--ZENVE-card)",
+            borderColor: "var(--ZENVE-border)",
             borderRadius: "6px",
             fontSize: "12px",
-            color: "var(--lovable-ink)",
+            color: "var(--ZENVE-ink)",
             boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
           }}
           cursor={{ fill: "rgba(194, 139, 81, 0.08)" }}
         />
         <Bar
           dataKey="gmv"
-          fill="var(--lovable-gold)"
+          fill="var(--ZENVE-gold)"
           radius={[4, 4, 0, 0]}
           maxBarSize={52}
         />
@@ -471,7 +471,7 @@ function DesignerGmvChart({ data = [] }) {
 }
 
 /* =========================================================
-   DONUT CHART COMPONENT (INVENTORY SPLIT - EXACT LOVABLE)
+   DONUT CHART COMPONENT (INVENTORY SPLIT - EXACT ZENVE)
 ========================================================= */
 
 const INVENTORY_COLORS = [
@@ -514,7 +514,7 @@ function InventoryDonutChart({ split = {} }) {
                 <Cell
                   key={`cell-${index}`}
                   fill={INVENTORY_COLORS[index % INVENTORY_COLORS.length]}
-                  stroke="var(--lovable-card)"
+                  stroke="var(--ZENVE-card)"
                   strokeWidth={2}
                 />
               ))}
@@ -522,11 +522,11 @@ function InventoryDonutChart({ split = {} }) {
             <Tooltip
               formatter={(value, name) => [`${value} units`, name]}
               contentStyle={{
-                backgroundColor: "var(--lovable-card)",
-                borderColor: "var(--lovable-border)",
+                backgroundColor: "var(--ZENVE-card)",
+                borderColor: "var(--ZENVE-border)",
                 borderRadius: "6px",
                 fontSize: "12px",
-                color: "var(--lovable-ink)",
+                color: "var(--ZENVE-ink)",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
               }}
             />
@@ -534,7 +534,7 @@ function InventoryDonutChart({ split = {} }) {
         </ResponsiveContainer>
       </div>
 
-      {/* Lovable Exact Donut Legend */}
+      {/* ZENVE Exact Donut Legend */}
       <div className="donut-legend">
         {segments.map((seg, i) => (
           <span key={seg.name} className="legend-item">
@@ -841,30 +841,30 @@ export default function Analytics() {
   return (
     <div className="analytics-page">
       {/* HEADER */}
-      <header className="lovable-header">
-        <div className="lovable-header-inner">
-          <div className="lovable-header-left">
-            <div className="lovable-portal-logo">
+      <header className="ZENVE-header">
+        <div className="ZENVE-header-inner">
+          <div className="ZENVE-header-left">
+            <div className="ZENVE-portal-logo">
               <img src={logo} alt="Zenve Fashion" />
             </div>
 
-            <div className="lovable-header-title-block">
-              <Link to="/command-centre" className="lovable-back-link">
+            <div className="ZENVE-header-title-block">
+              <Link to="/command-centre" className="ZENVE-back-link">
                 ← ALL 12 LAYERS
               </Link>
 
-              <h1 className="lovable-portal-title">
-                <span className="lovable-layer-num">11</span>
+              <h1 className="ZENVE-portal-title">
+                <span className="ZENVE-layer-num">11</span>
                 <span>BI Dashboards</span>
               </h1>
 
-              <p className="lovable-portal-desc">
+              <p className="ZENVE-portal-desc">
                 Analytics layer · Designer, SKU, inventory, customer, marketing KPIs
               </p>
             </div>
           </div>
 
-          <div className="lovable-header-right">
+          <div className="ZENVE-header-right">
             <SearchBar />
           </div>
         </div>
@@ -974,13 +974,13 @@ export default function Analytics() {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="6" style={{ textAlign: "center", padding: "32px", color: "var(--lovable-muted)" }}>
+                    <td colSpan="6" style={{ textAlign: "center", padding: "32px", color: "var(--ZENVE-muted)" }}>
                       Loading SKU performance metrics...
                     </td>
                   </tr>
                 ) : skuPerformanceList.length === 0 ? (
                   <tr>
-                    <td colSpan="6" style={{ textAlign: "center", padding: "32px", color: "var(--lovable-muted)" }}>
+                    <td colSpan="6" style={{ textAlign: "center", padding: "32px", color: "var(--ZENVE-muted)" }}>
                       No active SKUs found in catalogue.
                     </td>
                   </tr>

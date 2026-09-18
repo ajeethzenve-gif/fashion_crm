@@ -230,43 +230,43 @@ export default function CatalogueQa() {
      RENDER
   ======================================================= */
   return (
-    <div className="lovable-qa-layout">
+    <div className="ZENVE-qa-layout">
       {/* =====================================================
           HEADER SECTION
       ===================================================== */}
-      <header className="lovable-qa-header">
-        <div className="lovable-header-left">
-          <Link to="/" className="lovable-portal-logo">
+      <header className="ZENVE-qa-header">
+        <div className="ZENVE-header-left">
+          <Link to="/" className="ZENVE-portal-logo">
             <img src={logo} alt="Zenve Fashion" />
           </Link>
 
-          <div className="lovable-header-title-block">
-            <Link to="/" className="lovable-back-link">
+          <div className="ZENVE-header-title-block">
+            <Link to="/" className="ZENVE-back-link">
               <BackIcon />
               <span>ALL 12 LAYERS</span>
             </Link>
 
-            <h1 className="lovable-portal-title">
-              <span className="lovable-layer-num">04</span>
+            <h1 className="ZENVE-portal-title">
+              <span className="ZENVE-layer-num">04</span>
               Catalogue QA
             </h1>
 
-            <p className="lovable-portal-subtitle">
-              Review incoming designer SKUs across 10 quality dimensions.
+            <p className="ZENVE-portal-subtitle">
+              QA layer · Validation, approval, audit trail
             </p>
           </div>
         </div>
 
-        <div className="lovable-header-right">
+        <div className="ZENVE-header-right">
           <SearchBar />
         </div>
       </header>
 
       {/* FEEDBACK NOTIFICATION */}
       {alert && (
-        <div className={`lovable-alert lovable-alert-${alert.type}`}>
+        <div className={`ZENVE-alert ZENVE-alert-${alert.type}`}>
           <span>{alert.text}</span>
-          <button type="button" className="lovable-alert-close" onClick={() => setAlert(null)}>
+          <button type="button" className="ZENVE-alert-close" onClick={() => setAlert(null)}>
             ×
           </button>
         </div>
@@ -274,65 +274,65 @@ export default function CatalogueQa() {
 
       {/* ERROR NOTIFICATION */}
       {error && (
-        <div className="lovable-alert lovable-alert-error">
+        <div className="ZENVE-alert ZENVE-alert-error">
           <span>{error}</span>
-          <button type="button" className="lovable-alert-close" onClick={loadProducts}>
+          <button type="button" className="ZENVE-alert-close" onClick={loadProducts}>
             Retry
           </button>
         </div>
       )}
 
-      <main className="lovable-qa-main">
+      <main className="ZENVE-qa-main">
         {/* ===================================================
             TOP 4 KPI METRIC TILES
         =================================================== */}
-        <div className="lovable-qa-kpi-grid">
-          <div className="lovable-kpi-tile">
-            <div className="lovable-tile-label">In queue</div>
-            <div className="lovable-tile-value">{loading ? "—" : kpis.inQueue}</div>
-            <div className="lovable-tile-hint">Awaiting a score</div>
+        <div className="ZENVE-qa-kpi-grid">
+          <div className="ZENVE-kpi-tile">
+            <div className="ZENVE-tile-label">In queue</div>
+            <div className="ZENVE-tile-value">{loading ? "—" : kpis.inQueue}</div>
+            <div className="ZENVE-tile-hint">Awaiting a score</div>
           </div>
 
-          <div className="lovable-kpi-tile">
-            <div className="lovable-tile-label">Approved</div>
-            <div className="lovable-tile-value">{loading ? "—" : kpis.approved}</div>
-            <div className="lovable-tile-hint">Live on storefront</div>
+          <div className="ZENVE-kpi-tile">
+            <div className="ZENVE-tile-label">Approved</div>
+            <div className="ZENVE-tile-value">{loading ? "—" : kpis.approved}</div>
+            <div className="ZENVE-tile-hint">Live on storefront</div>
           </div>
 
-          <div className="lovable-kpi-tile">
-            <div className="lovable-tile-label">Rejected</div>
-            <div className="lovable-tile-value">{loading ? "—" : kpis.rejected}</div>
-            <div className="lovable-tile-hint">Needs revision</div>
+          <div className="ZENVE-kpi-tile">
+            <div className="ZENVE-tile-label">Rejected</div>
+            <div className="ZENVE-tile-value">{loading ? "—" : kpis.rejected}</div>
+            <div className="ZENVE-tile-hint">Needs revision</div>
           </div>
 
-          <div className="lovable-kpi-tile">
-            <div className="lovable-tile-label">Average quality</div>
-            <div className="lovable-tile-value">{loading ? "—" : `${kpis.avgQuality}/100`}</div>
-            <div className="lovable-tile-hint">Across reviewed SKUs</div>
+          <div className="ZENVE-kpi-tile">
+            <div className="ZENVE-tile-label">Average quality</div>
+            <div className="ZENVE-tile-value">{loading ? "—" : `${kpis.avgQuality}/100`}</div>
+            <div className="ZENVE-tile-hint">Across reviewed SKUs</div>
           </div>
         </div>
 
         {/* ===================================================
             SECTION 1: QA QUEUE
         =================================================== */}
-        <section className="lovable-portal-card">
-          <div className="lovable-card-header">
+        <section className="ZENVE-portal-card">
+          <div className="ZENVE-card-header">
             <div>
-              <h2 className="lovable-card-title">QA queue</h2>
-              <p className="lovable-card-description">
+              <h2 className="ZENVE-card-title">QA queue</h2>
+              <p className="ZENVE-card-description">
                 Ten weighted dimensions make the Total Product Quality Score. 90–100 approve · 75–89 correction · below 75 reject.
               </p>
             </div>
           </div>
 
           {loading ? (
-            <div className="lovable-item-empty">Loading QA queue from Django...</div>
+            <div className="ZENVE-item-empty">Loading QA queue from Django...</div>
           ) : queueSkus.length === 0 ? (
-            <div className="lovable-item-empty">
+            <div className="ZENVE-item-empty">
               Queue is clear. New designer uploads land here automatically.
             </div>
           ) : (
-            <div className="lovable-qa-queue-stack">
+            <div className="ZENVE-qa-queue-stack">
               {queueSkus.map((sku) => {
                 const scores = getScoresForSku(sku.id);
                 const totalScore = calculateWeightedScore(scores);
@@ -342,33 +342,33 @@ export default function CatalogueQa() {
                 const location = sku.location || sku.fulfilment_location || "Mumbai FC";
 
                 return (
-                  <div key={sku.id} className="lovable-qa-card">
+                  <div key={sku.id} className="ZENVE-qa-card">
                     {/* CARD HEADER */}
-                    <div className="lovable-qa-top-bar">
-                      <h3 className="lovable-sku-title">{sku.product_name || sku.name}</h3>
+                    <div className="ZENVE-qa-top-bar">
+                      <h3 className="ZENVE-sku-title">{sku.product_name || sku.name}</h3>
 
-                      <span className={`lovable-qa-badge tone-${qaStatus.toLowerCase()}`}>
+                      <span className={`ZENVE-qa-badge tone-${qaStatus.toLowerCase()}`}>
                         {qaStatus}
                       </span>
 
-                      <span className={`lovable-tone-badge ${scoreTone}`}>
+                      <span className={`ZENVE-tone-badge ${scoreTone}`}>
                         {totalScore}/100
                       </span>
                     </div>
 
                     {/* SKU ID MONO */}
-                    <div className="lovable-sku-id-mono">{sku.sku}</div>
+                    <div className="ZENVE-sku-id-mono">{sku.sku}</div>
 
                     {/* SUBTITLE DETAILS */}
-                    <p className="lovable-qa-meta-line">
+                    <p className="ZENVE-qa-meta-line">
                       {designerBrand} · {sku.category} · {sku.colour} / {sku.size} · {formatInr(sku.price || sku.selling_price)} · {location}
                     </p>
 
                     {/* 10-DIMENSION SCORE INPUTS */}
-                    <div className="lovable-dimensions-grid">
+                    <div className="ZENVE-dimensions-grid">
                       {QA_DIMENSIONS.map((dim) => (
-                        <div key={dim.key} className="lovable-dimension-tile">
-                          <span className="lovable-dim-label">
+                        <div key={dim.key} className="ZENVE-dimension-tile">
+                          <span className="ZENVE-dim-label">
                             {dim.label} · {dim.weight}%
                           </span>
                           <input
@@ -377,25 +377,25 @@ export default function CatalogueQa() {
                             max="100"
                             value={scores[dim.key] ?? 90}
                             onChange={(e) => handleScoreChange(sku.id, dim.key, e.target.value)}
-                            className="lovable-dim-input"
+                            className="ZENVE-dim-input"
                           />
                         </div>
                       ))}
                     </div>
 
                     {/* ACTION CONTROLS */}
-                    <div className="lovable-qa-actions-row">
+                    <div className="ZENVE-qa-actions-row">
                       <input
                         type="text"
                         placeholder="Reviewer note to the designer"
                         value={notesState[sku.id] ?? ""}
                         onChange={(e) => setNotesState({ ...notesState, [sku.id]: e.target.value })}
-                        className="lovable-note-input"
+                        className="ZENVE-note-input"
                       />
 
                       <button
                         type="button"
-                        className="lovable-btn-primary"
+                        className="ZENVE-btn-primary"
                         onClick={() => handleSubmitReview(sku)}
                       >
                         Submit review ({totalScore}/100)
@@ -403,7 +403,7 @@ export default function CatalogueQa() {
 
                       <button
                         type="button"
-                        className="lovable-btn-outline-sm"
+                        className="ZENVE-btn-outline-sm"
                         onClick={() => handleQuickDecision(sku, 95, "APPROVED")}
                       >
                         Quick approve (95)
@@ -411,7 +411,7 @@ export default function CatalogueQa() {
 
                       <button
                         type="button"
-                        className="lovable-btn-outline-sm"
+                        className="ZENVE-btn-outline-sm"
                         onClick={() => handleQuickDecision(sku, 60, "REJECTED")}
                       >
                         Quick reject (60)
@@ -427,35 +427,35 @@ export default function CatalogueQa() {
         {/* ===================================================
             SECTION 2: REVIEWED SKUS
         =================================================== */}
-        <section className="lovable-portal-card">
-          <div className="lovable-card-header">
+        <section className="ZENVE-portal-card">
+          <div className="ZENVE-card-header">
             <div>
-              <h2 className="lovable-card-title">Reviewed SKUs</h2>
-              <p className="lovable-card-description">
+              <h2 className="ZENVE-card-title">Reviewed SKUs</h2>
+              <p className="ZENVE-card-description">
                 Score breakdown is kept with every decision.
               </p>
             </div>
           </div>
 
           {reviewedSkus.length === 0 ? (
-            <div className="lovable-item-empty">Nothing reviewed yet.</div>
+            <div className="ZENVE-item-empty">Nothing reviewed yet.</div>
           ) : (
-            <div className="lovable-reviewed-list">
+            <div className="ZENVE-reviewed-list">
               {reviewedSkus.map((sku) => {
                 const qaStatus = sku.qaStatus || sku.status || "APPROVED";
                 return (
-                  <div key={sku.id} className="lovable-reviewed-row">
-                    <div className="lovable-reviewed-head">
-                      <span className="lovable-reviewed-name">{sku.product_name || sku.name}</span>
-                      <span className="lovable-sku-id-mono">{sku.sku}</span>
-                      <span className="lovable-reviewed-score">Score {sku.qa_score}/100</span>
-                      <span className={`lovable-qa-badge tone-${qaStatus.toLowerCase()}`}>
+                  <div key={sku.id} className="ZENVE-reviewed-row">
+                    <div className="ZENVE-reviewed-head">
+                      <span className="ZENVE-reviewed-name">{sku.product_name || sku.name}</span>
+                      <span className="ZENVE-sku-id-mono">{sku.sku}</span>
+                      <span className="ZENVE-reviewed-score">Score {sku.qa_score}/100</span>
+                      <span className={`ZENVE-qa-badge tone-${qaStatus.toLowerCase()}`}>
                         {qaStatus}
                       </span>
                     </div>
 
                     {sku.qa_scores && Object.keys(sku.qa_scores).length > 0 && (
-                      <p className="lovable-reviewed-breakdown">
+                      <p className="ZENVE-reviewed-breakdown">
                         {QA_DIMENSIONS.filter((d) => typeof sku.qa_scores[d.key] === "number")
                           .map((d) => `${d.label} ${sku.qa_scores[d.key]}`)
                           .join(" · ")}
@@ -463,7 +463,7 @@ export default function CatalogueQa() {
                     )}
 
                     {sku.qa_note && (
-                      <p className="lovable-reviewed-note">Note: {sku.qa_note}</p>
+                      <p className="ZENVE-reviewed-note">Note: {sku.qa_note}</p>
                     )}
                   </div>
                 );
@@ -475,28 +475,28 @@ export default function CatalogueQa() {
         {/* ===================================================
             SECTION 3: AUDIT TRAIL
         =================================================== */}
-        <section className="lovable-portal-card">
-          <div className="lovable-card-header">
+        <section className="ZENVE-portal-card">
+          <div className="ZENVE-card-header">
             <div>
-              <h2 className="lovable-card-title">Audit trail</h2>
-              <p className="lovable-card-description">
+              <h2 className="ZENVE-card-title">Audit trail</h2>
+              <p className="ZENVE-card-description">
                 Every QA decision is timestamped.
               </p>
             </div>
           </div>
 
           {auditLog.length === 0 ? (
-            <div className="lovable-item-empty">No QA decisions recorded yet.</div>
+            <div className="ZENVE-item-empty">No QA decisions recorded yet.</div>
           ) : (
-            <ul className="lovable-audit-list">
+            <ul className="ZENVE-audit-list">
               {auditLog.map((entry) => (
-                <li key={entry.id} className="lovable-audit-item">
-                  <span className="lovable-audit-time">
+                <li key={entry.id} className="ZENVE-audit-item">
+                  <span className="ZENVE-audit-time">
                     {new Date(entry.at).toLocaleString("en-IN", {
                       timeZone: "Asia/Kolkata",
                     })}
                   </span>
-                  <span className="lovable-audit-msg">{entry.message}</span>
+                  <span className="ZENVE-audit-msg">{entry.message}</span>
                 </li>
               ))}
             </ul>

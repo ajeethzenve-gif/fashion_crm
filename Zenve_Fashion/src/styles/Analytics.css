@@ -1,20 +1,20 @@
 /* =========================================================
    ZENVE FASHION - 11 BI DASHBOARDS & ANALYTICS
-   Exact Lovable Design Tokens & Even Multi-Screen Layout
-   Directly matching https://zenvefashioncm.lovable.app/analytics
+   Exact ZENVE Design Tokens & Even Multi-Screen Layout
+   Directly matching https://zenvefashioncm.ZENVE.app/analytics
 ========================================================= */
 
 :root {
-  --lovable-paper: #fbf9f5;
-  --lovable-card: #ffffff;
-  --lovable-ink: #17130f;
-  --lovable-muted: #736b63;
-  --lovable-border: #e8e3da;
-  --lovable-border-light: #f0ece5;
-  --lovable-border-hover: #c28b51;
-  --lovable-gold: #c28b51;
-  --lovable-gold-light: #fdfaf6;
-  --lovable-accent: #c28b51;
+  --ZENVE-paper: #fbf9f5;
+  --ZENVE-card: #ffffff;
+  --ZENVE-ink: #17130f;
+  --ZENVE-muted: #736b63;
+  --ZENVE-border: #e8e3da;
+  --ZENVE-border-light: #f0ece5;
+  --ZENVE-border-hover: #c28b51;
+  --ZENVE-gold: #c28b51;
+  --ZENVE-gold-light: #fdfaf6;
+  --ZENVE-accent: #c28b51;
   --chart-1: #c28b51;
   --chart-2: #5b7b99;
   --chart-3: #8f9e74;
@@ -35,8 +35,8 @@
 .analytics-page {
   width: 100%;
   min-height: 100vh;
-  background-color: var(--lovable-paper);
-  color: var(--lovable-ink);
+  background-color: var(--ZENVE-paper);
+  color: var(--ZENVE-ink);
   font-family: var(--font-sans);
   margin: 0;
   padding: 0;
@@ -46,56 +46,57 @@
 }
 
 /* =========================================================
-   HEADER (EXACT LOVABLE ALIGNMENT)
+   HEADER (EXACT ZENVE ALIGNMENT)
 ========================================================= */
 
-.lovable-header {
+.ZENVE-header {
   width: 100%;
-  background-color: var(--lovable-card);
-  border-bottom: 1px solid var(--lovable-border);
+  background-color: var(--ZENVE-card);
+  border-bottom: 1px solid var(--ZENVE-border);
   position: sticky;
   top: 0;
   z-index: 50;
 }
 
-.lovable-header-inner {
-  max-width: 1152px;
+.ZENVE-header-inner {
+  max-width: 1380px;
   margin: 0 auto;
-  padding: 16px 20px;
+  padding: 16px 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
 }
 
-.lovable-header-left {
+.ZENVE-header-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
   min-width: 0;
+  flex-shrink: 0;
 }
 
-.lovable-portal-logo {
+.ZENVE-portal-logo {
   display: inline-flex;
   align-items: center;
   text-decoration: none;
   flex-shrink: 0;
 }
 
-.lovable-portal-logo img {
-  height: 48px;
+.ZENVE-portal-logo img {
+  height: 38px;
   width: auto;
   display: block;
 }
 
-.lovable-header-title-block {
+.ZENVE-header-title-block {
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
 }
 
-.lovable-back-link {
+.ZENVE-back-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -103,7 +104,7 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   text-decoration: none;
   background: none;
   border: none;
@@ -112,37 +113,37 @@
   transition: color 0.15s ease;
 }
 
-.lovable-back-link:hover {
-  color: var(--lovable-ink);
+.ZENVE-back-link:hover {
+  color: var(--ZENVE-ink);
 }
 
-.lovable-portal-title {
+.ZENVE-portal-title {
   margin: 0;
   font-size: 24px;
   font-weight: 500;
   font-family: var(--font-serif);
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
   display: flex;
   align-items: baseline;
   gap: 8px;
   line-height: 1.2;
 }
 
-.lovable-layer-num {
+.ZENVE-layer-num {
   font-size: 24px;
   font-weight: 500;
   font-family: inherit;
-  color: var(--lovable-gold);
+  color: var(--ZENVE-gold);
 }
 
-.lovable-portal-desc {
+.ZENVE-portal-desc {
   margin: 0;
   font-size: 13.5px;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   line-height: 1.4;
 }
 
-.lovable-header-right {
+.ZENVE-header-right {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -154,10 +155,10 @@
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  background-color: var(--lovable-card);
-  border: 1px solid var(--lovable-border);
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
   border-radius: 6px;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -166,8 +167,8 @@
 }
 
 .analytics-refresh-btn:hover:not(:disabled) {
-  border-color: var(--lovable-gold);
-  background-color: var(--lovable-gold-light);
+  border-color: var(--ZENVE-gold);
+  background-color: var(--ZENVE-gold-light);
 }
 
 .analytics-refresh-btn:disabled {
@@ -190,9 +191,9 @@
 
 .analytics-container {
   width: 100%;
-  max-width: 1152px;
+  max-width: 1380px;
   margin: 0 auto;
-  padding: 28px 20px 60px;
+  padding: 24px 28px 60px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -233,8 +234,8 @@
 }
 
 .analytics-kpi-card {
-  background-color: var(--lovable-card);
-  border: 1px solid var(--lovable-border);
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
   border-radius: 8px;
   padding: 12px 16px;
   min-height: 82px;
@@ -254,7 +255,7 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   margin: 0;
   line-height: 1;
 }
@@ -263,7 +264,7 @@
   font-size: 24px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
   margin: 4px 0 0;
   line-height: 1.15;
   font-family: var(--font-display);
@@ -271,7 +272,7 @@
 
 .analytics-kpi-hint {
   font-size: 12px;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   margin: 2px 0 0;
   line-height: 1;
 }
@@ -281,8 +282,8 @@
 ========================================================= */
 
 .analytics-panel {
-  background-color: var(--lovable-card);
-  border: 1px solid var(--lovable-border);
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
   border-radius: 8px;
   padding: 20px;
   display: flex;
@@ -308,23 +309,23 @@
   margin: 0;
   font-size: 18px;
   font-weight: 600;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
 }
 
 .panel-desc {
   margin: 2px 0 0;
   font-size: 14px;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   line-height: 1.4;
 }
 
 .panel-empty {
   padding: 36px 16px;
   text-align: center;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   font-size: 13.5px;
-  background-color: var(--lovable-paper);
-  border: 1px dashed var(--lovable-border);
+  background-color: var(--ZENVE-paper);
+  border: 1px dashed var(--ZENVE-border);
   border-radius: 6px;
 }
 
@@ -358,7 +359,7 @@
   height: 100% !important;
 }
 
-/* Donut container & legend (exact Lovable layout) */
+/* Donut container & legend (exact ZENVE layout) */
 .donut-flex-container {
   width: 100%;
   height: 100%;
@@ -385,7 +386,7 @@
   align-items: center;
   gap: 12px;
   font-size: 12px;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   padding: 4px 8px 0;
   line-height: 1.3;
 }
@@ -406,7 +407,7 @@
 }
 
 /* =========================================================
-   3. SKU PERFORMANCE TABLE (EXACT LOVABLE TABLE)
+   3. SKU PERFORMANCE TABLE (EXACT ZENVE TABLE)
 ========================================================= */
 
 .sku-table-container {
@@ -414,7 +415,7 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
-  scrollbar-color: var(--lovable-border) transparent;
+  scrollbar-color: var(--ZENVE-border) transparent;
 }
 
 .sku-table-container::-webkit-scrollbar {
@@ -427,7 +428,7 @@
 }
 
 .sku-table-container::-webkit-scrollbar-thumb {
-  background-color: var(--lovable-border);
+  background-color: var(--ZENVE-border);
   border-radius: 4px;
 }
 
@@ -445,15 +446,15 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--lovable-muted);
-  border-bottom: 1px solid var(--lovable-border);
+  color: var(--ZENVE-muted);
+  border-bottom: 1px solid var(--ZENVE-border);
   white-space: nowrap;
 }
 
 .sku-table td {
   padding: 10px 16px 10px 0;
-  border-bottom: 1px solid var(--lovable-border);
-  color: var(--lovable-ink);
+  border-bottom: 1px solid var(--ZENVE-border);
+  color: var(--ZENVE-ink);
   vertical-align: middle;
 }
 
@@ -473,13 +474,13 @@
 
 .sku-name-text {
   font-weight: 500;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
 }
 
 .sku-code-text {
   font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
 }
 
 /* =========================================================
@@ -490,9 +491,9 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background-color: var(--lovable-ink);
+  background-color: var(--ZENVE-ink);
   color: #ffffff;
-  border: 1px solid var(--lovable-ink);
+  border: 1px solid var(--ZENVE-ink);
   border-radius: 6px;
   padding: 8px 16px;
   font-size: 14px;
@@ -525,10 +526,10 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 12px;
-  background-color: var(--lovable-card);
-  border: 1px solid var(--lovable-border);
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
   border-radius: 6px;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
   font-size: 14px;
   text-align: left;
   cursor: pointer;
@@ -536,7 +537,7 @@
 }
 
 .report-download-btn:hover {
-  border-color: var(--lovable-gold);
+  border-color: var(--ZENVE-gold);
 }
 
 .report-download-btn:disabled {
@@ -558,12 +559,12 @@
 
 .report-btn-rows {
   font-size: 12px;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   white-space: nowrap;
 }
 
 .report-btn-icon {
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   width: 14px;
   height: 14px;
   flex-shrink: 0;
@@ -571,7 +572,7 @@
 }
 
 .report-download-btn:hover .report-btn-icon {
-  color: var(--lovable-gold);
+  color: var(--ZENVE-gold);
 }
 
 /* =========================================================
@@ -592,8 +593,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  background-color: var(--lovable-card);
-  border: 1px solid var(--lovable-border);
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
   border-radius: 6px;
   font-size: 14px;
   transition: border-color 0.15s ease;
@@ -606,11 +607,11 @@
 
 .mover-name-rank {
   font-weight: 400;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
 }
 
 .mover-stats-subtext {
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   font-size: 13px;
   white-space: nowrap;
 }
@@ -636,52 +637,496 @@
 }
 
 /* =========================================================
-   RESPONSIVE DESIGN: 4K ULTRA HD & ULTRAWIDE (1921px - 3840px+)
+   COMPREHENSIVE ALL-SCREEN-SIZE RESPONSIVE MEDIA QUERIES
 ========================================================= */
 
-@media (min-width: 1921px) {
-  .lovable-header-inner {
-    padding: 24px 60px;
-    max-width: 2600px;
+/* ---------------------------------------------------------
+   1. MOBILE PHONES (320px - 640px)
+   Smartphones like iPhone, Pixel, Galaxy
+--------------------------------------------------------- */
+
+@media (max-width: 640px) {
+  .ZENVE-header-inner {
+    padding: 12px 14px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
   }
 
-  .lovable-portal-logo img {
-    height: 56px;
+  .ZENVE-header-left {
+    gap: 12px;
+    align-items: flex-start;
+    width: 100%;
   }
 
-  .lovable-back-link {
-    font-size: 13px;
+  .ZENVE-portal-logo img {
+    height: 32px;
+    width: auto;
+  }
+
+  .ZENVE-header-title-block {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ZENVE-portal-title {
+    font-size: 20px;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .ZENVE-layer-num {
+    font-size: 20px;
+  }
+
+  .ZENVE-portal-desc {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .ZENVE-header-right {
+    width: 100%;
+  }
+
+  .ZENVE-header-right .search-user-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     gap: 8px;
   }
 
-  .lovable-portal-title,
-  .lovable-layer-num {
-    font-size: 36px;
+  .ZENVE-header-right .search-bar-wrapper {
+    width: 100%;
+    flex: 1 1 100%;
+    max-width: 100%;
   }
 
-  .lovable-portal-desc {
-    font-size: 16px;
+  .ZENVE-header-right .search-box {
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  .analytics-refresh-btn {
-    padding: 10px 18px;
-    font-size: 14.5px;
+  .ZENVE-header-right .home-user {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
   }
 
   .analytics-container {
-    max-width: 2500px;
-    padding: 36px 60px 100px;
-    gap: 32px;
-  }
-
-  .analytics-kpi-grid {
+    padding: 14px 12px 48px;
     gap: 16px;
   }
 
+  /* Top 6 KPI Cards: 2x3 grid on mobile */
+  .analytics-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
   .analytics-kpi-card {
+    padding: 12px 14px;
+    min-height: 72px;
+  }
+
+  .label-caps {
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+
+  .analytics-kpi-value {
+    font-size: 20px;
+  }
+
+  .analytics-kpi-hint {
+    font-size: 11px;
+  }
+
+  /* Charts: 1 column on mobile */
+  .analytics-charts-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .analytics-panel {
+    padding: 14px 14px;
+    gap: 14px;
+  }
+
+  .panel-title {
+    font-size: 16px;
+  }
+
+  .panel-desc {
+    font-size: 12.5px;
+    line-height: 1.4;
+  }
+
+  .chart-h-wrap {
+    height: 250px;
+    min-height: 250px;
+  }
+
+  .donut-chart-area {
+    height: 200px;
+  }
+
+  .donut-legend {
+    gap: 10px;
+    font-size: 11.5px;
+    padding-top: 4px;
+    flex-wrap: wrap;
+  }
+
+  /* Table on mobile */
+  .sku-table-container {
+    margin: 0 -2px;
+  }
+
+  .sku-table {
+    min-width: 580px;
+  }
+
+  .sku-table th {
+    padding: 8px 10px 8px 0;
+    font-size: 10.5px;
+  }
+
+  .sku-table td {
+    padding: 10px 10px 10px 0;
+    font-size: 13px;
+  }
+
+  .btn-export-full {
+    width: 100%;
+    justify-content: center;
+    padding: 8px 14px;
+    font-size: 13px;
+    height: 38px;
+  }
+
+  /* Reports grid: 1 column */
+  .reports-buttons-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .report-download-btn {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  /* Top movers on mobile */
+  .mover-row-item {
+    padding: 10px 12px;
+    font-size: 13px;
+    gap: 8px;
+  }
+}
+
+/* Extra small mobile (< 380px) */
+@media (max-width: 380px) {
+  .ZENVE-header-inner {
+    padding: 10px 10px;
+  }
+
+  .analytics-container {
+    padding: 10px 8px 36px;
+    gap: 12px;
+  }
+
+  /* 1 column on extra small phones so currency numbers never truncate */
+  .analytics-kpi-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .analytics-kpi-value {
+    font-size: 20px;
+  }
+
+  .analytics-panel {
+    padding: 12px 10px;
+    gap: 12px;
+  }
+
+  .mover-row-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+  }
+
+  .mover-stats-subtext {
+    font-size: 11.5px;
+  }
+}
+
+/* ---------------------------------------------------------
+   2. TABLETS & MEDIUM SCREENS (641px - 1140px)
+   iPad, iPad Air, iPad Pro, Android Tablets, Surface Pro
+--------------------------------------------------------- */
+
+@media (min-width: 641px) and (max-width: 1140px) {
+  .ZENVE-header-inner {
+    padding: 14px 24px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .ZENVE-header-left {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .ZENVE-portal-logo img {
+    height: 36px;
+    width: auto;
+  }
+
+  .ZENVE-header-title-block {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ZENVE-portal-title {
+    font-size: 22px;
+    line-height: 1.25;
+    white-space: nowrap;
+  }
+
+  .ZENVE-portal-desc {
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--ZENVE-muted);
+    white-space: normal;
+    margin-top: 2px;
+  }
+
+  .ZENVE-header-right {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--ZENVE-border);
+  }
+
+  .ZENVE-header-right .search-user-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    min-width: 0;
+  }
+
+  .ZENVE-header-right .search-bar-wrapper {
+    flex: 1;
+    max-width: 340px;
+    min-width: 180px;
+  }
+
+  .ZENVE-header-right .home-user {
+    flex-shrink: 0;
+  }
+
+  .analytics-container {
+    max-width: 100%;
+    padding: 20px 24px 60px;
+    gap: 20px;
+  }
+
+  /* Top 6 KPIs: 3 columns (2 rows of 3) on tablet */
+  .analytics-kpi-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .analytics-kpi-card {
+    padding: 12px 14px;
+    min-height: 78px;
+  }
+
+  .analytics-kpi-value {
+    font-size: 22px;
+  }
+
+  /* Charts: 1 column on tablet portrait, 2 on wide tablet */
+  .analytics-charts-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .analytics-panel {
     padding: 18px 20px;
-    min-height: 104px;
-    border-radius: 12px;
+  }
+
+  .reports-buttons-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+/* Tablet portrait & narrow tablets (641px - 840px) */
+@media (min-width: 641px) and (max-width: 840px) {
+  .ZENVE-header-inner {
+    padding: 12px 18px;
+    gap: 10px;
+  }
+
+  .ZENVE-header-right {
+    gap: 12px;
+    padding-top: 10px;
+  }
+
+  .analytics-container {
+    padding: 16px 18px 48px;
+    gap: 16px;
+  }
+
+  .analytics-kpi-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+}
+
+/* ---------------------------------------------------------
+   3. LAPTOP & STANDARD DESKTOP (1141px - 1440px)
+   MacBook Pro, ThinkPad, Standard 1080p Desktop
+--------------------------------------------------------- */
+
+@media (min-width: 1141px) and (max-width: 1440px) {
+  .analytics-container {
+    max-width: 1380px;
+    padding: 24px 28px 60px;
+  }
+
+  .analytics-kpi-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+  }
+
+  .analytics-charts-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .reports-buttons-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+}
+
+/* ---------------------------------------------------------
+   4. LARGE DESKTOP & WIDE MONITORS (1441px - 1920px)
+   iMac 24", 27" QHD, Studio Display
+--------------------------------------------------------- */
+
+@media (min-width: 1441px) and (max-width: 1920px) {
+  .ZENVE-header-inner {
+    max-width: 1640px;
+    padding: 18px 36px;
+  }
+
+  .ZENVE-portal-title,
+  .ZENVE-layer-num {
+    font-size: 28px;
+  }
+
+  .analytics-container {
+    max-width: 1640px;
+    padding: 28px 36px 64px;
+    gap: 26px;
+  }
+
+  .analytics-kpi-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+  }
+
+  .analytics-kpi-card {
+    padding: 16px 18px;
+  }
+
+  .label-caps {
+    font-size: 12px;
+  }
+
+  .analytics-kpi-value {
+    font-size: 26px;
+  }
+
+  .analytics-panel {
+    padding: 22px 26px;
+    gap: 18px;
+  }
+
+  .panel-title {
+    font-size: 18.5px;
+  }
+
+  .analytics-charts-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .reports-buttons-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+}
+
+/* ---------------------------------------------------------
+   5. 4K ULTRA HD SCREENS (1921px - 3840px+)
+   Ultra-high resolution displays, 4K/5K Monitors
+--------------------------------------------------------- */
+
+@media (min-width: 1921px) {
+  .ZENVE-header-inner {
+    max-width: 2800px;
+    padding: 24px 64px;
+  }
+
+  .ZENVE-portal-logo img {
+    height: 52px;
+  }
+
+  .ZENVE-back-link {
+    font-size: 13.5px;
+    gap: 8px;
+  }
+
+  .ZENVE-portal-title,
+  .ZENVE-layer-num {
+    font-size: 34px;
+    gap: 12px;
+  }
+
+  .ZENVE-portal-desc {
+    font-size: 16.5px;
+  }
+
+  .analytics-container {
+    max-width: 2800px;
+    padding: 36px 64px 80px;
+    gap: 32px;
+  }
+
+  /* 4K Top 6 KPI Cards */
+  .analytics-kpi-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 18px;
+  }
+
+  .analytics-kpi-card {
+    padding: 20px 22px;
+    border-radius: 10px;
+    gap: 6px;
   }
 
   .label-caps {
@@ -689,17 +1134,18 @@
   }
 
   .analytics-kpi-value {
-    font-size: 36px;
+    font-size: 34px;
   }
 
   .analytics-kpi-hint {
     font-size: 14px;
   }
 
+  /* 4K Panels */
   .analytics-panel {
-    padding: 26px 30px;
-    border-radius: 12px;
-    gap: 20px;
+    padding: 28px 32px;
+    border-radius: 10px;
+    gap: 22px;
   }
 
   .panel-title {
@@ -711,22 +1157,22 @@
   }
 
   .analytics-charts-grid {
-    gap: 32px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
   }
 
   .chart-h-wrap {
-    height: 300px;
-    min-height: 300px;
+    height: 340px;
+    min-height: 340px;
   }
 
   .donut-chart-area {
-    height: 250px;
+    height: 280px;
   }
 
   .donut-legend {
     font-size: 14px;
     gap: 18px;
-    padding-top: 6px;
   }
 
   .sku-table th {
@@ -755,17 +1201,20 @@
   }
 
   .reports-buttons-grid {
-    gap: 12px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
   }
 
   .report-download-btn {
-    padding: 14px 16px;
+    padding: 14px 18px;
     font-size: 15px;
+    border-radius: 8px;
   }
 
   .mover-row-item {
-    padding: 12px 16px;
+    padding: 14px 18px;
     font-size: 15.5px;
+    border-radius: 8px;
   }
 
   .mover-stats-subtext {
@@ -773,388 +1222,22 @@
   }
 }
 
-/* =========================================================
-   RESPONSIVE DESIGN: LARGE DESKTOP (1441px - 1920px)
-========================================================= */
-
-@media (min-width: 1441px) and (max-width: 1920px) {
-  .lovable-header-inner {
-    padding: 18px 32px;
-    max-width: 1380px;
+/* Extreme 4K Resolution (3200px - 3840px Native) */
+@media (min-width: 3200px) {
+  .ZENVE-header-inner {
+    max-width: 3400px;
   }
 
   .analytics-container {
-    max-width: 1380px;
-    padding: 28px 32px 70px;
-    gap: 26px;
+    max-width: 3400px;
   }
 
-  .lovable-portal-title,
-  .lovable-layer-num {
-    font-size: 26px;
+  .ZENVE-portal-title,
+  .ZENVE-layer-num {
+    font-size: 40px;
   }
 
   .analytics-kpi-value {
-    font-size: 26px;
-  }
-}
-
-/* =========================================================
-   RESPONSIVE DESIGN: LAPTOP / DESKTOP (1025px - 1440px)
-========================================================= */
-
-@media (min-width: 1025px) and (max-width: 1440px) {
-  .analytics-container {
-    max-width: 1152px;
-  }
-}
-
-/* =========================================================
-   RESPONSIVE DESIGN: TABLET LANDSCAPE (769px - 1024px)
-========================================================= */
-
-@media (min-width: 769px) and (max-width: 1024px) {
-  .lovable-header-inner {
-    padding: 14px 20px;
-  }
-
-  .analytics-container {
-    padding: 22px 20px 50px;
-    gap: 20px;
-  }
-
-  .analytics-kpi-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-  }
-
-  .analytics-kpi-card {
-    min-height: 80px;
-  }
-
-  .analytics-charts-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  .reports-buttons-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-}
-
-/* =========================================================
-   RESPONSIVE DESIGN: TABLET PORTRAIT (641px - 768px)
-========================================================= */
-
-@media (min-width: 641px) and (max-width: 768px) {
-  .lovable-header-inner {
-    padding: 14px 16px;
-  }
-
-  .lovable-header-left {
-    gap: 12px;
-  }
-
-  .lovable-portal-logo img {
-    height: 38px;
-  }
-
-  .lovable-portal-title,
-  .lovable-layer-num {
-    font-size: 22px;
-  }
-
-  .lovable-portal-desc {
-    font-size: 13px;
-  }
-
-  .analytics-container {
-    padding: 18px 16px 48px;
-    gap: 18px;
-  }
-
-  .analytics-kpi-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
-
-  .analytics-kpi-card {
-    min-height: 78px;
-    padding: 10px 14px;
-  }
-
-  .analytics-kpi-value {
-    font-size: 22px;
-  }
-
-  .analytics-charts-grid {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-
-  .reports-buttons-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-}
-
-/* =========================================================
-   RESPONSIVE DESIGN: MOBILE / PHABLET (421px - 640px)
-========================================================= */
-
-@media (max-width: 640px) {
-  .lovable-header-inner {
-    padding: 12px 14px;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-
-  .lovable-header-left {
-    gap: 12px;
-    align-items: flex-start;
-  }
-
-  .lovable-portal-logo img {
-    height: 36px;
-  }
-
-  .lovable-portal-title,
-  .lovable-layer-num {
-    font-size: 22px;
-  }
-
-  .lovable-portal-desc {
-    font-size: 12.5px;
-  }
-
-  .lovable-header-right {
-    width: 100%;
-    justify-content: space-between;
-    gap: 8px;
-  }
-
-  .lovable-header-right .search-user-wrapper {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .analytics-refresh-btn {
-    padding: 6px 10px;
-    font-size: 12px;
-  }
-
-  .analytics-container {
-    padding: 16px 14px 44px;
-    gap: 16px;
-  }
-
-  .analytics-kpi-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-
-  .analytics-kpi-card {
-    padding: 10px 12px;
-    min-height: 74px;
-  }
-
-  .label-caps {
-    font-size: 10.5px;
-  }
-
-  .analytics-kpi-value {
-    font-size: 20px;
-  }
-
-  .analytics-kpi-hint {
-    font-size: 11px;
-  }
-
-  .analytics-charts-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .analytics-panel {
-    padding: 16px 14px;
-    gap: 14px;
-  }
-
-  .chart-h-wrap {
-    height: 260px;
-    min-height: 260px;
-  }
-
-  .donut-chart-area {
-    height: 215px;
-  }
-
-  .donut-legend {
-    gap: 10px;
-    font-size: 11.5px;
-    padding-top: 4px;
-  }
-
-  .panel-title {
-    font-size: 16.5px;
-  }
-
-  .panel-desc {
-    font-size: 13px;
-  }
-
-  .sku-table th {
-    padding: 8px 12px 8px 0;
-    font-size: 10.5px;
-  }
-
-  .sku-table td {
-    padding: 10px 12px 10px 0;
-    font-size: 13px;
-  }
-
-  .btn-export-full {
-    width: 100%;
-    justify-content: center;
-    padding: 8px 14px;
-    font-size: 13px;
-  }
-
-  .reports-buttons-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .report-download-btn {
-    padding: 10px 12px;
-    font-size: 13.5px;
-  }
-
-  .mover-row-item {
-    padding: 9px 12px;
-    font-size: 13.5px;
-  }
-}
-
-/* =========================================================
-   RESPONSIVE DESIGN: MOBILE XS & COMPACT (320px - 420px)
-========================================================= */
-
-@media (max-width: 420px) {
-  .lovable-header-inner {
-    padding: 10px 12px;
-    gap: 10px;
-  }
-
-  .lovable-portal-logo img {
-    height: 32px;
-  }
-
-  .lovable-portal-title,
-  .lovable-layer-num {
-    font-size: 20px;
-  }
-
-  .lovable-portal-desc {
-    font-size: 12px;
-  }
-
-  .analytics-container {
-    padding: 12px 10px 36px;
-    gap: 14px;
-  }
-
-  .analytics-kpi-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
-  }
-
-  .analytics-kpi-card {
-    padding: 8px 10px;
-    min-height: 70px;
-  }
-
-  .label-caps {
-    font-size: 10px;
-    letter-spacing: 0.04em;
-  }
-
-  .analytics-kpi-value {
-    font-size: 18px;
-  }
-
-  .analytics-kpi-hint {
-    font-size: 10.5px;
-  }
-
-  .analytics-panel {
-    padding: 14px 12px;
-    gap: 12px;
-  }
-
-  .chart-h-wrap {
-    height: 250px;
-    min-height: 250px;
-  }
-
-  .donut-chart-area {
-    height: 205px;
-  }
-
-  .donut-legend {
-    gap: 8px;
-    font-size: 11px;
-    padding-top: 2px;
-  }
-
-  .panel-title {
-    font-size: 15.5px;
-  }
-
-  .panel-desc {
-    font-size: 12px;
-  }
-
-  .sku-table th {
-    padding: 7px 8px 7px 0;
-    font-size: 10px;
-  }
-
-  .sku-table td {
-    padding: 8px 8px 8px 0;
-    font-size: 12px;
-  }
-
-  .sku-name-text {
-    font-size: 12.5px;
-  }
-
-  .sku-code-text {
-    font-size: 10.5px;
-  }
-
-  .btn-export-full {
-    font-size: 12.5px;
-    padding: 8px 12px;
-    height: 34px;
-  }
-
-  .report-download-btn {
-    padding: 8px 10px;
-    font-size: 12.5px;
-  }
-
-  .mover-row-item {
-    padding: 8px 10px;
-    font-size: 12.5px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 3px;
-  }
-
-  .mover-stats-subtext {
-    font-size: 11px;
+    font-size: 40px;
   }
 }

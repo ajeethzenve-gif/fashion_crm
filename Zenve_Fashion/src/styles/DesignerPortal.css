@@ -1,31 +1,31 @@
 /* =========================================================
    DESIGNER PORTAL STYLESHEET (02)
    Zenve Fashion Operations
-   Exact match to https://zenvefashioncm.lovable.app/designer-portal
+   Exact match to https://zenvefashioncm.ZENVE.app/designer-portal
    Comprehensive Multi-Screen Responsiveness (Mobile 320-640px, Tablet 641-1024px, Laptop 1025-1440px, Desktop 1441-1920px, 4K UHD 1921-3840px)
 ========================================================= */
 
 :root {
-  --lovable-paper: #fbf9f5;
-  --lovable-panel: #ffffff;
-  --lovable-ink: #17130f;
-  --lovable-muted: #736b63;
-  --lovable-line: #e8e3da;
-  --lovable-subtle: #f3efe8;
-  --lovable-accent: #27804c;
-  --lovable-amber: #b45309;
-  --lovable-red: #b91c1c;
-  --lovable-blue: #1d4ed8;
-  --lovable-font-serif: Georgia, "Times New Roman", serif;
-  --lovable-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  --ZENVE-paper: #fbf9f5;
+  --ZENVE-panel: #ffffff;
+  --ZENVE-ink: #17130f;
+  --ZENVE-muted: #736b63;
+  --ZENVE-line: #e8e3da;
+  --ZENVE-subtle: #f3efe8;
+  --ZENVE-accent: #27804c;
+  --ZENVE-amber: #b45309;
+  --ZENVE-red: #b91c1c;
+  --ZENVE-blue: #1d4ed8;
+  --ZENVE-font-serif: Georgia, "Times New Roman", serif;
+  --ZENVE-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
-.lovable-portal-layout {
+.ZENVE-portal-layout {
   min-height: 100vh;
   width: 100%;
-  background-color: var(--lovable-paper);
-  color: var(--lovable-ink);
-  font-family: var(--lovable-font-sans);
+  background-color: var(--ZENVE-paper);
+  color: var(--ZENVE-ink);
+  font-family: var(--ZENVE-font-sans);
   box-sizing: border-box;
 }
 
@@ -33,10 +33,10 @@
    HEADER
 ========================================================= */
 
-.lovable-portal-header {
+.ZENVE-portal-header {
   width: 100%;
-  background: var(--lovable-panel);
-  border-bottom: 1px solid var(--lovable-line);
+  background: var(--ZENVE-panel);
+  border-bottom: 1px solid var(--ZENVE-line);
   padding: 16px 28px;
   display: flex;
   align-items: center;
@@ -48,7 +48,7 @@
   z-index: 50;
 }
 
-.lovable-header-left {
+.ZENVE-header-left {
   display: flex;
   align-items: center;
   gap: 20px;
@@ -56,7 +56,7 @@
   flex-shrink: 0;
 }
 
-.lovable-portal-logo {
+.ZENVE-portal-logo {
   width: 46px;
   height: 46px;
   display: flex;
@@ -65,22 +65,22 @@
   flex-shrink: 0;
 }
 
-.lovable-portal-logo img {
+.ZENVE-portal-logo img {
   width: 100%;
   height: auto;
   object-fit: contain;
 }
 
-.lovable-header-title-block {
+.ZENVE-header-title-block {
   display: flex;
   flex-direction: column;
 }
 
-.lovable-back-link {
+.ZENVE-back-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -89,86 +89,86 @@
   transition: color 0.15s ease;
 }
 
-.lovable-back-link:hover {
-  color: var(--lovable-ink);
+.ZENVE-back-link:hover {
+  color: var(--ZENVE-ink);
 }
 
-.lovable-portal-title {
+.ZENVE-portal-title {
   margin: 0;
-  font-family: var(--lovable-font-serif);
+  font-family: var(--ZENVE-font-serif);
   font-size: 24px;
   font-weight: 600;
   line-height: 1.2;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.lovable-layer-num {
+.ZENVE-layer-num {
   font-weight: 400;
   color: #92400e;
 }
 
-.lovable-portal-subtitle {
+.ZENVE-portal-subtitle {
   margin: 3px 0 0;
   font-size: 12.5px;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
 }
 
 /* HEADER RIGHT */
-.lovable-header-right {
+.ZENVE-header-right {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.lovable-signed-in-box {
+.ZENVE-signed-in-box {
   display: flex;
   flex-direction: column;
   gap: 3px;
   min-width: 220px;
 }
 
-.lovable-label-caps {
+.ZENVE-label-caps {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
 }
 
-.lovable-select-wrap {
+.ZENVE-select-wrap {
   position: relative;
   width: 100%;
 }
 
-.lovable-designer-select {
+.ZENVE-designer-select {
   width: 100%;
   height: 36px;
-  background: var(--lovable-panel);
-  border: 1px solid var(--lovable-line);
+  background: var(--ZENVE-panel);
+  border: 1px solid var(--ZENVE-line);
   border-radius: 6px;
   padding: 0 32px 0 12px;
   font-size: 13.5px;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
   appearance: none;
   cursor: pointer;
   outline: none;
   transition: border-color 0.15s ease;
 }
 
-.lovable-designer-select:focus {
+.ZENVE-designer-select:focus {
   border-color: #92400e;
 }
 
-.lovable-select-chevron {
+.ZENVE-select-chevron {
   position: absolute;
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   display: flex;
   align-items: center;
 }
@@ -177,7 +177,7 @@
    FEEDBACK BANNERS
 ========================================================= */
 
-.lovable-alert {
+.ZENVE-alert {
   margin: 16px 28px 0;
   padding: 10px 16px;
   border-radius: 6px;
@@ -187,19 +187,19 @@
   justify-content: space-between;
 }
 
-.lovable-alert-success {
+.ZENVE-alert-success {
   background: #ecfdf5;
   border: 1px solid #a7f3d0;
   color: #065f46;
 }
 
-.lovable-alert-error {
+.ZENVE-alert-error {
   background: #fef2f2;
   border: 1px solid #fecaca;
   color: #991b1b;
 }
 
-.lovable-alert-close {
+.ZENVE-alert-close {
   background: none;
   border: none;
   font-size: 16px;
@@ -208,24 +208,24 @@
   padding: 0 4px;
 }
 
-.lovable-empty-state-card {
+.ZENVE-empty-state-card {
   max-width: 600px;
   margin: 60px auto;
   padding: 40px;
-  background: var(--lovable-panel);
-  border: 1px dashed var(--lovable-line);
+  background: var(--ZENVE-panel);
+  border: 1px dashed var(--ZENVE-line);
   border-radius: 8px;
   text-align: center;
 }
 
-.lovable-empty-state-card h3 {
+.ZENVE-empty-state-card h3 {
   margin: 0 0 8px;
-  font-family: var(--lovable-font-serif);
+  font-family: var(--ZENVE-font-serif);
   font-size: 20px;
 }
 
-.lovable-empty-state-card p {
-  color: var(--lovable-muted);
+.ZENVE-empty-state-card p {
+  color: var(--ZENVE-muted);
   font-size: 14px;
   margin-bottom: 20px;
 }
@@ -234,7 +234,7 @@
    MAIN CONTAINER
 ========================================================= */
 
-.lovable-portal-main {
+.ZENVE-portal-main {
   max-width: 1480px;
   margin: 0 auto;
   padding: 24px 28px 60px;
@@ -244,15 +244,15 @@
   box-sizing: border-box;
 }
 
-.lovable-portal-card {
-  background: var(--lovable-panel);
-  border: 1px solid var(--lovable-line);
+.ZENVE-portal-card {
+  background: var(--ZENVE-panel);
+  border: 1px solid var(--ZENVE-line);
   border-radius: 8px;
   padding: 22px 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
-.lovable-card-header {
+.ZENVE-card-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -260,94 +260,94 @@
   gap: 16px;
 }
 
-.lovable-card-title {
+.ZENVE-card-title {
   margin: 0;
-  font-family: var(--lovable-font-serif);
+  font-family: var(--ZENVE-font-serif);
   font-size: 19px;
   font-weight: 600;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
 }
 
-.lovable-card-description {
+.ZENVE-card-description {
   margin: 4px 0 0;
   font-size: 13px;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
 }
 
 /* =========================================================
    10 KPI METRIC TILES
 ========================================================= */
 
-.lovable-kpi-grid {
+.ZENVE-kpi-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 12px;
 }
 
-.lovable-kpi-tile {
-  background: var(--lovable-subtle);
-  border: 1px solid var(--lovable-line);
+.ZENVE-kpi-tile {
+  background: var(--ZENVE-subtle);
+  border: 1px solid var(--ZENVE-line);
   border-radius: 6px;
   padding: 14px;
   display: flex;
   flex-direction: column;
 }
 
-.lovable-tile-label {
+.ZENVE-tile-label {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   line-height: 1.2;
 }
 
-.lovable-tile-value {
+.ZENVE-tile-value {
   margin: 8px 0 4px;
-  font-family: var(--lovable-font-serif);
+  font-family: var(--ZENVE-font-serif);
   font-size: 22px;
   font-weight: 600;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
   line-height: 1.15;
 }
 
-.lovable-truncate {
+.ZENVE-truncate {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.lovable-tile-hint {
+.ZENVE-tile-hint {
   font-size: 11.5px;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   line-height: 1.25;
 }
 
 /* PENDING ACTIONS */
-.lovable-pending-actions-wrap {
+.ZENVE-pending-actions-wrap {
   margin-top: 20px;
   padding-top: 16px;
-  border-top: 1px solid var(--lovable-line);
+  border-top: 1px solid var(--ZENVE-line);
 }
 
-.lovable-pending-empty {
+.ZENVE-pending-empty {
   margin: 6px 0 0;
   font-size: 13.5px;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
 }
 
-.lovable-pending-list {
+.ZENVE-pending-list {
   margin: 8px 0 0;
   padding: 0;
   list-style: none;
   font-size: 13.5px;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.lovable-pending-list li {
+.ZENVE-pending-list li {
   color: #92400e;
   font-weight: 500;
 }
@@ -356,49 +356,49 @@
    NOTIFICATIONS
 ========================================================= */
 
-.lovable-btn-outline-sm {
+.ZENVE-btn-outline-sm {
   background: transparent;
-  border: 1px solid var(--lovable-line);
+  border: 1px solid var(--ZENVE-line);
   padding: 5px 12px;
   border-radius: 5px;
   font-size: 12px;
   font-weight: 500;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
   cursor: pointer;
   transition: background 0.15s ease;
   white-space: nowrap;
 }
 
-.lovable-btn-outline-sm:hover {
-  background: var(--lovable-subtle);
+.ZENVE-btn-outline-sm:hover {
+  background: var(--ZENVE-subtle);
 }
 
-.lovable-notifications-list {
+.ZENVE-notifications-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.lovable-notification-row {
+.ZENVE-notification-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
   padding: 10px 14px;
-  border: 1px solid var(--lovable-line);
+  border: 1px solid var(--ZENVE-line);
   border-radius: 6px;
-  background: var(--lovable-panel);
+  background: var(--ZENVE-panel);
   font-size: 13.5px;
 }
 
-.lovable-notif-left {
+.ZENVE-notif-left {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.lovable-unread-dot {
+.ZENVE-unread-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
@@ -406,17 +406,17 @@
   flex-shrink: 0;
 }
 
-.lovable-notif-msg {
-  color: var(--lovable-ink);
+.ZENVE-notif-msg {
+  color: var(--ZENVE-ink);
 }
 
-.lovable-notif-right {
+.ZENVE-notif-right {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.lovable-tone-badge {
+.ZENVE-tone-badge {
   padding: 2px 8px;
   border-radius: 4px;
   font-size: 10.5px;
@@ -425,22 +425,22 @@
   letter-spacing: 0.04em;
 }
 
-.lovable-tone-badge.info {
+.ZENVE-tone-badge.info {
   background: #f1f5f9;
   color: #334155;
 }
 
-.lovable-notif-date {
+.ZENVE-notif-date {
   font-size: 12px;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
 }
 
-.lovable-item-empty {
+.ZENVE-item-empty {
   padding: 18px;
   text-align: center;
   font-size: 13.5px;
-  color: var(--lovable-muted);
-  border: 1px dashed var(--lovable-line);
+  color: var(--ZENVE-muted);
+  border: 1px dashed var(--ZENVE-line);
   border-radius: 6px;
 }
 
@@ -448,89 +448,89 @@
    MY PROFILE (9-FIELD DEFINITION LIST)
 ========================================================= */
 
-.lovable-profile-dl {
+.ZENVE-profile-dl {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px 24px;
   margin: 0;
 }
 
-.lovable-profile-item {
+.ZENVE-profile-item {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.lovable-profile-item dd {
+.ZENVE-profile-item dd {
   margin: 0;
   font-size: 14.5px;
   font-weight: 500;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
 }
 
 /* =========================================================
    UPLOAD A SKU FORM
 ========================================================= */
 
-.lovable-sku-form {
+.ZENVE-sku-form {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.lovable-form-grid {
+.ZENVE-form-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
 
-.lovable-form-group {
+.ZENVE-form-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.lovable-form-group.col-span-2 {
+.ZENVE-form-group.col-span-2 {
   grid-column: span 2;
 }
 
-.lovable-form-input,
-.lovable-form-select {
+.ZENVE-form-input,
+.ZENVE-form-select {
   height: 38px;
-  background: var(--lovable-panel);
-  border: 1px solid var(--lovable-line);
+  background: var(--ZENVE-panel);
+  border: 1px solid var(--ZENVE-line);
   border-radius: 6px;
   padding: 0 12px;
   font-size: 13.5px;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
   outline: none;
   transition: border-color 0.15s ease;
   width: 100%;
 }
 
-.lovable-form-input:focus,
-.lovable-form-select:focus {
+.ZENVE-form-input:focus,
+.ZENVE-form-select:focus {
   border-color: #92400e;
 }
 
-.lovable-toggle-row {
+.ZENVE-toggle-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 12px;
   height: 38px;
-  border: 1px solid var(--lovable-line);
+  border: 1px solid var(--ZENVE-line);
   border-radius: 6px;
-  background: var(--lovable-panel);
+  background: var(--ZENVE-panel);
 }
 
-.lovable-toggle-row .lovable-label-caps {
+.ZENVE-toggle-row .ZENVE-label-caps {
   margin: 0;
   font-size: 11px;
 }
 
 /* CUSTOM SWITCH */
-.lovable-switch {
+.ZENVE-switch {
   position: relative;
   width: 36px;
   height: 20px;
@@ -545,11 +545,11 @@
   align-items: center;
 }
 
-.lovable-switch.checked {
+.ZENVE-switch.checked {
   background: #17130f;
 }
 
-.lovable-switch-thumb {
+.ZENVE-switch-thumb {
   width: 16px;
   height: 16px;
   background: #ffffff;
@@ -558,23 +558,23 @@
   display: block;
 }
 
-.lovable-switch.checked .lovable-switch-thumb {
+.ZENVE-switch.checked .ZENVE-switch-thumb {
   transform: translateX(16px);
 }
 
-.lovable-sku-preview-text {
+.ZENVE-sku-preview-text {
   margin: 4px 0 0;
   font-size: 12.5px;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
 }
 
-.lovable-sku-preview-text code {
+.ZENVE-sku-preview-text code {
   font-family: monospace;
   font-weight: 600;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
 }
 
-.lovable-btn-primary {
+.ZENVE-btn-primary {
   align-self: flex-start;
   background: #17130f;
   color: #ffffff;
@@ -591,11 +591,11 @@
   transition: background 0.15s ease;
 }
 
-.lovable-btn-primary:hover {
+.ZENVE-btn-primary:hover {
   background: #2d2621;
 }
 
-.lovable-btn-primary:disabled {
+.ZENVE-btn-primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -604,45 +604,45 @@
    SKU MASTER & STOCK TABLE
 ========================================================= */
 
-.lovable-table-responsive {
+.ZENVE-table-responsive {
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-.lovable-table {
+.ZENVE-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
 }
 
-.lovable-table th {
+.ZENVE-table th {
   padding: 10px 14px;
-  border-bottom: 1px solid var(--lovable-line);
+  border-bottom: 1px solid var(--ZENVE-line);
   font-weight: 600;
   white-space: nowrap;
 }
 
-.lovable-table td {
+.ZENVE-table td {
   padding: 12px 14px;
-  border-bottom: 1px solid var(--lovable-line);
+  border-bottom: 1px solid var(--ZENVE-line);
   font-size: 13.5px;
   vertical-align: middle;
 }
 
-.lovable-sku-name {
+.ZENVE-sku-name {
   font-weight: 500;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
 }
 
-.lovable-sku-id-mono {
+.ZENVE-sku-id-mono {
   font-family: monospace;
   font-size: 11.5px;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   margin-top: 2px;
 }
 
-.lovable-qa-badge {
+.ZENVE-qa-badge {
   padding: 3px 8px;
   border-radius: 999px;
   font-size: 11px;
@@ -652,24 +652,24 @@
   white-space: nowrap;
 }
 
-.lovable-qa-badge.tone-approved,
-.lovable-qa-badge.tone-live {
+.ZENVE-qa-badge.tone-approved,
+.ZENVE-qa-badge.tone-live {
   background: #ecfdf5;
   color: #065f46;
 }
 
-.lovable-qa-badge.tone-pending_qa,
-.lovable-qa-badge.tone-draft {
+.ZENVE-qa-badge.tone-pending_qa,
+.ZENVE-qa-badge.tone-draft {
   background: #fef3c7;
   color: #92400e;
 }
 
-.lovable-qa-badge.tone-correction {
+.ZENVE-qa-badge.tone-correction {
   background: #ffedd5;
   color: #c2410c;
 }
 
-.lovable-qa-badge.tone-rejected {
+.ZENVE-qa-badge.tone-rejected {
   background: #fef2f2;
   color: #991b1b;
 }
@@ -678,51 +678,51 @@
    ORDERS & SETTLEMENTS
 ========================================================= */
 
-.lovable-orders-block,
-.lovable-settlements-block {
+.ZENVE-orders-block,
+.ZENVE-settlements-block {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.lovable-settlements-block {
+.ZENVE-settlements-block {
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid var(--lovable-line);
+  border-top: 1px solid var(--ZENVE-line);
 }
 
-.lovable-order-row,
-.lovable-settlement-row {
+.ZENVE-order-row,
+.ZENVE-settlement-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
   padding: 10px 14px;
-  border: 1px solid var(--lovable-line);
+  border: 1px solid var(--ZENVE-line);
   border-radius: 6px;
-  background: var(--lovable-panel);
+  background: var(--ZENVE-panel);
   font-size: 13.5px;
 }
 
-.lovable-order-id,
-.lovable-stl-id {
+.ZENVE-order-id,
+.ZENVE-stl-id {
   font-weight: 600;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
 }
 
-.lovable-order-customer,
-.lovable-stl-breakdown {
-  color: var(--lovable-muted);
+.ZENVE-order-customer,
+.ZENVE-stl-breakdown {
+  color: var(--ZENVE-muted);
 }
 
-.lovable-order-amt,
-.lovable-stl-net {
+.ZENVE-order-amt,
+.ZENVE-stl-net {
   font-weight: 600;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
 }
 
-.lovable-order-badge {
+.ZENVE-order-badge {
   padding: 2px 8px;
   border-radius: 4px;
   font-size: 11px;
@@ -732,27 +732,27 @@
   white-space: nowrap;
 }
 
-.lovable-order-badge.tone-delivered,
-.lovable-order-badge.tone-paid,
-.lovable-order-badge.tone-reconciled {
+.ZENVE-order-badge.tone-delivered,
+.ZENVE-order-badge.tone-paid,
+.ZENVE-order-badge.tone-reconciled {
   background: #ecfdf5;
   color: #065f46;
 }
 
-.lovable-order-badge.tone-placed,
-.lovable-order-badge.tone-pending {
+.ZENVE-order-badge.tone-placed,
+.ZENVE-order-badge.tone-pending {
   background: #fef3c7;
   color: #92400e;
 }
 
-.lovable-order-badge.tone-shipped,
-.lovable-order-badge.tone-approved {
+.ZENVE-order-badge.tone-shipped,
+.ZENVE-order-badge.tone-approved {
   background: #eff6ff;
   color: #1e40af;
 }
 
-.lovable-order-badge.tone-cancelled,
-.lovable-order-badge.tone-reversed {
+.ZENVE-order-badge.tone-cancelled,
+.ZENVE-order-badge.tone-reversed {
   background: #fef2f2;
   color: #991b1b;
 }
@@ -766,73 +766,82 @@
    Smartphones like iPhone, Pixel, Galaxy
 --------------------------------------------------------- */
 @media (max-width: 640px) {
-  .lovable-portal-header {
+  .ZENVE-portal-header {
     padding: 12px 16px;
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
   }
 
-  .lovable-header-left {
+  .ZENVE-header-left {
     gap: 12px;
   }
 
-  .lovable-portal-logo {
+  .ZENVE-portal-logo {
     width: 34px;
     height: 34px;
   }
 
-  .lovable-portal-title {
+  .ZENVE-portal-title {
     font-size: 20px;
     gap: 6px;
   }
 
-  .lovable-layer-num {
+  .ZENVE-layer-num {
     font-size: 20px;
   }
 
-  .lovable-portal-subtitle {
+  .ZENVE-portal-subtitle {
     font-size: 12px;
     line-height: 1.4;
   }
 
-  .lovable-header-right {
+  .ZENVE-header-right {
     width: 100%;
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
   }
 
-  .lovable-header-right .search-container,
-  .lovable-header-right form {
+  .ZENVE-header-right .search-user-wrapper {
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
   }
 
-  .lovable-header-right .search-input {
+  .ZENVE-header-right .search-bar-wrapper {
     width: 100%;
+    flex: 1 1 100%;
   }
 
-  .lovable-signed-in-box {
+  .ZENVE-header-right .home-user {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .ZENVE-signed-in-box {
     width: 100%;
     min-width: unset;
   }
 
-  .lovable-alert {
+  .ZENVE-alert {
     margin: 12px 14px 0;
     font-size: 12.5px;
     padding: 8px 12px;
   }
 
-  .lovable-portal-main {
+  .ZENVE-portal-main {
     padding: 14px 12px 48px;
     gap: 16px;
   }
 
-  .lovable-portal-card {
+  .ZENVE-portal-card {
     padding: 16px 14px;
   }
 
-  .lovable-card-header {
+  .ZENVE-card-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
@@ -840,78 +849,78 @@
   }
 
   /* 10 KPIs on Mobile: 2-column grid */
-  .lovable-kpi-grid {
+  .ZENVE-kpi-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
 
-  .lovable-kpi-tile {
+  .ZENVE-kpi-tile {
     padding: 10px 12px;
   }
 
-  .lovable-tile-value {
+  .ZENVE-tile-value {
     font-size: 19px;
     margin: 6px 0 2px;
   }
 
-  .lovable-tile-hint {
+  .ZENVE-tile-hint {
     font-size: 11px;
   }
 
   /* Notifications */
-  .lovable-notification-row {
+  .ZENVE-notification-row {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
     padding: 10px 12px;
   }
 
-  .lovable-notif-right {
+  .ZENVE-notif-right {
     width: 100%;
     justify-content: space-between;
   }
 
   /* Profile Definition List: 1-column */
-  .lovable-profile-dl {
+  .ZENVE-profile-dl {
     grid-template-columns: 1fr;
     gap: 12px;
   }
 
   /* Upload SKU Form: 1-column */
-  .lovable-form-grid {
+  .ZENVE-form-grid {
     grid-template-columns: 1fr;
     gap: 10px;
   }
 
-  .lovable-form-group.span-2,
-  .lovable-form-group.col-span-2 {
+  .ZENVE-form-group.span-2,
+  .ZENVE-form-group.col-span-2 {
     grid-column: span 1;
   }
 
-  .lovable-btn-primary {
+  .ZENVE-btn-primary {
     width: 100%;
     text-align: center;
   }
 
   /* Table Horizontal Scrolling */
-  .lovable-table-responsive {
-    border: 1px solid var(--lovable-line);
+  .ZENVE-table-responsive {
+    border: 1px solid var(--ZENVE-line);
     border-radius: 6px;
   }
 
-  .lovable-table {
+  .ZENVE-table {
     min-width: 650px;
   }
 
-  .lovable-table th,
-  .lovable-table td {
+  .ZENVE-table th,
+  .ZENVE-table td {
     padding: 8px 10px;
     font-size: 12px;
   }
 
   /* Orders and Settlements on mobile */
-  .lovable-order-row,
-  .lovable-settlement-row {
+  .ZENVE-order-row,
+  .ZENVE-settlement-row {
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
@@ -921,7 +930,7 @@
 
 /* Extra small mobile (< 380px) */
 @media (max-width: 380px) {
-  .lovable-kpi-grid {
+  .ZENVE-kpi-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -931,14 +940,14 @@
    iPad, iPad Air, iPad Pro, Android Tablets, Surface Pro
 --------------------------------------------------------- */
 @media (min-width: 641px) and (max-width: 1140px) {
-  .lovable-portal-header {
+  .ZENVE-portal-header {
     padding: 14px 24px;
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
   }
 
-  .lovable-header-left {
+  .ZENVE-header-left {
     width: 100%;
     display: flex;
     align-items: center;
@@ -946,42 +955,42 @@
     min-width: 0;
   }
 
-  .lovable-portal-logo {
+  .ZENVE-portal-logo {
     width: 44px;
     height: 44px;
     flex-shrink: 0;
   }
 
-  .lovable-header-title-block {
+  .ZENVE-header-title-block {
     flex: 1;
     min-width: 0;
   }
 
-  .lovable-portal-title {
+  .ZENVE-portal-title {
     font-size: 22px;
     line-height: 1.25;
     white-space: nowrap;
   }
 
-  .lovable-portal-subtitle {
+  .ZENVE-portal-subtitle {
     font-size: 12.5px;
     line-height: 1.45;
-    color: var(--lovable-muted);
+    color: var(--ZENVE-muted);
     white-space: normal;
     margin-top: 2px;
   }
 
-  .lovable-header-right {
+  .ZENVE-header-right {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
     padding-top: 12px;
-    border-top: 1px solid var(--lovable-line);
+    border-top: 1px solid var(--ZENVE-line);
   }
 
-  .lovable-header-right .search-user-wrapper {
+  .ZENVE-header-right .search-user-wrapper {
     flex: 1;
     display: flex;
     align-items: center;
@@ -990,69 +999,69 @@
     min-width: 0;
   }
 
-  .lovable-header-right .search-bar-wrapper {
+  .ZENVE-header-right .search-bar-wrapper {
     flex: 1;
     max-width: 320px;
     min-width: 160px;
   }
 
-  .lovable-signed-in-box {
+  .ZENVE-signed-in-box {
     min-width: 200px;
     max-width: 260px;
     flex-shrink: 0;
   }
 
-  .lovable-portal-main {
+  .ZENVE-portal-main {
     max-width: 100%;
     padding: 20px 24px 60px;
     gap: 20px;
   }
 
   /* 10 KPIs on Tablet: 5 columns on landscape, 2 on portrait */
-  .lovable-kpi-grid {
+  .ZENVE-kpi-grid {
     grid-template-columns: repeat(5, 1fr);
     gap: 10px;
   }
 
-  .lovable-kpi-tile {
+  .ZENVE-kpi-tile {
     padding: 12px 10px;
   }
 
-  .lovable-tile-value {
+  .ZENVE-tile-value {
     font-size: 20px;
   }
 
-  .lovable-profile-dl {
+  .ZENVE-profile-dl {
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
   }
 
-  .lovable-form-grid {
+  .ZENVE-form-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 14px;
   }
 
-  .lovable-form-group.span-2,
-  .lovable-form-group.col-span-2 {
+  .ZENVE-form-group.span-2,
+  .ZENVE-form-group.col-span-2 {
     grid-column: span 2;
   }
 
-  .lovable-table-responsive {
-    border: 1px solid var(--lovable-line);
+  .ZENVE-table-responsive {
+    border: 1px solid var(--ZENVE-line);
     border-radius: 6px;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 
-  .lovable-table th,
-  .lovable-table td {
+  .ZENVE-table th,
+  .ZENVE-table td {
     padding: 10px 12px;
     font-size: 13px;
     white-space: nowrap;
   }
 
-  .lovable-order-row,
-  .lovable-settlement-row {
+  .ZENVE-order-row,
+  .ZENVE-settlement-row {
     padding: 12px 14px;
     font-size: 13px;
   }
@@ -1060,36 +1069,36 @@
 
 /* Tablet portrait & narrow tablets (641px - 840px) */
 @media (min-width: 641px) and (max-width: 840px) {
-  .lovable-portal-header {
+  .ZENVE-portal-header {
     padding: 12px 18px;
     gap: 10px;
   }
 
-  .lovable-header-right {
+  .ZENVE-header-right {
     gap: 12px;
     padding-top: 10px;
   }
 
-  .lovable-header-right .search-user-wrapper {
+  .ZENVE-header-right .search-user-wrapper {
     gap: 8px;
   }
 
-  .lovable-header-right .search-bar-wrapper {
+  .ZENVE-header-right .search-bar-wrapper {
     max-width: 230px;
     min-width: 130px;
   }
 
-  .lovable-signed-in-box {
+  .ZENVE-signed-in-box {
     min-width: 170px;
     max-width: 220px;
   }
 
-  .lovable-kpi-grid {
+  .ZENVE-kpi-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
 
-  .lovable-profile-dl {
+  .ZENVE-profile-dl {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
@@ -1100,24 +1109,24 @@
    MacBook Air, MacBook Pro 14", Ultrabooks
 --------------------------------------------------------- */
 @media (min-width: 1141px) and (max-width: 1440px) {
-  .lovable-portal-header {
+  .ZENVE-portal-header {
     padding: 16px 32px;
   }
 
-  .lovable-portal-main {
+  .ZENVE-portal-main {
     max-width: 1280px;
     padding: 24px 32px 60px;
   }
 
-  .lovable-kpi-grid {
+  .ZENVE-kpi-grid {
     grid-template-columns: repeat(5, 1fr);
   }
 
-  .lovable-form-grid {
+  .ZENVE-form-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 
-  .lovable-profile-dl {
+  .ZENVE-profile-dl {
     grid-template-columns: repeat(3, 1fr);
   }
 }
@@ -1127,16 +1136,16 @@
    Full HD 1080p and 1440p Monitors
 --------------------------------------------------------- */
 @media (min-width: 1441px) and (max-width: 1920px) {
-  .lovable-portal-header {
+  .ZENVE-portal-header {
     padding: 18px 40px;
   }
 
-  .lovable-portal-main {
+  .ZENVE-portal-main {
     max-width: 1540px;
     padding: 28px 40px 60px;
   }
 
-  .lovable-kpi-grid {
+  .ZENVE-kpi-grid {
     grid-template-columns: repeat(5, 1fr);
     gap: 14px;
   }
@@ -1147,136 +1156,136 @@
    Studio Displays, 4K UHD Monitors, Retina 4K/5K
 --------------------------------------------------------- */
 @media (min-width: 1921px) {
-  .lovable-portal-header {
+  .ZENVE-portal-header {
     padding: 24px 64px;
   }
 
-  .lovable-portal-logo {
+  .ZENVE-portal-logo {
     width: 54px;
     height: 54px;
   }
 
-  .lovable-back-link {
+  .ZENVE-back-link {
     font-size: 13px;
   }
 
-  .lovable-portal-title {
+  .ZENVE-portal-title {
     font-size: 34px;
     gap: 12px;
   }
 
-  .lovable-layer-num {
+  .ZENVE-layer-num {
     font-size: 34px;
   }
 
-  .lovable-portal-subtitle {
+  .ZENVE-portal-subtitle {
     font-size: 16px;
   }
 
-  .lovable-designer-select {
+  .ZENVE-designer-select {
     height: 44px;
     font-size: 15px;
     padding: 0 40px 0 16px;
     border-radius: 8px;
   }
 
-  .lovable-signed-in-box {
+  .ZENVE-signed-in-box {
     min-width: 280px;
   }
 
-  .lovable-portal-main {
+  .ZENVE-portal-main {
     max-width: 2800px;
     padding: 36px 64px 80px;
     gap: 32px;
   }
 
-  .lovable-portal-card {
+  .ZENVE-portal-card {
     padding: 28px 32px;
     border-radius: 10px;
   }
 
-  .lovable-card-title {
+  .ZENVE-card-title {
     font-size: 24px;
   }
 
-  .lovable-card-description {
+  .ZENVE-card-description {
     font-size: 15.5px;
   }
 
   /* 4K Expansive 10 KPIs */
-  .lovable-kpi-grid {
+  .ZENVE-kpi-grid {
     grid-template-columns: repeat(5, 1fr);
     gap: 20px;
   }
 
-  .lovable-kpi-tile {
+  .ZENVE-kpi-tile {
     padding: 20px 22px;
     border-radius: 8px;
   }
 
-  .lovable-tile-label {
+  .ZENVE-tile-label {
     font-size: 12.5px;
   }
 
-  .lovable-tile-value {
+  .ZENVE-tile-value {
     font-size: 32px;
     margin: 10px 0 6px;
   }
 
-  .lovable-tile-hint {
+  .ZENVE-tile-hint {
     font-size: 14px;
   }
 
   /* 4K Profile: 4 columns */
-  .lovable-profile-dl {
+  .ZENVE-profile-dl {
     grid-template-columns: repeat(4, 1fr);
     gap: 24px;
   }
 
-  .lovable-profile-item dd {
+  .ZENVE-profile-item dd {
     font-size: 16px;
   }
 
   /* 4K Form: 4 columns */
-  .lovable-form-grid {
+  .ZENVE-form-grid {
     grid-template-columns: repeat(4, 1fr);
     gap: 18px;
   }
 
-  .lovable-form-input,
-  .lovable-form-select,
-  .lovable-toggle-row {
+  .ZENVE-form-input,
+  .ZENVE-form-select,
+  .ZENVE-toggle-row {
     height: 44px;
     font-size: 15px;
     border-radius: 8px;
   }
 
-  .lovable-btn-primary {
+  .ZENVE-btn-primary {
     padding: 12px 28px;
     font-size: 15px;
     border-radius: 8px;
   }
 
   /* 4K Table */
-  .lovable-table th,
-  .lovable-table td {
+  .ZENVE-table th,
+  .ZENVE-table td {
     padding: 16px 20px;
     font-size: 15px;
   }
 
-  .lovable-sku-id-mono {
+  .ZENVE-sku-id-mono {
     font-size: 13px;
   }
 
   /* 4K Orders & Settlements */
-  .lovable-order-row,
-  .lovable-settlement-row {
+  .ZENVE-order-row,
+  .ZENVE-settlement-row {
     padding: 16px 20px;
     font-size: 15px;
     border-radius: 8px;
   }
 
-  .lovable-order-badge {
+  .ZENVE-order-badge {
     font-size: 12px;
     padding: 4px 10px;
   }
@@ -1284,11 +1293,11 @@
 
 /* Extreme 4K Resolution (3200px - 3840px Native) */
 @media (min-width: 3200px) {
-  .lovable-portal-main {
+  .ZENVE-portal-main {
     max-width: 3400px;
   }
 
-  .lovable-tile-value {
+  .ZENVE-tile-value {
     font-size: 38px;
   }
 }

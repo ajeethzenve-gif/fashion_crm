@@ -434,34 +434,34 @@ export default function Inventory() {
      RENDER
   ======================================================= */
   return (
-    <div className="lovable-inventory-layout">
+    <div className="ZENVE-inventory-layout">
       {/* =====================================================
           HEADER SECTION
       ===================================================== */}
-      <header className="lovable-inv-header">
-        <div className="lovable-header-left">
-          <Link to="/" className="lovable-portal-logo" aria-label="Go to home">
+      <header className="ZENVE-inv-header">
+        <div className="ZENVE-header-left">
+          <Link to="/" className="ZENVE-portal-logo" aria-label="Go to home">
             <img src={zenveLogo} alt="Zenve Fashion" />
           </Link>
 
-          <div className="lovable-header-title-block">
-            <Link to="/" className="lovable-back-link">
+          <div className="ZENVE-header-title-block">
+            <Link to="/" className="ZENVE-back-link">
               <BackIcon />
               <span>ALL 12 LAYERS</span>
             </Link>
 
-            <h1 className="lovable-portal-title">
-              <span className="lovable-layer-num">05</span>
+            <h1 className="ZENVE-portal-title">
+              <span className="ZENVE-layer-num">05</span>
               <span>Inventory Engine</span>
             </h1>
 
-            <p className="lovable-portal-desc">
+            <p className="ZENVE-portal-desc">
               Inventory layer · Physical, reserved, available, damaged, returned, in-transit
             </p>
           </div>
         </div>
 
-        <div className="lovable-header-right">
+        <div className="ZENVE-header-right">
           <SearchBar />
         </div>
       </header>
@@ -469,14 +469,14 @@ export default function Inventory() {
       {/* =====================================================
           MAIN BODY
       ===================================================== */}
-      <main className="lovable-inv-main">
+      <main className="ZENVE-inv-main">
         {/* TOAST / ALERT NOTIFICATION */}
         {alert && (
-          <div className={`lovable-inv-alert ${alert.type}`}>
+          <div className={`ZENVE-inv-alert ${alert.type}`}>
             <span>{alert.text}</span>
             <button
               type="button"
-              className="lovable-alert-close"
+              className="ZENVE-alert-close"
               onClick={() => setAlert(null)}
               aria-label="Close alert"
             >
@@ -488,67 +488,67 @@ export default function Inventory() {
         {/* ===================================================
             TOP 4 SUMMARY KPI CARDS
         =================================================== */}
-        <section className="lovable-inv-kpi-grid">
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Physical</span>
-            <strong className="lovable-kpi-value">{totals.physical}</strong>
-            <span className="lovable-kpi-hint">Units on hand</span>
+        <section className="ZENVE-inv-kpi-grid">
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Physical</span>
+            <strong className="ZENVE-kpi-value">{totals.physical}</strong>
+            <span className="ZENVE-kpi-hint">Units on hand</span>
           </div>
 
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Reserved</span>
-            <strong className="lovable-kpi-value">{totals.reserved}</strong>
-            <span className="lovable-kpi-hint">Held by live orders</span>
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Reserved</span>
+            <strong className="ZENVE-kpi-value">{totals.reserved}</strong>
+            <span className="ZENVE-kpi-hint">Held by live orders</span>
           </div>
 
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Available</span>
-            <strong className="lovable-kpi-value">{totals.available}</strong>
-            <span className="lovable-kpi-hint">Sellable now</span>
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Available</span>
+            <strong className="ZENVE-kpi-value">{totals.available}</strong>
+            <span className="ZENVE-kpi-hint">Sellable now</span>
           </div>
 
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Blocked</span>
-            <strong className="lovable-kpi-value">{totals.blocked}</strong>
-            <span className="lovable-kpi-hint">Damaged + quarantined</span>
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Blocked</span>
+            <strong className="ZENVE-kpi-value">{totals.blocked}</strong>
+            <span className="ZENVE-kpi-hint">Damaged + quarantined</span>
           </div>
         </section>
 
         {/* ===================================================
             FORECAST & REPLENISHMENT SECTION
         =================================================== */}
-        <section className="lovable-panel-card">
-          <div className="lovable-panel-header">
-            <h2 className="lovable-panel-title">Forecast & replenishment</h2>
-            <p className="lovable-panel-desc">
+        <section className="ZENVE-panel-card">
+          <div className="ZENVE-panel-header">
+            <h2 className="ZENVE-panel-title">Forecast & replenishment</h2>
+            <p className="ZENVE-panel-desc">
               Velocity is units sold per day over the last 30 days. Reorder point covers 10 days of that velocity.
             </p>
           </div>
 
           {/* 3 SUB-KPIS */}
-          <div className="lovable-forecast-sub-kpis">
-            <div className="lovable-kpi-card">
-              <span className="lovable-kpi-label">At or below reorder point</span>
-              <strong className="lovable-kpi-value">{reorderList.length}</strong>
-              <span className="lovable-kpi-hint">Raise a PO</span>
+          <div className="ZENVE-forecast-sub-kpis">
+            <div className="ZENVE-kpi-card">
+              <span className="ZENVE-kpi-label">At or below reorder point</span>
+              <strong className="ZENVE-kpi-value">{reorderList.length}</strong>
+              <span className="ZENVE-kpi-hint">Raise a PO</span>
             </div>
 
-            <div className="lovable-kpi-card">
-              <span className="lovable-kpi-label">Dead stock SKUs</span>
-              <strong className="lovable-kpi-value">{deadList.length}</strong>
-              <span className="lovable-kpi-hint">No sales in 30 days</span>
+            <div className="ZENVE-kpi-card">
+              <span className="ZENVE-kpi-label">Dead stock SKUs</span>
+              <strong className="ZENVE-kpi-value">{deadList.length}</strong>
+              <span className="ZENVE-kpi-hint">No sales in 30 days</span>
             </div>
 
-            <div className="lovable-kpi-card">
-              <span className="lovable-kpi-label">Fast moving</span>
-              <strong className="lovable-kpi-value">{fastList.length}</strong>
-              <span className="lovable-kpi-hint">Protect availability</span>
+            <div className="ZENVE-kpi-card">
+              <span className="ZENVE-kpi-label">Fast moving</span>
+              <strong className="ZENVE-kpi-value">{fastList.length}</strong>
+              <span className="ZENVE-kpi-hint">Protect availability</span>
             </div>
           </div>
 
           {/* FORECAST TABLE */}
-          <div className="lovable-table-wrap">
-            <table className="lovable-forecast-table">
+          <div className="ZENVE-table-wrap">
+            <table className="ZENVE-forecast-table">
               <thead>
                 <tr>
                   <th>SKU</th>
@@ -563,7 +563,7 @@ export default function Inventory() {
               <tbody>
                 {forecastItems.length === 0 ? (
                   <tr>
-                    <td colSpan={7} style={{ textAlign: "center", padding: "32px", color: "var(--lovable-muted)" }}>
+                    <td colSpan={7} style={{ textAlign: "center", padding: "32px", color: "var(--ZENVE-muted)" }}>
                       No SKUs in catalogue yet.
                     </td>
                   </tr>
@@ -582,12 +582,12 @@ export default function Inventory() {
                       <td>
                         <span>{item.reorderPoint}</span>
                         {item.available <= item.reorderPoint && (
-                          <span className="lovable-tone-badge warn ml-2">Reorder</span>
+                          <span className="ZENVE-tone-badge warn ml-2">Reorder</span>
                         )}
                       </td>
                       <td>{item.ageingDays === null ? "—" : `${item.ageingDays} d`}</td>
                       <td>
-                        <span className={`lovable-tone-badge ${MOVEMENT_TONE[item.movement]}`}>
+                        <span className={`ZENVE-tone-badge ${MOVEMENT_TONE[item.movement]}`}>
                           {MOVEMENT_LABEL[item.movement]}
                         </span>
                       </td>
@@ -602,17 +602,17 @@ export default function Inventory() {
         {/* ===================================================
             TWO-COLUMN DISTRIBUTION (STOCK BY HUB / BY DESIGNER)
         =================================================== */}
-        <section className="lovable-inv-two-col">
+        <section className="ZENVE-inv-two-col">
           {/* STOCK BY HUB */}
-          <div className="lovable-panel-card">
-            <div className="lovable-panel-header">
-              <h2 className="lovable-panel-title">Stock by hub</h2>
-              <p className="lovable-panel-desc">Where sellable units physically sit.</p>
+          <div className="ZENVE-panel-card">
+            <div className="ZENVE-panel-header">
+              <h2 className="ZENVE-panel-title">Stock by hub</h2>
+              <p className="ZENVE-panel-desc">Where sellable units physically sit.</p>
             </div>
 
-            <div className="lovable-hub-designer-list">
+            <div className="ZENVE-hub-designer-list">
               {stockByHub.map((hub) => (
-                <div key={hub.loc} className="lovable-dist-row">
+                <div key={hub.loc} className="ZENVE-dist-row">
                   <span className="dist-name">{hub.loc}</span>
                   <span className="dist-skus">{hub.skus} SKUs</span>
                   <span className="dist-units">{hub.units}</span>
@@ -622,20 +622,20 @@ export default function Inventory() {
           </div>
 
           {/* STOCK BY DESIGNER */}
-          <div className="lovable-panel-card">
-            <div className="lovable-panel-header">
-              <h2 className="lovable-panel-title">Stock by designer</h2>
-              <p className="lovable-panel-desc">Availability owned by each partner brand.</p>
+          <div className="ZENVE-panel-card">
+            <div className="ZENVE-panel-header">
+              <h2 className="ZENVE-panel-title">Stock by designer</h2>
+              <p className="ZENVE-panel-desc">Availability owned by each partner brand.</p>
             </div>
 
-            <div className="lovable-hub-designer-list">
+            <div className="ZENVE-hub-designer-list">
               {stockByDesigner.length === 0 ? (
-                <div className="lovable-empty-state">
+                <div className="ZENVE-empty-state">
                   <span>No designers found</span>
                 </div>
               ) : (
                 stockByDesigner.map((des) => (
-                  <div key={des.brand} className="lovable-dist-row">
+                  <div key={des.brand} className="ZENVE-dist-row">
                     <span className="dist-name">{des.brand}</span>
                     <span className="dist-skus">{des.skus} SKUs</span>
                     <span className="dist-units">{des.units}</span>
@@ -649,19 +649,19 @@ export default function Inventory() {
         {/* ===================================================
             STOCK LEDGER SECTION
         =================================================== */}
-        <section className="lovable-panel-card">
-          <div className="lovable-panel-header">
-            <div className="lovable-panel-title-row">
+        <section className="ZENVE-panel-card">
+          <div className="ZENVE-panel-header">
+            <div className="ZENVE-panel-title-row">
               <div>
-                <h2 className="lovable-panel-title">Stock ledger</h2>
-                <p className="lovable-panel-desc">
+                <h2 className="ZENVE-panel-title">Stock ledger</h2>
+                <p className="ZENVE-panel-desc">
                   Only available units are sellable. Receiving stock, damage and quarantine are all logged.
                 </p>
               </div>
 
               <input
                 type="text"
-                className="lovable-ledger-search-box"
+                className="ZENVE-ledger-search-box"
                 placeholder="Filter ledger SKUs..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -670,17 +670,17 @@ export default function Inventory() {
           </div>
 
           {loading ? (
-            <div className="lovable-empty-state">
+            <div className="ZENVE-empty-state">
               <strong>Loading inventory ledger...</strong>
               <p>Connecting to live Zenve Fashion database...</p>
             </div>
           ) : error ? (
-            <div className="lovable-empty-state">
+            <div className="ZENVE-empty-state">
               <strong style={{ color: "#9f1239" }}>{error}</strong>
               <p>
                 <button
                   type="button"
-                  className="lovable-btn lovable-btn-outline"
+                  className="ZENVE-btn ZENVE-btn-outline"
                   style={{ marginTop: "12px" }}
                   onClick={loadData}
                 >
@@ -689,74 +689,74 @@ export default function Inventory() {
               </p>
             </div>
           ) : filteredLedgerProducts.length === 0 ? (
-            <div className="lovable-empty-state">
+            <div className="ZENVE-empty-state">
               <strong>No SKUs in the catalogue yet.</strong>
               <p>Products uploaded in Layer 02 or 03 will automatically populate the live ledger.</p>
             </div>
           ) : (
-            <div className="lovable-ledger-stack">
+            <div className="ZENVE-ledger-stack">
               {filteredLedgerProducts.map((item) => (
-                <div key={item.id} className="lovable-ledger-card">
+                <div key={item.id} className="ZENVE-ledger-card">
                   {/* HEADER ROW */}
-                  <div className="lovable-ledger-header-row">
-                    <h3 className="lovable-ledger-sku-title">{item.name}</h3>
+                  <div className="ZENVE-ledger-header-row">
+                    <h3 className="ZENVE-ledger-sku-title">{item.name}</h3>
 
                     {item.available === 0 && (
-                      <span className="lovable-tone-badge bad">Out of stock</span>
+                      <span className="ZENVE-tone-badge bad">Out of stock</span>
                     )}
                     {item.available > 0 && item.available <= 2 && (
-                      <span className="lovable-tone-badge warn">Low stock</span>
+                      <span className="ZENVE-tone-badge warn">Low stock</span>
                     )}
 
-                    <span className="lovable-tone-badge info">{item.location}</span>
+                    <span className="ZENVE-tone-badge info">{item.location}</span>
                   </div>
 
-                  <p className="lovable-ledger-sku-id">{item.sku}</p>
+                  <p className="ZENVE-ledger-sku-id">{item.sku}</p>
 
                   {/* 7-METRIC BREAKDOWN GRID */}
-                  <div className="lovable-ledger-metrics-grid">
-                    <div className="lovable-metric-tile">
+                  <div className="ZENVE-ledger-metrics-grid">
+                    <div className="ZENVE-metric-tile">
                       <p className="tile-label">Physical</p>
                       <p className="tile-value">{item.physical}</p>
                     </div>
 
-                    <div className="lovable-metric-tile">
+                    <div className="ZENVE-metric-tile">
                       <p className="tile-label">Reserved</p>
                       <p className="tile-value">{item.reserved}</p>
                     </div>
 
-                    <div className="lovable-metric-tile">
+                    <div className="ZENVE-metric-tile">
                       <p className="tile-label">Available</p>
                       <p className="tile-value">{item.available}</p>
                     </div>
 
-                    <div className="lovable-metric-tile">
+                    <div className="ZENVE-metric-tile">
                       <p className="tile-label">In transit</p>
                       <p className="tile-value">{item.transit}</p>
                     </div>
 
-                    <div className="lovable-metric-tile">
+                    <div className="ZENVE-metric-tile">
                       <p className="tile-label">Returned</p>
                       <p className="tile-value">{item.returned}</p>
                     </div>
 
-                    <div className="lovable-metric-tile">
+                    <div className="ZENVE-metric-tile">
                       <p className="tile-label">Damaged</p>
                       <p className="tile-value">{item.damaged}</p>
                     </div>
 
-                    <div className="lovable-metric-tile">
+                    <div className="ZENVE-metric-tile">
                       <p className="tile-label">Quarantined</p>
                       <p className="tile-value">{item.quarantined}</p>
                     </div>
                   </div>
 
                   {/* ACTIONS ROW */}
-                  <div className="lovable-ledger-actions-row">
+                  <div className="ZENVE-ledger-actions-row">
                     <input
                       type="number"
                       min="1"
-                      className="lovable-qty-input"
+                      className="ZENVE-qty-input"
                       placeholder="Qty"
                       value={quantities[item.id] ?? ""}
                       onChange={(e) =>
@@ -767,7 +767,7 @@ export default function Inventory() {
 
                     <button
                       type="button"
-                      className="lovable-btn lovable-btn-primary"
+                      className="ZENVE-btn ZENVE-btn-primary"
                       onClick={() => handleReceive(item.id)}
                       disabled={processingId === item.id}
                     >
@@ -776,7 +776,7 @@ export default function Inventory() {
 
                     <button
                       type="button"
-                      className="lovable-btn lovable-btn-outline"
+                      className="ZENVE-btn ZENVE-btn-outline"
                       onClick={() => handleMarkDamaged(item.id)}
                       disabled={processingId === item.id || item.available <= 0}
                     >
@@ -785,7 +785,7 @@ export default function Inventory() {
 
                     <button
                       type="button"
-                      className="lovable-btn lovable-btn-outline"
+                      className="ZENVE-btn ZENVE-btn-outline"
                       onClick={() => handleQuarantine(item.id)}
                       disabled={processingId === item.id || item.available <= 0}
                     >
@@ -794,7 +794,7 @@ export default function Inventory() {
 
                     <button
                       type="button"
-                      className="lovable-btn lovable-btn-outline"
+                      className="ZENVE-btn ZENVE-btn-outline"
                       onClick={() => handleReleaseQuarantine(item.id)}
                       disabled={processingId === item.id || item.quarantined <= 0}
                     >
@@ -802,7 +802,7 @@ export default function Inventory() {
                     </button>
 
                     <select
-                      className="lovable-hub-select"
+                      className="ZENVE-hub-select"
                       value={item.location}
                       onChange={(e) => handleLocationChange(item.id, e.target.value)}
                       disabled={processingId === item.id}
@@ -823,13 +823,13 @@ export default function Inventory() {
         {/* ===================================================
             INVENTORY RULES IN FORCE
         =================================================== */}
-        <section className="lovable-panel-card">
-          <div className="lovable-panel-header">
-            <h2 className="lovable-panel-title">Inventory rules in force</h2>
-            <p className="lovable-panel-desc">Applied automatically by the order and returns engines.</p>
+        <section className="ZENVE-panel-card">
+          <div className="ZENVE-panel-header">
+            <h2 className="ZENVE-panel-title">Inventory rules in force</h2>
+            <p className="ZENVE-panel-desc">Applied automatically by the order and returns engines.</p>
           </div>
 
-          <ul className="lovable-rules-grid">
+          <ul className="ZENVE-rules-grid">
             {[
               "Order placed → Available −1, Reserved +1",
               "Shipped → Reserved −1, In transit +1",
@@ -839,8 +839,8 @@ export default function Inventory() {
               "Return passed inspection → Returned −1, Available +1",
               "Return failed → Returned −1, Damaged +1",
             ].map((rule) => (
-              <li key={rule} className="lovable-rule-item">
-                <span className="lovable-rule-bullet">•</span>
+              <li key={rule} className="ZENVE-rule-item">
+                <span className="ZENVE-rule-bullet">•</span>
                 <span>{rule}</span>
               </li>
             ))}

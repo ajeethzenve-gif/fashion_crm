@@ -41,10 +41,10 @@ function Switch({ checked, onChange }) {
       type="button"
       role="switch"
       aria-checked={checked}
-      className={`lovable-switch ${checked ? "checked" : ""}`}
+      className={`ZENVE-switch ${checked ? "checked" : ""}`}
       onClick={() => onChange(!checked)}
     >
-      <span className="lovable-switch-thumb" />
+      <span className="ZENVE-switch-thumb" />
     </button>
   );
 }
@@ -296,45 +296,45 @@ export default function DesignerPortal() {
      RENDER
   ======================================================= */
   return (
-    <div className="lovable-portal-layout">
+    <div className="ZENVE-portal-layout">
       {/* =====================================================
           HEADER SECTION
       ===================================================== */}
-      <header className="lovable-portal-header">
-        <div className="lovable-header-left">
-          <Link to="/" className="lovable-portal-logo">
+      <header className="ZENVE-portal-header">
+        <div className="ZENVE-header-left">
+          <Link to="/" className="ZENVE-portal-logo">
             <img src={logo} alt="Zenve Fashion" />
           </Link>
 
-          <div className="lovable-header-title-block">
-            <Link to="/" className="lovable-back-link">
+          <div className="ZENVE-header-title-block">
+            <Link to="/" className="ZENVE-back-link">
               <BackIcon />
               <span>ALL 12 LAYERS</span>
             </Link>
 
-            <h1 className="lovable-portal-title">
-              <span className="lovable-layer-num">02</span>
+            <h1 className="ZENVE-portal-title">
+              <span className="ZENVE-layer-num">02</span>
               Designer Portal
             </h1>
 
-            <p className="lovable-portal-subtitle">
+            <p className="ZENVE-portal-subtitle">
               Supply layer · Profile, SKU upload, inventory, orders, settlement view
             </p>
           </div>
         </div>
 
-        <div className="lovable-header-right">
+        <div className="ZENVE-header-right">
           <SearchBar />
 
           {/* SIGNED IN AS SELECTOR */}
-          <div className="lovable-signed-in-box">
-            <span className="lovable-label-caps">SIGNED IN AS</span>
-            <div className="lovable-select-wrap">
+          <div className="ZENVE-signed-in-box">
+            <span className="ZENVE-label-caps">SIGNED IN AS</span>
+            <div className="ZENVE-select-wrap">
               <select
                 value={selectedDesignerId}
                 onChange={(e) => setSelectedDesignerId(e.target.value)}
                 disabled={loadingDesigners || designers.length === 0}
-                className="lovable-designer-select"
+                className="ZENVE-designer-select"
               >
                 {designers.length === 0 ? (
                   <option value="">
@@ -348,7 +348,7 @@ export default function DesignerPortal() {
                   ))
                 )}
               </select>
-              <span className="lovable-select-chevron">
+              <span className="ZENVE-select-chevron">
                 <ArrowDownIcon />
               </span>
             </div>
@@ -358,11 +358,11 @@ export default function DesignerPortal() {
 
       {/* FEEDBACK BANNER */}
       {alertMessage && (
-        <div className={`lovable-alert lovable-alert-${alertMessage.type}`}>
+        <div className={`ZENVE-alert ZENVE-alert-${alertMessage.type}`}>
           <span>{alertMessage.text}</span>
           <button
             type="button"
-            className="lovable-alert-close"
+            className="ZENVE-alert-close"
             onClick={() => setAlertMessage(null)}
           >
             ×
@@ -372,11 +372,11 @@ export default function DesignerPortal() {
 
       {/* ERROR NOTICE */}
       {portalError && (
-        <div className="lovable-alert lovable-alert-error">
+        <div className="ZENVE-alert ZENVE-alert-error">
           <span>{portalError}</span>
           <button
             type="button"
-            className="lovable-alert-close"
+            className="ZENVE-alert-close"
             onClick={() => loadDashboard(selectedDesignerId)}
           >
             Retry
@@ -386,140 +386,140 @@ export default function DesignerPortal() {
 
       {/* MAIN BODY */}
       {!activeDesigner && !loadingPortal && !loadingDesigners ? (
-        <div className="lovable-empty-state-card">
+        <div className="ZENVE-empty-state-card">
           <h3>Create a designer in the Designer CRM first.</h3>
           <p>You need a registered designer brand to access the portal dashboard.</p>
-          <Link to="/designer-crm" className="lovable-btn-primary">
+          <Link to="/designer-crm" className="ZENVE-btn-primary">
             Open 01 Designer CRM →
           </Link>
         </div>
       ) : (
-        <main className="lovable-portal-main">
+        <main className="ZENVE-portal-main">
           {/* ===================================================
               SECTION 1: MY DASHBOARD (10 KPI CARDS + PENDING ACTIONS)
           =================================================== */}
-          <section className="lovable-portal-card">
-            <div className="lovable-card-header">
+          <section className="ZENVE-portal-card">
+            <div className="ZENVE-card-header">
               <div>
-                <h2 className="lovable-card-title">My dashboard</h2>
-                <p className="lovable-card-description">
+                <h2 className="ZENVE-card-title">My dashboard</h2>
+                <p className="ZENVE-card-description">
                   This month at a glance, straight from the live order and settlement ledgers.
                 </p>
               </div>
             </div>
 
             {/* 10 KPI METRIC CARDS */}
-            <div className="lovable-kpi-grid">
+            <div className="ZENVE-kpi-grid">
               {/* 1. Sales this month */}
-              <div className="lovable-kpi-tile">
-                <div className="lovable-tile-label">Sales this month</div>
-                <div className="lovable-tile-value">
+              <div className="ZENVE-kpi-tile">
+                <div className="ZENVE-tile-label">Sales this month</div>
+                <div className="ZENVE-tile-value">
                   {loadingPortal ? "—" : formatInr(kpis.monthlyGmv)}
                 </div>
-                <div className="lovable-tile-hint">Delivered GMV</div>
+                <div className="ZENVE-tile-hint">Delivered GMV</div>
               </div>
 
               {/* 2. Orders */}
-              <div className="lovable-kpi-tile">
-                <div className="lovable-tile-label">Orders</div>
-                <div className="lovable-tile-value">
+              <div className="ZENVE-kpi-tile">
+                <div className="ZENVE-tile-label">Orders</div>
+                <div className="ZENVE-tile-value">
                   {loadingPortal ? "—" : kpis.orders ?? 0}
                 </div>
-                <div className="lovable-tile-hint">
+                <div className="ZENVE-tile-hint">
                   {loadingPortal ? "..." : `${kpis.units ?? 0} units sold`}
                 </div>
               </div>
 
               {/* 3. Commission */}
-              <div className="lovable-kpi-tile">
-                <div className="lovable-tile-label">Commission</div>
-                <div className="lovable-tile-value">
+              <div className="ZENVE-kpi-tile">
+                <div className="ZENVE-tile-label">Commission</div>
+                <div className="ZENVE-tile-value">
                   {loadingPortal ? "—" : formatInr(kpis.commission)}
                 </div>
-                <div className="lovable-tile-hint">
+                <div className="ZENVE-tile-hint">
                   Take rate {activeDesigner?.takeRate ?? 0}%
                 </div>
               </div>
 
               {/* 4. Net payable */}
-              <div className="lovable-kpi-tile">
-                <div className="lovable-tile-label">Net payable</div>
-                <div className="lovable-tile-value">
+              <div className="ZENVE-kpi-tile">
+                <div className="ZENVE-tile-label">Net payable</div>
+                <div className="ZENVE-tile-value">
                   {loadingPortal ? "—" : formatInr(kpis.netPayable)}
                 </div>
-                <div className="lovable-tile-hint">
+                <div className="ZENVE-tile-hint">
                   {formatInr(kpis.paid)} already paid
                 </div>
               </div>
 
               {/* 5. Conversion */}
-              <div className="lovable-kpi-tile">
-                <div className="lovable-tile-label">Conversion</div>
-                <div className="lovable-tile-value">
+              <div className="ZENVE-kpi-tile">
+                <div className="ZENVE-tile-label">Conversion</div>
+                <div className="ZENVE-tile-value">
                   {loadingPortal ? "—" : `${kpis.conversion ?? 0.1}%`}
                 </div>
-                <div className="lovable-tile-hint">Units per 100 views</div>
+                <div className="ZENVE-tile-hint">Units per 100 views</div>
               </div>
 
               {/* 6. Best seller */}
-              <div className="lovable-kpi-tile">
-                <div className="lovable-tile-label">Best seller</div>
-                <div className="lovable-tile-value lovable-truncate" title={kpis.bestSeller?.name || "—"}>
+              <div className="ZENVE-kpi-tile">
+                <div className="ZENVE-tile-label">Best seller</div>
+                <div className="ZENVE-tile-value ZENVE-truncate" title={kpis.bestSeller?.name || "—"}>
                   {loadingPortal ? "—" : kpis.bestSeller?.name || "—"}
                 </div>
-                <div className="lovable-tile-hint">
+                <div className="ZENVE-tile-hint">
                   {kpis.bestSeller ? `${kpis.bestSeller.units} units` : "No sales yet"}
                 </div>
               </div>
 
               {/* 7. Returns */}
-              <div className="lovable-kpi-tile">
-                <div className="lovable-tile-label">Returns</div>
-                <div className="lovable-tile-value">
+              <div className="ZENVE-kpi-tile">
+                <div className="ZENVE-tile-label">Returns</div>
+                <div className="ZENVE-tile-value">
                   {loadingPortal ? "—" : kpis.returns ?? 0}
                 </div>
-                <div className="lovable-tile-hint">
+                <div className="ZENVE-tile-hint">
                   {kpis.returnRate ?? 0}% of units
                 </div>
               </div>
 
               {/* 8. Live SKUs */}
-              <div className="lovable-kpi-tile">
-                <div className="lovable-tile-label">Live SKUs</div>
-                <div className="lovable-tile-value">
+              <div className="ZENVE-kpi-tile">
+                <div className="ZENVE-tile-label">Live SKUs</div>
+                <div className="ZENVE-tile-value">
                   {loadingPortal ? "—" : kpis.liveSkus ?? 0}
                 </div>
-                <div className="lovable-tile-hint">
+                <div className="ZENVE-tile-hint">
                   {kpis.totalSkus ?? 0} total
                 </div>
               </div>
 
               {/* 9. Inventory alerts */}
-              <div className="lovable-kpi-tile">
-                <div className="lovable-tile-label">Inventory alerts</div>
-                <div className="lovable-tile-value">
+              <div className="ZENVE-kpi-tile">
+                <div className="ZENVE-tile-label">Inventory alerts</div>
+                <div className="ZENVE-tile-value">
                   {loadingPortal ? "—" : kpis.inventoryAlerts ?? 0}
                 </div>
-                <div className="lovable-tile-hint">At or below reorder point</div>
+                <div className="ZENVE-tile-hint">At or below reorder point</div>
               </div>
 
               {/* 10. Health score */}
-              <div className="lovable-kpi-tile">
-                <div className="lovable-tile-label">Health score</div>
-                <div className="lovable-tile-value">
+              <div className="ZENVE-kpi-tile">
+                <div className="ZENVE-tile-label">Health score</div>
+                <div className="ZENVE-tile-value">
                   {loadingPortal ? "—" : `${kpis.health ?? 75}/100`}
                 </div>
-                <div className="lovable-tile-hint">Zenve partner score</div>
+                <div className="ZENVE-tile-hint">Zenve partner score</div>
               </div>
             </div>
 
             {/* PENDING ACTIONS */}
-            <div className="lovable-pending-actions-wrap">
-              <span className="lovable-label-caps">Pending actions</span>
+            <div className="ZENVE-pending-actions-wrap">
+              <span className="ZENVE-label-caps">Pending actions</span>
               {pendingActions.length === 0 ? (
-                <p className="lovable-pending-empty">Nothing needs your attention.</p>
+                <p className="ZENVE-pending-empty">Nothing needs your attention.</p>
               ) : (
-                <ul className="lovable-pending-list">
+                <ul className="ZENVE-pending-list">
                   {pendingActions.map((action, idx) => (
                     <li key={idx}>• {action}</li>
                   ))}
@@ -531,11 +531,11 @@ export default function DesignerPortal() {
           {/* ===================================================
               SECTION 2: NOTIFICATIONS
           =================================================== */}
-          <section className="lovable-portal-card">
-            <div className="lovable-card-header">
+          <section className="ZENVE-portal-card">
+            <div className="ZENVE-card-header">
               <div>
-                <h2 className="lovable-card-title">Notifications</h2>
-                <p className="lovable-card-description">
+                <h2 className="ZENVE-card-title">Notifications</h2>
+                <p className="ZENVE-card-description">
                   QA outcomes, orders, low stock, returns, payouts and campaigns.
                 </p>
               </div>
@@ -543,7 +543,7 @@ export default function DesignerPortal() {
               {unreadNotifications > 0 && (
                 <button
                   type="button"
-                  className="lovable-btn-outline-sm"
+                  className="ZENVE-btn-outline-sm"
                   onClick={handleMarkNotificationsRead}
                 >
                   Mark {unreadNotifications} as read
@@ -552,21 +552,21 @@ export default function DesignerPortal() {
             </div>
 
             {notifications.length === 0 ? (
-              <div className="lovable-item-empty">No notifications yet.</div>
+              <div className="ZENVE-item-empty">No notifications yet.</div>
             ) : (
-              <div className="lovable-notifications-list">
+              <div className="ZENVE-notifications-list">
                 {notifications.map((n) => (
-                  <div key={n.id} className="lovable-notification-row">
-                    <div className="lovable-notif-left">
-                      {!n.read && <span className="lovable-unread-dot" />}
-                      <span className="lovable-notif-msg">{n.message}</span>
+                  <div key={n.id} className="ZENVE-notification-row">
+                    <div className="ZENVE-notif-left">
+                      {!n.read && <span className="ZENVE-unread-dot" />}
+                      <span className="ZENVE-notif-msg">{n.message}</span>
                     </div>
 
-                    <div className="lovable-notif-right">
-                      <span className="lovable-tone-badge info">
+                    <div className="ZENVE-notif-right">
+                      <span className="ZENVE-tone-badge info">
                         {n.kind.replaceAll("_", " ")}
                       </span>
-                      <span className="lovable-notif-date">
+                      <span className="ZENVE-notif-date">
                         {new Date(n.at).toLocaleDateString("en-IN", {
                           timeZone: "Asia/Kolkata",
                         })}
@@ -581,59 +581,59 @@ export default function DesignerPortal() {
           {/* ===================================================
               SECTION 3: MY PROFILE (9-FIELD GRID)
           =================================================== */}
-          <section className="lovable-portal-card">
-            <div className="lovable-card-header">
+          <section className="ZENVE-portal-card">
+            <div className="ZENVE-card-header">
               <div>
-                <h2 className="lovable-card-title">My profile</h2>
-                <p className="lovable-card-description">
+                <h2 className="ZENVE-card-title">My profile</h2>
+                <p className="ZENVE-card-description">
                   Maintained by the acquisition team in the CRM.
                 </p>
               </div>
             </div>
 
-            <dl className="lovable-profile-dl">
-              <div className="lovable-profile-item">
-                <dt className="lovable-label-caps">Brand</dt>
+            <dl className="ZENVE-profile-dl">
+              <div className="ZENVE-profile-item">
+                <dt className="ZENVE-label-caps">Brand</dt>
                 <dd>{activeDesigner?.brand || "—"}</dd>
               </div>
 
-              <div className="lovable-profile-item">
-                <dt className="lovable-label-caps">Owner</dt>
+              <div className="ZENVE-profile-item">
+                <dt className="ZENVE-label-caps">Owner</dt>
                 <dd>{activeDesigner?.name || "—"}</dd>
               </div>
 
-              <div className="lovable-profile-item">
-                <dt className="lovable-label-caps">Contact</dt>
+              <div className="ZENVE-profile-item">
+                <dt className="ZENVE-label-caps">Contact</dt>
                 <dd>{activeDesigner?.contact || "—"}</dd>
               </div>
 
-              <div className="lovable-profile-item">
-                <dt className="lovable-label-caps">City</dt>
+              <div className="ZENVE-profile-item">
+                <dt className="ZENVE-label-caps">City</dt>
                 <dd>{activeDesigner?.city || "—"}</dd>
               </div>
 
-              <div className="lovable-profile-item">
-                <dt className="lovable-label-caps">Stage</dt>
+              <div className="ZENVE-profile-item">
+                <dt className="ZENVE-label-caps">Stage</dt>
                 <dd>{activeDesigner?.stage || "—"}</dd>
               </div>
 
-              <div className="lovable-profile-item">
-                <dt className="lovable-label-caps">KYC</dt>
+              <div className="ZENVE-profile-item">
+                <dt className="ZENVE-label-caps">KYC</dt>
                 <dd>{activeDesigner?.kyc ? "Verified" : "Pending"}</dd>
               </div>
 
-              <div className="lovable-profile-item">
-                <dt className="lovable-label-caps">GST</dt>
+              <div className="ZENVE-profile-item">
+                <dt className="ZENVE-label-caps">GST</dt>
                 <dd>{activeDesigner?.gst || "—"}</dd>
               </div>
 
-              <div className="lovable-profile-item">
-                <dt className="lovable-label-caps">Contract ends</dt>
+              <div className="ZENVE-profile-item">
+                <dt className="ZENVE-label-caps">Contract ends</dt>
                 <dd>{activeDesigner?.contractEnds || "—"}</dd>
               </div>
 
-              <div className="lovable-profile-item">
-                <dt className="lovable-label-caps">Take rate</dt>
+              <div className="ZENVE-profile-item">
+                <dt className="ZENVE-label-caps">Take rate</dt>
                 <dd>{activeDesigner?.takeRate}%</dd>
               </div>
             </dl>
@@ -642,21 +642,21 @@ export default function DesignerPortal() {
           {/* ===================================================
               SECTION 4: UPLOAD A SKU
           =================================================== */}
-          <section className="lovable-portal-card">
-            <div className="lovable-card-header">
+          <section className="ZENVE-portal-card">
+            <div className="ZENVE-card-header">
               <div>
-                <h2 className="lovable-card-title">Upload a SKU</h2>
-                <p className="lovable-card-description">
+                <h2 className="ZENVE-card-title">Upload a SKU</h2>
+                <p className="ZENVE-card-description">
                   SKU ID is auto-generated and the row goes straight to QA.
                 </p>
               </div>
             </div>
 
-            <form onSubmit={handleSkuSubmit} className="lovable-sku-form">
-              <div className="lovable-form-grid">
+            <form onSubmit={handleSkuSubmit} className="ZENVE-sku-form">
+              <div className="ZENVE-form-grid">
                 {/* 1. Product name */}
-                <div className="lovable-form-group">
-                  <label className="lovable-label-caps">Product name</label>
+                <div className="ZENVE-form-group">
+                  <label className="ZENVE-label-caps">Product name</label>
                   <input
                     type="text"
                     placeholder="e.g. Ivory Silk Dog Kurta"
@@ -667,8 +667,8 @@ export default function DesignerPortal() {
                 </div>
 
                 {/* 2. Category */}
-                <div className="lovable-form-group">
-                  <label className="lovable-label-caps">Category</label>
+                <div className="ZENVE-form-group">
+                  <label className="ZENVE-label-caps">Category</label>
                   <input
                     type="text"
                     placeholder="e.g. Pet Occasion Wear"
@@ -679,8 +679,8 @@ export default function DesignerPortal() {
                 </div>
 
                 {/* 3. Colour */}
-                <div className="lovable-form-group">
-                  <label className="lovable-label-caps">Colour</label>
+                <div className="ZENVE-form-group">
+                  <label className="ZENVE-label-caps">Colour</label>
                   <input
                     type="text"
                     placeholder="e.g. Ivory Gold"
@@ -691,8 +691,8 @@ export default function DesignerPortal() {
                 </div>
 
                 {/* 4. Size */}
-                <div className="lovable-form-group">
-                  <label className="lovable-label-caps">Size</label>
+                <div className="ZENVE-form-group">
+                  <label className="ZENVE-label-caps">Size</label>
                   <select
                     value={form.size}
                     onChange={(e) => setForm({ ...form, size: e.target.value })}
@@ -708,8 +708,8 @@ export default function DesignerPortal() {
                 </div>
 
                 {/* 5. MRP */}
-                <div className="lovable-form-group">
-                  <label className="lovable-label-caps">MRP</label>
+                <div className="ZENVE-form-group">
+                  <label className="ZENVE-label-caps">MRP</label>
                   <input
                     type="number"
                     min="0"
@@ -721,8 +721,8 @@ export default function DesignerPortal() {
                 </div>
 
                 {/* 6. Selling price */}
-                <div className="lovable-form-group">
-                  <label className="lovable-label-caps">Selling price</label>
+                <div className="ZENVE-form-group">
+                  <label className="ZENVE-label-caps">Selling price</label>
                   <input
                     type="number"
                     min="0"
@@ -734,8 +734,8 @@ export default function DesignerPortal() {
                 </div>
 
                 {/* 7. Fabric / material */}
-                <div className="lovable-form-group">
-                  <label className="lovable-label-caps">Fabric / material</label>
+                <div className="ZENVE-form-group">
+                  <label className="ZENVE-label-caps">Fabric / material</label>
                   <input
                     type="text"
                     placeholder="e.g. Pure Raw Silk"
@@ -745,8 +745,8 @@ export default function DesignerPortal() {
                 </div>
 
                 {/* 8. Pet safety information (span 2) */}
-                <div className="lovable-form-group span-2">
-                  <label className="lovable-label-caps">Pet safety information</label>
+                <div className="ZENVE-form-group span-2">
+                  <label className="ZENVE-label-caps">Pet safety information</label>
                   <input
                     type="text"
                     value={form.petSafety}
@@ -755,8 +755,8 @@ export default function DesignerPortal() {
                 </div>
 
                 {/* 9. Stocking location */}
-                <div className="lovable-form-group">
-                  <label className="lovable-label-caps">Stocking location</label>
+                <div className="ZENVE-form-group">
+                  <label className="ZENVE-label-caps">Stocking location</label>
                   <select
                     value={form.location}
                     onChange={(e) => setForm({ ...form, location: e.target.value })}
@@ -768,8 +768,8 @@ export default function DesignerPortal() {
                 </div>
 
                 {/* 10. Fast delivery toggle */}
-                <div className="lovable-form-toggle-row">
-                  <span className="lovable-label-caps">Fast delivery eligible</span>
+                <div className="ZENVE-form-toggle-row">
+                  <span className="ZENVE-label-caps">Fast delivery eligible</span>
                   <Switch
                     checked={form.fastDelivery}
                     onChange={(val) => setForm({ ...form, fastDelivery: val })}
@@ -777,8 +777,8 @@ export default function DesignerPortal() {
                 </div>
 
                 {/* 11. Returnable toggle */}
-                <div className="lovable-form-toggle-row">
-                  <span className="lovable-label-caps">Returnable</span>
+                <div className="ZENVE-form-toggle-row">
+                  <span className="ZENVE-label-caps">Returnable</span>
                   <Switch
                     checked={form.returnable}
                     onChange={(val) => setForm({ ...form, returnable: val })}
@@ -787,16 +787,16 @@ export default function DesignerPortal() {
               </div>
 
               {/* SKU ID PREVIEW */}
-              <div className="lovable-sku-preview-row">
-                <span className="lovable-preview-text">SKU ID preview:</span>
-                <span className="lovable-sku-mono">{skuPreview}</span>
+              <div className="ZENVE-sku-preview-row">
+                <span className="ZENVE-preview-text">SKU ID preview:</span>
+                <span className="ZENVE-sku-mono">{skuPreview}</span>
               </div>
 
               {/* SUBMIT BUTTON */}
-              <div className="lovable-form-actions">
+              <div className="ZENVE-form-actions">
                 <button
                   type="submit"
-                  className="lovable-btn-primary"
+                  className="ZENVE-btn-primary"
                   disabled={submittingSku || !activeDesigner}
                 >
                   {submittingSku ? "Submitting..." : "Submit to QA"}
@@ -808,30 +808,30 @@ export default function DesignerPortal() {
           {/* ===================================================
               SECTION 5: MY SKUS & STOCK (LIVE BACKEND DATA)
           =================================================== */}
-          <section className="lovable-portal-card">
-            <div className="lovable-card-header">
+          <section className="ZENVE-portal-card">
+            <div className="ZENVE-card-header">
               <div>
-                <h2 className="lovable-card-title">My SKUs &amp; stock</h2>
-                <p className="lovable-card-description">
+                <h2 className="ZENVE-card-title">My SKUs &amp; stock</h2>
+                <p className="ZENVE-card-description">
                   Live availability the storefront can sell, with cover in days.
                 </p>
               </div>
             </div>
 
             {skus.length === 0 ? (
-              <div className="lovable-item-empty">No SKUs uploaded yet.</div>
+              <div className="ZENVE-item-empty">No SKUs uploaded yet.</div>
             ) : (
-              <div className="lovable-table-responsive">
-                <table className="lovable-table">
+              <div className="ZENVE-table-responsive">
+                <table className="ZENVE-table">
                   <thead>
                     <tr>
-                      <th className="lovable-label-caps">SKU</th>
-                      <th className="lovable-label-caps">Price</th>
-                      <th className="lovable-label-caps">QA</th>
-                      <th className="lovable-label-caps">Available</th>
-                      <th className="lovable-label-caps">Reserved</th>
-                      <th className="lovable-label-caps">Sold</th>
-                      <th className="lovable-label-caps">Days of cover</th>
+                      <th className="ZENVE-label-caps">SKU</th>
+                      <th className="ZENVE-label-caps">Price</th>
+                      <th className="ZENVE-label-caps">QA</th>
+                      <th className="ZENVE-label-caps">Available</th>
+                      <th className="ZENVE-label-caps">Reserved</th>
+                      <th className="ZENVE-label-caps">Sold</th>
+                      <th className="ZENVE-label-caps">Days of cover</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -841,12 +841,12 @@ export default function DesignerPortal() {
                       return (
                         <tr key={skuItem.id}>
                           <td>
-                            <div className="lovable-sku-name">{skuItem.product_name}</div>
-                            <div className="lovable-sku-id-mono">{skuItem.sku}</div>
+                            <div className="ZENVE-sku-name">{skuItem.product_name}</div>
+                            <div className="ZENVE-sku-id-mono">{skuItem.sku}</div>
                           </td>
                           <td>{formatInr(skuItem.selling_price)}</td>
                           <td>
-                            <span className={`lovable-qa-badge tone-${qaClass}`}>
+                            <span className={`ZENVE-qa-badge tone-${qaClass}`}>
                               {qaStatus}
                             </span>
                           </td>
@@ -868,27 +868,27 @@ export default function DesignerPortal() {
           {/* ===================================================
               SECTION 6: MY ORDERS & SETTLEMENTS
           =================================================== */}
-          <section className="lovable-portal-card">
-            <div className="lovable-card-header">
+          <section className="ZENVE-portal-card">
+            <div className="ZENVE-card-header">
               <div>
-                <h2 className="lovable-card-title">My orders &amp; settlements</h2>
+                <h2 className="ZENVE-card-title">My orders &amp; settlements</h2>
               </div>
             </div>
 
             {/* ORDERS */}
-            <div className="lovable-orders-block">
+            <div className="ZENVE-orders-block">
               {orders.length === 0 ? (
-                <div className="lovable-item-empty">
+                <div className="ZENVE-item-empty">
                   No orders yet — sell something from the Storefront layer.
                 </div>
               ) : (
-                <div className="lovable-orders-list">
+                <div className="ZENVE-orders-list">
                   {orders.map((ord) => (
-                    <div key={ord.id} className="lovable-order-row">
-                      <span className="lovable-order-id">{ord.id}</span>
-                      <span className="lovable-order-customer">{ord.customer}</span>
-                      <span className="lovable-order-amt">{formatInr(ord.amount)}</span>
-                      <span className={`lovable-order-badge tone-${ord.status.toLowerCase()}`}>
+                    <div key={ord.id} className="ZENVE-order-row">
+                      <span className="ZENVE-order-id">{ord.id}</span>
+                      <span className="ZENVE-order-customer">{ord.customer}</span>
+                      <span className="ZENVE-order-amt">{formatInr(ord.amount)}</span>
+                      <span className={`ZENVE-order-badge tone-${ord.status.toLowerCase()}`}>
                         {ord.status}
                       </span>
                     </div>
@@ -899,16 +899,16 @@ export default function DesignerPortal() {
 
             {/* SETTLEMENTS */}
             {settlements.length > 0 && (
-              <div className="lovable-settlements-block">
-                <div className="lovable-settlements-list">
+              <div className="ZENVE-settlements-block">
+                <div className="ZENVE-settlements-list">
                   {settlements.map((stl) => (
-                    <div key={stl.id} className="lovable-settlement-row">
-                      <span className="lovable-stl-id">{stl.id}</span>
-                      <span className="lovable-stl-breakdown">
+                    <div key={stl.id} className="ZENVE-settlement-row">
+                      <span className="ZENVE-stl-id">{stl.id}</span>
+                      <span className="ZENVE-stl-breakdown">
                         GMV {formatInr(stl.gmv)} − commission {formatInr(stl.commission)}
                       </span>
-                      <span className="lovable-stl-net">{formatInr(stl.net)}</span>
-                      <span className={`lovable-order-badge tone-${stl.status.toLowerCase()}`}>
+                      <span className="ZENVE-stl-net">{formatInr(stl.net)}</span>
+                      <span className={`ZENVE-order-badge tone-${stl.status.toLowerCase()}`}>
                         {stl.status}
                       </span>
                     </div>

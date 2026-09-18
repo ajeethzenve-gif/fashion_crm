@@ -24,10 +24,10 @@ function Switch({ checked, onChange }) {
       type="button"
       role="switch"
       aria-checked={checked}
-      className={`lovable-cat-switch ${checked ? "checked" : ""}`}
+      className={`ZENVE-cat-switch ${checked ? "checked" : ""}`}
       onClick={() => onChange(!checked)}
     >
-      <span className="lovable-cat-switch-thumb" />
+      <span className="ZENVE-cat-switch-thumb" />
     </button>
   );
 }
@@ -263,43 +263,43 @@ export default function Catalogue() {
      RENDER
   ======================================================= */
   return (
-    <div className="lovable-catalogue-layout">
+    <div className="ZENVE-catalogue-layout">
       {/* =====================================================
           HEADER SECTION
       ===================================================== */}
-      <header className="lovable-catalogue-header">
-        <div className="lovable-header-left">
-          <Link to="/" className="lovable-portal-logo">
+      <header className="ZENVE-catalogue-header">
+        <div className="ZENVE-header-left">
+          <Link to="/" className="ZENVE-portal-logo">
             <img src={logo} alt="Zenve Fashion" />
           </Link>
 
-          <div className="lovable-header-title-block">
-            <Link to="/" className="lovable-back-link">
+          <div className="ZENVE-header-title-block">
+            <Link to="/" className="ZENVE-back-link">
               <BackIcon />
               <span>ALL 12 LAYERS</span>
             </Link>
 
-            <h1 className="lovable-portal-title">
-              <span className="lovable-layer-num">03</span>
+            <h1 className="ZENVE-portal-title">
+              <span className="ZENVE-layer-num">03</span>
               Product / SKU
             </h1>
 
-            <p className="lovable-portal-subtitle">
+            <p className="ZENVE-portal-subtitle">
               Catalogue layer · Variants, attributes, media, pricing, policy
             </p>
           </div>
         </div>
 
-        <div className="lovable-header-right">
+        <div className="ZENVE-header-right">
           <SearchBar />
         </div>
       </header>
 
       {/* FEEDBACK BANNER */}
       {alert && (
-        <div className={`lovable-alert lovable-alert-${alert.type}`}>
+        <div className={`ZENVE-alert ZENVE-alert-${alert.type}`}>
           <span>{alert.text}</span>
-          <button type="button" className="lovable-alert-close" onClick={() => setAlert(null)}>
+          <button type="button" className="ZENVE-alert-close" onClick={() => setAlert(null)}>
             ×
           </button>
         </div>
@@ -307,69 +307,69 @@ export default function Catalogue() {
 
       {/* ERROR BANNER */}
       {error && (
-        <div className="lovable-alert lovable-alert-error">
+        <div className="ZENVE-alert ZENVE-alert-error">
           <span>{error}</span>
-          <button type="button" className="lovable-alert-close" onClick={loadProducts}>
+          <button type="button" className="ZENVE-alert-close" onClick={loadProducts}>
             Retry
           </button>
         </div>
       )}
 
-      <main className="lovable-catalogue-main">
+      <main className="ZENVE-catalogue-main">
         {/* ===================================================
             TOP 4 KPI CARDS
         =================================================== */}
-        <div className="lovable-catalogue-kpis">
-          <div className="lovable-kpi-tile">
-            <div className="lovable-tile-label">SKUs</div>
-            <div className="lovable-tile-value">{loading ? "—" : kpis.totalSkus}</div>
+        <div className="ZENVE-catalogue-kpis">
+          <div className="ZENVE-kpi-tile">
+            <div className="ZENVE-tile-label">SKUs</div>
+            <div className="ZENVE-tile-value">{loading ? "—" : kpis.totalSkus}</div>
           </div>
 
-          <div className="lovable-kpi-tile">
-            <div className="lovable-tile-label">Live</div>
-            <div className="lovable-tile-value">{loading ? "—" : kpis.liveSkus}</div>
+          <div className="ZENVE-kpi-tile">
+            <div className="ZENVE-tile-label">Live</div>
+            <div className="ZENVE-tile-value">{loading ? "—" : kpis.liveSkus}</div>
           </div>
 
-          <div className="lovable-kpi-tile">
-            <div className="lovable-tile-label">In QA</div>
-            <div className="lovable-tile-value">{loading ? "—" : kpis.inQa}</div>
+          <div className="ZENVE-kpi-tile">
+            <div className="ZENVE-tile-label">In QA</div>
+            <div className="ZENVE-tile-value">{loading ? "—" : kpis.inQa}</div>
           </div>
 
-          <div className="lovable-kpi-tile">
-            <div className="lovable-tile-label">Final sale</div>
-            <div className="lovable-tile-value">{loading ? "—" : kpis.finalSale}</div>
+          <div className="ZENVE-kpi-tile">
+            <div className="ZENVE-tile-label">Final sale</div>
+            <div className="ZENVE-tile-value">{loading ? "—" : kpis.finalSale}</div>
           </div>
         </div>
 
         {/* ===================================================
             SKU MASTER SECTION
         =================================================== */}
-        <section className="lovable-portal-card">
-          <div className="lovable-card-header">
+        <section className="ZENVE-portal-card">
+          <div className="ZENVE-card-header">
             <div>
-              <h2 className="lovable-card-title">SKU master</h2>
-              <p className="lovable-card-description">
+              <h2 className="ZENVE-card-title">SKU master</h2>
+              <p className="ZENVE-card-description">
                 Pattern: ZNV-DESIGNER-CATEGORY-PRODUCT-COLOUR-SIZE. Price edits and record edits are written to the audit log.
               </p>
             </div>
 
-            <div className="lovable-search-action-wrap">
+            <div className="ZENVE-search-action-wrap">
               <input
                 type="text"
                 placeholder="Search SKU, name, colour, collection…"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="lovable-cat-search-input"
+                className="ZENVE-cat-search-input"
               />
             </div>
           </div>
 
           {loading ? (
-            <div className="lovable-item-empty">Loading SKUs from Django...</div>
+            <div className="ZENVE-item-empty">Loading SKUs from Django...</div>
           ) : filteredProducts.length === 0 ? (
-            <div className="lovable-item-empty">No SKUs match this search.</div>
+            <div className="ZENVE-item-empty">No SKUs match this search.</div>
           ) : (
-            <div className="lovable-sku-card-stack">
+            <div className="ZENVE-sku-card-stack">
               {filteredProducts.map((sku) => {
                 const completion = computeCompletion(sku);
                 const isExpanded = expandedSkuId === sku.id;
@@ -384,83 +384,83 @@ export default function Catalogue() {
                   [sku.collection, sku.occasion, sku.season].filter(Boolean).join(" · ") || "—";
 
                 return (
-                  <div key={sku.id} className="lovable-sku-item-card">
+                  <div key={sku.id} className="ZENVE-sku-item-card">
                     {/* TOP BADGE HEADER */}
-                    <div className="lovable-sku-top-bar">
-                      <h3 className="lovable-sku-title">{sku.product_name || sku.name}</h3>
+                    <div className="ZENVE-sku-top-bar">
+                      <h3 className="ZENVE-sku-title">{sku.product_name || sku.name}</h3>
 
-                      <span className={`lovable-qa-badge tone-${qaStatus.toLowerCase()}`}>
+                      <span className={`ZENVE-qa-badge tone-${qaStatus.toLowerCase()}`}>
                         {qaStatus}
                       </span>
 
-                      <span className={`lovable-tone-badge ${isLive ? "good" : "neutral"}`}>
+                      <span className={`ZENVE-tone-badge ${isLive ? "good" : "neutral"}`}>
                         {isLive ? "LIVE" : "NOT LIVE"}
                       </span>
 
-                      <span className={`lovable-tone-badge ${isReturnable ? "info" : "warn"}`}>
+                      <span className={`ZENVE-tone-badge ${isReturnable ? "info" : "warn"}`}>
                         {isReturnable ? "Returnable" : "Final sale"}
                       </span>
 
-                      <span className={`lovable-tone-badge ${completion >= 80 ? "good" : "warn"}`}>
+                      <span className={`ZENVE-tone-badge ${completion >= 80 ? "good" : "warn"}`}>
                         Record {completion}% complete
                       </span>
 
                       {/* ACTIVE MERCHANDISING FLAGS */}
                       {MERCHANDISING_FLAGS.filter((f) => sku[f.key]).map((f) => (
-                        <span key={f.key} className="lovable-tone-badge info">
+                        <span key={f.key} className="ZENVE-tone-badge info">
                           {f.label}
                         </span>
                       ))}
                     </div>
 
                     {/* SKU ID MONO */}
-                    <div className="lovable-sku-id-mono">{sku.sku}</div>
+                    <div className="ZENVE-sku-id-mono">{sku.sku}</div>
 
                     {/* QUICK METADATA GRID */}
-                    <div className="lovable-sku-meta-grid">
+                    <div className="ZENVE-sku-meta-grid">
                       <div>
-                        <span className="lovable-label-caps">Designer</span>
+                        <span className="ZENVE-label-caps">Designer</span>
                         <p>{designerBrand}</p>
                       </div>
 
                       <div>
-                        <span className="lovable-label-caps">Category</span>
+                        <span className="ZENVE-label-caps">Category</span>
                         <p>{`${sku.category} · ${sku.colour} · ${sku.size}`}</p>
                       </div>
 
                       <div>
-                        <span className="lovable-label-caps">MRP / price</span>
+                        <span className="ZENVE-label-caps">MRP / price</span>
                         <p>{`${formatInr(sku.mrp)} → ${formatInr(sku.price || sku.selling_price)}`}</p>
                       </div>
 
                       <div>
-                        <span className="lovable-label-caps">Fulfilment</span>
+                        <span className="ZENVE-label-caps">Fulfilment</span>
                         <p>{fulfilmentText}</p>
                       </div>
 
                       <div>
-                        <span className="lovable-label-caps">Barcode / HSN</span>
+                        <span className="ZENVE-label-caps">Barcode / HSN</span>
                         <p>{`${sku.barcode || "—"} · ${sku.hsn || "—"}`}</p>
                       </div>
 
                       <div>
-                        <span className="lovable-label-caps">GST</span>
+                        <span className="ZENVE-label-caps">GST</span>
                         <p>{sku.gstRate || sku.gst_rate || 0}%</p>
                       </div>
 
                       <div>
-                        <span className="lovable-label-caps">Fabric</span>
+                        <span className="ZENVE-label-caps">Fabric</span>
                         <p>{sku.fabric || sku.material || "—"}</p>
                       </div>
 
                       <div>
-                        <span className="lovable-label-caps">Collection</span>
+                        <span className="ZENVE-label-caps">Collection</span>
                         <p>{collectionText}</p>
                       </div>
                     </div>
 
                     {/* ACTION CONTROLS */}
-                    <div className="lovable-sku-actions-row">
+                    <div className="ZENVE-sku-actions-row">
                       <input
                         type="number"
                         placeholder="New price"
@@ -468,18 +468,18 @@ export default function Catalogue() {
                         onChange={(e) =>
                           setPriceInputs({ ...priceInputs, [sku.id]: e.target.value })
                         }
-                        className="lovable-price-input"
+                        className="ZENVE-price-input"
                       />
 
                       <button
                         type="button"
-                        className="lovable-btn-outline-sm"
+                        className="ZENVE-btn-outline-sm"
                         onClick={() => handlePriceUpdate(sku)}
                       >
                         Update price
                       </button>
 
-                      <label className="lovable-fast-delivery-label">
+                      <label className="ZENVE-fast-delivery-label">
                         <Switch
                           checked={sku.fastDelivery || sku.fast_delivery}
                           onChange={() => handleToggleFast(sku)}
@@ -489,7 +489,7 @@ export default function Catalogue() {
 
                       <button
                         type="button"
-                        className="lovable-btn-outline-sm"
+                        className="ZENVE-btn-outline-sm"
                         onClick={() => setExpandedSkuId(isExpanded ? null : sku.id)}
                       >
                         {isExpanded ? "Close full record" : "Edit full record"}
@@ -498,14 +498,14 @@ export default function Catalogue() {
 
                     {/* EXPANDED FULL RECORD EDITOR */}
                     {isExpanded && (
-                      <div className="lovable-record-editor-box">
+                      <div className="ZENVE-record-editor-box">
                         {RECORD_SECTIONS.map((sec) => (
-                          <div key={sec.title} className="lovable-editor-section">
-                            <span className="lovable-label-caps">{sec.title}</span>
-                            <div className="lovable-editor-fields-grid">
+                          <div key={sec.title} className="ZENVE-editor-section">
+                            <span className="ZENVE-label-caps">{sec.title}</span>
+                            <div className="ZENVE-editor-fields-grid">
                               {sec.fields.map((f) => (
-                                <div key={f.key} className="lovable-editor-field">
-                                  <label className="lovable-field-sublabel">{f.label}</label>
+                                <div key={f.key} className="ZENVE-editor-field">
+                                  <label className="ZENVE-field-sublabel">{f.label}</label>
                                   <input
                                     type={f.number ? "number" : "text"}
                                     defaultValue={String(sku[f.key] ?? "")}
@@ -515,7 +515,7 @@ export default function Catalogue() {
                                         : e.target.value;
                                       handleFieldBlur(sku, f.key, f.label, val);
                                     }}
-                                    className="lovable-editor-input"
+                                    className="ZENVE-editor-input"
                                   />
                                 </div>
                               ))}
@@ -524,11 +524,11 @@ export default function Catalogue() {
                         ))}
 
                         {/* MERCHANDISING FLAGS SWITCHES */}
-                        <div className="lovable-editor-section">
-                          <span className="lovable-label-caps">Merchandising flags</span>
-                          <div className="lovable-merch-flags-grid">
+                        <div className="ZENVE-editor-section">
+                          <span className="ZENVE-label-caps">Merchandising flags</span>
+                          <div className="ZENVE-merch-flags-grid">
                             {MERCHANDISING_FLAGS.map((f) => (
-                              <label key={f.key} className="lovable-merch-flag-item">
+                              <label key={f.key} className="ZENVE-merch-flag-item">
                                 <span>{f.label}</span>
                                 <Switch
                                   checked={!!sku[f.key]}

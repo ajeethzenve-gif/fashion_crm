@@ -286,34 +286,34 @@ export default function Orders() {
      RENDER
   ======================================================= */
   return (
-    <div className="lovable-orders-layout">
+    <div className="ZENVE-orders-layout">
       {/* =====================================================
           HEADER SECTION
       ===================================================== */}
-      <header className="lovable-orders-header">
-        <div className="lovable-header-left">
-          <Link to="/" className="lovable-portal-logo" aria-label="Go to home">
+      <header className="ZENVE-orders-header">
+        <div className="ZENVE-header-left">
+          <Link to="/" className="ZENVE-portal-logo" aria-label="Go to home">
             <img src={zenveLogo} alt="Zenve Fashion" />
           </Link>
 
-          <div className="lovable-header-title-block">
-            <Link to="/" className="lovable-back-link">
+          <div className="ZENVE-header-title-block">
+            <Link to="/" className="ZENVE-back-link">
               <BackIcon />
               <span>ALL 12 LAYERS</span>
             </Link>
 
-            <h1 className="lovable-portal-title">
-              <span className="lovable-layer-num">07</span>
+            <h1 className="ZENVE-portal-title">
+              <span className="ZENVE-layer-num">07</span>
               <span>OMS</span>
             </h1>
 
-            <p className="lovable-portal-desc">
+            <p className="ZENVE-portal-desc">
               Orders layer · Order lifecycle, split orders, cancellation
             </p>
           </div>
         </div>
 
-        <div className="lovable-header-right">
+        <div className="ZENVE-header-right">
           <SearchBar />
         </div>
       </header>
@@ -321,14 +321,14 @@ export default function Orders() {
       {/* =====================================================
           MAIN BODY
       ===================================================== */}
-      <main className="lovable-orders-main">
+      <main className="ZENVE-orders-main">
         {/* TOAST / ALERT BANNER */}
         {alert && (
-          <div className={`lovable-orders-alert ${alert.type}`}>
+          <div className={`ZENVE-orders-alert ${alert.type}`}>
             <span>{alert.text}</span>
             <button
               type="button"
-              className="lovable-alert-close"
+              className="ZENVE-alert-close"
               onClick={() => setAlert(null)}
               aria-label="Close alert"
             >
@@ -340,38 +340,38 @@ export default function Orders() {
         {/* ===================================================
             TOP 4 SUMMARY KPI CARDS
         =================================================== */}
-        <section className="lovable-orders-kpi-grid">
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Orders</span>
-            <strong className="lovable-kpi-value">{normalizedOrders.length}</strong>
+        <section className="ZENVE-orders-kpi-grid">
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Orders</span>
+            <strong className="ZENVE-kpi-value">{normalizedOrders.length}</strong>
           </div>
 
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Open</span>
-            <strong className="lovable-kpi-value">{openCount}</strong>
-            <span className="lovable-kpi-hint">Not delivered or cancelled</span>
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Open</span>
+            <strong className="ZENVE-kpi-value">{openCount}</strong>
+            <span className="ZENVE-kpi-hint">Not delivered or cancelled</span>
           </div>
 
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Delivered</span>
-            <strong className="lovable-kpi-value">{deliveredCount}</strong>
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Delivered</span>
+            <strong className="ZENVE-kpi-value">{deliveredCount}</strong>
           </div>
 
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">GMV</span>
-            <strong className="lovable-kpi-value">{formatInr(totalGmv)}</strong>
-            <span className="lovable-kpi-hint">Excludes cancellations</span>
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">GMV</span>
+            <strong className="ZENVE-kpi-value">{formatInr(totalGmv)}</strong>
+            <span className="ZENVE-kpi-hint">Excludes cancellations</span>
           </div>
         </section>
 
         {/* ===================================================
             ORDER LIFECYCLE SECTION
         =================================================== */}
-        <section className="lovable-panel-card">
-          <div className="lovable-panel-header">
-            <div className="lovable-panel-title-block">
-              <h2 className="lovable-panel-title">Order lifecycle</h2>
-              <p className="lovable-panel-desc">
+        <section className="ZENVE-panel-card">
+          <div className="ZENVE-panel-header">
+            <div className="ZENVE-panel-title-block">
+              <h2 className="ZENVE-panel-title">Order lifecycle</h2>
+              <p className="ZENVE-panel-desc">
                 PLACED → CONFIRMED → PACKED → SHIPPED → OUT FOR DELIVERY → DELIVERED. Cancellation is only allowed before dispatch.
               </p>
             </div>
@@ -381,22 +381,22 @@ export default function Orders() {
               placeholder="Filter orders..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="lovable-order-search-box"
+              className="ZENVE-order-search-box"
             />
           </div>
 
           {loading ? (
-            <div className="lovable-empty-state">
+            <div className="ZENVE-empty-state">
               <strong>Loading orders ledger...</strong>
               <p>Connecting to live Zenve Fashion database...</p>
             </div>
           ) : error ? (
-            <div className="lovable-empty-state">
+            <div className="ZENVE-empty-state">
               <strong style={{ color: "#9f1239" }}>{error}</strong>
               <p>
                 <button
                   type="button"
-                  className="lovable-btn lovable-btn-outline"
+                  className="ZENVE-btn ZENVE-btn-outline"
                   style={{ marginTop: "12px" }}
                   onClick={loadOrders}
                 >
@@ -405,11 +405,11 @@ export default function Orders() {
               </p>
             </div>
           ) : filteredOrders.length === 0 ? (
-            <div className="lovable-empty-state">
+            <div className="ZENVE-empty-state">
               No orders yet — place one from the Storefront layer.
             </div>
           ) : (
-            <div className="lovable-orders-stack">
+            <div className="ZENVE-orders-stack">
               {filteredOrders.map((n) => {
                 const statusMap = {
                   "PLACED": "Pending",
@@ -441,12 +441,12 @@ export default function Orders() {
                 const isProcessing = processingId === n.rawId;
 
                 return (
-                  <div key={n.rawId || n.id} className="lovable-order-card">
+                  <div key={n.rawId || n.id} className="ZENVE-order-card">
                     {/* HEADER ROW */}
-                    <div className="lovable-order-top-row">
-                      <div className="lovable-order-id-group">
-                        <h3 className="lovable-order-id-title">{n.id}</h3>
-                        <span className="lovable-order-date">
+                    <div className="ZENVE-order-top-row">
+                      <div className="ZENVE-order-id-group">
+                        <h3 className="ZENVE-order-id-title">{n.id}</h3>
+                        <span className="ZENVE-order-date">
                           {new Date(n.placedAt).toLocaleDateString("en-IN", {
                             day: "numeric",
                             month: "short",
@@ -457,79 +457,79 @@ export default function Orders() {
                         </span>
                       </div>
 
-                      <div className="lovable-order-badges-group">
-                        <span className={`lovable-tone-badge ${getStatusTone(n.status)}`}>
+                      <div className="ZENVE-order-badges-group">
+                        <span className={`ZENVE-tone-badge ${getStatusTone(n.status)}`}>
                           {n.status.replace(/_/g, " ")}
                         </span>
-                        <span className={`lovable-tone-badge ${n.paymentStatus === "Paid" ? "good" : "warn"}`}>
+                        <span className={`ZENVE-tone-badge ${n.paymentStatus === "Paid" ? "good" : "warn"}`}>
                           Payment: {n.paymentStatus} ({n.paymentMethod})
                         </span>
-                        <span className={`lovable-tone-badge ${n.fast ? "good" : "neutral"}`}>
+                        <span className={`ZENVE-tone-badge ${n.fast ? "good" : "neutral"}`}>
                           {n.eta}
                         </span>
                       </div>
                     </div>
 
                     {/* CUSTOMER & SHIPPING DETAILS SECTION */}
-                    <div className="lovable-order-customer-box">
-                      <div className="lovable-customer-grid">
-                        <div className="lovable-customer-col">
-                          <span className="lovable-detail-label">Customer Details</span>
-                          <strong className="lovable-customer-name">{n.customer}</strong>
-                          {n.phone && <span className="lovable-customer-contact">📞 {n.phone}</span>}
-                          {n.email && <span className="lovable-customer-contact">✉️ {n.email}</span>}
+                    <div className="ZENVE-order-customer-box">
+                      <div className="ZENVE-customer-grid">
+                        <div className="ZENVE-customer-col">
+                          <span className="ZENVE-detail-label">Customer Details</span>
+                          <strong className="ZENVE-customer-name">{n.customer}</strong>
+                          {n.phone && <span className="ZENVE-customer-contact">📞 {n.phone}</span>}
+                          {n.email && <span className="ZENVE-customer-contact">✉️ {n.email}</span>}
                         </div>
 
-                        <div className="lovable-customer-col">
-                          <span className="lovable-detail-label">Shipping Destination</span>
-                          <span className="lovable-customer-address">{n.address || "Standard Address"}</span>
-                          <span className="lovable-customer-pincode">PIN Code: <strong>{n.pincode}</strong></span>
+                        <div className="ZENVE-customer-col">
+                          <span className="ZENVE-detail-label">Shipping Destination</span>
+                          <span className="ZENVE-customer-address">{n.address || "Standard Address"}</span>
+                          <span className="ZENVE-customer-pincode">PIN Code: <strong>{n.pincode}</strong></span>
                         </div>
 
-                        <div className="lovable-customer-col lovable-payment-col">
-                          <span className="lovable-detail-label">Order Financials</span>
-                          <div className="lovable-financial-rows">
-                            <span className="lovable-subtotal-line">Subtotal: {formatInr(n.subtotal)}</span>
-                            {n.discount > 0 && <span className="lovable-discount-line">Discount: -{formatInr(n.discount)}</span>}
+                        <div className="ZENVE-customer-col ZENVE-payment-col">
+                          <span className="ZENVE-detail-label">Order Financials</span>
+                          <div className="ZENVE-financial-rows">
+                            <span className="ZENVE-subtotal-line">Subtotal: {formatInr(n.subtotal)}</span>
+                            {n.discount > 0 && <span className="ZENVE-discount-line">Discount: -{formatInr(n.discount)}</span>}
                             {n.shipping > 0 ? (
-                              <span className="lovable-shipping-line">Shipping: {formatInr(n.shipping)}</span>
+                              <span className="ZENVE-shipping-line">Shipping: {formatInr(n.shipping)}</span>
                             ) : (
-                              <span className="lovable-shipping-free">Shipping: Free</span>
+                              <span className="ZENVE-shipping-free">Shipping: Free</span>
                             )}
-                            <strong className="lovable-grand-total">Total: {formatInr(n.amount)}</strong>
+                            <strong className="ZENVE-grand-total">Total: {formatInr(n.amount)}</strong>
                           </div>
                         </div>
                       </div>
                     </div>
 
                     {/* ORDER ITEMS LIST */}
-                    <div className="lovable-order-items-wrapper">
-                      <span className="lovable-detail-label">Order Items ({n.lines.length})</span>
-                      <ul className="lovable-order-lines-list">
+                    <div className="ZENVE-order-items-wrapper">
+                      <span className="ZENVE-detail-label">Order Items ({n.lines.length})</span>
+                      <ul className="ZENVE-order-lines-list">
                         {n.lines.map((t, idx) => (
-                          <li key={idx} className="lovable-order-line-item">
-                            <div className="lovable-line-item-left">
+                          <li key={idx} className="ZENVE-order-line-item">
+                            <div className="ZENVE-line-item-left">
                               {t.image ? (
-                                <img src={t.image} alt={t.name} className="lovable-line-item-thumb" />
+                                <img src={t.image} alt={t.name} className="ZENVE-line-item-thumb" />
                               ) : (
-                                <div className="lovable-line-item-thumb-placeholder">👗</div>
+                                <div className="ZENVE-line-item-thumb-placeholder">👗</div>
                               )}
-                              <div className="lovable-line-item-info">
-                                <span className="lovable-line-name">{t.name}</span>
-                                <div className="lovable-line-item-meta">
-                                  <span className="lovable-line-sku">{t.skuId}</span>
-                                  {t.brand && <span className="lovable-line-brand">{t.brand}</span>}
-                                  {t.size && <span className="lovable-line-tag">Size: {t.size}</span>}
-                                  {t.color && <span className="lovable-line-tag">Color: {t.color}</span>}
+                              <div className="ZENVE-line-item-info">
+                                <span className="ZENVE-line-name">{t.name}</span>
+                                <div className="ZENVE-line-item-meta">
+                                  <span className="ZENVE-line-sku">{t.skuId}</span>
+                                  {t.brand && <span className="ZENVE-line-brand">{t.brand}</span>}
+                                  {t.size && <span className="ZENVE-line-tag">Size: {t.size}</span>}
+                                  {t.color && <span className="ZENVE-line-tag">Color: {t.color}</span>}
                                 </div>
                               </div>
                             </div>
 
-                            <div className="lovable-line-item-right">
-                              <span className="lovable-line-qty-price">
+                            <div className="ZENVE-line-item-right">
+                              <span className="ZENVE-line-qty-price">
                                 {t.qty} × {formatInr(t.price)}
                               </span>
-                              <strong className="lovable-line-price">
+                              <strong className="ZENVE-line-price">
                                 {formatInr(t.total || t.price * t.qty)}
                               </strong>
                             </div>
@@ -539,11 +539,11 @@ export default function Orders() {
                     </div>
 
                     {/* TIMELINE BADGES */}
-                    <div className="lovable-timeline-row">
+                    <div className="ZENVE-timeline-row">
                       {n.timeline.map((step, idx) => (
                         <span
                           key={idx}
-                          className={`lovable-tone-badge ${getStatusTone(step.status)}`}
+                          className={`ZENVE-tone-badge ${getStatusTone(step.status)}`}
                         >
                           {step.status.replace(/_/g, " ")} ·{" "}
                           {new Date(step.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
@@ -552,10 +552,10 @@ export default function Orders() {
                     </div>
 
                     {/* ACTIONS ROW */}
-                    <div className="lovable-order-actions-row">
+                    <div className="ZENVE-order-actions-row">
                       <button
                         type="button"
-                        className="lovable-btn lovable-btn-primary"
+                        className="ZENVE-btn ZENVE-btn-primary"
                         disabled={!nextStep || isProcessing}
                         onClick={() => handleAdvance(n)}
                       >
@@ -568,7 +568,7 @@ export default function Orders() {
 
                       <button
                         type="button"
-                        className="lovable-btn lovable-btn-outline"
+                        className="ZENVE-btn ZENVE-btn-outline"
                         disabled={isCancelDisabled || isProcessing}
                         onClick={() => handleCancel(n)}
                       >

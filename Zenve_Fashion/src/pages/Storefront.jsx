@@ -19,7 +19,7 @@ function BackIcon() {
 }
 
 /* =========================================================
-   DELIVERY PROMISE CALCULATION (Lovable Engine)
+   DELIVERY PROMISE CALCULATION (ZENVE Engine)
 ========================================================= */
 
 function computeDeliveryPromise(pincode, product, availableStock) {
@@ -359,37 +359,37 @@ export default function Storefront() {
      RENDER
   ======================================================= */
   return (
-    <div className="lovable-storefront-layout">
+    <div className="ZENVE-storefront-layout">
       {/* =====================================================
           HEADER SECTION
       ===================================================== */}
-      <header className="lovable-sf-header">
-        <div className="lovable-header-left">
-          <Link to="/" className="lovable-portal-logo" aria-label="Go to home">
+      <header className="ZENVE-sf-header">
+        <div className="ZENVE-header-left">
+          <Link to="/" className="ZENVE-portal-logo" aria-label="Go to home">
             <img src={zenveLogo} alt="Zenve Fashion" />
           </Link>
 
-          <div className="lovable-header-title-block">
-            <Link to="/" className="lovable-back-link">
+          <div className="ZENVE-header-title-block">
+            <Link to="/" className="ZENVE-back-link">
               <BackIcon />
               <span>ALL 12 LAYERS</span>
             </Link>
 
-            <h1 className="lovable-portal-title">
-              <span className="lovable-layer-num">06</span>
+            <h1 className="ZENVE-portal-title">
+              <span className="ZENVE-layer-num">06</span>
               <span>Storefront</span>
             </h1>
 
-            <p className="lovable-portal-desc">
+            <p className="ZENVE-portal-desc">
               Commerce layer · Search, filters, product page, cart, checkout
             </p>
           </div>
         </div>
 
         {/* HEADER ASIDE / RIGHT CONTROLS */}
-        <div className="lovable-header-right">
-          <div className="lovable-pincode-aside">
-            <label className="lovable-pincode-label" htmlFor="sf-pincode">
+        <div className="ZENVE-header-right">
+          <div className="ZENVE-pincode-aside">
+            <label className="ZENVE-pincode-label" htmlFor="sf-pincode">
               Delivery pincode
             </label>
             <input
@@ -397,7 +397,7 @@ export default function Storefront() {
               type="text"
               inputMode="numeric"
               maxLength={6}
-              className="lovable-pincode-input"
+              className="ZENVE-pincode-input"
               value={pincode}
               onChange={(e) => setPincode(e.target.value.replace(/\D/g, ""))}
               placeholder="6-digit pincode"
@@ -411,14 +411,14 @@ export default function Storefront() {
       {/* =====================================================
           MAIN BODY
       ===================================================== */}
-      <main className="lovable-sf-main">
+      <main className="ZENVE-sf-main">
         {/* ALERT NOTIFICATION */}
         {alert && (
-          <div className={`lovable-sf-alert ${alert.type}`}>
+          <div className={`ZENVE-sf-alert ${alert.type}`}>
             <span>{alert.text}</span>
             <button
               type="button"
-              className="lovable-alert-close"
+              className="ZENVE-alert-close"
               onClick={() => setAlert(null)}
               aria-label="Close alert"
             >
@@ -430,34 +430,34 @@ export default function Storefront() {
         {/* ===================================================
             TOP 3 SUMMARY KPI CARDS
         =================================================== */}
-        <section className="lovable-sf-kpi-grid">
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Live SKUs</span>
-            <strong className="lovable-kpi-value">{liveSkus.length}</strong>
-            <span className="lovable-kpi-hint">Only QA-approved, in-stock listings sell</span>
+        <section className="ZENVE-sf-kpi-grid">
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Live SKUs</span>
+            <strong className="ZENVE-kpi-value">{liveSkus.length}</strong>
+            <span className="ZENVE-kpi-hint">Only QA-approved, in-stock listings sell</span>
           </div>
 
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">In bag</span>
-            <strong className="lovable-kpi-value">{totalBagItemsCount}</strong>
-            <span className="lovable-kpi-hint">{formatInr(cartTotalAmount)}</span>
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">In bag</span>
+            <strong className="ZENVE-kpi-value">{totalBagItemsCount}</strong>
+            <span className="ZENVE-kpi-hint">{formatInr(cartTotalAmount)}</span>
           </div>
 
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Fast pincode</span>
-            <strong className="lovable-kpi-value">{isFastPincode ? "Yes" : "No"}</strong>
-            <span className="lovable-kpi-hint">Mumbai 400xxx · Bangalore 560xxx</span>
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Fast pincode</span>
+            <strong className="ZENVE-kpi-value">{isFastPincode ? "Yes" : "No"}</strong>
+            <span className="ZENVE-kpi-hint">Mumbai 400xxx · Bangalore 560xxx</span>
           </div>
         </section>
 
         {/* ===================================================
             SHOP SECTION
         =================================================== */}
-        <section className="lovable-panel-card">
-          <div className="lovable-panel-header">
-            <div className="lovable-panel-title-block">
-              <h2 className="lovable-panel-title">Shop</h2>
-              <p className="lovable-panel-desc">
+        <section className="ZENVE-panel-card">
+          <div className="ZENVE-panel-header">
+            <div className="ZENVE-panel-title-block">
+              <h2 className="ZENVE-panel-title">Shop</h2>
+              <p className="ZENVE-panel-desc">
                 Delivery promise is computed live from pincode, stocking location, fast flag and availability.
               </p>
             </div>
@@ -467,22 +467,22 @@ export default function Storefront() {
               placeholder="Search the catalogue…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="lovable-cat-search-box"
+              className="ZENVE-cat-search-box"
             />
           </div>
 
           {loading ? (
-            <div className="lovable-empty-state">
+            <div className="ZENVE-empty-state">
               <strong>Loading catalogue...</strong>
               <p>Connecting to live Zenve Fashion database...</p>
             </div>
           ) : error ? (
-            <div className="lovable-empty-state">
+            <div className="ZENVE-empty-state">
               <strong style={{ color: "#9f1239" }}>{error}</strong>
               <p>
                 <button
                   type="button"
-                  className="lovable-btn lovable-btn-outline"
+                  className="ZENVE-btn ZENVE-btn-outline"
                   style={{ marginTop: "12px" }}
                   onClick={loadData}
                 >
@@ -491,52 +491,52 @@ export default function Storefront() {
               </p>
             </div>
           ) : liveSkus.length === 0 ? (
-            <div className="lovable-empty-state">
+            <div className="ZENVE-empty-state">
               Nothing live yet — approve a SKU in Catalogue QA and receive stock.
             </div>
           ) : (
-            <div className="lovable-product-grid">
+            <div className="ZENVE-product-grid">
               {liveSkus.map((sku) => {
                 const deliveryPromise = computeDeliveryPromise(pincode, sku, sku.available);
 
                 return (
-                  <div key={sku.id} className="lovable-product-card">
+                  <div key={sku.id} className="ZENVE-product-card">
                     {/* TITLE ROW */}
-                    <div className="lovable-prod-top-row">
-                      <h3 className="lovable-prod-title">{sku.name}</h3>
+                    <div className="ZENVE-prod-top-row">
+                      <h3 className="ZENVE-prod-title">{sku.name}</h3>
                       {deliveryPromise.fast && (
-                        <span className="lovable-tone-badge good">60 min</span>
+                        <span className="ZENVE-tone-badge good">60 min</span>
                       )}
                     </div>
 
                     {/* BRAND & VARIANT */}
-                    <p className="lovable-prod-meta">
+                    <p className="ZENVE-prod-meta">
                       {sku.brand} · {sku.colour} / {sku.size}
                     </p>
 
                     {/* PRICE */}
-                    <p className="lovable-prod-price-row">
+                    <p className="ZENVE-prod-price-row">
                       <span>{formatInr(sku.price)}</span>
                       {sku.mrp > sku.price && (
-                        <span className="lovable-prod-mrp">{formatInr(sku.mrp)}</span>
+                        <span className="ZENVE-prod-mrp">{formatInr(sku.mrp)}</span>
                       )}
                     </p>
 
                     {/* DELIVERY PROMISE */}
-                    <p className="lovable-prod-delivery">
-                      <span className="lovable-delivery-label">Delivery: </span>
+                    <p className="ZENVE-prod-delivery">
+                      <span className="ZENVE-delivery-label">Delivery: </span>
                       <strong>{deliveryPromise.eta}</strong>
                     </p>
 
                     {/* STOCK & HUB */}
-                    <p className="lovable-prod-stock">
+                    <p className="ZENVE-prod-stock">
                       {sku.available > 0
                         ? `${sku.available} in stock · ${sku.location}`
                         : "Out of stock"}
                     </p>
 
                     {/* RETURN POLICY */}
-                    <p className="lovable-prod-policy">
+                    <p className="ZENVE-prod-policy">
                       {sku.returnable
                         ? "7-day return eligible"
                         : "Final sale — no returns"}
@@ -545,7 +545,7 @@ export default function Storefront() {
                     {/* ADD TO BAG */}
                     <button
                       type="button"
-                      className="lovable-add-bag-btn"
+                      className="ZENVE-add-bag-btn"
                       disabled={sku.available < 1 || isCheckingOut}
                       onClick={() => addToBag(sku.id)}
                     >
@@ -561,36 +561,36 @@ export default function Storefront() {
         {/* ===================================================
             BAG & CHECKOUT SECTION
         =================================================== */}
-        <section className="lovable-panel-card">
-          <div className="lovable-panel-header">
-            <div className="lovable-panel-title-block">
-              <h2 className="lovable-panel-title">Bag & checkout</h2>
-              <p className="lovable-panel-desc">
+        <section className="ZENVE-panel-card">
+          <div className="ZENVE-panel-header">
+            <div className="ZENVE-panel-title-block">
+              <h2 className="ZENVE-panel-title">Bag & checkout</h2>
+              <p className="ZENVE-panel-desc">
                 Checkout reserves inventory instantly and creates a live order in the OMS.
               </p>
             </div>
           </div>
 
           {cart.length === 0 ? (
-            <div className="lovable-empty-state">
+            <div className="ZENVE-empty-state">
               Your bag is empty.
             </div>
           ) : (
-            <div className="lovable-bag-stack">
+            <div className="ZENVE-bag-stack">
               {cart.map((item) => {
                 const prod =
                   normalizedProducts.find((p) => p.id === item.skuId) || item.product;
 
                 return (
-                  <div key={item.skuId} className="lovable-bag-item-row">
-                    <span className="lovable-bag-item-name">{prod.name}</span>
-                    <span className="lovable-bag-item-qty">Qty {item.qty}</span>
-                    <span className="lovable-bag-item-price">
+                  <div key={item.skuId} className="ZENVE-bag-item-row">
+                    <span className="ZENVE-bag-item-name">{prod.name}</span>
+                    <span className="ZENVE-bag-item-qty">Qty {item.qty}</span>
+                    <span className="ZENVE-bag-item-price">
                       {formatInr((prod.price || 0) * item.qty)}
                     </span>
                     <button
                       type="button"
-                      className="lovable-btn-ghost"
+                      className="ZENVE-btn-ghost"
                       onClick={() => removeFromBag(item.skuId)}
                       disabled={isCheckingOut}
                     >
@@ -601,19 +601,19 @@ export default function Storefront() {
               })}
 
               {/* ORDER TOTAL */}
-              <div className="lovable-bag-total-row">
+              <div className="ZENVE-bag-total-row">
                 <span>Order total</span>
                 <span>{formatInr(cartTotalAmount)}</span>
               </div>
 
               {/* CHECKOUT CONTROLS */}
-              <div className="lovable-checkout-controls-row">
-                <div className="lovable-checkout-input-group">
+              <div className="ZENVE-checkout-controls-row">
+                <div className="ZENVE-checkout-input-group">
                   <label htmlFor="customer-name">Customer name</label>
                   <input
                     id="customer-name"
                     type="text"
-                    className="lovable-customer-input"
+                    className="ZENVE-customer-input"
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     placeholder="Enter customer name"
@@ -623,7 +623,7 @@ export default function Storefront() {
 
                 <button
                   type="button"
-                  className="lovable-btn lovable-btn-primary"
+                  className="ZENVE-btn ZENVE-btn-primary"
                   onClick={handleCheckout}
                   disabled={isCheckingOut || !cart.length}
                 >
@@ -632,7 +632,7 @@ export default function Storefront() {
 
                 <button
                   type="button"
-                  className="lovable-btn lovable-btn-outline"
+                  className="ZENVE-btn ZENVE-btn-outline"
                   onClick={clearBag}
                   disabled={isCheckingOut || !cart.length}
                 >

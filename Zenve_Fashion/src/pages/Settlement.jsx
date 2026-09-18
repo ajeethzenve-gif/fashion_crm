@@ -124,7 +124,7 @@ const INCLUDED_POINTS = [
 
 /* =========================================================
    SETTLEMENT COMPONENT (10)
-   Direct match to https://zenvefashioncm.lovable.app/settlement
+   Direct match to https://zenvefashioncm.ZENVE.app/settlement
 ========================================================= */
 
 export default function Settlement() {
@@ -163,7 +163,7 @@ export default function Settlement() {
       if (Array.isArray(settlementsData) && settlementsData.length > 0) {
         setSettlements(settlementsData);
       } else {
-        // Use default Lovable reference settlements if backend has none yet
+        // Use default ZENVE reference settlements if backend has none yet
         setSettlements(DEFAULT_SETTLEMENTS);
       }
 
@@ -301,34 +301,34 @@ export default function Settlement() {
   };
 
   return (
-    <div className="lovable-settlement-layout">
+    <div className="ZENVE-settlement-layout">
       {/* =====================================================
           HEADER SECTION
       ===================================================== */}
-      <header className="lovable-settlement-header">
-        <div className="lovable-header-left">
-          <Link to="/" className="lovable-portal-logo" aria-label="Go to home">
+      <header className="ZENVE-settlement-header">
+        <div className="ZENVE-header-left">
+          <Link to="/" className="ZENVE-portal-logo" aria-label="Go to home">
             <img src={zenveLogo} alt="Zenve Fashion" />
           </Link>
 
-          <div className="lovable-header-title-block">
-            <Link to="/" className="lovable-back-link">
+          <div className="ZENVE-header-title-block">
+            <Link to="/" className="ZENVE-back-link">
               <BackIcon />
               <span>ALL 12 LAYERS</span>
             </Link>
 
-            <h1 className="lovable-portal-title">
-              <span className="lovable-layer-num">10</span>
+            <h1 className="ZENVE-portal-title">
+              <span className="ZENVE-layer-num">10</span>
               <span>Settlement</span>
             </h1>
 
-            <p className="lovable-portal-desc">
+            <p className="ZENVE-portal-desc">
               Finance layer · Take rate, payout, refunds, reconciliation
             </p>
           </div>
         </div>
 
-        <div className="lovable-header-right">
+        <div className="ZENVE-header-right">
           <SearchBar />
         </div>
       </header>
@@ -336,14 +336,14 @@ export default function Settlement() {
       {/* =====================================================
           MAIN CONTENT AREA
       ===================================================== */}
-      <main className="lovable-settlement-main">
+      <main className="ZENVE-settlement-main">
         {/* TOAST / ALERT BANNER */}
         {alert && (
-          <div className={`lovable-settlement-alert ${alert.type}`}>
+          <div className={`ZENVE-settlement-alert ${alert.type}`}>
             <span>{alert.text}</span>
             <button
               type="button"
-              className="lovable-alert-close"
+              className="ZENVE-alert-close"
               onClick={() => setAlert(null)}
               aria-label="Close alert"
             >
@@ -354,11 +354,11 @@ export default function Settlement() {
 
         {/* ERROR BANNER */}
         {error && (
-          <div className="lovable-settlement-alert error">
+          <div className="ZENVE-settlement-alert error">
             <span>{error}</span>
             <button
               type="button"
-              className="lovable-alert-close"
+              className="ZENVE-alert-close"
               onClick={loadData}
               aria-label="Retry loading data"
             >
@@ -370,59 +370,59 @@ export default function Settlement() {
         {/* ===================================================
             TOP 4 KPI METRIC CARDS
         =================================================== */}
-        <section className="lovable-settlement-kpi-grid">
+        <section className="ZENVE-settlement-kpi-grid">
           {/* SETTLED GMV */}
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Settled GMV</span>
-            <strong className="lovable-kpi-value">{formatInr(settledGmv)}</strong>
-            <span className="lovable-kpi-hint">{activeSettlements.length} settlements</span>
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Settled GMV</span>
+            <strong className="ZENVE-kpi-value">{formatInr(settledGmv)}</strong>
+            <span className="ZENVE-kpi-hint">{activeSettlements.length} settlements</span>
           </div>
 
           {/* ZENVE COMMISSION */}
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Zenve commission</span>
-            <strong className="lovable-kpi-value">{formatInr(zenveCommission)}</strong>
-            <span className="lovable-kpi-hint">Take rate earnings</span>
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Zenve commission</span>
+            <strong className="ZENVE-kpi-value">{formatInr(zenveCommission)}</strong>
+            <span className="ZENVE-kpi-hint">Take rate earnings</span>
           </div>
 
           {/* PAYABLE TO DESIGNERS */}
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Payable to designers</span>
-            <strong className="lovable-kpi-value">{formatInr(payableToDesigners)}</strong>
-            <span className="lovable-kpi-hint">Not yet paid</span>
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Payable to designers</span>
+            <strong className="ZENVE-kpi-value">{formatInr(payableToDesigners)}</strong>
+            <span className="ZENVE-kpi-hint">Not yet paid</span>
           </div>
 
           {/* REVERSED BY RETURNS */}
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Reversed by returns</span>
-            <strong className="lovable-kpi-value">{reversedByReturnsCount}</strong>
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Reversed by returns</span>
+            <strong className="ZENVE-kpi-value">{reversedByReturnsCount}</strong>
           </div>
         </section>
 
         {/* ===================================================
             SETTLEMENT LEDGER PANEL
         =================================================== */}
-        <section className="lovable-panel-card">
-          <div className="lovable-panel-header">
-            <div className="lovable-panel-title-block">
-              <h2 className="lovable-panel-title">Settlement ledger</h2>
-              <p className="lovable-panel-desc">
+        <section className="ZENVE-panel-card">
+          <div className="ZENVE-panel-header">
+            <div className="ZENVE-panel-title-block">
+              <h2 className="ZENVE-panel-title">Settlement ledger</h2>
+              <p className="ZENVE-panel-desc">
                 A settlement is created the moment an order is delivered, and reversed when a refund is issued.
               </p>
             </div>
           </div>
 
           {loading ? (
-            <div className="lovable-empty-box">
+            <div className="ZENVE-empty-box">
               Loading settlements from finance engine...
             </div>
           ) : normalizedSettlements.length === 0 ? (
-            <div className="lovable-empty-box">
+            <div className="ZENVE-empty-box">
               No settlements yet — deliver an order in the OMS layer.
             </div>
           ) : (
-            <div className="lovable-table-wrap">
-              <table className="lovable-settlement-table">
+            <div className="ZENVE-table-wrap">
+              <table className="ZENVE-settlement-table">
                 <thead>
                   <tr>
                     <th>Settlement</th>
@@ -465,7 +465,7 @@ export default function Settlement() {
                         <td className="net-payable-text">{formatInr(item.net)}</td>
 
                         <td>
-                          <span className={`lovable-tone-badge ${getStatusTone(item.status)}`}>
+                          <span className={`ZENVE-tone-badge ${getStatusTone(item.status)}`}>
                             {item.status}
                           </span>
                         </td>
@@ -473,7 +473,7 @@ export default function Settlement() {
                         <td>
                           <button
                             type="button"
-                            className="lovable-btn-sm outline"
+                            className="ZENVE-btn-sm outline"
                             disabled={isReversed || isReconciled || actionLoadingId === item.id}
                             onClick={() => handleAdvance(item)}
                           >
@@ -492,18 +492,18 @@ export default function Settlement() {
         {/* ===================================================
             WHAT IS INCLUDED PANEL
         =================================================== */}
-        <section className="lovable-panel-card">
-          <div className="lovable-panel-title-block">
-            <h2 className="lovable-panel-title">What is included</h2>
-            <p className="lovable-panel-desc">
+        <section className="ZENVE-panel-card">
+          <div className="ZENVE-panel-title-block">
+            <h2 className="ZENVE-panel-title">What is included</h2>
+            <p className="ZENVE-panel-desc">
               Straight from the blueprint's settlement components.
             </p>
           </div>
 
-          <ul className="lovable-included-grid">
+          <ul className="ZENVE-included-grid">
             {INCLUDED_POINTS.map((point) => (
-              <li key={point} className="lovable-included-item">
-                <span className="lovable-included-bullet" aria-hidden="true">•</span>
+              <li key={point} className="ZENVE-included-item">
+                <span className="ZENVE-included-bullet" aria-hidden="true">•</span>
                 <span>{point}</span>
               </li>
             ))}

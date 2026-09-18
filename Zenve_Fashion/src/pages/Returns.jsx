@@ -104,7 +104,7 @@ function getNextActionLabel(status) {
 
 /* =========================================================
    REVERSE LOGISTICS / RETURNS COMPONENT (09)
-   Direct match to https://zenvefashioncm.lovable.app/returns
+   Direct match to https://zenvefashioncm.ZENVE.app/returns
 ========================================================= */
 
 export default function Returns() {
@@ -381,34 +381,34 @@ export default function Returns() {
   };
 
   return (
-    <div className="lovable-returns-layout">
+    <div className="ZENVE-returns-layout">
       {/* =====================================================
           HEADER SECTION
       ===================================================== */}
-      <header className="lovable-returns-header">
-        <div className="lovable-header-left">
-          <Link to="/" className="lovable-portal-logo" aria-label="Go to home">
+      <header className="ZENVE-returns-header">
+        <div className="ZENVE-header-left">
+          <Link to="/" className="ZENVE-portal-logo" aria-label="Go to home">
             <img src={zenveLogo} alt="Zenve Fashion" />
           </Link>
 
-          <div className="lovable-header-title-block">
-            <Link to="/" className="lovable-back-link">
+          <div className="ZENVE-header-title-block">
+            <Link to="/" className="ZENVE-back-link">
               <BackIcon />
               <span>ALL 12 LAYERS</span>
             </Link>
 
-            <h1 className="lovable-portal-title">
-              <span className="lovable-layer-num">09</span>
+            <h1 className="ZENVE-portal-title">
+              <span className="ZENVE-layer-num">09</span>
               <span>Returns Engine</span>
             </h1>
 
-            <p className="lovable-portal-desc">
+            <p className="ZENVE-portal-desc">
               Returns layer · Request, pickup, inspection, refund / exchange
             </p>
           </div>
         </div>
 
-        <div className="lovable-header-right">
+        <div className="ZENVE-header-right">
           <SearchBar />
         </div>
       </header>
@@ -416,14 +416,14 @@ export default function Returns() {
       {/* =====================================================
           MAIN CONTENT AREA
       ===================================================== */}
-      <main className="lovable-returns-main">
+      <main className="ZENVE-returns-main">
         {/* TOAST NOTIFICATION BANNER */}
         {alert && (
-          <div className={`lovable-returns-alert ${alert.type}`}>
+          <div className={`ZENVE-returns-alert ${alert.type}`}>
             <span>{alert.text}</span>
             <button
               type="button"
-              className="lovable-alert-close"
+              className="ZENVE-alert-close"
               onClick={() => setAlert(null)}
               aria-label="Close alert"
             >
@@ -434,11 +434,11 @@ export default function Returns() {
 
         {/* ERROR BANNER */}
         {error && (
-          <div className="lovable-returns-alert error">
+          <div className="ZENVE-returns-alert error">
             <span>{error}</span>
             <button
               type="button"
-              className="lovable-alert-close"
+              className="ZENVE-alert-close"
               onClick={loadData}
               aria-label="Retry loading data"
             >
@@ -450,31 +450,31 @@ export default function Returns() {
         {/* ===================================================
             TOP 4 KPI METRIC CARDS
         =================================================== */}
-        <section className="lovable-returns-kpi-grid">
+        <section className="ZENVE-returns-kpi-grid">
           {/* OPEN RETURNS */}
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Open returns</span>
-            <strong className="lovable-kpi-value">{openReturnsCount}</strong>
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Open returns</span>
+            <strong className="ZENVE-kpi-value">{openReturnsCount}</strong>
           </div>
 
           {/* AWAITING INSPECTION */}
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Awaiting inspection</span>
-            <strong className="lovable-kpi-value">
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Awaiting inspection</span>
+            <strong className="ZENVE-kpi-value">
               {awaitingInspectionCount}
             </strong>
           </div>
 
           {/* FAILED QC */}
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Failed QC</span>
-            <strong className="lovable-kpi-value">{failedQcCount}</strong>
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Failed QC</span>
+            <strong className="ZENVE-kpi-value">{failedQcCount}</strong>
           </div>
 
           {/* REFUND VALUE */}
-          <div className="lovable-kpi-card">
-            <span className="lovable-kpi-label">Refund value</span>
-            <strong className="lovable-kpi-value">
+          <div className="ZENVE-kpi-card">
+            <span className="ZENVE-kpi-label">Refund value</span>
+            <strong className="ZENVE-kpi-value">
               {formatInr(totalRefundValue)}
             </strong>
           </div>
@@ -483,31 +483,31 @@ export default function Returns() {
         {/* ===================================================
             RAISE A RETURN PANEL
         =================================================== */}
-        <section className="lovable-panel-card">
-          <div className="lovable-panel-header">
-            <div className="lovable-panel-title-block">
-              <h2 className="lovable-panel-title">Raise a return</h2>
-              <p className="lovable-panel-desc">
+        <section className="ZENVE-panel-card">
+          <div className="ZENVE-panel-header">
+            <div className="ZENVE-panel-title-block">
+              <h2 className="ZENVE-panel-title">Raise a return</h2>
+              <p className="ZENVE-panel-desc">
                 Only delivered orders and returnable SKUs pass the policy check.
               </p>
             </div>
           </div>
 
           {deliveredOrders.length === 0 ? (
-            <div className="lovable-empty-box">
+            <div className="ZENVE-empty-box">
               No delivered orders yet — deliver an order in the OMS layer first.
             </div>
           ) : (
             <form
-              className="lovable-raise-return-form"
+              className="ZENVE-raise-return-form"
               onSubmit={handleCreateReturn}
             >
               {/* DELIVERED ORDER SELECT */}
-              <div className="lovable-form-field">
+              <div className="ZENVE-form-field">
                 <label htmlFor="return-order-select">Delivered order</label>
                 <select
                   id="return-order-select"
-                  className="lovable-select"
+                  className="ZENVE-select"
                   style={{ minWidth: "220px" }}
                   value={selectedOrderId}
                   onChange={(e) => {
@@ -525,11 +525,11 @@ export default function Returns() {
               </div>
 
               {/* ITEM SELECT */}
-              <div className="lovable-form-field">
+              <div className="ZENVE-form-field">
                 <label htmlFor="return-item-select">Item</label>
                 <select
                   id="return-item-select"
-                  className="lovable-select"
+                  className="ZENVE-select"
                   style={{ minWidth: "260px" }}
                   value={selectedItemSku}
                   disabled={!activeOrder}
@@ -550,12 +550,12 @@ export default function Returns() {
               </div>
 
               {/* REASON INPUT */}
-              <div className="lovable-form-field">
+              <div className="ZENVE-form-field">
                 <label htmlFor="return-reason-input">Reason</label>
                 <input
                   id="return-reason-input"
                   type="text"
-                  className="lovable-input"
+                  className="ZENVE-input"
                   style={{ minWidth: "220px" }}
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
@@ -565,7 +565,7 @@ export default function Returns() {
               {/* CREATE BUTTON */}
               <button
                 type="submit"
-                className="lovable-btn-primary"
+                className="ZENVE-btn-primary"
                 disabled={submitting}
               >
                 {submitting ? "Creating..." : "Create return"}
@@ -577,11 +577,11 @@ export default function Returns() {
         {/* ===================================================
             RETURN WORKFLOW PANEL
         =================================================== */}
-        <section className="lovable-panel-card">
-          <div className="lovable-panel-header">
-            <div className="lovable-panel-title-block">
-              <h2 className="lovable-panel-title">Return workflow</h2>
-              <p className="lovable-panel-desc">
+        <section className="ZENVE-panel-card">
+          <div className="ZENVE-panel-header">
+            <div className="ZENVE-panel-title-block">
+              <h2 className="ZENVE-panel-title">Return workflow</h2>
+              <p className="ZENVE-panel-desc">
                 Requested → pickup → received → inspected → refunded. Inspection
                 decides whether stock becomes sellable again.
               </p>
@@ -589,13 +589,13 @@ export default function Returns() {
           </div>
 
           {loading ? (
-            <div className="lovable-empty-box">
+            <div className="ZENVE-empty-box">
               Loading returns from reverse logistics engine...
             </div>
           ) : returns.length === 0 ? (
-            <div className="lovable-empty-box">No returns raised.</div>
+            <div className="ZENVE-empty-box">No returns raised.</div>
           ) : (
-            <div className="lovable-returns-list">
+            <div className="ZENVE-returns-list">
               {returns.map((ret) => {
                 const currentStatus = (
                   ret.normalized_status ||
@@ -617,32 +617,32 @@ export default function Returns() {
                 const refundAmount = Number(ret.refund ?? ret.refund_amount) || 0;
 
                 return (
-                  <div key={ret.id} className="lovable-return-card">
-                    <div className="lovable-return-top">
-                      <h3 className="lovable-return-id">{returnIdDisplay}</h3>
+                  <div key={ret.id} className="ZENVE-return-card">
+                    <div className="ZENVE-return-top">
+                      <h3 className="ZENVE-return-id">{returnIdDisplay}</h3>
                       <span
-                        className={`lovable-tone-badge ${getTone(
+                        className={`ZENVE-tone-badge ${getTone(
                           currentStatus
                         )}`}
                       >
                         {currentStatus.replace(/_/g, " ")}
                       </span>
-                      <span className="lovable-tone-badge neutral">
+                      <span className="ZENVE-tone-badge neutral">
                         {orderIdDisplay}
                       </span>
                     </div>
 
-                    <p className="lovable-return-details">
+                    <p className="ZENVE-return-details">
                       {skuTitle} · {ret.reason || "Size did not fit"} · refund{" "}
                       {formatInr(refundAmount)}
                     </p>
 
-                    <div className="lovable-return-actions">
+                    <div className="ZENVE-return-actions">
                       {isReceived ? (
                         <>
                           <button
                             type="button"
-                            className="lovable-btn-sm primary"
+                            className="ZENVE-btn-sm primary"
                             disabled={actionLoadingId === ret.id}
                             onClick={() => handleInspect(ret.id, "PASSED")}
                           >
@@ -650,7 +650,7 @@ export default function Returns() {
                           </button>
                           <button
                             type="button"
-                            className="lovable-btn-sm danger-outline"
+                            className="ZENVE-btn-sm danger-outline"
                             disabled={actionLoadingId === ret.id}
                             onClick={() => handleInspect(ret.id, "FAILED")}
                           >
@@ -660,7 +660,7 @@ export default function Returns() {
                       ) : (
                         <button
                           type="button"
-                          className="lovable-btn-sm outline"
+                          className="ZENVE-btn-sm outline"
                           disabled={isRefunded || actionLoadingId === ret.id}
                           onClick={() => handleAdvance(ret)}
                         >

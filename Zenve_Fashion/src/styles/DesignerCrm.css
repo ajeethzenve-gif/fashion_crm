@@ -1,20 +1,20 @@
 /* =========================================================
    ZENVE FASHION - 01 DESIGNER CRM
-   Exact Lovable Design Tokens & Complete Multi-Screen Responsiveness
+   Exact ZENVE Design Tokens & Complete Multi-Screen Responsiveness
    (Mobile 320-640px, Tablet 641-1024px, Laptop 1025-1440px, Desktop 1441-1920px, 4K UHD 1921-3840px)
 ========================================================= */
 
 :root {
-  --lovable-paper: #fbf9f5;
-  --lovable-card: #ffffff;
-  --lovable-ink: #17130f;
-  --lovable-muted: #736b63;
-  --lovable-border: #e8e3da;
-  --lovable-border-hover: #c28b51;
-  --lovable-gold: #c28b51;
-  --lovable-gold-light: #fdfaf6;
-  --lovable-secondary: #f5f2ec;
-  --lovable-font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --ZENVE-paper: #fbf9f5;
+  --ZENVE-card: #ffffff;
+  --ZENVE-ink: #17130f;
+  --ZENVE-muted: #736b63;
+  --ZENVE-border: #e8e3da;
+  --ZENVE-border-hover: #c28b51;
+  --ZENVE-gold: #c28b51;
+  --ZENVE-gold-light: #fdfaf6;
+  --ZENVE-secondary: #f5f2ec;
+  --ZENVE-font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
 .designer-crm-page,
@@ -27,8 +27,8 @@
 .designer-crm-page {
   width: 100%;
   min-height: 100vh;
-  background-color: var(--lovable-paper);
-  color: var(--lovable-ink);
+  background-color: var(--ZENVE-paper);
+  color: var(--ZENVE-ink);
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   margin: 0;
   padding: 0;
@@ -39,16 +39,16 @@
    HEADER
 ========================================================= */
 
-.lovable-header {
+.ZENVE-header {
   width: 100%;
-  background-color: var(--lovable-card);
-  border-bottom: 1px solid var(--lovable-border);
+  background-color: var(--ZENVE-card);
+  border-bottom: 1px solid var(--ZENVE-border);
   position: sticky;
   top: 0;
   z-index: 50;
 }
 
-.lovable-header-inner {
+.ZENVE-header-inner {
   max-width: 1440px;
   margin: 0 auto;
   padding: 16px 32px;
@@ -58,26 +58,27 @@
   gap: 24px;
 }
 
-.lovable-header-left {
+.ZENVE-header-left {
   display: flex;
   align-items: center;
   gap: 20px;
   min-width: 0;
+  flex-shrink: 0;
 }
 
-.lovable-portal-logo img {
+.ZENVE-portal-logo img {
   height: 38px;
   width: auto;
   display: block;
 }
 
-.lovable-header-title-block {
+.ZENVE-header-title-block {
   display: flex;
   flex-direction: column;
   gap: 3px;
 }
 
-.lovable-back-link {
+.ZENVE-back-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -85,7 +86,7 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   text-decoration: none;
   background: none;
   border: none;
@@ -94,35 +95,35 @@
   transition: color 0.15s ease;
 }
 
-.lovable-back-link:hover {
-  color: var(--lovable-ink);
+.ZENVE-back-link:hover {
+  color: var(--ZENVE-ink);
 }
 
-.lovable-portal-title {
+.ZENVE-portal-title {
   margin: 0;
   font-size: 26px;
   font-weight: 500;
-  font-family: var(--lovable-font-serif);
-  color: var(--lovable-ink);
+  font-family: var(--ZENVE-font-serif);
+  color: var(--ZENVE-ink);
   display: flex;
   align-items: baseline;
   gap: 10px;
 }
 
-.lovable-layer-num {
+.ZENVE-layer-num {
   font-size: 26px;
   font-weight: 500;
   font-family: inherit;
-  color: var(--lovable-gold);
+  color: var(--ZENVE-gold);
 }
 
-.lovable-portal-desc {
+.ZENVE-portal-desc {
   margin: 0;
   font-size: 13.5px;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
 }
 
-.lovable-header-right {
+.ZENVE-header-right {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -133,10 +134,10 @@
   align-items: center;
   gap: 6px;
   padding: 7px 14px;
-  background-color: var(--lovable-card);
-  border: 1px solid var(--lovable-border);
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
   border-radius: 6px;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -145,8 +146,8 @@
 }
 
 .crm-refresh-btn:hover {
-  border-color: var(--lovable-gold);
-  background-color: var(--lovable-gold-light);
+  border-color: var(--ZENVE-gold);
+  background-color: var(--ZENVE-gold-light);
 }
 
 .crm-spinner {
@@ -204,8 +205,8 @@
 }
 
 .crm-kpi-card {
-  background-color: var(--lovable-card);
-  border: 1px solid var(--lovable-border);
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
   border-radius: 8px;
   padding: 14px 16px;
   display: flex;
@@ -223,7 +224,7 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   margin: 0 0 6px 0;
 }
 
@@ -231,14 +232,14 @@
   font-size: 24px;
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
   margin: 0;
   line-height: 1.2;
 }
 
 .crm-kpi-hint {
   font-size: 11.5px;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   margin-top: 4px;
   margin-bottom: 0;
 }
@@ -248,8 +249,8 @@
 ========================================================= */
 
 .crm-panel {
-  background-color: var(--lovable-card);
-  border: 1px solid var(--lovable-border);
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
   border-radius: 8px;
   padding: 20px 24px;
   display: flex;
@@ -274,22 +275,22 @@
   margin: 0;
   font-size: 16px;
   font-weight: 600;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
 }
 
 .crm-panel-desc {
   margin: 0;
   font-size: 13px;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
 }
 
 .crm-empty-state {
   padding: 36px 16px;
   text-align: center;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   font-size: 13.5px;
-  background-color: var(--lovable-paper);
-  border: 1px dashed var(--lovable-border);
+  background-color: var(--ZENVE-paper);
+  border: 1px dashed var(--ZENVE-border);
   border-radius: 6px;
 }
 
@@ -344,8 +345,8 @@
 }
 
 .designer-card {
-  background-color: var(--lovable-card);
-  border: 1px solid var(--lovable-border);
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
   border-radius: 8px;
   padding: 18px 20px;
   display: flex;
@@ -383,13 +384,13 @@
   margin: 0;
   font-size: 16px;
   font-weight: 600;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
 }
 
 .designer-subtext-line {
   margin: 0;
   font-size: 13px;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
   line-height: 1.4;
   word-break: break-word;
 }
@@ -404,18 +405,18 @@
 
 .designer-stage-select {
   padding: 6px 10px;
-  background-color: var(--lovable-card);
-  border: 1px solid var(--lovable-border);
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
   border-radius: 6px;
   font-size: 13px;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
   outline: none;
   cursor: pointer;
   min-width: 130px;
 }
 
 .designer-stage-select:focus {
-  border-color: var(--lovable-gold);
+  border-color: var(--ZENVE-gold);
 }
 
 .btn-crm-action {
@@ -429,19 +430,19 @@
 }
 
 .btn-crm-action.outline {
-  background-color: var(--lovable-card);
-  border: 1px solid var(--lovable-border);
-  color: var(--lovable-ink);
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
+  color: var(--ZENVE-ink);
 }
 
 .btn-crm-action.outline:hover {
-  border-color: var(--lovable-gold);
-  background-color: var(--lovable-gold-light);
+  border-color: var(--ZENVE-gold);
+  background-color: var(--ZENVE-gold-light);
 }
 
 .btn-crm-action.primary {
-  background-color: var(--lovable-ink);
-  border: 1px solid var(--lovable-ink);
+  background-color: var(--ZENVE-ink);
+  border: 1px solid var(--ZENVE-ink);
   color: #ffffff;
 }
 
@@ -457,7 +458,7 @@
 }
 
 .econ-box {
-  background-color: var(--lovable-secondary);
+  background-color: var(--ZENVE-secondary);
   border-radius: 6px;
   padding: 8px 12px;
   display: flex;
@@ -468,7 +469,7 @@
 .econ-val {
   font-size: 15px;
   font-weight: 600;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
   margin-top: 2px;
 }
 
@@ -509,17 +510,17 @@
 }
 
 .task-title {
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
 }
 
 .task-title.done {
   text-decoration: line-through;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
 }
 
 .task-due {
   font-size: 11.5px;
-  color: var(--lovable-muted);
+  color: var(--ZENVE-muted);
 }
 
 .task-add-row {
@@ -534,48 +535,48 @@
   flex: 1;
   min-width: 170px;
   padding: 6px 10px;
-  background-color: var(--lovable-card);
-  border: 1px solid var(--lovable-border);
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
   border-radius: 6px;
   font-size: 12.5px;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
   outline: none;
 }
 
 .task-input-text:focus {
-  border-color: var(--lovable-gold);
+  border-color: var(--ZENVE-gold);
 }
 
 .task-input-date {
   width: 135px;
   padding: 6px 8px;
-  background-color: var(--lovable-card);
-  border: 1px solid var(--lovable-border);
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
   border-radius: 6px;
   font-size: 12px;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
   outline: none;
 }
 
 .task-input-date:focus {
-  border-color: var(--lovable-gold);
+  border-color: var(--ZENVE-gold);
 }
 
 .btn-add-task {
   padding: 6px 12px;
-  background-color: var(--lovable-card);
-  border: 1px solid var(--lovable-border);
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
   border-radius: 6px;
   font-size: 12.5px;
   font-weight: 500;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .btn-add-task:hover {
-  border-color: var(--lovable-gold);
-  background-color: var(--lovable-gold-light);
+  border-color: var(--ZENVE-gold);
+  background-color: var(--ZENVE-gold-light);
 }
 
 /* Controls Column */
@@ -598,18 +599,18 @@
 .crm-select,
 .crm-input-num {
   padding: 6px 10px;
-  background-color: var(--lovable-card);
-  border: 1px solid var(--lovable-border);
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
   border-radius: 6px;
   font-size: 12.5px;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
   outline: none;
   width: 100%;
 }
 
 .crm-select:focus,
 .crm-input-num:focus {
-  border-color: var(--lovable-gold);
+  border-color: var(--ZENVE-gold);
 }
 
 /* =========================================================
@@ -631,11 +632,11 @@
 .lead-input,
 .lead-select {
   padding: 8px 12px;
-  background-color: var(--lovable-card);
-  border: 1px solid var(--lovable-border);
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
   border-radius: 6px;
   font-size: 13px;
-  color: var(--lovable-ink);
+  color: var(--ZENVE-ink);
   outline: none;
   transition: border-color 0.15s ease;
   width: 100%;
@@ -643,16 +644,16 @@
 
 .lead-input:focus,
 .lead-select:focus {
-  border-color: var(--lovable-gold);
+  border-color: var(--ZENVE-gold);
 }
 
 .btn-create-lead {
   align-self: flex-start;
   margin-top: 8px;
   padding: 8px 18px;
-  background-color: var(--lovable-ink);
+  background-color: var(--ZENVE-ink);
   color: #ffffff;
-  border: 1px solid var(--lovable-ink);
+  border: 1px solid var(--ZENVE-ink);
   border-radius: 6px;
   font-size: 13px;
   font-weight: 500;
@@ -698,54 +699,65 @@
    Smartphones like iPhone, Pixel, Galaxy
 --------------------------------------------------------- */
 @media (max-width: 640px) {
-  .lovable-header-inner {
+  .ZENVE-header-inner {
     padding: 12px 16px;
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
   }
 
-  .lovable-header-left {
+  .ZENVE-header-left {
     gap: 12px;
   }
 
-  .lovable-portal-logo img {
+  .ZENVE-portal-logo img {
     height: 32px;
   }
 
-  .lovable-portal-title {
+  .ZENVE-portal-title {
     font-size: 20px;
     gap: 6px;
   }
 
-  .lovable-layer-num {
+  .ZENVE-layer-num {
     font-size: 20px;
   }
 
-  .lovable-portal-desc {
+  .ZENVE-portal-desc {
     font-size: 12px;
     line-height: 1.4;
   }
 
-  .lovable-header-right {
+  .ZENVE-header-right {
     width: 100%;
-    flex-direction: row;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .ZENVE-header-right .search-user-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     gap: 8px;
   }
 
-  .lovable-header-right .search-container,
-  .lovable-header-right form {
-    flex: 1;
-    min-width: 0;
+  .ZENVE-header-right .search-bar-wrapper {
+    width: 100%;
+    flex: 1 1 100%;
   }
 
-  .lovable-header-right .search-input {
+  .ZENVE-header-right .home-user {
     width: 100%;
+    justify-content: center;
   }
 
   .crm-refresh-btn {
-    padding: 6px 10px;
-    font-size: 12px;
+    width: 100%;
+    justify-content: center;
+    padding: 8px 12px;
+    font-size: 13px;
   }
 
   .crm-container {
@@ -905,51 +917,135 @@
 }
 
 /* ---------------------------------------------------------
-   2. TABLETS (641px - 1024px)
-   iPad 10.2", iPad Air, iPad Pro, Android Tablets
+   2. TABLETS & MEDIUM SCREENS (641px - 1140px)
+   iPad, iPad Air, iPad Pro, Android Tablets, Surface Pro
 --------------------------------------------------------- */
-@media (min-width: 641px) and (max-width: 1024px) {
-  .lovable-header-inner {
-    padding: 16px 24px;
+@media (min-width: 641px) and (max-width: 1140px) {
+  .ZENVE-header-inner {
+    padding: 14px 24px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .ZENVE-header-left {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .ZENVE-portal-logo img {
+    height: 38px;
+    width: auto;
+  }
+
+  .ZENVE-header-title-block {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ZENVE-portal-title {
+    font-size: 24px;
+    white-space: nowrap;
+  }
+
+  .ZENVE-portal-desc {
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--ZENVE-muted);
+    white-space: normal;
+    margin-top: 2px;
+  }
+
+  .ZENVE-header-right {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--ZENVE-border);
+  }
+
+  .crm-refresh-btn {
+    flex-shrink: 0;
+    height: 36px;
+    padding: 0 14px;
+  }
+
+  .ZENVE-header-right .search-user-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .ZENVE-header-right .search-bar-wrapper {
+    flex: 1;
+    max-width: 320px;
+    min-width: 160px;
+  }
+
+  .ZENVE-header-right .home-user {
+    flex-shrink: 0;
   }
 
   .crm-container {
-    padding: 20px 24px;
+    max-width: 100%;
+    padding: 20px 24px 60px;
     gap: 20px;
   }
 
-  /* Top 5 KPIs on Tablet: 3 columns */
+  /* 5 KPIs on Tablet */
   .crm-kpi-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 10px;
   }
 
-  .crm-kpi-card:nth-child(4) {
-    grid-column: span 1;
+  .crm-kpi-card {
+    padding: 14px 12px;
   }
 
-  .crm-kpi-card:nth-child(5) {
-    grid-column: span 2;
+  .crm-kpi-value {
+    font-size: 22px;
   }
 
   .designer-card {
-    padding: 16px 18px;
+    padding: 18px 20px;
+    gap: 16px;
   }
 
   .designer-card-top {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 14px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
   }
 
   .designer-actions-right {
-    width: 100%;
-    justify-content: flex-start;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
+  /* 6 Economics Boxes: 6 on landscape, 3 on portrait */
   .designer-economics-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 8px;
+  }
+
+  .econ-box {
+    padding: 8px 10px;
+  }
+
+  .econ-val {
+    font-size: 15px;
   }
 
   .designer-bottom-grid {
@@ -958,17 +1054,83 @@
   }
 
   .lead-form-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
   }
 }
 
+/* Tablet portrait & narrow tablets (641px - 840px) */
+@media (min-width: 641px) and (max-width: 840px) {
+  .ZENVE-header-inner {
+    padding: 12px 18px;
+    gap: 10px;
+  }
+
+  .ZENVE-header-right {
+    gap: 10px;
+    padding-top: 10px;
+  }
+
+  .ZENVE-header-right .search-user-wrapper {
+    gap: 8px;
+  }
+
+  .ZENVE-header-right .search-bar-wrapper {
+    max-width: 220px;
+    min-width: 130px;
+  }
+
+  /* 5 KPIs on portrait: 2 cols with 5th spanning */
+  .crm-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .crm-kpi-card:nth-child(5) {
+    grid-column: span 2;
+  }
+
+  .designer-card-top {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .designer-actions-right {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .designer-stage-select {
+    grid-column: span 3;
+    width: 100%;
+  }
+
+  /* 6 Economics Boxes: 2 rows of 3 */
+  .designer-economics-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .designer-bottom-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .lead-form-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
 /* ---------------------------------------------------------
-   3. STANDARD LAPTOPS (1025px - 1440px)
+   3. STANDARD LAPTOPS (1141px - 1440px)
    MacBook Air, MacBook Pro 14", Ultrabooks
 --------------------------------------------------------- */
-@media (min-width: 1025px) and (max-width: 1440px) {
-  .lovable-header-inner {
+@media (min-width: 1141px) and (max-width: 1440px) {
+  .ZENVE-header-inner {
     max-width: 1400px;
     padding: 16px 32px;
   }
@@ -996,7 +1158,7 @@
    Full HD 1080p and 1440p Monitors
 --------------------------------------------------------- */
 @media (min-width: 1441px) and (max-width: 1920px) {
-  .lovable-header-inner {
+  .ZENVE-header-inner {
     max-width: 1620px;
     padding: 18px 40px;
   }
@@ -1022,29 +1184,29 @@
    Studio Displays, 4K UHD Monitors, Retina 4K/5K
 --------------------------------------------------------- */
 @media (min-width: 1921px) {
-  .lovable-header-inner {
+  .ZENVE-header-inner {
     max-width: 2800px;
     padding: 24px 64px;
   }
 
-  .lovable-portal-logo img {
+  .ZENVE-portal-logo img {
     height: 48px;
   }
 
-  .lovable-back-link {
+  .ZENVE-back-link {
     font-size: 13px;
   }
 
-  .lovable-portal-title {
+  .ZENVE-portal-title {
     font-size: 34px;
     gap: 12px;
   }
 
-  .lovable-layer-num {
+  .ZENVE-layer-num {
     font-size: 34px;
   }
 
-  .lovable-portal-desc {
+  .ZENVE-portal-desc {
     font-size: 16px;
   }
 
@@ -1190,7 +1352,7 @@
 
 /* Extreme 4K Resolution (3200px - 3840px Native) */
 @media (min-width: 3200px) {
-  .lovable-header-inner,
+  .ZENVE-header-inner,
   .crm-container {
     max-width: 3400px;
   }
