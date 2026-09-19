@@ -6,18 +6,39 @@
 ========================================================= */
 
 :root {
-  --ZENVE-paper: #fbf9f5;
-  --ZENVE-panel: #ffffff;
-  --ZENVE-ink: #17130f;
-  --ZENVE-muted: #736b63;
-  --ZENVE-line: #e8e3da;
-  --ZENVE-subtle: #f3efe8;
-  --ZENVE-accent: #27804c;
+  /* Exact Lovable Design Tokens */
+  --ZENVE-radius: 0.4rem;
+  --ZENVE-radius-md: calc(0.4rem - 2px);
+  --ZENVE-radius-sm: calc(0.4rem - 4px);
+
+  /* Precise sRGB Fallbacks matching Lovable */
+  --ZENVE-paper: #faf7f1;
+  --ZENVE-panel: #fffdfa;
+  --ZENVE-line: #e2ddd5;
+  --ZENVE-ink: #1f160f;
+  --ZENVE-muted: #746a60;
+  --ZENVE-subtle: #f2eee7;
+  --ZENVE-accent: #d97706;
   --ZENVE-amber: #b45309;
   --ZENVE-red: #b91c1c;
   --ZENVE-blue: #1d4ed8;
-  --ZENVE-font-serif: Georgia, "Times New Roman", serif;
-  --ZENVE-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  --ZENVE-shadow-panel: 0 1px 2px rgba(29, 20, 13, 0.06), 0 12px 32px -18px rgba(29, 20, 13, 0.25);
+
+  --ZENVE-font-serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --ZENVE-font-sans: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+@supports (color: oklch(97.6% 0.008 85)) {
+  :root {
+    --ZENVE-paper: oklch(97.6% 0.008 85);
+    --ZENVE-panel: oklch(99.5% 0.004 85);
+    --ZENVE-line: oklch(90% 0.012 82);
+    --ZENVE-ink: oklch(21% 0.02 60);
+    --ZENVE-muted: oklch(53% 0.02 65);
+    --ZENVE-subtle: oklch(94.5% 0.01 85);
+    --ZENVE-accent: oklch(72% 0.11 62);
+    --ZENVE-shadow-panel: 0 1px 2px oklch(20% 0.02 60 / 0.06), 0 12px 32px -18px oklch(20% 0.02 60 / 0.25);
+  }
 }
 
 .ZENVE-portal-layout {
@@ -133,20 +154,20 @@
   gap: 10px;
 }
 
-/* Force precise 38px height & 8px radius on search and user pills for flawless alignment */
+/* Force precise 38px height & radius on search and user pills for flawless alignment */
 .ZENVE-header-right .home-search {
   height: 38px !important;
-  border-radius: 8px !important;
-  border: 1px solid #ded9d1 !important;
-  background: #f9f7f3 !important;
+  border-radius: var(--ZENVE-radius-md) !important;
+  border: 1px solid var(--ZENVE-line) !important;
+  background: var(--ZENVE-paper) !important;
   box-sizing: border-box !important;
 }
 
 .ZENVE-header-right .home-user {
   height: 38px !important;
-  border-radius: 8px !important;
-  border: 1px solid #ded9d1 !important;
-  background: #f9f7f3 !important;
+  border-radius: var(--ZENVE-radius-md) !important;
+  border: 1px solid var(--ZENVE-line) !important;
+  background: var(--ZENVE-paper) !important;
   padding: 0 12px !important;
   box-sizing: border-box !important;
   display: inline-flex !important;
@@ -160,16 +181,16 @@
   flex-shrink: 0;
 }
 
-/* UNIFIED INLINE SIGNED IN AS PILL (Matches 38px height, #ded9d1 border, 8px radius) */
+/* UNIFIED INLINE SIGNED IN AS PILL (Matches 38px height, exact line border, radius) */
 .ZENVE-signed-in-box {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   height: 38px;
   padding: 0 10px 0 12px;
-  background: #fdfaf6;
-  border: 1px solid #ded9d1;
-  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--ZENVE-line);
+  border-radius: var(--ZENVE-radius-md);
   box-sizing: border-box;
   flex-shrink: 0;
   min-width: 190px;
@@ -320,9 +341,9 @@
 .ZENVE-portal-card {
   background: var(--ZENVE-panel);
   border: 1px solid var(--ZENVE-line);
-  border-radius: 8px;
+  border-radius: var(--ZENVE-radius);
   padding: 22px 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--ZENVE-shadow-panel);
 }
 
 .ZENVE-card-header {
@@ -358,9 +379,10 @@
 }
 
 .ZENVE-kpi-tile {
-  background: var(--ZENVE-subtle);
+  background: var(--ZENVE-panel);
   border: 1px solid var(--ZENVE-line);
-  border-radius: 6px;
+  border-radius: var(--ZENVE-radius);
+  box-shadow: var(--ZENVE-shadow-panel);
   padding: 14px;
   display: flex;
   flex-direction: column;
@@ -460,7 +482,7 @@
   gap: 12px;
   padding: 10px 14px;
   border: 1px solid var(--ZENVE-line);
-  border-radius: 6px;
+  border-radius: var(--ZENVE-radius-md);
   background: var(--ZENVE-panel);
   font-size: 13.5px;
 }
@@ -528,9 +550,9 @@
   justify-content: center;
   width: 38px;
   height: 38px;
-  border-radius: 8px;
-  border: 1px solid #ded9d1;
-  background: #f9f7f3;
+  border-radius: var(--ZENVE-radius-md);
+  border: 1px solid var(--ZENVE-line);
+  background: var(--ZENVE-paper);
   color: var(--ZENVE-ink);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -588,9 +610,9 @@
   justify-content: center;
   width: 38px;
   height: 38px;
-  border-radius: 8px;
-  border: 1px solid #ded9d1;
-  background: #f9f7f3;
+  border-radius: var(--ZENVE-radius-md);
+  border: 1px solid var(--ZENVE-line);
+  background: var(--ZENVE-paper);
   color: var(--ZENVE-ink);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -606,7 +628,7 @@
 }
 
 .ZENVE-header-profile-btn.active {
-  background: #fdfaf6;
+  background: var(--ZENVE-panel);
   border-color: #92400e;
   color: #92400e;
   box-shadow: 0 0 0 2px rgba(146, 64, 14, 0.12);
@@ -647,8 +669,8 @@
   padding: 14px 20px;
   background: var(--ZENVE-panel);
   border: 1px solid var(--ZENVE-line);
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  border-radius: var(--ZENVE-radius);
+  box-shadow: var(--ZENVE-shadow-panel);
 }
 
 .ZENVE-btn-back-dashboard {
@@ -659,7 +681,7 @@
   background: var(--ZENVE-ink);
   color: #ffffff;
   border: 1px solid var(--ZENVE-ink);
-  border-radius: 6px;
+  border-radius: var(--ZENVE-radius-md);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -677,10 +699,10 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: #92400e;
-  background: #fdfaf6;
+  background: var(--ZENVE-panel);
   border: 1px solid #fde68a;
   padding: 4px 10px;
-  border-radius: 4px;
+  border-radius: var(--ZENVE-radius-sm);
 }
 
 @keyframes zenveFadeSlideDown {
@@ -931,7 +953,7 @@
   padding: 6px 14px;
   background: var(--ZENVE-panel);
   border: 1px solid var(--ZENVE-line);
-  border-radius: 6px;
+  border-radius: var(--ZENVE-radius-md);
   font-size: 13px;
   font-weight: 500;
   color: var(--ZENVE-ink);
@@ -942,7 +964,7 @@
 
 .ZENVE-btn-edit-profile:hover:not(:disabled) {
   border-color: #92400e;
-  background: #fdfaf6;
+  background: var(--ZENVE-subtle);
   color: #92400e;
 }
 
@@ -962,7 +984,7 @@
   background: var(--ZENVE-ink);
   border: 1px solid var(--ZENVE-ink);
   color: #ffffff;
-  border-radius: 6px;
+  border-radius: var(--ZENVE-radius-md);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -983,7 +1005,7 @@
   background: transparent;
   border: 1px solid var(--ZENVE-line);
   color: var(--ZENVE-muted);
-  border-radius: 6px;
+  border-radius: var(--ZENVE-radius-md);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -998,9 +1020,9 @@
 .ZENVE-profile-input {
   width: 100%;
   padding: 6px 10px;
-  background: #ffffff;
+  background: transparent;
   border: 1px solid var(--ZENVE-line);
-  border-radius: 5px;
+  border-radius: var(--ZENVE-radius-md);
   font-size: 13.5px;
   color: var(--ZENVE-ink);
   outline: none;
@@ -1162,9 +1184,9 @@
 .ZENVE-form-select {
   width: 100%;
   height: 44px; /* Increased from 38px */
-  background: var(--ZENVE-panel);
+  background: transparent;
   border: 1px solid var(--ZENVE-line);
-  border-radius: 6px;
+  border-radius: var(--ZENVE-radius-md);
   padding: 0 14px;
   font-size: 14px;
   color: var(--ZENVE-ink);
@@ -1189,8 +1211,8 @@
   padding: 0 14px;
   height: 44px; /* Matches input height */
   border: 1px solid var(--ZENVE-line);
-  border-radius: 6px;
-  background: var(--ZENVE-panel);
+  border-radius: var(--ZENVE-radius-md);
+  background: transparent;
   box-sizing: border-box;
 }
 
@@ -1338,7 +1360,7 @@
 }
 
 .ZENVE-table tbody tr {
-  border-bottom: 1px solid #f0ebe4;
+  border-bottom: 1px solid var(--ZENVE-line);
 }
 
 
@@ -1491,7 +1513,7 @@
   gap: 12px;
   padding: 10px 14px;
   border: 1px solid var(--ZENVE-line);
-  border-radius: 6px;
+  border-radius: var(--ZENVE-radius-md);
   background: var(--ZENVE-panel);
   font-size: 13.5px;
 }
