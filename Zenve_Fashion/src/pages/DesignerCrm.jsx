@@ -507,7 +507,7 @@ export default function DesignerCRM() {
       primary_category: newLead.category.trim() || "",
       tier: newLead.tier.toUpperCase(),
       take_rate: newLead.takeRate !== "" ? Number(newLead.takeRate) : 0,
-      gst_number: newLead.gst.trim() || "",
+      gst_number: newLead.gst.trim() ? newLead.gst.trim().toUpperCase() : null,
       contract_end_date: newLead.contractEnds || null,
       lead_source: newLead.source,
       sales_owner: newLead.owner,
@@ -1145,11 +1145,13 @@ export default function DesignerCRM() {
             </div>
 
             <div className="lead-form-field">
-              <label className="label-caps">GST number</label>
+              <label className="label-caps">
+                GST number <span className="optional-tag">(Optional)</span>
+              </label>
               <input
                 type="text"
                 className="lead-input"
-                placeholder="27AAAAA0000A1Z5"
+                placeholder="27AAAAA0000A1Z5 (optional)"
                 value={newLead.gst}
                 onChange={(e) =>
                   setNewLead({ ...newLead, gst: e.target.value })

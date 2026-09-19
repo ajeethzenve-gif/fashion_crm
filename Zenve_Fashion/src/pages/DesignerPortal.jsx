@@ -31,6 +31,27 @@ function ArrowDownIcon() {
   );
 }
 
+function BellIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path
+        d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M13.73 21a2 2 0 0 1-3.46 0"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 /* =========================================================
    SWITCH COMPONENT
 ========================================================= */
@@ -81,6 +102,32 @@ export default function DesignerPortal() {
   const [portalData, setPortalData] = useState(null);
   const [loadingPortal, setLoadingPortal] = useState(false);
   const [portalError, setPortalError] = useState("");
+
+  // Notification sidebar drawer state
+  const [notifSidebarOpen, setNotifSidebarOpen] = useState(false);
+
+  // Close notification sidebar on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && notifSidebarOpen) {
+        setNotifSidebarOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [notifSidebarOpen]);
+
+  // Lock body scroll when notification sidebar is open
+  useEffect(() => {
+    if (notifSidebarOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [notifSidebarOpen]);
 
   // Toast / feedback message
   const [alertMessage, setAlertMessage] = useState(null);
@@ -326,6 +373,26 @@ export default function DesignerPortal() {
         <div className="ZENVE-header-right">
           <SearchBar />
 
+          {/* NOTIFICATION BUTTON IN HEADER */}
+          <button
+            type="button"
+            className="ZENVE-header-notif-btn"
+            onClick={() => setNotifSidebarOpen(true)}
+            aria-label="Open notifications sidebar"
+            title={
+              unreadNotifications > 0
+                ? `${unreadNotifications} unread notification${unreadNotifications > 1 ? "s" : ""}`
+                : "Notifications"
+            }
+          >
+            <BellIcon />
+            {unreadNotifications > 0 && (
+              <span className="ZENVE-header-notif-badge">
+                {unreadNotifications}
+              </span>
+            )}
+          </button>
+
           {/* SIGNED IN AS SELECTOR */}
           <div className="ZENVE-signed-in-box">
             <span className="ZENVE-label-caps">SIGNED IN AS</span>
@@ -529,57 +596,7 @@ export default function DesignerPortal() {
           </section>
 
           {/* ===================================================
-              SECTION 2: NOTIFICATIONS
-          =================================================== */}
-          <section className="ZENVE-portal-card">
-            <div className="ZENVE-card-header">
-              <div>
-                <h2 className="ZENVE-card-title">Notifications</h2>
-                <p className="ZENVE-card-description">
-                  QA outcomes, orders, low stock, returns, payouts and campaigns.
-                </p>
-              </div>
-
-              {unreadNotifications > 0 && (
-                <button
-                  type="button"
-                  className="ZENVE-btn-outline-sm"
-                  onClick={handleMarkNotificationsRead}
-                >
-                  Mark {unreadNotifications} as read
-                </button>
-              )}
-            </div>
-
-            {notifications.length === 0 ? (
-              <div className="ZENVE-item-empty">No notifications yet.</div>
-            ) : (
-              <div className="ZENVE-notifications-list">
-                {notifications.map((n) => (
-                  <div key={n.id} className="ZENVE-notification-row">
-                    <div className="ZENVE-notif-left">
-                      {!n.read && <span className="ZENVE-unread-dot" />}
-                      <span className="ZENVE-notif-msg">{n.message}</span>
-                    </div>
-
-                    <div className="ZENVE-notif-right">
-                      <span className="ZENVE-tone-badge info">
-                        {n.kind.replaceAll("_", " ")}
-                      </span>
-                      <span className="ZENVE-notif-date">
-                        {new Date(n.at).toLocaleDateString("en-IN", {
-                          timeZone: "Asia/Kolkata",
-                        })}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-
-          {/* ===================================================
-              SECTION 3: MY PROFILE (9-FIELD GRID)
+              SECTION 2: MY PROFILE (9-FIELD GRID)
           =================================================== */}
           <section className="ZENVE-portal-card">
             <div className="ZENVE-card-header">
@@ -640,7 +657,7 @@ export default function DesignerPortal() {
           </section>
 
           {/* ===================================================
-              SECTION 4: UPLOAD A SKU
+              SECTION 3: UPLOAD A SKU
           =================================================== */}
           <section className="ZENVE-portal-card">
             <div className="ZENVE-card-header">
@@ -918,6 +935,117 @@ export default function DesignerPortal() {
             )}
           </section>
         </main>
+      )}
+
+      {/* =====================================================
+          NOTIFICATION SIDEBAR POPUP (DRAWER)
+      ===================================================== */}
+      {notifSidebarOpen && (
+        <div
+          className="ZENVE-notif-backdrop"
+          onClick={() => setNotifSidebarOpen(false)}
+          aria-hidden="true"
+        >
+          <div
+            className="ZENVE-notif-sidebar"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="notif-sidebar-title"
+          >
+            {/* SIDEBAR HEADER */}
+            <div className="ZENVE-notif-sidebar-header">
+              <div className="ZENVE-notif-sidebar-title-wrap">
+                <div className="ZENVE-notif-sidebar-title-row">
+                  <h2 id="notif-sidebar-title" className="ZENVE-notif-sidebar-title">
+                    Notifications
+                  </h2>
+                  {unreadNotifications > 0 ? (
+                    <span className="ZENVE-notif-count-pill">
+                      {unreadNotifications} unread
+                    </span>
+                  ) : (
+                    <span className="ZENVE-notif-count-pill subtle">
+                      All caught up
+                    </span>
+                  )}
+                </div>
+                <p className="ZENVE-notif-sidebar-sub">
+                  QA outcomes, orders, low stock, returns, payouts and campaigns.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className="ZENVE-notif-sidebar-close"
+                onClick={() => setNotifSidebarOpen(false)}
+                aria-label="Close notifications sidebar"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* SIDEBAR ACTIONS BAR */}
+            <div className="ZENVE-notif-sidebar-actions">
+              <span className="ZENVE-label-caps">
+                {notifications.length} {notifications.length === 1 ? "Update" : "Updates"}
+              </span>
+
+              {unreadNotifications > 0 && (
+                <button
+                  type="button"
+                  className="ZENVE-btn-outline-sm"
+                  onClick={handleMarkNotificationsRead}
+                >
+                  Mark all as read
+                </button>
+              )}
+            </div>
+
+            {/* SIDEBAR BODY */}
+            <div className="ZENVE-notif-sidebar-body">
+              {notifications.length === 0 ? (
+                <div className="ZENVE-item-empty">No notifications yet.</div>
+              ) : (
+                <div className="ZENVE-notifications-list">
+                  {notifications.map((n) => (
+                    <div
+                      key={n.id}
+                      className={`ZENVE-notification-row ${!n.read ? "unread" : ""}`}
+                    >
+                      <div className="ZENVE-notif-left">
+                        {!n.read && <span className="ZENVE-unread-dot" />}
+                        <span className="ZENVE-notif-msg">{n.message}</span>
+                      </div>
+
+                      <div className="ZENVE-notif-right">
+                        <span className="ZENVE-tone-badge info">
+                          {n.kind.replaceAll("_", " ")}
+                        </span>
+                        <span className="ZENVE-notif-date">
+                          {new Date(n.at).toLocaleDateString("en-IN", {
+                            timeZone: "Asia/Kolkata",
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* SIDEBAR FOOTER */}
+            <div className="ZENVE-notif-sidebar-footer">
+              <button
+                type="button"
+                className="ZENVE-btn-outline-sm"
+                onClick={() => setNotifSidebarOpen(false)}
+              >
+                Close Side Bar
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

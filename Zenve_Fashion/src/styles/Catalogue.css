@@ -457,6 +457,9 @@
   color: var(--ZENVE-ink, #17130f);
   cursor: pointer;
   user-select: none;
+  border: 1px solid var(--ZENVE-line, #e8e3da);
+  padding: 6px 12px;
+  border-radius: 5px;
 }
 
 /* SWITCH */

@@ -445,6 +445,223 @@
 }
 
 /* =========================================================
+   HEADER NOTIFICATION BUTTON
+========================================================= */
+
+.ZENVE-header-notif-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid var(--ZENVE-line);
+  background: var(--ZENVE-panel);
+  color: var(--ZENVE-ink);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+}
+
+.ZENVE-header-notif-btn:hover {
+  background: var(--ZENVE-subtle);
+  border-color: #c28b51;
+  color: #c28b51;
+  transform: translateY(-1px);
+}
+
+.ZENVE-header-notif-btn:active {
+  transform: translateY(0);
+}
+
+.ZENVE-header-notif-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: #dc2626;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--ZENVE-panel);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  animation: notifPulse 2s infinite ease-in-out;
+}
+
+@keyframes notifPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* =========================================================
+   NOTIFICATION SIDEBAR POPUP (DRAWER)
+========================================================= */
+
+.ZENVE-notif-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(23, 19, 15, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  justify-content: flex-end;
+  animation: notifFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ZENVE-notif-sidebar {
+  width: 440px;
+  max-width: 90vw;
+  height: 100vh;
+  background: var(--ZENVE-panel);
+  box-shadow: -8px 0 32px rgba(23, 19, 15, 0.16);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  animation: notifSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+@keyframes notifFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes notifSlideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.ZENVE-notif-sidebar-header {
+  padding: 22px 24px;
+  border-bottom: 1px solid var(--ZENVE-line);
+  background: var(--ZENVE-paper);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.ZENVE-notif-sidebar-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ZENVE-notif-sidebar-title {
+  margin: 0;
+  font-family: var(--ZENVE-font-serif);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ZENVE-ink);
+}
+
+.ZENVE-notif-count-pill {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.ZENVE-notif-count-pill.subtle {
+  background: #f3efe8;
+  color: var(--ZENVE-muted);
+  border-color: var(--ZENVE-line);
+}
+
+.ZENVE-notif-sidebar-sub {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  color: var(--ZENVE-muted);
+  line-height: 1.4;
+}
+
+.ZENVE-notif-sidebar-close {
+  background: transparent;
+  border: 1px solid var(--ZENVE-line);
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--ZENVE-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.ZENVE-notif-sidebar-close:hover {
+  background: var(--ZENVE-subtle);
+  color: var(--ZENVE-ink);
+  border-color: #c28b51;
+}
+
+.ZENVE-notif-sidebar-actions {
+  padding: 12px 24px;
+  background: var(--ZENVE-panel);
+  border-bottom: 1px solid var(--ZENVE-line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ZENVE-notif-sidebar-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ZENVE-notification-row.unread {
+  background: #fffdfa;
+  border-color: #f3dfc6;
+}
+
+.ZENVE-notif-sidebar-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--ZENVE-line);
+  background: var(--ZENVE-paper);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+@media (max-width: 640px) {
+  .ZENVE-notif-sidebar {
+    width: 100vw;
+    max-width: 100vw;
+  }
+}
+
+/* =========================================================
    MY PROFILE (9-FIELD DEFINITION LIST)
 ========================================================= */
 

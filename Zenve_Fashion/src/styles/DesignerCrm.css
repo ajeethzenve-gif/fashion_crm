@@ -629,6 +629,14 @@
   gap: 4px;
 }
 
+.optional-tag {
+  font-size: 10px;
+  font-weight: 400;
+  text-transform: none;
+  color: var(--ZENVE-muted);
+  margin-left: 4px;
+}
+
 .lead-input,
 .lead-select {
   padding: 8px 12px;
