@@ -182,6 +182,10 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ZENVE-muted, #736b63);
+  display: inline-block;
+  border: 1px solid var(--ZENVE-line, #e8e3da);
+  border-radius: 4px;
+  padding: 2px 6px;
 }
 
 .ZENVE-kpi-val {
@@ -408,7 +412,7 @@
 
 .ZENVE-btn-outline-sm {
   background: transparent;
-  border: 1px solid var(--ZENVE-line, #e8e3da);
+  border: 1.5px solid var(--ZENVE-ink, #17130f);
   padding: 5px 12px;
   border-radius: 5px;
   font-size: 12px;
