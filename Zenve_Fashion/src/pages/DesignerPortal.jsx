@@ -803,8 +803,10 @@ export default function DesignerPortal() {
         <main className="ZENVE-portal-main">
           {/* ===================================================
               SECTION 1: MY DASHBOARD (10 KPI CARDS + PENDING ACTIONS)
+              (HIDDEN WHEN IN PROFILE & ACCOUNT VIEW)
           =================================================== */}
-          <section className="ZENVE-portal-card">
+          {!showProfileAndAccount && (
+            <section className="ZENVE-portal-card">
             <div className="ZENVE-card-header">
               <div>
                 <h2 className="ZENVE-card-title">My dashboard</h2>
@@ -933,13 +935,27 @@ export default function DesignerPortal() {
               )}
             </div>
           </section>
+        )}
 
           {/* ===================================================
               SECTIONS 2 & 2B: ACCESSIBLE ONLY VIA HEADER BUTTON
-              (MY PROFILE & ACCOUNT DETAILS)
+              (EXCLUSIVE VIEW: PROFILE & ACCOUNT DETAILS ONLY)
           =================================================== */}
           {showProfileAndAccount && (
-            <div id="zenve-profile-account-section" className="ZENVE-profile-account-drawer-block">
+            <div id="zenve-profile-account-section" className="ZENVE-profile-account-exclusive-view">
+              {/* NAVIGATION BAR TO GET OUT / RETURN TO DASHBOARD */}
+              <div className="ZENVE-exclusive-nav-bar">
+                <button
+                  type="button"
+                  className="ZENVE-btn-back-dashboard"
+                  onClick={() => setShowProfileAndAccount(false)}
+                >
+                  <BackIcon />
+                  <span>Back to Dashboard</span>
+                </button>
+                <span className="ZENVE-exclusive-view-badge">Account & Profile Details</span>
+              </div>
+
               {/* SECTION 2: MY PROFILE */}
               <section className="ZENVE-portal-card">
                 <div className="ZENVE-card-header">
@@ -1384,9 +1400,13 @@ export default function DesignerPortal() {
       )}
 
           {/* ===================================================
-              SECTION 3: UPLOAD A SKU
+              BALANCE DIVS (SECTIONS 3, 4, 5)
+              (HIDDEN WHEN IN PROFILE & ACCOUNT VIEW)
           =================================================== */}
-          <section className="ZENVE-portal-card">
+          {!showProfileAndAccount && (
+            <>
+              {/* SECTION 3: UPLOAD A SKU */}
+              <section className="ZENVE-portal-card">
             <div className="ZENVE-card-header">
               <div>
                 <h2 className="ZENVE-card-title">Upload a SKU</h2>
@@ -1661,7 +1681,9 @@ export default function DesignerPortal() {
               </div>
             )}
           </section>
-        </main>
+        </>
+      )}
+    </main>
       )}
 
       {/* =====================================================
