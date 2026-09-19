@@ -943,27 +943,11 @@ export default function DesignerPortal() {
           =================================================== */}
           {showProfileAndAccount && (
             <div id="zenve-profile-account-section" className="ZENVE-profile-account-exclusive-view">
-              {/* NAVIGATION BAR TO GET OUT / RETURN TO DASHBOARD */}
-              <div className="ZENVE-exclusive-nav-bar">
-                <button
-                  type="button"
-                  className="ZENVE-btn-back-dashboard"
-                  onClick={() => setShowProfileAndAccount(false)}
-                >
-                  <BackIcon />
-                  <span>Back to Dashboard</span>
-                </button>
-                <span className="ZENVE-exclusive-view-badge">Account & Profile Details</span>
-              </div>
-
               {/* SECTION 2: MY PROFILE */}
               <section className="ZENVE-portal-card">
                 <div className="ZENVE-card-header">
                   <div>
-                    <div className="ZENVE-profile-title-flex">
-                      <h2 className="ZENVE-card-title">My profile</h2>
-                      <span className="ZENVE-access-granted-pill">Accessed via Header</span>
-                    </div>
+                    <h2 className="ZENVE-card-title">My profile</h2>
                     <p className="ZENVE-card-description">
                       Maintained by the acquisition team in the CRM.
                     </p>
