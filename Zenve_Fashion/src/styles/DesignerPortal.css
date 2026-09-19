@@ -116,68 +116,125 @@
   color: var(--ZENVE-muted);
 }
 
-/* HEADER RIGHT */
+/* =========================================================
+   HEADER RIGHT & CONTROLS ALIGNMENT
+========================================================= */
+
 .ZENVE-header-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
-.ZENVE-signed-in-box {
+.ZENVE-header-right .search-user-wrapper {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 220px;
+  align-items: center;
+  gap: 10px;
 }
 
-.ZENVE-label-caps {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+/* Force precise 38px height & 8px radius on search and user pills for flawless alignment */
+.ZENVE-header-right .home-search {
+  height: 38px !important;
+  border-radius: 8px !important;
+  border: 1px solid #ded9d1 !important;
+  background: #f9f7f3 !important;
+  box-sizing: border-box !important;
+}
+
+.ZENVE-header-right .home-user {
+  height: 38px !important;
+  border-radius: 8px !important;
+  border: 1px solid #ded9d1 !important;
+  background: #f9f7f3 !important;
+  padding: 0 12px !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.ZENVE-header-right-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* UNIFIED INLINE SIGNED IN AS PILL (Matches 38px height, #ded9d1 border, 8px radius) */
+.ZENVE-signed-in-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 10px 0 12px;
+  background: #fdfaf6;
+  border: 1px solid #ded9d1;
+  border-radius: 8px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  min-width: 190px;
+  max-width: 250px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ZENVE-signed-in-box:focus-within {
+  border-color: #92400e;
+  box-shadow: 0 0 0 2px rgba(146, 64, 14, 0.08);
+}
+
+.ZENVE-signed-in-prefix {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--ZENVE-muted);
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border-radius: 0 !important;
-  display: block;
+  white-space: nowrap;
+  flex-shrink: 0;
+  user-select: none;
 }
 
 .ZENVE-select-wrap {
   position: relative;
-  width: 100%;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  flex: 1;
 }
 
 .ZENVE-designer-select {
   width: 100%;
   height: 36px;
-  background: var(--ZENVE-panel);
-  border: 1px solid var(--ZENVE-line);
-  border-radius: 6px;
-  padding: 0 32px 0 12px;
-  font-size: 13.5px;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 20px 0 2px;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--ZENVE-ink);
   appearance: none;
   cursor: pointer;
   outline: none;
-  transition: border-color 0.15s ease;
-}
-
-.ZENVE-designer-select:focus {
-  border-color: #92400e;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: inherit;
 }
 
 .ZENVE-select-chevron {
   position: absolute;
-  right: 10px;
+  right: 0;
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
   color: var(--ZENVE-muted);
   display: flex;
   align-items: center;
+}
+
+.ZENVE-header-actions-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 /* =========================================================
@@ -463,8 +520,8 @@
   width: 38px;
   height: 38px;
   border-radius: 8px;
-  border: 1px solid var(--ZENVE-line);
-  background: var(--ZENVE-panel);
+  border: 1px solid #ded9d1;
+  background: #f9f7f3;
   color: var(--ZENVE-ink);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -509,6 +566,127 @@
   50% {
     transform: scale(1.1);
   }
+}
+
+/* =========================================================
+   HEADER PROFILE & ACCOUNT ACCESS BUTTON (ICON-ONLY)
+========================================================= */
+
+.ZENVE-header-profile-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid #ded9d1;
+  background: #f9f7f3;
+  color: var(--ZENVE-ink);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.ZENVE-header-profile-btn:hover {
+  background: var(--ZENVE-subtle);
+  border-color: #c28b51;
+  color: #92400e;
+  transform: translateY(-1px);
+}
+
+.ZENVE-header-profile-btn.active {
+  background: #fdfaf6;
+  border-color: #92400e;
+  color: #92400e;
+  box-shadow: 0 0 0 2px rgba(146, 64, 14, 0.12);
+}
+
+.ZENVE-header-profile-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.ZENVE-header-active-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #92400e;
+  box-shadow: 0 0 0 1.5px var(--ZENVE-panel);
+}
+
+/* =========================================================
+   PROFILE & ACCOUNT SECTION CONDITIONAL DRAWER
+========================================================= */
+
+.ZENVE-profile-account-drawer-block {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: zenveFadeSlideDown 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes zenveFadeSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ZENVE-profile-title-flex {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ZENVE-access-granted-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.ZENVE-profile-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ZENVE-btn-hide-profile-section {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid var(--ZENVE-line);
+  color: var(--ZENVE-muted);
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.ZENVE-btn-hide-profile-section:hover {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #991b1b;
 }
 
 /* =========================================================
@@ -690,6 +868,212 @@
   font-size: 14.5px;
   font-weight: 500;
   color: var(--ZENVE-ink);
+}
+
+/* EDIT PROFILE BUTTON & FORM IN MY PROFILE */
+.ZENVE-btn-edit-profile {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: var(--ZENVE-panel);
+  border: 1px solid var(--ZENVE-line);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ZENVE-ink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.ZENVE-btn-edit-profile:hover:not(:disabled) {
+  border-color: #92400e;
+  background: #fdfaf6;
+  color: #92400e;
+}
+
+.ZENVE-btn-edit-profile:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ZENVE-edit-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ZENVE-btn-save-sm {
+  padding: 6px 14px;
+  background: var(--ZENVE-ink);
+  border: 1px solid var(--ZENVE-ink);
+  color: #ffffff;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ZENVE-btn-save-sm:hover:not(:disabled) {
+  background: #2d2620;
+}
+
+.ZENVE-btn-save-sm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ZENVE-btn-secondary-sm {
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid var(--ZENVE-line);
+  color: var(--ZENVE-muted);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ZENVE-btn-secondary-sm:hover:not(:disabled) {
+  color: var(--ZENVE-ink);
+  border-color: #92400e;
+}
+
+.ZENVE-profile-input {
+  width: 100%;
+  padding: 6px 10px;
+  background: #ffffff;
+  border: 1px solid var(--ZENVE-line);
+  border-radius: 5px;
+  font-size: 13.5px;
+  color: var(--ZENVE-ink);
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+.ZENVE-profile-input:focus {
+  border-color: #92400e;
+  box-shadow: 0 0 0 2px rgba(146, 64, 14, 0.08);
+}
+
+.ZENVE-profile-readonly-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--ZENVE-subtle);
+  border: 1px solid var(--ZENVE-line);
+  border-radius: 5px;
+  min-height: 34px;
+  box-sizing: border-box;
+}
+
+.ZENVE-profile-readonly-val {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ZENVE-ink);
+}
+
+.ZENVE-profile-lock-badge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--ZENVE-muted);
+  letter-spacing: 0.04em;
+  background: rgba(0, 0, 0, 0.04);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* =========================================================
+   ACCOUNT DETAILS CARD
+========================================================= */
+
+.ZENVE-account-holder-dd,
+.ZENVE-account-num-dd,
+.ZENVE-ifsc-dd,
+.ZENVE-pan-dd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ZENVE-account-num-dd span {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.ZENVE-mask-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--ZENVE-line);
+  border-radius: 4px;
+  color: var(--ZENVE-muted);
+  cursor: pointer;
+  padding: 3px 6px;
+  transition: all 0.15s ease;
+}
+
+.ZENVE-mask-toggle-btn:hover {
+  background: var(--ZENVE-subtle);
+  color: var(--ZENVE-ink);
+  border-color: #92400e;
+}
+
+.ZENVE-bank-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #1e3a8a;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+}
+
+.ZENVE-verified-mini-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: #065f46;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  padding: 1px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ZENVE-field-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.ZENVE-field-hint {
+  font-size: 11px;
+  color: var(--ZENVE-muted);
+  margin-top: 3px;
+  display: block;
+}
+
+.uppercase-code {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: monospace, inherit;
 }
 
 /* =========================================================
@@ -1154,30 +1538,47 @@
     width: 100%;
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 8px;
   }
 
   .ZENVE-header-right .search-user-wrapper {
     width: 100%;
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
     gap: 8px;
   }
 
   .ZENVE-header-right .search-bar-wrapper {
-    width: 100%;
-    flex: 1 1 100%;
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
   }
 
   .ZENVE-header-right .home-user {
+    flex: 0 0 auto;
+    padding: 0 10px !important;
+  }
+
+  .ZENVE-header-right-controls {
     width: 100%;
-    justify-content: center;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   .ZENVE-signed-in-box {
-    width: 100%;
-    min-width: unset;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
+    width: auto;
+  }
+
+  .ZENVE-header-actions-group {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
 
   .ZENVE-alert {
@@ -1339,29 +1740,43 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    padding-top: 12px;
+    gap: 10px;
+    padding-top: 10px;
     border-top: 1px solid var(--ZENVE-line);
   }
 
   .ZENVE-header-right .search-user-wrapper {
-    flex: 1;
+    flex: 1 1 auto;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     justify-content: flex-start;
     min-width: 0;
   }
 
   .ZENVE-header-right .search-bar-wrapper {
-    flex: 1;
-    max-width: 320px;
-    min-width: 160px;
+    flex: 1 1 180px;
+    max-width: 240px;
+    min-width: 130px;
+  }
+
+  .ZENVE-header-right-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
   }
 
   .ZENVE-signed-in-box {
-    min-width: 200px;
-    max-width: 260px;
+    max-width: 230px;
+    min-width: 170px;
+    flex-shrink: 0;
+  }
+
+  .ZENVE-header-actions-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     flex-shrink: 0;
   }
 
@@ -1464,7 +1879,29 @@
 --------------------------------------------------------- */
 @media (min-width: 1141px) and (max-width: 1440px) {
   .ZENVE-portal-header {
-    padding: 16px 32px;
+    padding: 14px 24px;
+    gap: 16px;
+  }
+
+  .ZENVE-header-right {
+    gap: 10px;
+  }
+
+  .ZENVE-header-right .search-user-wrapper {
+    gap: 10px;
+  }
+
+  .ZENVE-header-right .search-bar-wrapper {
+    max-width: 220px;
+  }
+
+  .ZENVE-header-right-controls {
+    gap: 8px;
+  }
+
+  .ZENVE-signed-in-box {
+    max-width: 230px;
+    min-width: 170px;
   }
 
   .ZENVE-portal-main {

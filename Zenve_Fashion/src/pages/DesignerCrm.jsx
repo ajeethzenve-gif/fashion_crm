@@ -17,6 +17,15 @@ import {
    CONSTANTS & BLUEPRINT SEQUENCE
 ========================================================= */
 
+export const COMPANY_GST_INFO = {
+  name: "ZENVE FASHION PRIVATE LIMITED",
+  gstNumber: "29AABCZ1234F1Z8",
+  state: "Karnataka (All-India E-Commerce Coverage)",
+  type: "E-Commerce Marketplace Operator & Master Platform GSTIN",
+  section: "Section 9(5) & Section 52 CGST Act",
+  hsnSac: "998311 / 998439 (Fashion Marketplace & Creator Supply Services)",
+};
+
 const STAGES_SEQUENCE = [
   "LEAD",
   "QUALIFIED",
@@ -112,10 +121,57 @@ export default function DesignerCRM() {
     renewalProbability: "",
   });
 
+  // GST Modal & Company GST State
+  const [showGstModal, setShowGstModal] = useState(false);
+  const [useCompanyGst, setUseCompanyGst] = useState(false);
+  const [gstModalTarget, setGstModalTarget] = useState("newLead"); // 'newLead' | designer object
+
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
   };
+
+  const handleConfirmCompanyGst = async () => {
+    if (gstModalTarget === "newLead") {
+      setNewLead((prev) => ({ ...prev, gst: COMPANY_GST_INFO.gstNumber }));
+      setUseCompanyGst(true);
+      showToast(`Applied ZENVE Company GST (${COMPANY_GST_INFO.gstNumber})`);
+    } else if (gstModalTarget && typeof gstModalTarget === "object") {
+      try {
+        await handleUpdateField(gstModalTarget.id, {
+          gst_number: COMPANY_GST_INFO.gstNumber,
+        });
+        showToast(
+          `Applied Company GST (${COMPANY_GST_INFO.gstNumber}) to ${
+            gstModalTarget.brand_name || gstModalTarget.designer_name || "designer"
+          }`
+        );
+      } catch (err) {
+        console.error("Failed to update designer GST:", err);
+      }
+    }
+    setShowGstModal(false);
+  };
+
+  const handleCloseGstModal = () => {
+    setShowGstModal(false);
+    if (
+      gstModalTarget === "newLead" &&
+      newLead.gst.trim().toUpperCase() !== COMPANY_GST_INFO.gstNumber
+    ) {
+      setUseCompanyGst(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && showGstModal) {
+        handleCloseGstModal();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showGstModal, newLead.gst, gstModalTarget]);
 
   // Fetch all live records
   const loadData = async (isManual = false) => {
@@ -540,6 +596,7 @@ export default function DesignerCRM() {
         cac: "",
         renewalProbability: "",
       });
+      setUseCompanyGst(false);
     } catch (err) {
       console.error("Failed to create designer lead:", err);
       alert(err.message || "Failed to create designer lead.");
@@ -697,6 +754,19 @@ export default function DesignerCRM() {
                           >
                             Health {econ.health}/100
                           </span>
+
+                          <span
+                            className={`tone-badge ${
+                              designer.gst_number || designer.gst ? "good" : "warn"
+                            }`}
+                          >
+                            {designer.gst_number || designer.gst
+                              ? (designer.gst_number === COMPANY_GST_INFO.gstNumber ||
+                                 designer.gst === COMPANY_GST_INFO.gstNumber
+                                  ? "Company GST"
+                                  : "GST Verified")
+                              : "No GST"}
+                          </span>
                         </div>
 
                         {/* Meta Line 1 */}
@@ -709,7 +779,27 @@ export default function DesignerCRM() {
                           rate {designer.take_rate != null ? `${Number(designer.take_rate)}%` : "0%"}
                           {designer.contract_end_date
                             ? ` · contract ends ${designer.contract_end_date}`
-                            : ""}
+                            : ""} · GST:{" "}
+                          {designer.gst_number || designer.gst ? (
+                            <span className="designer-gst-code">
+                              {designer.gst_number || designer.gst}
+                              {(designer.gst_number === COMPANY_GST_INFO.gstNumber ||
+                                designer.gst === COMPANY_GST_INFO.gstNumber) && (
+                                <span className="designer-gst-corp-tag">ZENVE</span>
+                              )}
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              className="crm-gst-assign-link"
+                              onClick={() => {
+                                setGstModalTarget(designer);
+                                setShowGstModal(true);
+                              }}
+                            >
+                              + Assign Company GST
+                            </button>
+                          )}
                         </p>
 
                         {/* Meta Line 2 */}
@@ -1144,19 +1234,52 @@ export default function DesignerCRM() {
               />
             </div>
 
-            <div className="lead-form-field">
-              <label className="label-caps">
-                GST number <span className="optional-tag">(Optional)</span>
-              </label>
+            <div className="lead-form-field lead-form-field-gst">
+              <div className="lead-field-header-row">
+                <label className="label-caps">
+                  GST number <span className="optional-tag">(Optional)</span>
+                </label>
+                {useCompanyGst && (
+                  <span className="lead-company-gst-badge">
+                    <span className="badge-dot"></span> Company GST Applied
+                  </span>
+                )}
+              </div>
               <input
                 type="text"
-                className="lead-input"
-                placeholder="27AAAAA0000A1Z5 (optional)"
+                className={`lead-input ${useCompanyGst ? "input-company-gst" : ""}`}
+                placeholder="27AAAAA0000A1Z5 (or use company GST)"
                 value={newLead.gst}
-                onChange={(e) =>
-                  setNewLead({ ...newLead, gst: e.target.value })
-                }
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setNewLead({ ...newLead, gst: val });
+                  if (val.trim().toUpperCase() === COMPANY_GST_INFO.gstNumber) {
+                    setUseCompanyGst(true);
+                  } else {
+                    setUseCompanyGst(false);
+                  }
+                }}
               />
+              <div className="lead-gst-checkbox-row">
+                <label className="lead-gst-checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={useCompanyGst}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setGstModalTarget("newLead");
+                        setShowGstModal(true);
+                      } else {
+                        setUseCompanyGst(false);
+                        if (newLead.gst.trim().toUpperCase() === COMPANY_GST_INFO.gstNumber) {
+                          setNewLead({ ...newLead, gst: "" });
+                        }
+                      }
+                    }}
+                  />
+                  <span>Designer doesn't have a GST number? (Use Company GST)</span>
+                </label>
+              </div>
             </div>
 
             <div className="lead-form-field">
@@ -1179,6 +1302,111 @@ export default function DesignerCRM() {
           </form>
         </section>
       </main>
+
+      {/* COMPANY GST INFORMATION & CONFIRMATION MODAL */}
+      {showGstModal && (
+        <div className="gst-modal-overlay" onClick={handleCloseGstModal}>
+          <div className="gst-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="gst-modal-header">
+              <div className="gst-modal-icon-badge">
+                <svg
+                  width="26"
+                  height="26"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  <path d="m9 12 2 2 4-4" />
+                </svg>
+              </div>
+              <div className="gst-modal-title-wrap">
+                <span className="gst-modal-badge">PLATFORM TAX COMPLIANCE</span>
+                <h3 className="gst-modal-title">Use ZENVE Company GST Number</h3>
+                <p className="gst-modal-desc">
+                  Onboard creators and independent fashion designers legally under ZENVE's master enterprise GST registration.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="gst-modal-close-btn"
+                onClick={handleCloseGstModal}
+                aria-label="Close dialog"
+              >
+                &times;
+              </button>
+            </div>
+
+            <div className="gst-modal-body">
+              {/* Entity Information Card */}
+              <div className="gst-company-card">
+                <div className="gst-company-row">
+                  <span className="gst-field-label">Master Legal Entity</span>
+                  <span className="gst-field-val strong">{COMPANY_GST_INFO.name}</span>
+                </div>
+                <div className="gst-company-row">
+                  <span className="gst-field-label">Company GSTIN</span>
+                  <span className="gst-field-val gst-code-val">
+                    <code>{COMPANY_GST_INFO.gstNumber}</code>
+                    <span className="gst-active-pill">ACTIVE · VERIFIED</span>
+                  </span>
+                </div>
+                <div className="gst-company-row">
+                  <span className="gst-field-label">Jurisdiction</span>
+                  <span className="gst-field-val">{COMPANY_GST_INFO.state}</span>
+                </div>
+              </div>
+
+              {/* Confirmation Question */}
+              <div className="gst-confirm-box">
+                <p className="gst-confirm-question">
+                  Do you want to use our company GST number (<strong>{COMPANY_GST_INFO.gstNumber}</strong>) for{" "}
+                  <strong>
+                    {gstModalTarget === "newLead"
+                      ? newLead.brand || newLead.name || "this new designer lead"
+                      : gstModalTarget?.brand_name ||
+                        gstModalTarget?.designer_name ||
+                        "this designer"}
+                  </strong>?
+                </p>
+              </div>
+            </div>
+
+            {/* Modal Actions: Two options (Yes / No) */}
+            <div className="gst-modal-actions">
+              <button
+                type="button"
+                className="btn-modal-yes"
+                onClick={handleConfirmCompanyGst}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                Yes, Use Company GST
+              </button>
+              <button
+                type="button"
+                className="btn-modal-no"
+                onClick={handleCloseGstModal}
+              >
+                No, Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
