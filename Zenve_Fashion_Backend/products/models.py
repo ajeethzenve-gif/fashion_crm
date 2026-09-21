@@ -589,3 +589,45 @@ class Product(models.Model):
     @property
     def qa_status(self):
         return self.status
+
+import os
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from django.core.validators import FileExtensionValidator
+from django.db import models
+
+private_storage = FileSystemStorage(location=settings.PRIVATE_MEDIA_ROOT)
+
+def product_image_path(instance, filename):
+    extension = os.path.splitext(filename)[1].lower()
+    return f"products/{instance.product_id}/{instance.position}{extension}"
+
+
+class ProductImage(models.Model):
+    class Position(models.IntegerChoices):
+        ONE = 1, "Image 1"
+        TWO = 2, "Image 2"
+        THREE = 3, "Image 3"
+        FOUR = 4, "Image 4"
+
+    product = models.ForeignKey(
+        Product,
+        related_name="product_images",
+        on_delete=models.CASCADE,
+    )
+    position = models.PositiveSmallIntegerField(choices=Position.choices)
+
+    image = models.ImageField(
+        storage=private_storage,
+        upload_to=product_image_path,
+        validators=[FileExtensionValidator(["jpg", "jpeg", "png", "webp"])],
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["product", "position"],
+                name="unique_product_image_position",
+            )
+        ]
+        ordering = ["position"]
