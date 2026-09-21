@@ -137,4 +137,4 @@ class DesignerSerializer(serializers.ModelSerializer):
             ret["live_skus_count"] = live_skus
         except Exception:
             pass
-        return ret
+        return ret

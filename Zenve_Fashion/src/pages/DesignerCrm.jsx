@@ -13,6 +13,8 @@ import {
   getSettlements,
 } from "../services/api";
 
+import { maskGstNumber } from "../utils/gstUtils.js";
+
 /* =========================================================
    CONSTANTS & BLUEPRINT SEQUENCE
 ========================================================= */
@@ -25,6 +27,20 @@ export const COMPANY_GST_INFO = {
   section: "Section 9(5) & Section 52 CGST Act",
   hsnSac: "998311 / 998439 (Fashion Marketplace & Creator Supply Services)",
 };
+
+function WhatsAppIcon({ size = 16, className = "" }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+    >
+      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+    </svg>
+  );
+}
 
 const STAGES_SEQUENCE = [
   "LEAD",
@@ -107,7 +123,8 @@ export default function DesignerCRM() {
   const [newLead, setNewLead] = useState({
     name: "",
     brand: "",
-    contact: "",
+    email: "",
+    phone: "",
     city: "",
     category: "",
     tier: "Emerging",
@@ -132,17 +149,18 @@ export default function DesignerCRM() {
   };
 
   const handleConfirmCompanyGst = async () => {
+    const masked = maskGstNumber(COMPANY_GST_INFO.gstNumber);
     if (gstModalTarget === "newLead") {
       setNewLead((prev) => ({ ...prev, gst: COMPANY_GST_INFO.gstNumber }));
       setUseCompanyGst(true);
-      showToast(`Applied ZENVE Company GST (${COMPANY_GST_INFO.gstNumber})`);
+      showToast(`Applied ZENVE Company GST (${masked})`);
     } else if (gstModalTarget && typeof gstModalTarget === "object") {
       try {
         await handleUpdateField(gstModalTarget.id, {
           gst_number: COMPANY_GST_INFO.gstNumber,
         });
         showToast(
-          `Applied Company GST (${COMPANY_GST_INFO.gstNumber}) to ${
+          `Applied Company GST (${masked}) to ${
             gstModalTarget.brand_name || gstModalTarget.designer_name || "designer"
           }`
         );
@@ -153,11 +171,56 @@ export default function DesignerCRM() {
     setShowGstModal(false);
   };
 
+  const handleRequestCompanyGstCreation = async () => {
+    const targetName =
+      gstModalTarget === "newLead"
+        ? newLead.brand || newLead.name || "New Designer Lead"
+        : gstModalTarget?.brand_name ||
+          gstModalTarget?.designer_name ||
+          "Designer";
+
+    const targetCity =
+      gstModalTarget === "newLead"
+        ? newLead.city || "Regional Hub"
+        : gstModalTarget?.city || gstModalTarget?.state || "Regional Hub";
+
+    if (gstModalTarget === "newLead") {
+      setNewLead((prev) => ({ ...prev, gst: "COMPANY_GST_REQUESTED" }));
+      setUseCompanyGst(true);
+      showToast(
+        `Requested company-side GST creation for ${targetName}! Company will create a new GST number.`
+      );
+    } else if (gstModalTarget && typeof gstModalTarget === "object") {
+      try {
+        const existingTasks = gstModalTarget.follow_up_tasks || [];
+        const newTask = {
+          id: Date.now(),
+          text: `Company Tax Team: Create dedicated company GST number for ${targetName} (${targetCity})`,
+          due_date: new Date().toISOString().split("T")[0],
+          completed: false,
+        };
+
+        await handleUpdateField(gstModalTarget.id, {
+          gst_number: "COMPANY_GST_REQUESTED",
+          follow_up_tasks: [...existingTasks, newTask],
+        });
+
+        showToast(
+          `Requested! Company side will create a new GST number for ${targetName}.`
+        );
+      } catch (err) {
+        console.error("Failed to request company GST creation:", err);
+      }
+    }
+    setShowGstModal(false);
+  };
+
   const handleCloseGstModal = () => {
     setShowGstModal(false);
     if (
       gstModalTarget === "newLead" &&
-      newLead.gst.trim().toUpperCase() !== COMPANY_GST_INFO.gstNumber
+      newLead.gst.trim().toUpperCase() !== COMPANY_GST_INFO.gstNumber &&
+      newLead.gst !== "COMPANY_GST_REQUESTED"
     ) {
       setUseCompanyGst(false);
     }
@@ -172,6 +235,53 @@ export default function DesignerCRM() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [showGstModal, newLead.gst, gstModalTarget]);
+
+  // Send WhatsApp portal access notification with direct access link
+  const handleSendWhatsAppPortalLink = (designer) => {
+    if (!designer) return;
+    const phoneRaw = designer.phone || designer.contact || "";
+    let cleanPhone = phoneRaw.replace(/[^0-9]/g, "");
+    if (cleanPhone.length === 10) cleanPhone = `91${cleanPhone}`;
+
+    if (!cleanPhone) {
+      const input = window.prompt(
+        `Enter WhatsApp phone number for ${designer.designer_name || designer.brand_name} (with country code, e.g. 919876543210):`,
+        "91"
+      );
+      if (!input) return;
+      cleanPhone = input.replace(/[^0-9]/g, "");
+    }
+
+    const designerName = designer.designer_name || designer.brand_name || "Designer";
+    const brandName = designer.brand_name || designer.designer_name || "Designer Brand";
+    const gstVal = designer.gst_number || designer.gst || COMPANY_GST_INFO.gstNumber;
+    const portalUrl = `${window.location.origin}/designer-portal?designer=${encodeURIComponent(brandName)}&code=${encodeURIComponent(designer.designer_code || `DSG-${designer.id}`)}`;
+
+    const message = `🌟 *ZENVE FASHION - DESIGNER PORTAL ACCESS* 🌟
+
+Hello *${designerName}*,
+
+Your company details and designer account have been successfully configured on *ZENVE Fashion*!
+
+📋 *Your Company Onboarding Details:*
+• Brand: *${brandName}*
+• Legal Entity: *${COMPANY_GST_INFO.name}*
+• GST Status: *${maskGstNumber(gstVal)}*
+• Operating City: *${designer.city || "All-India Marketplace Hub"}*
+• Designer Code: *${designer.designer_code || `DSG-${designer.id}`}*
+
+🚀 *Direct Access to Your Designer Portal:*
+${portalUrl}
+
+Click the link above to directly access your Designer Portal to manage your catalogue, view orders, track inventory, and view settlements.
+
+Welcome to ZENVE Fashion!
+_Team ZENVE Creator Operations_`;
+
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    showToast(`WhatsApp portal access link opened for ${brandName}!`);
+  };
 
   // Fetch all live records
   const loadData = async (isManual = false) => {
@@ -309,8 +419,8 @@ export default function DesignerCRM() {
           const itemTotal =
             Number(
               item.total ||
-                item.total_price ||
-                (Number(item.price || 0) * Number(item.quantity || item.qty || 1))
+              item.total_price ||
+              (Number(item.price || 0) * Number(item.quantity || item.qty || 1))
             ) || 0;
           orderItemsSum += itemTotal;
           if (isRecent) {
@@ -350,7 +460,7 @@ export default function DesignerCRM() {
 
     const skuProductivity =
       designer.effective_sku_productivity !== undefined &&
-      Number(designer.effective_sku_productivity) > 0
+        Number(designer.effective_sku_productivity) > 0
         ? Number(designer.effective_sku_productivity)
         : (liveSkus > 0 ? Math.round(gmv / liveSkus) : Math.round(gmv));
 
@@ -373,27 +483,27 @@ export default function DesignerCRM() {
       designer.health_score !== undefined && Number(designer.health_score) > 0
         ? Number(designer.health_score)
         : totalProds > 0 || gmv > 0
-        ? Math.max(
+          ? Math.max(
             0,
             Math.min(
               100,
               Math.round(
                 qaRate * 0.25 +
-                  stockRate * 0.2 +
-                  Math.min(100, monthlyGmv / 500) * 0.25 +
-                  (isKyc ? 100 : 0) * 0.1 +
-                  renewalProb * 0.2
+                stockRate * 0.2 +
+                Math.min(100, monthlyGmv / 500) * 0.25 +
+                (isKyc ? 100 : 0) * 0.1 +
+                renewalProb * 0.2
               )
             )
           )
-        : Math.max(
+          : Math.max(
             0,
             Math.min(
               100,
               Math.round(
                 (isKyc ? 100 : 0) * 0.3 +
-                  renewalProb * 0.4 +
-                  (designer.contract_signed ? 30 : 0)
+                renewalProb * 0.4 +
+                (designer.contract_signed ? 30 : 0)
               )
             )
           );
@@ -448,10 +558,10 @@ export default function DesignerCRM() {
         list.map((d) =>
           d.id === designer.id
             ? {
-                ...d,
-                kyc_status: nextStatus,
-                kyc_verified: !currentVerified,
-              }
+              ...d,
+              kyc_status: nextStatus,
+              kyc_verified: !currentVerified,
+            }
             : d
         )
       );
@@ -544,12 +654,15 @@ export default function DesignerCRM() {
   // Create lead
   const handleCreateLead = async (e) => {
     e.preventDefault();
-    if (!newLead.name.trim() || !newLead.brand.trim() || !newLead.contact.trim()) {
-      alert("Name, brand and contact are required.");
+    if (!newLead.name.trim() || !newLead.brand.trim()) {
+      alert("Designer name and brand name are required.");
+      return;
+    }
+    if (!newLead.email.trim() && !newLead.phone.trim()) {
+      alert("Please provide at least an email address or mobile number.");
       return;
     }
 
-    const isEmail = newLead.contact.includes("@");
     const designerCode = `DSG-${String(Date.now()).slice(-4)}`;
 
     const payload = {
@@ -557,13 +670,19 @@ export default function DesignerCRM() {
       designer_name: newLead.name.trim(),
       brand_name: newLead.brand.trim(),
       owner_name: newLead.name.trim(),
-      email: isEmail ? newLead.contact.trim() : `${newLead.name.toLowerCase().replace(/\s+/g, "")}@example.com`,
-      phone: !isEmail ? newLead.contact.trim() : "",
+      email: newLead.email.trim() || `${newLead.name.toLowerCase().replace(/\s+/g, "")}@example.com`,
+      phone: newLead.phone.trim(),
       city: newLead.city.trim() || "",
       primary_category: newLead.category.trim() || "",
       tier: newLead.tier.toUpperCase(),
       take_rate: newLead.takeRate !== "" ? Number(newLead.takeRate) : 0,
-      gst_number: newLead.gst.trim() ? newLead.gst.trim().toUpperCase() : null,
+      gst_number: newLead.gst.trim()
+        ? newLead.gst === "COMPANY_GST_REQUESTED"
+          ? "COMPANY_GST_REQUESTED"
+          : newLead.gst.trim().toUpperCase() === maskGstNumber(COMPANY_GST_INFO.gstNumber)
+          ? COMPANY_GST_INFO.gstNumber
+          : newLead.gst.trim().toUpperCase()
+        : null,
       contract_end_date: newLead.contractEnds || null,
       lead_source: newLead.source,
       sales_owner: newLead.owner,
@@ -573,7 +692,17 @@ export default function DesignerCRM() {
       stage: "LEAD",
       kyc_status: "PENDING",
       kyc_verified: false,
-      follow_up_tasks: [],
+      follow_up_tasks:
+        newLead.gst === "COMPANY_GST_REQUESTED"
+          ? [
+              {
+                id: Date.now(),
+                text: `Company Tax Team: Create dedicated company GST for ${newLead.brand.trim()} (${newLead.city.trim() || "Regional Hub"})`,
+                due_date: new Date().toISOString().split("T")[0],
+                completed: false,
+              },
+            ]
+          : [],
     };
 
     try {
@@ -583,7 +712,8 @@ export default function DesignerCRM() {
       setNewLead({
         name: "",
         brand: "",
-        contact: "",
+        email: "",
+        phone: "",
         city: "",
         category: "",
         tier: "Emerging",
@@ -736,35 +866,35 @@ export default function DesignerCRM() {
                           </span>
 
                           <span
-                            className={`tone-badge ${
-                              econ.isKyc ? "good" : "bad"
-                            }`}
+                            className={`tone-badge ${econ.isKyc ? "good" : "bad"
+                              }`}
                           >
                             {econ.isKyc ? "KYC verified" : "KYC missing"}
                           </span>
 
                           <span
-                            className={`tone-badge ${
-                              econ.health >= 70
+                            className={`tone-badge ${econ.health >= 70
                                 ? "good"
                                 : econ.health >= 45
-                                ? "warn"
-                                : "bad"
-                            }`}
+                                  ? "warn"
+                                  : "bad"
+                              }`}
                           >
                             Health {econ.health}/100
                           </span>
 
                           <span
-                            className={`tone-badge ${
-                              designer.gst_number || designer.gst ? "good" : "warn"
-                            }`}
+                            className={`tone-badge ${designer.gst_number || designer.gst ? "good" : "warn"
+                              }`}
                           >
                             {designer.gst_number || designer.gst
                               ? (designer.gst_number === COMPANY_GST_INFO.gstNumber ||
-                                 designer.gst === COMPANY_GST_INFO.gstNumber
-                                  ? "Company GST"
-                                  : "GST Verified")
+                                designer.gst === COMPANY_GST_INFO.gstNumber
+                                ? "Company GST"
+                                : (designer.gst_number === "COMPANY_GST_REQUESTED" ||
+                                  designer.gst === "COMPANY_GST_REQUESTED")
+                                ? "GST Requested (Company)"
+                                : "GST Verified")
                               : "No GST"}
                           </span>
                         </div>
@@ -782,11 +912,34 @@ export default function DesignerCRM() {
                             : ""} · GST:{" "}
                           {designer.gst_number || designer.gst ? (
                             <span className="designer-gst-code">
-                              {designer.gst_number || designer.gst}
-                              {(designer.gst_number === COMPANY_GST_INFO.gstNumber ||
-                                designer.gst === COMPANY_GST_INFO.gstNumber) && (
-                                <span className="designer-gst-corp-tag">ZENVE</span>
+                              {designer.gst_number === "COMPANY_GST_REQUESTED" ||
+                              designer.gst === "COMPANY_GST_REQUESTED" ? (
+                                <span className="tone-badge warn" style={{ fontSize: "11px", padding: "2px 6px" }}>
+                                  Creation Requested (Company)
+                                </span>
+                              ) : (
+                                <>
+                                  {(designer.gst_number === COMPANY_GST_INFO.gstNumber ||
+                                    designer.gst === COMPANY_GST_INFO.gstNumber)
+                                    ? maskGstNumber(designer.gst_number || designer.gst)
+                                    : (designer.gst_number || designer.gst)}
+                                  {(designer.gst_number === COMPANY_GST_INFO.gstNumber ||
+                                    designer.gst === COMPANY_GST_INFO.gstNumber) && (
+                                      <span className="designer-gst-corp-tag">ZENVE</span>
+                                    )}
+                                </>
                               )}
+                              <button
+                                type="button"
+                                className="crm-gst-switch-btn"
+                                title="Change or request Company GST"
+                                onClick={() => {
+                                  setGstModalTarget(designer);
+                                  setShowGstModal(true);
+                                }}
+                              >
+                                ✎
+                              </button>
                             </span>
                           ) : (
                             <button
@@ -808,8 +961,8 @@ export default function DesignerCRM() {
                           {designer.sales_owner || "Unassigned"} · next follow-up{" "}
                           {designer.next_followup_date
                             ? new Date(
-                                designer.next_followup_date
-                              ).toLocaleDateString()
+                              designer.next_followup_date
+                            ).toLocaleDateString()
                             : "not set"}{" "}
                           · renewal likelihood{" "}
                           {designer.renewal_likelihood != null ? `${designer.renewal_likelihood}%` : "—"}
@@ -898,6 +1051,42 @@ export default function DesignerCRM() {
                       </div>
                     </div>
 
+                    {/* EXTRA DIV: WHATSAPP DIRECT PORTAL ACCESS NOTIFICATION */}
+                    <div className="crm-whatsapp-portal-card">
+                      <div className="whatsapp-card-badge-row">
+                        <span className="whatsapp-pill">
+                          <WhatsAppIcon size={13} /> WHATSAPP DIRECT ACCESS
+                        </span>
+                        <span className="whatsapp-status-tag">
+                          {designer.phone || designer.contact ? "WhatsApp Ready" : "Contact On File"}
+                        </span>
+                      </div>
+
+                      <div className="whatsapp-card-content">
+                        <div className="whatsapp-card-info">
+                          <h4 className="whatsapp-designer-title">
+                            {designer.brand_name || designer.designer_name} Company Access
+                          </h4>
+                          <p className="whatsapp-designer-desc">
+                            Company details confirmed: <strong>{COMPANY_GST_INFO.name}</strong> · GST: <strong>{maskGstNumber(designer.gst_number || designer.gst || COMPANY_GST_INFO.gstNumber)}</strong> · City: <strong>{designer.city || "Corporate Hub"}</strong>
+                          </p>
+                          <span className="whatsapp-phone-hint">
+                            📱 Registered contact: <strong>{designer.phone || designer.contact || designer.email || "No phone added"}</strong>
+                          </span>
+                        </div>
+
+                        <button
+                          type="button"
+                          className="btn-send-whatsapp-portal"
+                          onClick={() => handleSendWhatsAppPortalLink(designer)}
+                          title="Click to send WhatsApp message with direct access to Designer Portal"
+                        >
+                          <WhatsAppIcon size={16} />
+                          <span>Send WhatsApp Portal Link</span>
+                        </button>
+                      </div>
+                    </div>
+
                     {/* Bottom Row: Follow-Up Tasks (Left) & Controls (Right) */}
                     <div className="designer-bottom-grid">
                       {/* Left: Follow-up Tasks */}
@@ -913,7 +1102,7 @@ export default function DesignerCRM() {
                                 !isDone &&
                                 task.due_date &&
                                 task.due_date <
-                                  new Date().toISOString().split("T")[0];
+                                new Date().toISOString().split("T")[0];
                               return (
                                 <li key={task.id} className="task-row-item">
                                   <input
@@ -924,9 +1113,8 @@ export default function DesignerCRM() {
                                     }
                                   />
                                   <span
-                                    className={`task-title ${
-                                      isDone ? "done" : ""
-                                    }`}
+                                    className={`task-title ${isDone ? "done" : ""
+                                      }`}
                                   >
                                     {task.title || task.text}
                                   </span>
@@ -1055,7 +1243,7 @@ export default function DesignerCRM() {
           )}
         </section>
 
-        {/* 3. ADD A DESIGNER LEAD (14 Fields) */}
+        {/* 3. ADD A DESIGNER LEAD (15 Fields) */}
         <section className="crm-panel">
           <div className="crm-panel-header">
             <div className="crm-panel-title-block">
@@ -1094,14 +1282,27 @@ export default function DesignerCRM() {
             </div>
 
             <div className="lead-form-field">
-              <label className="label-caps">Contact email / phone</label>
+              <label className="label-caps">Email address</label>
               <input
-                type="text"
+                type="email"
                 className="lead-input"
-                placeholder="email@brand.com or 9876543210"
-                value={newLead.contact}
+                placeholder="e.g. designer@brand.com"
+                value={newLead.email}
                 onChange={(e) =>
-                  setNewLead({ ...newLead, contact: e.target.value })
+                  setNewLead({ ...newLead, email: e.target.value })
+                }
+              />
+            </div>
+
+            <div className="lead-form-field">
+              <label className="label-caps">Mobile number</label>
+              <input
+                type="tel"
+                className="lead-input"
+                placeholder="e.g. 9876543210"
+                value={newLead.phone}
+                onChange={(e) =>
+                  setNewLead({ ...newLead, phone: e.target.value })
                 }
               />
             </div>
@@ -1217,23 +1418,6 @@ export default function DesignerCRM() {
               />
             </div>
 
-            <div className="lead-form-field">
-              <label className="label-caps">Renewal likelihood %</label>
-              <input
-                type="number"
-                className="lead-input"
-                min="0"
-                max="100"
-                value={newLead.renewalProbability}
-                onChange={(e) =>
-                  setNewLead({
-                    ...newLead,
-                    renewalProbability: Number(e.target.value),
-                  })
-                }
-              />
-            </div>
-
             <div className="lead-form-field lead-form-field-gst">
               <div className="lead-field-header-row">
                 <label className="label-caps">
@@ -1241,7 +1425,10 @@ export default function DesignerCRM() {
                 </label>
                 {useCompanyGst && (
                   <span className="lead-company-gst-badge">
-                    <span className="badge-dot"></span> Company GST Applied
+                    <span className="badge-dot"></span>{" "}
+                    {newLead.gst === "COMPANY_GST_REQUESTED"
+                      ? "Creation Requested (Company Side)"
+                      : "Company GST Applied"}
                   </span>
                 )}
               </div>
@@ -1249,13 +1436,19 @@ export default function DesignerCRM() {
                 type="text"
                 className={`lead-input ${useCompanyGst ? "input-company-gst" : ""}`}
                 placeholder="27AAAAA0000A1Z5 (or use company GST)"
-                value={newLead.gst}
+                value={
+                  newLead.gst === COMPANY_GST_INFO.gstNumber
+                    ? maskGstNumber(newLead.gst)
+                    : newLead.gst === "COMPANY_GST_REQUESTED"
+                    ? "Creation Requested (Company creating GST)"
+                    : newLead.gst
+                }
                 onChange={(e) => {
                   const val = e.target.value;
                   setNewLead({ ...newLead, gst: val });
                   if (val.trim().toUpperCase() === COMPANY_GST_INFO.gstNumber) {
                     setUseCompanyGst(true);
-                  } else {
+                  } else if (val !== "COMPANY_GST_REQUESTED") {
                     setUseCompanyGst(false);
                   }
                 }}
@@ -1271,15 +1464,47 @@ export default function DesignerCRM() {
                         setShowGstModal(true);
                       } else {
                         setUseCompanyGst(false);
-                        if (newLead.gst.trim().toUpperCase() === COMPANY_GST_INFO.gstNumber) {
+                        if (
+                          newLead.gst.trim().toUpperCase() === COMPANY_GST_INFO.gstNumber ||
+                          newLead.gst === "COMPANY_GST_REQUESTED"
+                        ) {
                           setNewLead({ ...newLead, gst: "" });
                         }
                       }
                     }}
                   />
-                  <span>Designer doesn't have a GST number? (Use Company GST)</span>
+                  <span>Designer doesn't have a GST number? (Use / Request Company GST)</span>
                 </label>
+                {useCompanyGst && (
+                  <button
+                    type="button"
+                    className="lead-gst-change-btn"
+                    onClick={() => {
+                      setGstModalTarget("newLead");
+                      setShowGstModal(true);
+                    }}
+                  >
+                    Change / Request GST
+                  </button>
+                )}
               </div>
+            </div>
+
+            <div className="lead-form-field">
+              <label className="label-caps">Renewal likelihood %</label>
+              <input
+                type="number"
+                className="lead-input"
+                min="0"
+                max="100"
+                value={newLead.renewalProbability}
+                onChange={(e) =>
+                  setNewLead({
+                    ...newLead,
+                    renewalProbability: Number(e.target.value),
+                  })
+                }
+              />
             </div>
 
             <div className="lead-form-field">
@@ -1325,9 +1550,9 @@ export default function DesignerCRM() {
               </div>
               <div className="gst-modal-title-wrap">
                 <span className="gst-modal-badge">PLATFORM TAX COMPLIANCE</span>
-                <h3 className="gst-modal-title">Use ZENVE Company GST Number</h3>
+                <h3 className="gst-modal-title">Company GST Coverage & Creation</h3>
                 <p className="gst-modal-desc">
-                  Onboard creators and independent fashion designers legally under ZENVE's master enterprise GST registration.
+                  Assign our master company GST number or request our company to create a new dedicated GST number for this designer.
                 </p>
               </div>
               <button
@@ -1341,7 +1566,7 @@ export default function DesignerCRM() {
             </div>
 
             <div className="gst-modal-body">
-              {/* Entity Information Card */}
+              {/* Option 1: Master Company GSTIN (Masked for Security) */}
               <div className="gst-company-card">
                 <div className="gst-company-row">
                   <span className="gst-field-label">Master Legal Entity</span>
@@ -1350,8 +1575,14 @@ export default function DesignerCRM() {
                 <div className="gst-company-row">
                   <span className="gst-field-label">Company GSTIN</span>
                   <span className="gst-field-val gst-code-val">
-                    <code>{COMPANY_GST_INFO.gstNumber}</code>
+                    <code>{maskGstNumber(COMPANY_GST_INFO.gstNumber)}</code>
                     <span className="gst-active-pill">ACTIVE · VERIFIED</span>
+                  </span>
+                </div>
+                <div className="gst-company-row">
+                  <span className="gst-field-label">Security Mask</span>
+                  <span className="gst-field-val" style={{ color: "#786d5e", fontSize: "12px" }}>
+                    Protected for security (Only last 4 digits shown)
                   </span>
                 </div>
                 <div className="gst-company-row">
@@ -1360,22 +1591,44 @@ export default function DesignerCRM() {
                 </div>
               </div>
 
+              {/* Option 2: Request Company-Side Creation for this Designer */}
+              <div className="gst-request-box">
+                <div className="gst-request-box-header">
+                  <span className="gst-request-badge">CREATE NEW GST</span>
+                  <h4 className="gst-request-title">Request Company to Create New GST for Designer</h4>
+                </div>
+                <p className="gst-request-desc">
+                  Does this designer need their own dedicated company-developed GST number? Submit a request and our company tax team will register a new compliant GSTIN for this designer.
+                </p>
+                <button
+                  type="button"
+                  className="btn-request-company-gst"
+                  onClick={handleRequestCompanyGstCreation}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                  Request Company to Create New GST for This Designer
+                </button>
+              </div>
+
               {/* Confirmation Question */}
               <div className="gst-confirm-box">
                 <p className="gst-confirm-question">
-                  Do you want to use our company GST number (<strong>{COMPANY_GST_INFO.gstNumber}</strong>) for{" "}
+                  Or apply our existing company master GST (<strong>{maskGstNumber(COMPANY_GST_INFO.gstNumber)}</strong>) for{" "}
                   <strong>
                     {gstModalTarget === "newLead"
                       ? newLead.brand || newLead.name || "this new designer lead"
                       : gstModalTarget?.brand_name ||
-                        gstModalTarget?.designer_name ||
-                        "this designer"}
-                  </strong>?
+                      gstModalTarget?.designer_name ||
+                      "this designer"}
+                  </strong> immediately?
                 </p>
               </div>
             </div>
 
-            {/* Modal Actions: Two options (Yes / No) */}
+            {/* Modal Actions: Apply Existing / Request New / Cancel */}
             <div className="gst-modal-actions">
               <button
                 type="button"
@@ -1394,7 +1647,14 @@ export default function DesignerCRM() {
                 >
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
-                Yes, Use Company GST
+                Yes, Use Company GST ({COMPANY_GST_INFO.gstNumber.slice(-4)})
+              </button>
+              <button
+                type="button"
+                className="btn-modal-request"
+                onClick={handleRequestCompanyGstCreation}
+              >
+                + Request New Company GST
               </button>
               <button
                 type="button"

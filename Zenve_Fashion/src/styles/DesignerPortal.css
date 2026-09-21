@@ -11,7 +11,7 @@
   --ZENVE-radius-md: calc(0.4rem - 2px);
   --ZENVE-radius-sm: calc(0.4rem - 4px);
 
-  /* Precise sRGB Fallbacks matching Lovable */
+  /* Precise sRGB Fallbacks matching */
   --ZENVE-paper: #faf7f1;
   --ZENVE-panel: #fffdfa;
   --ZENVE-line: #e2ddd5;
@@ -48,6 +48,25 @@
   color: var(--ZENVE-ink);
   font-family: var(--ZENVE-font-sans);
   box-sizing: border-box;
+}
+
+/* =========================================================
+   TYPOGRAPHY & CAPS LABELS (Borderless & Clean)
+========================================================= */
+
+.ZENVE-label-caps {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ZENVE-muted);
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  line-height: 1.2;
+  display: inline-block;
 }
 
 /* =========================================================
@@ -423,6 +442,15 @@
   margin-top: 20px;
   padding-top: 16px;
   border-top: 1px solid var(--ZENVE-line);
+}
+
+.ZENVE-pending-actions-wrap .ZENVE-label-caps {
+  display: inline-block;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
 .ZENVE-pending-empty {
@@ -1173,6 +1201,22 @@
   gap: 6px;
 }
 
+.ZENVE-form-group label,
+.ZENVE-form-group label.ZENVE-label-caps {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ZENVE-muted);
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin-bottom: 2px;
+}
+
 .ZENVE-form-group.col-span-2 {
   grid-column: span 2;
 }
@@ -1220,6 +1264,11 @@
 .ZENVE-toggle-row .ZENVE-label-caps {
   margin: 0;
   font-size: 11px;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
 /* 3. Add spacing to the SKU Preview row */
@@ -1338,14 +1387,16 @@
   height: 20px; /* Exact margin-bottom below thead */
 }
 
-.ZENVE-table th {
+.ZENVE-table th,
+.ZENVE-table th.ZENVE-label-caps {
   padding-top: 10px;
   padding-right: 14px;
   padding-bottom: 24px; /* Creates the space between the thead text and the bottom border line */
   padding-left: 14px;
   margin-bottom: 10px;
   background: transparent !important;
-  border-bottom: 1px solid var(--ZENVE-line);
+  border: none !important;
+  border-bottom: 1px solid var(--ZENVE-line) !important;
   border-radius: 0 !important;
   box-shadow: none !important;
   color: var(--ZENVE-muted);
@@ -1356,7 +1407,6 @@
   white-space: nowrap;
   display: table-cell !important;
   vertical-align: middle;
-
 }
 
 .ZENVE-table tbody tr {
