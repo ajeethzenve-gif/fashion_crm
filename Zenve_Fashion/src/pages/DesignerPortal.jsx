@@ -1858,7 +1858,7 @@ export default function DesignerPortal() {
           ALERT
       ===================================================== */}
 
-      {alertMessage && (
+      {alertMessage && alertMessage.type !== "success" && (
         <div
           className={`ZENVE-alert ZENVE-alert-${alertMessage.type}`}
         >

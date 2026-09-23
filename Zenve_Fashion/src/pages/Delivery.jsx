@@ -265,7 +265,7 @@ export default function DeliveryEngine() {
       ===================================================== */}
       <main className="ZENVE-delivery-main">
         {/* ALERT NOTIFICATION BANNER */}
-        {alert && (
+        {alert && alert.type !== "success" && (
           <div className={`ZENVE-delivery-alert ${alert.type}`}>
             <span>{alert.text}</span>
             <button

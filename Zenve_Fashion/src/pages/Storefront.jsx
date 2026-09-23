@@ -415,7 +415,7 @@ export default function Storefront() {
       ===================================================== */}
       <main className="ZENVE-sf-main">
         {/* ALERT NOTIFICATION */}
-        {alert && (
+        {alert && alert.type !== "success" && (
           <div className={`ZENVE-sf-alert ${alert.type}`}>
             <span>{alert.text}</span>
             <button

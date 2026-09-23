@@ -1112,4 +1112,20 @@ button {
   border-radius: 0 0 12px 12px !important;
 }
 
+/* Hide legacy in-page success alert banners so only SweetAlert toasts are used */
+.ZENVE-alert-success,
+.ZENVE-banner-alert.success,
+.ZENVE-sf-alert.success,
+.ZENVE-orders-alert.success,
+.ZENVE-inv-alert.success,
+.ZENVE-returns-alert.success,
+.ZENVE-settlement-alert.success,
+.ZENVE-delivery-alert.success,
+.crm-toast,
+.cc-toast,
+.analytics-toast {
+  display: none !important;
+}
+
+
 

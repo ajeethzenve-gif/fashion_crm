@@ -420,7 +420,7 @@ export default function Returns() {
       ===================================================== */}
       <main className="ZENVE-returns-main">
         {/* TOAST NOTIFICATION BANNER */}
-        {alert && (
+        {alert && alert.type !== "success" && (
           <div className={`ZENVE-returns-alert ${alert.type}`}>
             <span>{alert.text}</span>
             <button

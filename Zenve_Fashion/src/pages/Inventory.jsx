@@ -473,7 +473,7 @@ export default function Inventory() {
       ===================================================== */}
       <main className="ZENVE-inv-main">
         {/* TOAST / ALERT NOTIFICATION */}
-        {alert && (
+        {alert && alert.type !== "success" && (
           <div className={`ZENVE-inv-alert ${alert.type}`}>
             <span>{alert.text}</span>
             <button

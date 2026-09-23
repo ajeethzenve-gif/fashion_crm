@@ -340,7 +340,7 @@ export default function Settlement() {
       ===================================================== */}
       <main className="ZENVE-settlement-main">
         {/* TOAST / ALERT BANNER */}
-        {alert && (
+        {alert && alert.type !== "success" && (
           <div className={`ZENVE-settlement-alert ${alert.type}`}>
             <span>{alert.text}</span>
             <button

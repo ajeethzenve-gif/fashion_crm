@@ -325,7 +325,7 @@ export default function Orders() {
       ===================================================== */}
       <main className="ZENVE-orders-main">
         {/* TOAST / ALERT BANNER */}
-        {alert && (
+        {alert && alert.type !== "success" && (
           <div className={`ZENVE-orders-alert ${alert.type}`}>
             <span>{alert.text}</span>
             <button

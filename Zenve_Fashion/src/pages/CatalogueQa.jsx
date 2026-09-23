@@ -258,7 +258,7 @@ export default function CatalogueQa() {
       </header>
 
       {/* FEEDBACK NOTIFICATION */}
-      {alert && (
+      {alert && alert.type !== "success" && (
         <div className={`ZENVE-alert ZENVE-alert-${alert.type}`}>
           <span>{alert.text}</span>
           <button type="button" className="ZENVE-alert-close" onClick={() => setAlert(null)}>
