@@ -264,35 +264,7 @@ export default function DeliveryEngine() {
           MAIN CONTENT AREA
       ===================================================== */}
       <main className="ZENVE-delivery-main">
-        {/* ALERT NOTIFICATION BANNER */}
-        {alert && alert.type !== "success" && (
-          <div className={`ZENVE-delivery-alert ${alert.type}`}>
-            <span>{alert.text}</span>
-            <button
-              type="button"
-              className="ZENVE-alert-close"
-              onClick={() => setAlert(null)}
-              aria-label="Close alert"
-            >
-              ×
-            </button>
-          </div>
-        )}
 
-        {/* ERROR BANNER */}
-        {error && (
-          <div className="ZENVE-delivery-alert error">
-            <span>{error}</span>
-            <button
-              type="button"
-              className="ZENVE-alert-close"
-              onClick={loadDeliveryProducts}
-              aria-label="Retry loading products"
-            >
-              Retry
-            </button>
-          </div>
-        )}
 
         {/* ===================================================
             TOP 3 KPI METRIC CARDS

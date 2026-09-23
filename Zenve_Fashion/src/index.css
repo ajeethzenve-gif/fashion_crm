@@ -1112,18 +1112,26 @@ button {
   border-radius: 0 0 12px 12px !important;
 }
 
-/* Hide legacy in-page success alert banners so only SweetAlert toasts are used */
+/* =========================================================
+   HIDE ALL NOTIFICATION BANNERS & TOASTS ON ALL PAGES
+========================================================= */
+.ZENVE-alert,
 .ZENVE-alert-success,
-.ZENVE-banner-alert.success,
-.ZENVE-sf-alert.success,
-.ZENVE-orders-alert.success,
-.ZENVE-inv-alert.success,
-.ZENVE-returns-alert.success,
-.ZENVE-settlement-alert.success,
-.ZENVE-delivery-alert.success,
+.ZENVE-alert-error,
+.ZENVE-banner-alert,
+.ZENVE-sf-alert,
+.ZENVE-orders-alert,
+.ZENVE-inv-alert,
+.ZENVE-returns-alert,
+.ZENVE-settlement-alert,
+.ZENVE-delivery-alert,
 .crm-toast,
 .cc-toast,
-.analytics-toast {
+.analytics-toast,
+.crm-error-banner,
+.analytics-error-banner,
+.cc-error-banner,
+.zenve-swal-toast {
   display: none !important;
 }
 

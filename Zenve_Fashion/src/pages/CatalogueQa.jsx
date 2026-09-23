@@ -257,25 +257,7 @@ export default function CatalogueQa() {
         </div>
       </header>
 
-      {/* FEEDBACK NOTIFICATION */}
-      {alert && alert.type !== "success" && (
-        <div className={`ZENVE-alert ZENVE-alert-${alert.type}`}>
-          <span>{alert.text}</span>
-          <button type="button" className="ZENVE-alert-close" onClick={() => setAlert(null)}>
-            ×
-          </button>
-        </div>
-      )}
 
-      {/* ERROR NOTIFICATION */}
-      {error && (
-        <div className="ZENVE-alert ZENVE-alert-error">
-          <span>{error}</span>
-          <button type="button" className="ZENVE-alert-close" onClick={loadProducts}>
-            Retry
-          </button>
-        </div>
-      )}
 
       <main className="ZENVE-qa-main">
         {/* ===================================================

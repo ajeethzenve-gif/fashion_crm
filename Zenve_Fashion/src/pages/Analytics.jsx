@@ -1092,20 +1092,8 @@ export default function Analytics() {
         </div>
       </header>
 
-      {/* TOAST ALERT */}
-      {toastMessage && <div className="analytics-toast">{toastMessage}</div>}
-
       {/* MAIN CONTENT CONTAINER */}
       <main className="analytics-container">
-        {/* ERROR BANNER */}
-        {error && (
-          <div className="analytics-error-banner">
-            <span>{error}</span>
-            <button type="button" onClick={() => loadData(true)}>
-              Retry
-            </button>
-          </div>
-        )}
 
         {/* 1. TOP 6 KPI METRICS */}
         <section className="analytics-kpi-grid">

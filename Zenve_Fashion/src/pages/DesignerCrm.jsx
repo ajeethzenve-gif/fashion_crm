@@ -771,20 +771,8 @@ _Team ZENVE Creator Operations_`;
         </div>
       </header>
 
-      {/* TOAST ALERT */}
-      {toastMessage && <div className="crm-toast">{toastMessage}</div>}
-
       {/* MAIN CONTAINER */}
       <main className="crm-container">
-        {/* ERROR BANNER */}
-        {error && (
-          <div className="crm-error-banner">
-            <span>{error}</span>
-            <button type="button" onClick={() => loadData(true)}>
-              Retry
-            </button>
-          </div>
-        )}
 
         {/* 1. TOP 5 KPI CARDS */}
         <section className="crm-kpi-grid">

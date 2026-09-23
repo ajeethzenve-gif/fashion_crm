@@ -419,35 +419,7 @@ export default function Returns() {
           MAIN CONTENT AREA
       ===================================================== */}
       <main className="ZENVE-returns-main">
-        {/* TOAST NOTIFICATION BANNER */}
-        {alert && alert.type !== "success" && (
-          <div className={`ZENVE-returns-alert ${alert.type}`}>
-            <span>{alert.text}</span>
-            <button
-              type="button"
-              className="ZENVE-alert-close"
-              onClick={() => setAlert(null)}
-              aria-label="Close alert"
-            >
-              ×
-            </button>
-          </div>
-        )}
 
-        {/* ERROR BANNER */}
-        {error && (
-          <div className="ZENVE-returns-alert error">
-            <span>{error}</span>
-            <button
-              type="button"
-              className="ZENVE-alert-close"
-              onClick={loadData}
-              aria-label="Retry loading data"
-            >
-              Retry
-            </button>
-          </div>
-        )}
 
         {/* ===================================================
             TOP 4 KPI METRIC CARDS

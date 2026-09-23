@@ -1854,49 +1854,7 @@ export default function DesignerPortal() {
         </div>
       </header>
 
-      {/* =====================================================
-          ALERT
-      ===================================================== */}
 
-      {alertMessage && alertMessage.type !== "success" && (
-        <div
-          className={`ZENVE-alert ZENVE-alert-${alertMessage.type}`}
-        >
-          <span>{alertMessage.text}</span>
-
-          <button
-            type="button"
-            className="ZENVE-alert-close"
-            onClick={() =>
-              setAlertMessage(null)
-            }
-          >
-            ×
-          </button>
-        </div>
-      )}
-
-      {/* =====================================================
-          PORTAL ERROR
-      ===================================================== */}
-
-      {portalError && (
-        <div className="ZENVE-alert ZENVE-alert-error">
-          <span>{portalError}</span>
-
-          <button
-            type="button"
-            className="ZENVE-alert-close"
-            onClick={() =>
-              loadDashboard(
-                selectedDesignerId
-              )
-            }
-          >
-            Retry
-          </button>
-        </div>
-      )}
 
       {/* =====================================================
           EMPTY DESIGNER

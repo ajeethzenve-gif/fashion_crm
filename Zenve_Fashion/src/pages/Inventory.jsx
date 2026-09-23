@@ -472,20 +472,7 @@ export default function Inventory() {
           MAIN BODY
       ===================================================== */}
       <main className="ZENVE-inv-main">
-        {/* TOAST / ALERT NOTIFICATION */}
-        {alert && alert.type !== "success" && (
-          <div className={`ZENVE-inv-alert ${alert.type}`}>
-            <span>{alert.text}</span>
-            <button
-              type="button"
-              className="ZENVE-alert-close"
-              onClick={() => setAlert(null)}
-              aria-label="Close alert"
-            >
-              ×
-            </button>
-          </div>
-        )}
+
 
         {/* ===================================================
             TOP 4 SUMMARY KPI CARDS

@@ -324,20 +324,7 @@ export default function Orders() {
           MAIN BODY
       ===================================================== */}
       <main className="ZENVE-orders-main">
-        {/* TOAST / ALERT BANNER */}
-        {alert && alert.type !== "success" && (
-          <div className={`ZENVE-orders-alert ${alert.type}`}>
-            <span>{alert.text}</span>
-            <button
-              type="button"
-              className="ZENVE-alert-close"
-              onClick={() => setAlert(null)}
-              aria-label="Close alert"
-            >
-              ×
-            </button>
-          </div>
-        )}
+
 
         {/* ===================================================
             TOP 4 SUMMARY KPI CARDS
