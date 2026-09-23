@@ -305,7 +305,6 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^http://(localhost|127\.0\.0\.1)(:\d+)?$",
 ]
 
-CORS_ALLOW_CREDENTIALS = True
 
 
 # =====================================================

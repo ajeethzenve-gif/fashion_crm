@@ -4,6 +4,7 @@ from .views import (
     DesignerListAPIView,
     DesignerDetailAPIView,
     DesignerPortalDashboardAPIView,
+    DesignerAccountDetailsView
 )
 
 
@@ -37,5 +38,11 @@ urlpatterns = [
         "<int:designer_id>/portal-dashboard/",
         DesignerPortalDashboardAPIView.as_view(),
         name="designer-portal-dashboard",
+    ),
+
+    path(
+        "<int:designer_id>/account-details/",
+        DesignerAccountDetailsView.as_view(),
+        name="designer-account-details",
     ),
 ]

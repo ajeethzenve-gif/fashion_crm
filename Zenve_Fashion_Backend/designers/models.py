@@ -148,7 +148,7 @@ class Designer(models.Model):
         max_length=15,
         blank=True,
         null=True,
-        unique=True,
+        unique=False,
         verbose_name="GST Number",
         validators=[
             RegexValidator(
@@ -457,3 +457,78 @@ class Designer(models.Model):
                 if due and due < today_str:
                     count += 1
         return count
+
+
+class DesignerAccountDetails(models.Model):
+    """
+    Bank and payout details for a designer.
+
+    One designer can have only one primary account-details record.
+    """
+
+    designer = models.OneToOneField(
+        Designer,
+        on_delete=models.CASCADE,
+        related_name="account_details",
+        verbose_name="Designer",
+    )
+
+    account_holder_name = models.CharField(
+        max_length=255,
+        verbose_name="Account Holder Name",
+    )
+
+    account_number = models.CharField(
+        max_length=18,
+        validators=[
+            RegexValidator(
+                regex=r"^[0-9]{9,18}$",
+                message="Account number must contain 9 to 18 digits.",
+            )
+        ],
+        verbose_name="Bank Account Number",
+    )
+
+    ifsc_code = models.CharField(
+        max_length=11,
+        validators=[
+            RegexValidator(
+                regex=r"^[A-Z]{4}0[A-Z0-9]{6}$",
+                message="Enter a valid 11-character IFSC code.",
+            )
+        ],
+        verbose_name="IFSC Code",
+    )
+
+    pan_number = models.CharField(
+        max_length=10,
+        validators=[
+            RegexValidator(
+                regex=r"^[A-Z]{5}[0-9]{4}[A-Z]$",
+                message="Enter a valid 10-character PAN number.",
+            )
+        ],
+        verbose_name="PAN Number",
+    )
+
+    is_verified = models.BooleanField(
+        default=False,
+        verbose_name="Account Verified",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        db_table = "designer_account_details"
+        verbose_name = "Designer Account Details"
+        verbose_name_plural = "Designer Account Details"
+        ordering = ["-updated_at"]
+
+    def __str__(self):
+        return f"{self.designer.brand_name} - {self.account_holder_name}"

@@ -14,168 +14,444 @@ from .models import Product
 from .serializers import ProductSerializer
 
 
-class ProductListCreateAPIView(APIView):
-    """
-    GET  /api/products/ (supports ?designer=Name, ?category=Cat, ?status=Status)
-    POST /api/products/
+# =========================================================
+# PRODUCT LIST + CREATE
+# =========================================================
 
-    POST accepts:
-    - normal JSON product data
-    - multipart/form-data product data
-    - exactly four files using the `images` key
-    """
+class ProductListCreateAPIView(APIView):
 
     permission_classes = [AllowAny]
 
-    # Added: supports React FormData image upload without breaking JSON requests.
     parser_classes = [
         JSONParser,
         FormParser,
         MultiPartParser,
     ]
 
-    def get(self, request):
-        designer = request.query_params.get("designer")
-        category = request.query_params.get("category")
-        status_filter = request.query_params.get("status")
+    # =====================================================
+    # GET PRODUCTS
+    # =====================================================
 
-        products = Product.objects.all().order_by("-created_at")
+    def get(self, request):
+
+        designer = request.query_params.get(
+            "designer"
+        )
+
+        category = request.query_params.get(
+            "category"
+        )
+
+        status_filter = request.query_params.get(
+            "status"
+        )
+
+        is_live = request.query_params.get(
+            "is_live"
+        )
+
+        products = (
+            Product.objects
+            .select_related("designer")
+            .prefetch_related("product_images")
+            .all()
+            .order_by("-created_at")
+        )
+
+        # -------------------------------------------------
+        # Designer filter
+        # -------------------------------------------------
 
         if designer:
-            designer_val = str(designer).strip()
 
-            if designer_val.isdigit():
+            designer_value = str(
+                designer
+            ).strip()
+
+            if designer_value.isdigit():
+
                 products = products.filter(
-                    designer_id=int(designer_val)
+                    designer_id=int(
+                        designer_value
+                    )
                 )
+
             else:
+
                 products = products.filter(
                     models.Q(
-                        designer__brand_name__iexact=designer_val
+                        designer__brand_name__iexact=
+                        designer_value
                     )
-                    | models.Q(
-                        designer__designer_name__iexact=designer_val
+                    |
+                    models.Q(
+                        designer__designer_name__iexact=
+                        designer_value
                     )
-                    | models.Q(
-                        designer__designer_code__iexact=designer_val
+                    |
+                    models.Q(
+                        designer__designer_code__iexact=
+                        designer_value
                     )
                 )
 
+        # -------------------------------------------------
+        # Category filter
+        # -------------------------------------------------
+
         if category:
+
             products = products.filter(
                 category__iexact=category.strip()
             )
 
+        # -------------------------------------------------
+        # Status filter
+        # -------------------------------------------------
+
         if status_filter:
+
             products = products.filter(
                 status__iexact=status_filter.strip()
             )
 
-        is_live = request.query_params.get("is_live")
+        # -------------------------------------------------
+        # Live filter
+        # -------------------------------------------------
 
         if is_live is not None:
-            is_live_bool = str(is_live).strip().lower() in [
-                "true",
-                "1",
-                "yes",
-            ]
-            products = products.filter(is_live=is_live_bool)
 
-        serializer = ProductSerializer(products, many=True)
+            is_live_bool = (
+                str(is_live)
+                .strip()
+                .lower()
+                in [
+                    "true",
+                    "1",
+                    "yes",
+                ]
+            )
+
+            products = products.filter(
+                is_live=is_live_bool
+            )
+
+        serializer = ProductSerializer(
+            products,
+            many=True,
+            context={
+                "request": request,
+            },
+        )
 
         return Response(
             serializer.data,
             status=status.HTTP_200_OK,
         )
 
+    # =====================================================
+    # CREATE PRODUCT
+    # =====================================================
+
     def post(self, request):
-        # request.data includes text fields.
-        # request.FILES is automatically included in `images`
-        # by MultiPartParser and your ProductSerializer.
-        serializer = ProductSerializer(
-            data=request.data,
-            context={"request": request},
+
+        print("\n================================")
+        print("PRODUCT CREATE")
+        print("================================")
+        print(
+            "CONTENT TYPE:",
+            request.content_type,
+        )
+        print(
+            "DATA:",
+            request.data,
+        )
+        print(
+            "FILES:",
+            request.FILES,
         )
 
-        if serializer.is_valid():
-            product = serializer.save()
+        # -------------------------------------------------
+        # Get all uploaded images
+        # -------------------------------------------------
+
+        images = request.FILES.getlist(
+            "images"
+        )
+
+        print(
+            "IMAGE COUNT:",
+            len(images),
+        )
+
+        # -------------------------------------------------
+        # Require exactly 4 images
+        # -------------------------------------------------
+
+        if len(images) != 4:
 
             return Response(
-                ProductSerializer(
-                    product,
-                    context={"request": request},
-                ).data,
-                status=status.HTTP_201_CREATED,
+                {
+                    "images": [
+                        (
+                            "Exactly 4 product images "
+                            "are required."
+                        )
+                    ]
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # -------------------------------------------------
+        # Maximum file size
+        # -------------------------------------------------
+
+        for image in images:
+
+            if image.size > 5 * 1024 * 1024:
+
+                return Response(
+                    {
+                        "images": [
+                            (
+                                "Each image must be "
+                                "5 MB or smaller."
+                            )
+                        ]
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        # -------------------------------------------------
+        # Build serializer input
+        #
+        # IMPORTANT:
+        # request.data is a QueryDict.
+        # Convert it into a normal dict and explicitly
+        # provide images as a Python list.
+        # -------------------------------------------------
+
+        serializer_data = {}
+
+        for key in request.data.keys():
+
+            if key == "images":
+                continue
+
+            serializer_data[key] = request.data.get(
+                key
+            )
+
+        serializer_data["images"] = images
+
+        print(
+            "SERIALIZER DATA KEYS:",
+            list(serializer_data.keys()),
+        )
+
+        print(
+            "PRODUCT NAME:",
+            serializer_data.get(
+                "product_name"
+            ),
+        )
+
+        print(
+            "SKU:",
+            serializer_data.get(
+                "sku"
+            ),
+        )
+
+        print(
+            "DESIGNER:",
+            serializer_data.get(
+                "designer"
+            ),
+        )
+
+        print(
+            "CATEGORY:",
+            serializer_data.get(
+                "category"
+            ),
+        )
+
+        print(
+            "COLOUR:",
+            serializer_data.get(
+                "colour"
+            ),
+        )
+
+        print(
+            "MRP:",
+            serializer_data.get(
+                "mrp"
+            ),
+        )
+
+        print(
+            "SELLING PRICE:",
+            serializer_data.get(
+                "selling_price"
+            ),
+        )
+
+        # -------------------------------------------------
+        # Validate serializer
+        # -------------------------------------------------
+
+        serializer = ProductSerializer(
+            data=serializer_data,
+            context={
+                "request": request,
+            },
+        )
+
+        if not serializer.is_valid():
+
+            print(
+                "VALIDATION ERRORS:",
+                serializer.errors,
+            )
+
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # -------------------------------------------------
+        # Save
+        # -------------------------------------------------
+
+        try:
+
+            product = serializer.save()
+
+        except Exception as exc:
+
+            print(
+                "PRODUCT CREATE ERROR:",
+                repr(exc),
+            )
+
+            return Response(
+                {
+                    "detail": str(exc),
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # -------------------------------------------------
+        # Return created product
+        # -------------------------------------------------
+
         return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST,
+            ProductSerializer(
+                product,
+                context={
+                    "request": request,
+                },
+            ).data,
+            status=status.HTTP_201_CREATED,
         )
 
 
+# =========================================================
+# PRODUCT DETAIL
+# =========================================================
+
 class ProductDetailAPIView(APIView):
-    """
-    GET    /api/products/<id>/
-    PUT    /api/products/<id>/
-    PATCH  /api/products/<id>/
-    DELETE /api/products/<id>/
-    """
 
     permission_classes = [AllowAny]
 
-    # Added: keeps normal JSON update support and FormData support.
     parser_classes = [
         JSONParser,
         FormParser,
         MultiPartParser,
     ]
 
+    # =====================================================
+    # GET OBJECT
+    # =====================================================
+
     def get_object(self, pk):
+
         try:
-            return Product.objects.get(pk=pk)
+
+            return Product.objects.get(
+                pk=pk
+            )
+
         except Product.DoesNotExist:
+
             return None
 
+    # =====================================================
+    # GET
+    # =====================================================
+
     def get(self, request, pk):
+
         product = self.get_object(pk)
 
-        if not product:
+        if product is None:
+
             return Response(
-                {"detail": "Product not found."},
+                {
+                    "detail": "Product not found."
+                },
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        serializer = ProductSerializer(
+            product,
+            context={
+                "request": request,
+            },
+        )
+
         return Response(
-            ProductSerializer(
-                product,
-                context={"request": request},
-            ).data,
+            serializer.data,
             status=status.HTTP_200_OK,
         )
 
+    # =====================================================
+    # PUT
+    # =====================================================
+
     def put(self, request, pk):
+
         product = self.get_object(pk)
 
-        if not product:
+        if product is None:
+
             return Response(
-                {"detail": "Product not found."},
+                {
+                    "detail": "Product not found."
+                },
                 status=status.HTTP_404_NOT_FOUND,
             )
 
         serializer = ProductSerializer(
             product,
             data=request.data,
-            context={"request": request},
+            context={
+                "request": request,
+            },
         )
 
         if serializer.is_valid():
+
             product = serializer.save()
 
             return Response(
                 ProductSerializer(
                     product,
-                    context={"request": request},
+                    context={
+                        "request": request,
+                    },
                 ).data,
                 status=status.HTTP_200_OK,
             )
@@ -185,12 +461,20 @@ class ProductDetailAPIView(APIView):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
+    # =====================================================
+    # PATCH
+    # =====================================================
+
     def patch(self, request, pk):
+
         product = self.get_object(pk)
 
-        if not product:
+        if product is None:
+
             return Response(
-                {"detail": "Product not found."},
+                {
+                    "detail": "Product not found."
+                },
                 status=status.HTTP_404_NOT_FOUND,
             )
 
@@ -198,16 +482,21 @@ class ProductDetailAPIView(APIView):
             product,
             data=request.data,
             partial=True,
-            context={"request": request},
+            context={
+                "request": request,
+            },
         )
 
         if serializer.is_valid():
+
             product = serializer.save()
 
             return Response(
                 ProductSerializer(
                     product,
-                    context={"request": request},
+                    context={
+                        "request": request,
+                    },
                 ).data,
                 status=status.HTTP_200_OK,
             )
@@ -217,96 +506,212 @@ class ProductDetailAPIView(APIView):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
+    # =====================================================
+    # DELETE
+    # =====================================================
+
     def delete(self, request, pk):
+
         product = self.get_object(pk)
 
-        if not product:
+        if product is None:
+
             return Response(
-                {"detail": "Product not found."},
+                {
+                    "detail": "Product not found."
+                },
                 status=status.HTTP_404_NOT_FOUND,
             )
 
         product.delete()
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            status=status.HTTP_204_NO_CONTENT
+        )
 
+
+# =========================================================
+# STOCK ADJUSTMENT
+# =========================================================
 
 class ProductStockAdjustmentAPIView(APIView):
-    """
-    POST /api/products/<id>/adjust_stock/
-
-    Body:
-    {
-        "action": "receive" | "damage" | "quarantine" |
-                  "release_quarantine" | "reserve" | "release_reserve",
-        "quantity": int
-    }
-    """
 
     permission_classes = [AllowAny]
 
     def post(self, request, pk):
+
         try:
-            product = Product.objects.get(pk=pk)
+
+            product = Product.objects.get(
+                pk=pk
+            )
+
         except Product.DoesNotExist:
+
             return Response(
-                {"detail": "Product not found."},
+                {
+                    "detail": "Product not found."
+                },
                 status=status.HTTP_404_NOT_FOUND,
             )
 
         action = str(
-            request.data.get("action", "")
+            request.data.get(
+                "action",
+                "",
+            )
         ).strip().lower()
 
         try:
-            qty = int(request.data.get("quantity", 0))
-        except (ValueError, TypeError):
+
+            quantity = int(
+                request.data.get(
+                    "quantity",
+                    0,
+                )
+            )
+
+        except (
+            ValueError,
+            TypeError,
+        ):
+
             return Response(
-                {"detail": "Invalid quantity provided."},
+                {
+                    "detail": (
+                        "Invalid quantity provided."
+                    )
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if qty <= 0:
+        if quantity <= 0:
+
             return Response(
-                {"detail": "Quantity must be greater than zero."},
+                {
+                    "detail": (
+                        "Quantity must be greater "
+                        "than zero."
+                    )
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # -------------------------------------------------
+        # RECEIVE
+        # -------------------------------------------------
 
         if action == "receive":
-            product.inventory_quantity += qty
 
-        elif action in ["damage", "mark_damaged", "damaged"]:
+            product.inventory_quantity += quantity
+
+        # -------------------------------------------------
+        # DAMAGE
+        # -------------------------------------------------
+
+        elif action in [
+            "damage",
+            "mark_damaged",
+            "damaged",
+        ]:
+
             available = product.available_quantity
-            qty_to_damage = min(qty, available)
-            product.damaged_quantity += qty_to_damage
 
-        elif action in ["quarantine", "quarantined"]:
+            quantity_to_damage = min(
+                quantity,
+                available,
+            )
+
+            product.damaged_quantity += (
+                quantity_to_damage
+            )
+
+        # -------------------------------------------------
+        # QUARANTINE
+        # -------------------------------------------------
+
+        elif action in [
+            "quarantine",
+            "quarantined",
+        ]:
+
             available = product.available_quantity
-            qty_to_quarantine = min(qty, available)
-            product.quarantined_quantity += qty_to_quarantine
 
-        elif action in ["release_quarantine", "release"]:
-            qty_to_release = min(
-                qty,
+            quantity_to_quarantine = min(
+                quantity,
+                available,
+            )
+
+            product.quarantined_quantity += (
+                quantity_to_quarantine
+            )
+
+        # -------------------------------------------------
+        # RELEASE QUARANTINE
+        # -------------------------------------------------
+
+        elif action in [
+            "release_quarantine",
+            "release",
+        ]:
+
+            quantity_to_release = min(
+                quantity,
                 product.quarantined_quantity,
             )
-            product.quarantined_quantity -= qty_to_release
+
+            product.quarantined_quantity -= (
+                quantity_to_release
+            )
+
+        # -------------------------------------------------
+        # RESERVE
+        # -------------------------------------------------
 
         elif action == "reserve":
-            available = product.available_quantity
-            qty_to_reserve = min(qty, available)
-            product.reserved_quantity += qty_to_reserve
 
-        elif action in ["release_reserve", "unreserve"]:
-            qty_to_release = min(
-                qty,
+            available = product.available_quantity
+
+            quantity_to_reserve = min(
+                quantity,
+                available,
+            )
+
+            product.reserved_quantity += (
+                quantity_to_reserve
+            )
+
+        # -------------------------------------------------
+        # RELEASE RESERVE
+        # -------------------------------------------------
+
+        elif action in [
+            "release_reserve",
+            "unreserve",
+        ]:
+
+            quantity_to_release = min(
+                quantity,
                 product.reserved_quantity,
             )
-            product.reserved_quantity -= qty_to_release
+
+            product.reserved_quantity -= (
+                quantity_to_release
+            )
+
+        # -------------------------------------------------
+        # INVALID ACTION
+        # -------------------------------------------------
 
         else:
+
             return Response(
-                {"detail": f"Unsupported inventory action: {action}"},
+                {
+                    "detail": (
+                        "Unsupported inventory action: "
+                        f"{action}"
+                    )
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -315,7 +720,9 @@ class ProductStockAdjustmentAPIView(APIView):
         return Response(
             ProductSerializer(
                 product,
-                context={"request": request},
+                context={
+                    "request": request,
+                },
             ).data,
             status=status.HTTP_200_OK,
         )
