@@ -4,6 +4,7 @@ import "../styles/StoreFront.css";
 import SearchBar from "../components/SearchBar";
 import zenveLogo from "../assest/logo/zenve-logo-fashion.png";
 import { getProducts, getDesigners, createOrder } from "../services/api";
+import { showToast } from "../utils/zenveToast";
 
 /* =========================================================
    ICONS
@@ -93,6 +94,7 @@ export default function Storefront() {
 
   useEffect(() => {
     if (alert) {
+      showToast(alert);
       const timer = setTimeout(() => setAlert(null), 5000);
       return () => clearTimeout(timer);
     }

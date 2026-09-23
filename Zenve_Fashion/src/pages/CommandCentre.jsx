@@ -11,6 +11,7 @@ import {
   getReturns,
   getSettlements,
 } from "../services/api";
+import { showSuccessToast, showErrorToast } from "../utils/zenveToast";
 
 /* =========================================================
    SVG ICONS
@@ -102,6 +103,7 @@ function downloadCsvBlob(filename, csvContent) {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+  showSuccessToast(`Exported ${filename}`);
 }
 
 const SECTION_TITLES = {
@@ -471,8 +473,13 @@ export default function CommandCentre() {
   const [auditTimeFilter, setAuditTimeFilter] = useState("all");
   const [visibleAuditCount, setVisibleAuditCount] = useState(40);
 
-  const showToast = (msg) => {
+  const showToast = (msg, isError = false) => {
     setToastMessage(msg);
+    if (isError) {
+      showErrorToast(msg);
+    } else {
+      showSuccessToast(msg);
+    }
     setTimeout(() => setToastMessage(null), 3000);
   };
 
@@ -510,6 +517,7 @@ export default function CommandCentre() {
     } catch (err) {
       console.error("Failed to load Command Centre overview:", err);
       setError("Failed to connect to live backend.");
+      showErrorToast("Failed to connect to live backend.");
     } finally {
       setLoading(false);
       setRefreshing(false);

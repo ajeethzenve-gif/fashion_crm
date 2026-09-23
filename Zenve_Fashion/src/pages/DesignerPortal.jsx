@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import { showToast, showErrorToast } from "../utils/zenveToast";
 import "../styles/DesignerPortal.css";
 import SearchBar from "../components/SearchBar";
 import logo from "../assest/logo/zenve-logo-fashion.png";
@@ -357,6 +358,18 @@ export default function DesignerPortal() {
   ======================================================= */
 
   const [alertMessage, setAlertMessage] = useState(null);
+
+  useEffect(() => {
+    if (alertMessage) {
+      showToast(alertMessage);
+    }
+  }, [alertMessage]);
+
+  useEffect(() => {
+    if (portalError) {
+      showErrorToast(portalError);
+    }
+  }, [portalError]);
 
   /* =======================================================
      SKU FORM

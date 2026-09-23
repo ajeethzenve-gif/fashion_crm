@@ -1046,3 +1046,70 @@ button {
   }
 }
 
+/* =========================================================
+   ZENVE SWEETALERT BOTTOM-RIGHT TOAST THEME
+   Unified toast notifications for success/error in all layers
+========================================================= */
+
+.zenve-swal-toast {
+  font-family: var(--sans, 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif) !important;
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  padding: 12px 18px !important;
+  margin-bottom: 24px !important;
+  margin-right: 24px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid #e7e5e4 !important;
+  align-items: center !important;
+  min-width: 280px !important;
+  max-width: 400px !important;
+}
+
+.zenve-swal-toast.zenve-swal-toast-success {
+  border-left: 4px solid #16a34a !important;
+}
+
+.zenve-swal-toast.zenve-swal-toast-error {
+  border-left: 4px solid #dc2626 !important;
+}
+
+.zenve-swal-toast .swal2-icon {
+  margin: 0 12px 0 0 !important;
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  border-width: 2px !important;
+  font-size: 11px !important;
+}
+
+.zenve-swal-toast .swal2-icon.swal2-success [class^='swal2-success-line'] {
+  height: 2px !important;
+}
+
+.zenve-swal-toast .swal2-icon.swal2-error [class^='swal2-x-mark-line'] {
+  height: 2px !important;
+}
+
+.zenve-swal-toast-title {
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  color: var(--ink, #1c1917) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+  line-height: 1.4 !important;
+}
+
+.zenve-swal-progress-success {
+  background: #16a34a !important;
+  height: 3px !important;
+  border-radius: 0 0 12px 12px !important;
+}
+
+.zenve-swal-progress-error {
+  background: #dc2626 !important;
+  height: 3px !important;
+  border-radius: 0 0 12px 12px !important;
+}
+
+

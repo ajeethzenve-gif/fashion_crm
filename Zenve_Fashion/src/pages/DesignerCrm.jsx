@@ -14,6 +14,7 @@ import {
 } from "../services/api";
 
 import { maskGstNumber } from "../utils/gstUtils.js";
+import { showSuccessToast, showErrorToast } from "../utils/zenveToast";
 
 /* =========================================================
    CONSTANTS & BLUEPRINT SEQUENCE
@@ -143,8 +144,13 @@ export default function DesignerCRM() {
   const [useCompanyGst, setUseCompanyGst] = useState(false);
   const [gstModalTarget, setGstModalTarget] = useState("newLead"); // 'newLead' | designer object
 
-  const showToast = (msg) => {
+  const showToast = (msg, isError = false) => {
     setToastMessage(msg);
+    if (isError) {
+      showErrorToast(msg);
+    } else {
+      showSuccessToast(msg);
+    }
     setTimeout(() => setToastMessage(null), 3000);
   };
 

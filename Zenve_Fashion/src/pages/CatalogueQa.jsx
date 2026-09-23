@@ -4,6 +4,7 @@ import "../styles/CatalogueQa.css";
 import SearchBar from "../components/SearchBar";
 import logo from "../assest/logo/zenve-logo-fashion.png";
 import { getProducts, updateProduct } from "../services/api";
+import { showToast } from "../utils/zenveToast";
 
 /* =========================================================
    ICONS
@@ -61,6 +62,14 @@ export default function CatalogueQa() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [alert, setAlert] = useState(null);
+
+  useEffect(() => {
+    if (alert) {
+      showToast(alert);
+      const timer = setTimeout(() => setAlert(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [alert]);
 
   // Scores by SKU ID: { [skuId]: { productData: 90, photography: 90, ... } }
   const [scoresState, setScoresState] = useState({});

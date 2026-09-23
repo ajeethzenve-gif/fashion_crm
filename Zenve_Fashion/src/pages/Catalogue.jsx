@@ -4,6 +4,7 @@ import "../styles/Catalogue.css";
 import SearchBar from "../components/SearchBar";
 import logo from "../assest/logo/zenve-logo-fashion.png";
 import { getProducts, updateProduct } from "../services/api";
+import { showToast } from "../utils/zenveToast";
 
 /* =========================================================
    ICONS & SWITCH
@@ -112,6 +113,14 @@ export default function Catalogue() {
   const [priceInputs, setPriceInputs] = useState({});
   const [expandedSkuId, setExpandedSkuId] = useState(null);
   const [alert, setAlert] = useState(null);
+
+  useEffect(() => {
+    if (alert) {
+      showToast(alert);
+      const timer = setTimeout(() => setAlert(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [alert]);
 
   /* =======================================================
      FETCH PRODUCTS FROM BACKEND

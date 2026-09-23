@@ -23,6 +23,7 @@ import {
   getReturns,
   getSettlements,
 } from "../services/api";
+import { showSuccessToast, showErrorToast } from "../utils/zenveToast";
 
 /* =========================================================
    SVG ICONS
@@ -96,6 +97,7 @@ function downloadCsvBlob(filename, csvContent) {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+  showSuccessToast(`Exported ${filename}`);
 }
 
 const SECTION_TITLES = {
@@ -668,8 +670,13 @@ export default function Analytics() {
   const [backendOverview, setBackendOverview] = useState(null);
 
   // Show Toast feedback
-  const showToast = (msg) => {
+  const showToast = (msg, isError = false) => {
     setToastMessage(msg);
+    if (isError) {
+      showErrorToast(msg);
+    } else {
+      showSuccessToast(msg);
+    }
     setTimeout(() => setToastMessage(null), 3000);
   };
 
@@ -707,6 +714,7 @@ export default function Analytics() {
     } catch (err) {
       console.error("Failed to load analytics data:", err);
       setError("Failed to synchronize with live database.");
+      showErrorToast("Failed to synchronize with live database.");
     } finally {
       setLoading(false);
       setRefreshing(false);

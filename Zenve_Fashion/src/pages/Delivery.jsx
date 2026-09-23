@@ -4,6 +4,7 @@ import "../styles/Delivery.css";
 import SearchBar from "../components/SearchBar";
 import zenveLogo from "../assest/logo/zenve-logo-fashion.png";
 import { getProducts, updateProduct } from "../services/api";
+import { showToast } from "../utils/zenveToast";
 
 /* =========================================================
    ICONS
@@ -104,6 +105,7 @@ export default function DeliveryEngine() {
 
   useEffect(() => {
     if (alert) {
+      showToast(alert);
       const timer = setTimeout(() => setAlert(null), 4000);
       return () => clearTimeout(timer);
     }

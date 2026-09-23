@@ -8,6 +8,7 @@ import {
   transitionSettlement,
   getDesigners,
 } from "../services/api";
+import { showToast } from "../utils/zenveToast";
 
 /* =========================================================
    ICONS
@@ -137,6 +138,7 @@ export default function Settlement() {
 
   useEffect(() => {
     if (alert) {
+      showToast(alert);
       const timer = setTimeout(() => setAlert(null), 5000);
       return () => clearTimeout(timer);
     }

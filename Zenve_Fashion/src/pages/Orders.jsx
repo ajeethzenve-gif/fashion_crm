@@ -4,6 +4,7 @@ import "../styles/Orders.css";
 import SearchBar from "../components/SearchBar";
 import zenveLogo from "../assest/logo/zenve-logo-fashion.png";
 import { getOrders, transitionOrder, cancelOrder } from "../services/api";
+import { showToast } from "../utils/zenveToast";
 
 /* =========================================================
    ICONS
@@ -70,6 +71,7 @@ export default function Orders() {
 
   useEffect(() => {
     if (alert) {
+      showToast(alert);
       const timer = setTimeout(() => setAlert(null), 5000);
       return () => clearTimeout(timer);
     }
