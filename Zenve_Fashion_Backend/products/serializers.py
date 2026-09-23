@@ -69,10 +69,14 @@ class FlexibleLocationField(serializers.CharField):
         mapping = {
             "mumbai fc": Product.FulfilmentLocation.MUMBAI_FC,
             "mumbai_fc": Product.FulfilmentLocation.MUMBAI_FC,
-
-            "bangalore fc": Product.FulfilmentLocation.BANGALORE_FC,
-            "bangalore_fc": Product.FulfilmentLocation.BANGALORE_FC,
-
+            "bengaluru fc": Product.FulfilmentLocation.BENGALURU_FC,
+            "bengaluru_fc": Product.FulfilmentLocation.BENGALURU_FC,
+            "kochi fc": Product.FulfilmentLocation.KOCHI_FC,
+            "kochi_fc": Product.FulfilmentLocation.KOCHI_FC,
+            "chennai fc": Product.FulfilmentLocation.CHENNAI_FC,
+            "chennai_fc": Product.FulfilmentLocation.CHENNAI_FC,
+            "bangalore fc": Product.FulfilmentLocation.BENGALURU_FC,
+            "bangalore_fc": Product.FulfilmentLocation.BENGALURU_FC,
             "delhi fc": Product.FulfilmentLocation.DELHI_FC,
             "delhi_fc": Product.FulfilmentLocation.DELHI_FC,
 

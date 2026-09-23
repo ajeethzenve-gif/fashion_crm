@@ -114,13 +114,13 @@ export default function CatalogueQa() {
 
   const kpis = useMemo(() => {
     const inQueue = queueSkus.length;
-    const approved = products.filter((p) => (p.qaStatus || p.status) === "APPROVED").length;
-    const rejected = products.filter((p) => (p.qaStatus || p.status) === "REJECTED").length;
+    const approved = products.filter((p) => (p.qaStatus || p.status) === "APPROVED" || (p.qaStatus || p.status) === "LIVE").length;
+    const totalSkus = products.length;
     const withScores = products.filter((p) => typeof p.qa_score === "number");
     const avgQuality = withScores.length
       ? Math.round(withScores.reduce((acc, p) => acc + p.qa_score, 0) / withScores.length)
       : 0;
-    return { inQueue, approved, rejected, avgQuality };
+    return { inQueue, approved, totalSkus, avgQuality };
   }, [products, queueSkus]);
 
   /* =======================================================
@@ -140,26 +140,16 @@ export default function CatalogueQa() {
   };
 
   /* =======================================================
-     SUBMIT DETAILED REVIEW
+     SUBMIT DETAILED REVIEW (DIRECT APPROVAL WITH REFERENCE SCORE)
   ======================================================= */
   const handleSubmitReview = async (skuItem) => {
     const scores = getScoresForSku(skuItem.id);
     const totalScore = calculateWeightedScore(scores);
     const note = notesState[skuItem.id] || "";
 
-    let newStatus = "REJECTED";
-    let isLive = false;
-    let message = `Rejected (${totalScore}/100) — designer must resubmit`;
-
-    if (totalScore >= 90) {
-      newStatus = "APPROVED";
-      isLive = true;
-      message = `Approved with ${totalScore}/100 — SKU is now live`;
-    } else if (totalScore >= 75) {
-      newStatus = "CORRECTION";
-      isLive = false;
-      message = `Correction requested (${totalScore}/100) — sent back to designer`;
-    }
+    const newStatus = "APPROVED";
+    const isLive = true;
+    const message = `Approved with ${totalScore}/100 reference score — SKU is now live`;
 
     try {
       await updateProduct(skuItem.id, {
@@ -177,7 +167,7 @@ export default function CatalogueQa() {
         {
           id: `log-${Date.now()}`,
           at: new Date().toISOString(),
-          message: `${skuItem.product_name || skuItem.name} reviewed: ${message}`,
+          message: `${skuItem.product_name || skuItem.name} directly approved with ${totalScore}/100 reference score`,
         },
         ...prev,
       ]);
@@ -186,26 +176,22 @@ export default function CatalogueQa() {
       await loadProducts();
     } catch (err) {
       console.error("Submit QA review failed:", err);
-      setAlert({ type: "error", text: `Failed to submit review: ${err.message}` });
+      setAlert({ type: "error", text: `Failed to approve product: ${err.message}` });
     }
   };
 
   /* =======================================================
-     QUICK DECISION HANDLERS
+     QUICK APPROVE HANDLER
   ======================================================= */
-  const handleQuickDecision = async (skuItem, targetScore, targetStatus) => {
-    const isLive = targetStatus === "APPROVED";
-    const message =
-      targetStatus === "APPROVED"
-        ? `Quick approved with ${targetScore}/100 — SKU is now live`
-        : `Quick rejected with ${targetScore}/100 — designer must resubmit`;
+  const handleQuickApprove = async (skuItem, targetScore = 95) => {
+    const message = `Quick approved with ${targetScore}/100 reference score — SKU is now live`;
 
     try {
       await updateProduct(skuItem.id, {
-        status: targetStatus,
+        status: "APPROVED",
         qa_score: targetScore,
-        is_live: isLive,
-        qa_note: `Quick decision applied (${targetScore}/100)`,
+        is_live: true,
+        qa_note: notesState[skuItem.id] || `Directly approved (${targetScore}/100 reference score)`,
       });
 
       setAlert({ type: "success", text: message });
@@ -221,8 +207,8 @@ export default function CatalogueQa() {
 
       await loadProducts();
     } catch (err) {
-      console.error("Quick decision failed:", err);
-      setAlert({ type: "error", text: `Failed to apply quick decision: ${err.message}` });
+      console.error("Quick approve failed:", err);
+      setAlert({ type: "error", text: `Failed to approve product: ${err.message}` });
     }
   };
 
@@ -290,7 +276,7 @@ export default function CatalogueQa() {
           <div className="ZENVE-kpi-tile">
             <div className="ZENVE-tile-label">In queue</div>
             <div className="ZENVE-tile-value">{loading ? "—" : kpis.inQueue}</div>
-            <div className="ZENVE-tile-hint">Awaiting a score</div>
+            <div className="ZENVE-tile-hint">Awaiting review</div>
           </div>
 
           <div className="ZENVE-kpi-tile">
@@ -300,15 +286,15 @@ export default function CatalogueQa() {
           </div>
 
           <div className="ZENVE-kpi-tile">
-            <div className="ZENVE-tile-label">Rejected</div>
-            <div className="ZENVE-tile-value">{loading ? "—" : kpis.rejected}</div>
-            <div className="ZENVE-tile-hint">Needs revision</div>
+            <div className="ZENVE-tile-label">Total SKUs</div>
+            <div className="ZENVE-tile-value">{loading ? "—" : kpis.totalSkus}</div>
+            <div className="ZENVE-tile-hint">Catalogue count</div>
           </div>
 
           <div className="ZENVE-kpi-tile">
             <div className="ZENVE-tile-label">Average quality</div>
             <div className="ZENVE-tile-value">{loading ? "—" : `${kpis.avgQuality}/100`}</div>
-            <div className="ZENVE-tile-hint">Across reviewed SKUs</div>
+            <div className="ZENVE-tile-hint">Designer reference score</div>
           </div>
         </div>
 
@@ -320,7 +306,7 @@ export default function CatalogueQa() {
             <div>
               <h2 className="ZENVE-card-title">QA queue</h2>
               <p className="ZENVE-card-description">
-                Ten weighted dimensions make the Total Product Quality Score. 90–100 approve · 75–89 correction · below 75 reject.
+                Directly approve products for storefront. 10 weighted quality dimensions are recorded as reference scores for designers.
               </p>
             </div>
           </div>
@@ -387,7 +373,7 @@ export default function CatalogueQa() {
                     <div className="ZENVE-qa-actions-row">
                       <input
                         type="text"
-                        placeholder="Reviewer note to the designer"
+                        placeholder="Reference note for designer (optional)"
                         value={notesState[sku.id] ?? ""}
                         onChange={(e) => setNotesState({ ...notesState, [sku.id]: e.target.value })}
                         className="ZENVE-note-input"
@@ -398,23 +384,15 @@ export default function CatalogueQa() {
                         className="ZENVE-btn-primary"
                         onClick={() => handleSubmitReview(sku)}
                       >
-                        Submit review ({totalScore}/100)
+                        Approve product ({totalScore}/100)
                       </button>
 
                       <button
                         type="button"
                         className="ZENVE-btn-outline-sm"
-                        onClick={() => handleQuickDecision(sku, 95, "APPROVED")}
+                        onClick={() => handleQuickApprove(sku, 95)}
                       >
                         Quick approve (95)
-                      </button>
-
-                      <button
-                        type="button"
-                        className="ZENVE-btn-outline-sm"
-                        onClick={() => handleQuickDecision(sku, 60, "REJECTED")}
-                      >
-                        Quick reject (60)
                       </button>
                     </div>
                   </div>

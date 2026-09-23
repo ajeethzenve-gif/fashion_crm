@@ -377,9 +377,8 @@ export default function Catalogue() {
                 const isLive = sku.live || sku.is_live || sku.status === "LIVE";
                 const isReturnable = sku.returnable ?? sku.return_policy === "RETURNABLE";
                 const designerBrand = sku.designer_brand || sku.designer_name || "—";
-                const fulfilmentText = `${sku.location || sku.fulfilment_location || "Mumbai FC"} · ${
-                  sku.available_quantity ?? sku.inventory_quantity ?? 0
-                } available`;
+                const fulfilmentText = `${sku.location || sku.fulfilment_location || "Mumbai FC"} · ${sku.available_quantity ?? sku.inventory_quantity ?? 0
+                  } available`;
                 const collectionText =
                   [sku.collection, sku.occasion, sku.season].filter(Boolean).join(" · ") || "—";
 

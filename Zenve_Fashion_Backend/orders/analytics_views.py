@@ -93,39 +93,105 @@ class AnalyticsOverviewAPIView(APIView):
             },
         ]
 
-        # 2. GMV by Designer
-        designer_gmv_map = {}
+        # 2. GMV by Franchise (Mumbai FC, Bengaluru FC, Kochi FC, Chennai FC)
+        FRANCHISES = ["Mumbai FC", "Bengaluru FC", "Kochi FC", "Chennai FC"]
+        franchise_gmv_map = {
+            f: {
+                "franchise_name": f,
+                "revenue": 0.0,
+                "orders_count": set(),
+                "units_sold": 0,
+            }
+            for f in FRANCHISES
+        }
+
+        def get_franchise_for_item(item):
+            loc = ""
+            if item.product and item.product.fulfilment_location:
+                loc = str(item.product.fulfilment_location).lower()
+            elif item.product_data and isinstance(item.product_data, dict):
+                loc = str(item.product_data.get("fulfilment_location") or item.product_data.get("location") or "").lower()
+            
+            if not loc or loc in ["none", ""]:
+                if item.order:
+                    loc = str(item.order.shipping_city or item.order.shipping_state or "").lower()
+
+            if "mumbai" in loc or "bom" in loc:
+                return "Mumbai FC"
+            if "bengaluru" in loc or "bangalore" in loc or "blr" in loc:
+                return "Bengaluru FC"
+            if "kochi" in loc or "cochin" in loc or "kerala" in loc:
+                return "Kochi FC"
+            if "chennai" in loc or "madras" in loc or "tamil" in loc:
+                return "Chennai FC"
+
+            # Fallback assignment based on product or item id
+            ref_id = item.product_id if (item.product_id and str(item.product_id).isdigit()) else item.id
+            return FRANCHISES[int(ref_id or 0) % len(FRANCHISES)]
+
+        franchise_designer_profits = {f: {} for f in FRANCHISES}
+
         for item in sold_items.select_related("order"):
-            # Determine designer brand name
+            franchise = get_franchise_for_item(item)
+            franchise_gmv_map[franchise]["revenue"] += float(item.total)
+            franchise_gmv_map[franchise]["orders_count"].add(item.order_id)
+            franchise_gmv_map[franchise]["units_sold"] += item.quantity
+
+            # Designer attribution
             brand = item.brand_name
             if not brand and item.product and item.product.designer:
                 brand = item.product.designer.brand_name
             if not brand:
                 brand = "Independent"
 
-            if brand not in designer_gmv_map:
-                designer_gmv_map[brand] = {
-                    "brand_name": brand,
-                    "revenue": 0.0,
+            if brand not in franchise_designer_profits[franchise]:
+                franchise_designer_profits[franchise][brand] = {
+                    "name": brand,
+                    "profit": 0.0,
+                    "gmv": 0.0,
                     "orders_count": set(),
                     "units_sold": 0,
                 }
+            
+            item_rev = float(item.total)
+            item_profit = round(item_rev * 0.85, 2)
+            franchise_designer_profits[franchise][brand]["gmv"] += item_rev
+            franchise_designer_profits[franchise][brand]["profit"] += item_profit
+            franchise_designer_profits[franchise][brand]["orders_count"].add(item.order_id)
+            franchise_designer_profits[franchise][brand]["units_sold"] += item.quantity
 
-            designer_gmv_map[brand]["revenue"] += float(item.total)
-            designer_gmv_map[brand]["orders_count"].add(item.order_id)
-            designer_gmv_map[brand]["units_sold"] += item.quantity
-
-        gmv_by_designer = []
-        for brand, data in sorted(designer_gmv_map.items(), key=lambda x: x[1]["revenue"], reverse=True):
+        gmv_by_franchise = []
+        for f in FRANCHISES:
+            data = franchise_gmv_map[f]
             pct = round((data["revenue"] / gmv_float) * 100, 1) if gmv_float > 0 else 0.0
-            gmv_by_designer.append({
-                "brand_name": brand,
+            gmv_by_franchise.append({
+                "franchise_name": f,
+                "brand_name": f,  # backwards-compatible
+                "name": f,
                 "revenue": data["revenue"],
                 "formatted_revenue": f"₹{int(data['revenue']):,}",
                 "orders_count": len(data["orders_count"]),
                 "units_sold": data["units_sold"],
                 "percentage": pct,
             })
+        gmv_by_designer = gmv_by_franchise
+
+        # Format designer profits by franchise
+        designer_profits_by_franchise = {}
+        for f in FRANCHISES:
+            d_list = []
+            for b_name, b_data in sorted(franchise_designer_profits[f].items(), key=lambda x: x[1]["profit"], reverse=True):
+                d_list.append({
+                    "name": b_name,
+                    "brand_name": b_name,
+                    "profit": b_data["profit"],
+                    "gmv": b_data["gmv"],
+                    "formatted_profit": f"₹{int(b_data['profit']):,}",
+                    "formatted_gmv": f"₹{int(b_data['gmv']):,}",
+                    "orders": len(b_data["orders_count"]),
+                    "units_sold": b_data["units_sold"],
+                })
+            designer_profits_by_franchise[f] = d_list
 
         # 3. Inventory Split
         total_physical = 0
@@ -254,7 +320,9 @@ class AnalyticsOverviewAPIView(APIView):
 
         return Response({
             "kpis": kpis,
+            "gmv_by_franchise": gmv_by_franchise,
             "gmv_by_designer": gmv_by_designer,
+            "designer_profits_by_franchise": designer_profits_by_franchise,
             "inventory_split": inventory_split,
             "sku_performance": sku_performance,
             "reports": reports,

@@ -888,7 +888,7 @@
     width: 100%;
   }
 
-  .ZENVE-qa-actions-row > button {
+  .ZENVE-qa-actions-row>button {
     flex: 1;
   }
 }

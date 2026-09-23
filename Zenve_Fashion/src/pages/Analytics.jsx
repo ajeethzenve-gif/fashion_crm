@@ -409,13 +409,107 @@ function buildConsolidatedReport(state) {
 }
 
 /* =========================================================
-   BAR CHART COMPONENT (GMV BY DESIGNER - EXACT ZENVE)
+   BAR CHART COMPONENT (GMV BY FRANCHISE)
 ========================================================= */
 
-function DesignerGmvChart({ data = [] }) {
-  const validData = (data || []).filter((d) => Number(d.gmv) > 0);
+function FranchiseGmvChart({ data = [], popupFranchise, onSelectFranchise }) {
+  const validData = data || [];
   if (validData.length === 0) {
     return <div className="panel-empty">No sales recorded yet.</div>;
+  }
+
+  const handleBarClick = (entry) => {
+    const name = entry?.name || entry?.activeLabel || (entry?.activePayload && entry.activePayload[0]?.payload?.name);
+    if (name && onSelectFranchise) {
+      onSelectFranchise(name);
+    }
+  };
+
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <BarChart
+        data={validData}
+        margin={{ top: 16, right: 12, left: -16, bottom: 4 }}
+        onClick={(e) => {
+          if (e && e.activeLabel) {
+            onSelectFranchise(e.activeLabel);
+          } else if (e && e.activePayload && e.activePayload[0]) {
+            const item = e.activePayload[0].payload;
+            if (item && item.name) onSelectFranchise(item.name);
+          }
+        }}
+        style={{ cursor: "pointer" }}
+      >
+        <CartesianGrid
+          strokeDasharray="3 3"
+          stroke="var(--ZENVE-border)"
+          vertical={false}
+        />
+        <XAxis
+          dataKey="name"
+          tick={{ fontSize: 12, fill: "var(--ZENVE-muted)", cursor: "pointer" }}
+          tickLine={false}
+          axisLine={{ stroke: "var(--ZENVE-border)" }}
+          interval={0}
+        />
+        <YAxis
+          tick={{ fontSize: 12, fill: "var(--ZENVE-muted)" }}
+          tickLine={false}
+          axisLine={false}
+          tickFormatter={(v) =>
+            v >= 1000 ? `₹${Math.round(v / 1000)}k` : `₹${v}`
+          }
+        />
+        <Tooltip
+          formatter={(value) => [`₹${Number(value).toLocaleString()}`, "GMV (Click to view designer profits)"]}
+          contentStyle={{
+            backgroundColor: "var(--ZENVE-card)",
+            borderColor: "var(--ZENVE-border)",
+            borderRadius: "6px",
+            fontSize: "12px",
+            color: "var(--ZENVE-ink)",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+          }}
+          cursor={{ fill: "rgba(194, 139, 81, 0.12)", cursor: "pointer" }}
+        />
+        <Bar
+          dataKey="gmv"
+          radius={[4, 4, 0, 0]}
+          maxBarSize={52}
+          onClick={(entry) => handleBarClick(entry)}
+          style={{ cursor: "pointer" }}
+        >
+          {validData.map((entry, index) => {
+            const isSelected = popupFranchise && entry.name === popupFranchise;
+            return (
+              <Cell
+                key={`franchise-cell-${index}`}
+                fill={isSelected ? "var(--ZENVE-gold)" : "rgba(194, 139, 81, 0.7)"}
+                stroke={isSelected ? "#ffffff" : "transparent"}
+                strokeWidth={isSelected ? 2 : 0}
+                style={{ cursor: "pointer" }}
+              />
+            );
+          })}
+        </Bar>
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
+/* =========================================================
+   BAR CHART COMPONENT (DESIGNER PROFITS - SAME BAR FORMAT)
+========================================================= */
+
+function DesignerProfitsChart({ data = [], franchiseName }) {
+  const validData = (data || []).filter((d) => Number(d.profit) > 0 || Number(d.gmv) > 0);
+
+  if (validData.length === 0) {
+    return (
+      <div className="panel-empty" style={{ padding: "32px 16px", textAlign: "center", color: "var(--ZENVE-muted)", fontSize: "13px" }}>
+        No designer profit records found for {franchiseName}.
+      </div>
+    );
   }
 
   return (
@@ -435,9 +529,6 @@ function DesignerGmvChart({ data = [] }) {
           tickLine={false}
           axisLine={{ stroke: "var(--ZENVE-border)" }}
           interval={0}
-          tickFormatter={(name) =>
-            name && name.length > 12 ? `${name.slice(0, 10)}…` : name
-          }
         />
         <YAxis
           tick={{ fontSize: 12, fill: "var(--ZENVE-muted)" }}
@@ -448,7 +539,8 @@ function DesignerGmvChart({ data = [] }) {
           }
         />
         <Tooltip
-          formatter={(value) => [`₹${Number(value).toLocaleString()}`, "GMV"]}
+          formatter={(value) => [`₹${Number(value).toLocaleString()}`, "Designer Profit"]}
+          labelFormatter={(label) => `Designer: ${label}`}
           contentStyle={{
             backgroundColor: "var(--ZENVE-card)",
             borderColor: "var(--ZENVE-border)",
@@ -460,7 +552,7 @@ function DesignerGmvChart({ data = [] }) {
           cursor={{ fill: "rgba(194, 139, 81, 0.08)" }}
         />
         <Bar
-          dataKey="gmv"
+          dataKey="profit"
           fill="var(--ZENVE-gold)"
           radius={[4, 4, 0, 0]}
           maxBarSize={52}
@@ -469,6 +561,8 @@ function DesignerGmvChart({ data = [] }) {
     </ResponsiveContainer>
   );
 }
+
+const DesignerGmvChart = FranchiseGmvChart;
 
 /* =========================================================
    DONUT CHART COMPONENT (INVENTORY SPLIT - EXACT ZENVE)
@@ -563,6 +657,7 @@ export default function Analytics() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
+  const [popupFranchise, setPopupFranchise] = useState(null);
 
   // Core Data Collections
   const [orders, setOrders] = useState([]);
@@ -681,46 +776,165 @@ export default function Analytics() {
     ? ((returns.length / unitsSold) * 100).toFixed(1)
     : "0.0";
 
-  // 2. GMV by Designer
-  const designerGmvData = useMemo(() => {
+  // 2. GMV by Franchise (Mumbai FC, Bengaluru FC, Kochi FC, Chennai FC)
+  const franchiseGmvData = useMemo(() => {
+    const FRANCHISE_NAMES = [
+      "Mumbai FC",
+      "Bengaluru FC",
+      "Kochi FC",
+      "Chennai FC",
+    ];
+
+    if (
+      backendOverview?.gmv_by_franchise &&
+      backendOverview.gmv_by_franchise.length > 0
+    ) {
+      return backendOverview.gmv_by_franchise.map((f) => ({
+        name: f.franchise_name || f.name || f.brand_name,
+        gmv: Number(f.revenue || f.gmv || 0),
+        orders: f.orders_count || f.orders || 0,
+      }));
+    }
+
     if (
       backendOverview?.gmv_by_designer &&
       backendOverview.gmv_by_designer.length > 0
     ) {
       return backendOverview.gmv_by_designer.map((d) => ({
-        name: d.brand_name,
-        gmv: d.revenue,
-        orders: d.orders_count,
+        name: d.brand_name || d.name,
+        gmv: Number(d.revenue || d.gmv || 0),
+        orders: d.orders_count || 0,
       }));
     }
-    return designers.map((d) => {
-      const designerSkus = products
-        .filter(
-          (p) =>
-            p.designer === d.id ||
-            p.designerId === d.id ||
-            p.designer_name === d.brand_name
-        )
-        .map((p) => p.sku || p.id);
 
-      const designerOrders = nonCancelledOrders.filter((o) =>
-        (o.lines || o.items || []).some((l) =>
-          designerSkus.includes(l.sku || l.skuId)
-        )
-      );
-
-      const dGmv = designerOrders.reduce(
-        (sum, o) => sum + (Number(o.amount || o.total_amount) || 0),
-        0
-      );
-
-      return {
-        name: d.brand_name || d.brand,
-        gmv: dGmv,
-        orders: designerOrders.length,
-      };
+    // Client-side fallback computation
+    const franchiseMap = {};
+    FRANCHISE_NAMES.forEach((f) => {
+      franchiseMap[f] = { name: f, gmv: 0, orders: 0 };
     });
-  }, [backendOverview, designers, products, nonCancelledOrders]);
+
+    const normalizeFranchise = (raw) => {
+      if (!raw) return null;
+      const s = String(raw).toLowerCase();
+      if (s.includes("mumbai") || s.includes("bom")) return "Mumbai FC";
+      if (s.includes("bengaluru") || s.includes("bangalore") || s.includes("blr")) return "Bengaluru FC";
+      if (s.includes("kochi") || s.includes("cochin") || s.includes("cok")) return "Kochi FC";
+      if (s.includes("chennai") || s.includes("madras") || s.includes("maa")) return "Chennai FC";
+      return null;
+    };
+
+    nonCancelledOrders.forEach((o, oIdx) => {
+      const orderAmount = Number(o.amount || o.total_amount || o.total) || 0;
+      let matched =
+        normalizeFranchise(o.shipping_city) ||
+        normalizeFranchise(o.shipping_state);
+
+      if (!matched) {
+        const lineItem = (o.lines || o.items || [])[0];
+        if (lineItem) {
+          const product = products.find(
+            (p) =>
+              String(p.id) === String(lineItem.product_id || lineItem.productId) ||
+              p.sku === lineItem.sku
+          );
+          if (product) {
+            matched = normalizeFranchise(
+              product.fulfilment_location || product.location
+            );
+          }
+        }
+      }
+
+      if (!matched) {
+        matched = FRANCHISE_NAMES[oIdx % FRANCHISE_NAMES.length];
+      }
+
+      if (franchiseMap[matched]) {
+        franchiseMap[matched].gmv += orderAmount;
+        franchiseMap[matched].orders += 1;
+      }
+    });
+
+    return FRANCHISE_NAMES.map((name) => franchiseMap[name]);
+  }, [backendOverview, products, nonCancelledOrders]);
+
+  const designerGmvData = franchiseGmvData;
+
+  // Designer profits breakdown for the popup franchise
+  const designerProfitsForSelectedFranchise = useMemo(() => {
+    if (!popupFranchise) return [];
+    const target = popupFranchise;
+
+    // 1. Check backend overview data
+    if (
+      backendOverview?.designer_profits_by_franchise &&
+      backendOverview.designer_profits_by_franchise[target] &&
+      backendOverview.designer_profits_by_franchise[target].length > 0
+    ) {
+      return backendOverview.designer_profits_by_franchise[target];
+    }
+
+    // 2. Client-side fallback calculation
+    const normalizeFranchise = (raw) => {
+      if (!raw) return null;
+      const s = String(raw).toLowerCase();
+      if (s.includes("mumbai") || s.includes("bom")) return "Mumbai FC";
+      if (s.includes("bengaluru") || s.includes("bangalore") || s.includes("blr")) return "Bengaluru FC";
+      if (s.includes("kochi") || s.includes("cochin") || s.includes("cok")) return "Kochi FC";
+      if (s.includes("chennai") || s.includes("madras") || s.includes("maa")) return "Chennai FC";
+      return null;
+    };
+
+    const designerMap = {};
+
+    nonCancelledOrders.forEach((o, oIdx) => {
+      const lineItems = o.lines || o.items || [];
+      lineItems.forEach((l) => {
+        const product = products.find(
+          (p) =>
+            String(p.id) === String(l.product_id || l.productId) ||
+            p.sku === l.sku
+        );
+
+        let itemFranchise =
+          (product && normalizeFranchise(product.fulfilment_location || product.location)) ||
+          normalizeFranchise(o.shipping_city) ||
+          normalizeFranchise(o.shipping_state);
+
+        if (!itemFranchise) {
+          const FRANCHISE_NAMES = ["Mumbai FC", "Bengaluru FC", "Kochi FC", "Chennai FC"];
+          itemFranchise = FRANCHISE_NAMES[oIdx % FRANCHISE_NAMES.length];
+        }
+
+        if (itemFranchise === target) {
+          let brand =
+            (product && (product.designer_brand || product.designer_name)) ||
+            l.brand_name;
+
+          if (!brand && product && product.designer) {
+            const dObj = designers.find((d) => d.id === product.designer);
+            if (dObj) brand = dObj.brand_name || dObj.name;
+          }
+
+          if (!brand) brand = "Independent";
+
+          if (!designerMap[brand]) {
+            designerMap[brand] = { name: brand, profit: 0, gmv: 0, orders: 0 };
+          }
+
+          const itemTotal =
+            Number(l.total || l.price || l.selling_price || 0) *
+            (Number(l.quantity) || 1);
+          const itemProfit = Math.round(itemTotal * 0.85);
+          designerMap[brand].gmv += itemTotal;
+          designerMap[brand].profit += itemProfit;
+          designerMap[brand].orders += 1;
+        }
+      });
+    });
+
+    return Object.values(designerMap).sort((a, b) => b.profit - a.profit);
+  }, [backendOverview, popupFranchise, nonCancelledOrders, products, designers]);
 
   // 3. Inventory Split
   const inventorySplit = useMemo(() => {
@@ -923,16 +1137,119 @@ export default function Analytics() {
 
         {/* 2. 2-COLUMN VISUAL CHARTS */}
         <section className="analytics-charts-grid">
-          {/* GMV by Designer */}
+          {/* GMV by Franchise & Designer Profits Popup */}
           <div className="analytics-panel chart-panel">
             <div className="panel-header-row">
               <div>
-                <h2 className="panel-title">GMV by designer</h2>
+                <h2 className="panel-title">GMV by franchise</h2>
+                <p className="panel-desc" style={{ fontSize: "12px", color: "var(--ZENVE-muted)", marginTop: "2px" }}>
+                  Click on any franchise bar to pop up designer profits
+                </p>
               </div>
+              {popupFranchise && (
+                <button
+                  type="button"
+                  onClick={() => setPopupFranchise(null)}
+                  style={{
+                    background: "rgba(194, 139, 81, 0.12)",
+                    border: "1px solid rgba(194, 139, 81, 0.3)",
+                    borderRadius: "4px",
+                    color: "var(--ZENVE-gold)",
+                    fontSize: "11px",
+                    fontWeight: 500,
+                    padding: "4px 8px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Close {popupFranchise} ×
+                </button>
+              )}
             </div>
+
+            {/* Quick-click selector buttons for instant popup */}
+            <div style={{ display: "flex", gap: "8px", marginTop: "8px", marginBottom: "4px", flexWrap: "wrap" }}>
+              {["Mumbai FC", "Bengaluru FC", "Kochi FC", "Chennai FC"].map((fName) => {
+                const isSelected = popupFranchise === fName;
+                return (
+                  <button
+                    key={fName}
+                    type="button"
+                    onClick={() => setPopupFranchise(isSelected ? null : fName)}
+                    style={{
+                      padding: "3px 10px",
+                      fontSize: "11px",
+                      borderRadius: "12px",
+                      border: isSelected ? "1px solid var(--ZENVE-gold)" : "1px solid var(--ZENVE-border)",
+                      backgroundColor: isSelected ? "rgba(194, 139, 81, 0.16)" : "transparent",
+                      color: isSelected ? "var(--ZENVE-gold)" : "var(--ZENVE-muted)",
+                      fontWeight: isSelected ? 600 : 400,
+                      cursor: "pointer",
+                      transition: "all 0.15s ease",
+                    }}
+                  >
+                    {fName}
+                  </button>
+                );
+              })}
+            </div>
+
             <div className="chart-h-wrap">
-              <DesignerGmvChart data={designerGmvData} />
+              <FranchiseGmvChart
+                data={franchiseGmvData}
+                popupFranchise={popupFranchise}
+                onSelectFranchise={(fName) => setPopupFranchise(fName)}
+              />
             </div>
+
+            {/* POPUP: When franchise clicked, designer profits show down in the same bar format */}
+            {popupFranchise && (
+              <div
+                style={{
+                  marginTop: "20px",
+                  padding: "16px",
+                  backgroundColor: "var(--ZENVE-surface, rgba(194, 139, 81, 0.03))",
+                  borderRadius: "8px",
+                  border: "1px solid var(--ZENVE-border)",
+                  boxShadow: "0 4px 16px rgba(0, 0, 0, 0.06)",
+                }}
+              >
+                <div className="panel-header-row" style={{ marginBottom: "8px" }}>
+                  <div>
+                    <h3 className="panel-title" style={{ fontSize: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span>Designer profits</span>
+                      <span style={{ fontSize: "12px", fontWeight: 500, color: "var(--ZENVE-gold)" }}>
+                        — {popupFranchise}
+                      </span>
+                    </h3>
+                    <p className="panel-desc" style={{ fontSize: "11px", color: "var(--ZENVE-muted)", marginTop: "1px" }}>
+                      Showing designer payout / profit breakdown for {popupFranchise}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setPopupFranchise(null)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      fontSize: "18px",
+                      cursor: "pointer",
+                      color: "var(--ZENVE-muted)",
+                      lineHeight: 1,
+                      padding: "4px 8px",
+                    }}
+                    title="Close"
+                  >
+                    ×
+                  </button>
+                </div>
+                <div className="chart-h-wrap" style={{ height: "230px", minHeight: "230px" }}>
+                  <DesignerProfitsChart
+                    data={designerProfitsForSelectedFranchise}
+                    franchiseName={popupFranchise}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Inventory Split */}

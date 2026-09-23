@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 import "../styles/DesignerPortal.css";
 import SearchBar from "../components/SearchBar";
 import logo from "../assest/logo/zenve-logo-fashion.png";
@@ -233,6 +234,14 @@ const cleanCode = (str, len = 3) => {
   );
 };
 
+const getDesignerInitials = (name, brand) => {
+  const target = (brand || name || "DP").trim();
+  const parts = target.split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "DP";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+};
+
 /* =========================================================
    EMPTY ACCOUNT FORM
 ========================================================= */
@@ -294,7 +303,13 @@ export default function DesignerPortal() {
   ======================================================= */
 
   const [designers, setDesigners] = useState([]);
-  const [selectedDesignerId, setSelectedDesignerId] = useState("");
+  const [selectedDesignerId, setSelectedDesignerId] = useState(() => {
+    try {
+      return localStorage.getItem("zenve_selected_designer_id") || "";
+    } catch {
+      return "";
+    }
+  });
   const [loadingDesigners, setLoadingDesigners] = useState(true);
 
   /* =======================================================
@@ -451,6 +466,8 @@ export default function DesignerPortal() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const [profileImagePreview, setProfileImagePreview] = useState("");
+  const [profileImageError, setProfileImageError] = useState(false);
+  const profileFileInputRef = useRef(null);
 
   /* =======================================================
      ACCOUNT DETAILS
@@ -496,11 +513,24 @@ export default function DesignerPortal() {
 
       if (list.length > 0) {
         setSelectedDesignerId((prev) => {
+          let saved = "";
+          try {
+            saved = localStorage.getItem("zenve_selected_designer_id") || "";
+          } catch {
+            saved = "";
+          }
+          const candidate = prev || saved;
           const exists = list.some(
-            (d) => String(d.id) === String(prev)
+            (d) => String(d.id) === String(candidate)
           );
 
-          return exists ? prev : String(list[0].id);
+          const chosen = exists ? String(candidate) : String(list[0].id);
+          try {
+            localStorage.setItem("zenve_selected_designer_id", chosen);
+          } catch {
+            // ignore
+          }
+          return chosen;
         });
       }
     } catch (err) {
@@ -540,6 +570,20 @@ export default function DesignerPortal() {
 
       const data = unwrapApiResponse(response);
       setPortalData(data || null);
+
+      if (data?.account_details) {
+        const acc = data.account_details;
+        const normalized = {
+          accountHolderName: acc.account_holder_name || "",
+          accountNumber: acc.account_number || "",
+          ifscCode: acc.ifsc_code || "",
+          panNumber: acc.pan_number || "",
+        };
+        setAccountForm(normalized);
+        setSavedAccountForm(normalized);
+        setHasAccountDetails(true);
+        setIsAccountMasked(true);
+      }
     } catch (err) {
       console.error(
         "Failed to fetch portal dashboard:",
@@ -571,6 +615,10 @@ export default function DesignerPortal() {
     portalData?.designer ||
     portalData?.designer_details ||
     null;
+
+  useEffect(() => {
+    setProfileImageError(false);
+  }, [selectedDesignerId, activeDesigner?.profile_image]);
 
   const kpis = portalData?.kpis || {};
   const pendingActions =
@@ -638,44 +686,42 @@ export default function DesignerPortal() {
 
       const response =
         await getDesignerAccountDetails(designerId);
-      const responseData = unwrapApiResponse(response);
 
-      /*
-       Expected backend response:
+      const rawPayload = response;
+      const unwrappedPayload = unwrapApiResponse(response);
 
-       {
-         exists: true,
-         data: {
-           id: 1,
-           designer: 5,
-           account_holder_name: "...",
-           account_number: "...",
-           ifsc_code: "...",
-           pan_number: "...",
-           is_verified: false
-         }
-       }
-      */
+      let record = null;
+      let accountExists = false;
 
-      const accountExists =
-        responseData?.exists === true ||
-        Boolean(responseData?.data);
+      if (rawPayload && rawPayload.exists !== undefined) {
+        accountExists = Boolean(rawPayload.exists && rawPayload.data);
+        record = rawPayload.data;
+      } else if (unwrappedPayload && unwrappedPayload.exists !== undefined) {
+        accountExists = Boolean(unwrappedPayload.exists && unwrappedPayload.data);
+        record = unwrappedPayload.data;
+      } else if (
+        unwrappedPayload &&
+        (unwrappedPayload.account_number ||
+          unwrappedPayload.account_holder_name ||
+          unwrappedPayload.ifsc_code)
+      ) {
+        accountExists = true;
+        record = unwrappedPayload;
+      }
 
-      if (accountExists) {
-        const data = responseData?.data || responseData;
-
+      if (accountExists && record) {
         const normalizedAccount = {
           accountHolderName:
-            data.account_holder_name || "",
+            record.account_holder_name || "",
 
           accountNumber:
-            data.account_number || "",
+            record.account_number || "",
 
           ifscCode:
-            data.ifsc_code || "",
+            record.ifsc_code || "",
 
           panNumber:
-            data.pan_number || "",
+            record.pan_number || "",
         };
 
         setAccountForm(normalizedAccount);
@@ -683,20 +729,10 @@ export default function DesignerPortal() {
         setHasAccountDetails(true);
         setIsAccountMasked(true);
       } else {
-        /*
-         IMPORTANT:
-         Do NOT create mock/default values.
-        */
-
         setAccountForm(EMPTY_ACCOUNT_FORM);
         setSavedAccountForm(EMPTY_ACCOUNT_FORM);
         setHasAccountDetails(false);
         setIsAccountMasked(true);
-
-        setAlertMessage({
-          type: "error",
-          text: "Account details have not been provided by this designer.",
-        });
       }
     } catch (err) {
       console.error(
@@ -708,14 +744,6 @@ export default function DesignerPortal() {
       setSavedAccountForm(EMPTY_ACCOUNT_FORM);
       setHasAccountDetails(false);
       setIsAccountMasked(true);
-
-      setAlertMessage({
-        type: "error",
-        text: getErrorMessage(
-          err,
-          "Unable to load account details from the server."
-        ),
-      });
     } finally {
       setLoadingAccount(false);
     }
@@ -1180,6 +1208,7 @@ export default function DesignerPortal() {
 
     setProfileImage(null);
     setProfileImagePreview("");
+    setProfileImageError(false);
     setIsEditingProfile(false);
   };
 
@@ -1219,6 +1248,7 @@ export default function DesignerPortal() {
     setProfileImagePreview(
       URL.createObjectURL(file)
     );
+    setProfileImageError(false);
   };
 
   const handleSaveProfile = async () => {
@@ -1347,6 +1377,89 @@ export default function DesignerPortal() {
 
     setIsEditingAccount(true);
   };
+
+  /* =======================================================
+     ACCOUNT DETAILS INCOMPLETE SWEETALERT REMINDER
+  ======================================================= */
+
+  const hasPromptedAccountRef = useRef({});
+
+  useEffect(() => {
+    if (
+      showProfileAndAccount &&
+      !loadingAccount &&
+      !hasAccountDetails &&
+      !isEditingAccount &&
+      selectedDesignerId &&
+      activeDesigner
+    ) {
+      if (hasPromptedAccountRef.current[selectedDesignerId]) {
+        return;
+      }
+
+      hasPromptedAccountRef.current[selectedDesignerId] = true;
+
+      const brandOrName =
+        activeDesigner.brand ||
+        activeDesigner.brand_name ||
+        activeDesigner.name ||
+        "This designer";
+
+      Swal.fire({
+        title: "Account Details Setup",
+        html: `
+          <div class="zenve-swal-info-container">
+            <div class="zenve-swal-info-icon-wrap">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+            </div>
+            <p class="zenve-swal-info-desc">
+              <strong>${brandOrName}</strong>'s bank settlement account and PAN card details are pending completion.
+            </p>
+            <p class="zenve-swal-info-subtext">
+              Completing these details enables seamless payout disbursements and order settlements.
+            </p>
+          </div>
+        `,
+        showCloseButton: true,
+        showCancelButton: true,
+        confirmButtonText: "Complete Details",
+        cancelButtonText: "Dismiss",
+        reverseButtons: true,
+        backdrop: "rgba(0, 0, 0, 0.4)",
+        focusConfirm: false,
+        width: "370px",
+        customClass: {
+          popup: "zenve-swal-popup",
+          title: "zenve-swal-title",
+          closeButton: "zenve-swal-close-btn",
+          confirmButton: "zenve-swal-confirm-btn",
+          cancelButton: "zenve-swal-cancel-btn",
+          actions: "zenve-swal-actions",
+        },
+      }).then((result) => {
+        if (result.isConfirmed) {
+          handleStartEditAccount();
+          setTimeout(() => {
+            const el = document.getElementById("zenve-account-section");
+            if (el) {
+              el.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          }, 150);
+        }
+      });
+    }
+  }, [
+    showProfileAndAccount,
+    loadingAccount,
+    hasAccountDetails,
+    isEditingAccount,
+    selectedDesignerId,
+    activeDesigner,
+  ]);
 
   const handleCancelEditAccount = () => {
     setAccountForm(savedAccountForm);
@@ -1526,6 +1639,8 @@ export default function DesignerPortal() {
           text:
             "Account & banking details updated successfully.",
         });
+
+        await loadAccountDetails(selectedDesignerId);
       } catch (err) {
         console.error(
           "Failed to save account details:",
@@ -1594,17 +1709,21 @@ export default function DesignerPortal() {
           <div className="ZENVE-header-right-controls">
             <div className="ZENVE-signed-in-box">
               <span className="ZENVE-signed-in-prefix">
-                SIGNED IN AS
+                AS
               </span>
 
               <div className="ZENVE-select-wrap">
                 <select
                   value={selectedDesignerId}
-                  onChange={(e) =>
-                    setSelectedDesignerId(
-                      e.target.value
-                    )
-                  }
+                  onChange={(e) => {
+                    const newId = e.target.value;
+                    setSelectedDesignerId(newId);
+                    try {
+                      localStorage.setItem("zenve_selected_designer_id", newId);
+                    } catch {
+                      // ignore
+                    }
+                  }}
                   disabled={
                     loadingDesigners ||
                     designers.length === 0
@@ -1625,8 +1744,8 @@ export default function DesignerPortal() {
                         value={d.id}
                       >
                         {d.brand_name ||
-                          d.designer_name ||
                           d.brand ||
+                          d.designer_name ||
                           d.name ||
                           `Designer #${d.id}`}
                       </option>
@@ -1654,6 +1773,7 @@ export default function DesignerPortal() {
                       const nextState = !prev;
 
                       if (!prev) {
+                        hasPromptedAccountRef.current[selectedDesignerId] = false;
                         setTimeout(() => {
                           const el =
                             document.getElementById(
@@ -2119,13 +2239,107 @@ export default function DesignerPortal() {
                 </div>
 
                 {!isEditingProfile ? (
-                  <dl className="ZENVE-profile-dl">
-                    <div className="ZENVE-profile-item">
-                      <dt className="ZENVE-label-caps">
+                  <div className="ZENVE-profile-card-body">
+                    <dl className="ZENVE-profile-dl">
+                      <div className="ZENVE-profile-item">
+                        <dt className="ZENVE-label-caps">
+                          Brand
+                        </dt>
+                        <dd>
+                          {activeDesigner?.brand ||
+                            "—"}
+                        </dd>
+                      </div>
+
+                      <div className="ZENVE-profile-item">
+                        <dt className="ZENVE-label-caps">
+                          Owner
+                        </dt>
+                        <dd>
+                          {activeDesigner?.name ||
+                            "—"}
+                        </dd>
+                      </div>
+
+                      <div className="ZENVE-profile-item">
+                        <dt className="ZENVE-label-caps">
+                          Contact
+                        </dt>
+                        <dd>
+                          {activeDesigner?.contact ||
+                            "—"}
+                        </dd>
+                      </div>
+
+                      <div className="ZENVE-profile-item">
+                        <dt className="ZENVE-label-caps">
+                          City
+                        </dt>
+                        <dd>
+                          {activeDesigner?.city ||
+                            "—"}
+                        </dd>
+                      </div>
+
+                      <div className="ZENVE-profile-item">
+                        <dt className="ZENVE-label-caps">
+                          Stage
+                        </dt>
+                        <dd>
+                          {activeDesigner?.stage ||
+                            "—"}
+                        </dd>
+                      </div>
+
+                      <div className="ZENVE-profile-item">
+                        <dt className="ZENVE-label-caps">
+                          KYC
+                        </dt>
+                        <dd>
+                          {activeDesigner?.kyc
+                            ? "Verified"
+                            : "Pending"}
+                        </dd>
+                      </div>
+
+                      <div className="ZENVE-profile-item">
+                        <dt className="ZENVE-label-caps">
+                          GST
+                        </dt>
+                        <dd>
+                          {activeDesigner?.gst ||
+                            "—"}
+                        </dd>
+                      </div>
+
+                      <div className="ZENVE-profile-item">
+                        <dt className="ZENVE-label-caps">
+                          Contract ends
+                        </dt>
+                        <dd>
+                          {activeDesigner?.contractEnds ||
+                            "—"}
+                        </dd>
+                      </div>
+
+                      <div className="ZENVE-profile-item">
+                        <dt className="ZENVE-label-caps">
+                          Take rate
+                        </dt>
+                        <dd>
+                          {activeDesigner?.takeRate ??
+                            0}
+                          %
+                        </dd>
+                      </div>
+                    </dl>
+
+                    <aside className="ZENVE-profile-image-aside">
+                      <span className="ZENVE-label-caps" style={{ marginBottom: "10px" }}>
                         Profile image
-                      </dt>
-                      <dd>
-                        {activeDesigner?.profile_image ? (
+                      </span>
+                      <div className="ZENVE-profile-avatar-wrapper">
+                        {activeDesigner?.profile_image && !profileImageError ? (
                           <img
                             src={activeDesigner.profile_image}
                             alt={
@@ -2133,331 +2347,290 @@ export default function DesignerPortal() {
                               activeDesigner?.brand_name ||
                               "Designer"
                             }
-                            className="ZENVE-profile-image-preview"
+                            className="ZENVE-profile-avatar-img"
+                            onError={() => setProfileImageError(true)}
                           />
                         ) : (
-                          "—"
+                          <div className="ZENVE-profile-avatar-fallback">
+                            {getDesignerInitials(
+                              activeDesigner?.name,
+                              activeDesigner?.brand || activeDesigner?.brand_name
+                            )}
+                          </div>
                         )}
-                      </dd>
-                    </div>
-
-                    <div className="ZENVE-profile-item">
-                      <dt className="ZENVE-label-caps">
-                        Brand
-                      </dt>
-                      <dd>
-                        {activeDesigner?.brand ||
-                          "—"}
-                      </dd>
-                    </div>
-
-                    <div className="ZENVE-profile-item">
-                      <dt className="ZENVE-label-caps">
-                        Owner
-                      </dt>
-                      <dd>
-                        {activeDesigner?.name ||
-                          "—"}
-                      </dd>
-                    </div>
-
-                    <div className="ZENVE-profile-item">
-                      <dt className="ZENVE-label-caps">
-                        Contact
-                      </dt>
-                      <dd>
-                        {activeDesigner?.contact ||
-                          "—"}
-                      </dd>
-                    </div>
-
-                    <div className="ZENVE-profile-item">
-                      <dt className="ZENVE-label-caps">
-                        City
-                      </dt>
-                      <dd>
-                        {activeDesigner?.city ||
-                          "—"}
-                      </dd>
-                    </div>
-
-                    <div className="ZENVE-profile-item">
-                      <dt className="ZENVE-label-caps">
-                        Stage
-                      </dt>
-                      <dd>
-                        {activeDesigner?.stage ||
-                          "—"}
-                      </dd>
-                    </div>
-
-                    <div className="ZENVE-profile-item">
-                      <dt className="ZENVE-label-caps">
-                        KYC
-                      </dt>
-                      <dd>
-                        {activeDesigner?.kyc
-                          ? "Verified"
-                          : "Pending"}
-                      </dd>
-                    </div>
-
-                    <div className="ZENVE-profile-item">
-                      <dt className="ZENVE-label-caps">
-                        GST
-                      </dt>
-                      <dd>
-                        {activeDesigner?.gst ||
-                          "—"}
-                      </dd>
-                    </div>
-
-                    <div className="ZENVE-profile-item">
-                      <dt className="ZENVE-label-caps">
-                        Contract ends
-                      </dt>
-                      <dd>
-                        {activeDesigner?.contractEnds ||
-                          "—"}
-                      </dd>
-                    </div>
-
-                    <div className="ZENVE-profile-item">
-                      <dt className="ZENVE-label-caps">
-                        Take rate
-                      </dt>
-                      <dd>
-                        {activeDesigner?.takeRate ??
-                          0}
-                        %
-                      </dd>
-                    </div>
-                  </dl>
+                      </div>
+                      <span className="ZENVE-profile-avatar-caption">
+                        {activeDesigner?.brand || "Designer"}
+                      </span>
+                    </aside>
+                  </div>
                 ) : (
                   <form
                     onSubmit={(e) => {
                       e.preventDefault();
                       handleSaveProfile();
                     }}
-                    className="ZENVE-profile-dl"
+                    className="ZENVE-profile-card-body"
                   >
-                    <div className="ZENVE-profile-item">
-                      <label className="ZENVE-label-caps">
-                        Profile image
-                      </label>
+                    <div className="ZENVE-profile-dl">
+                      <div className="ZENVE-profile-item">
+                        <label className="ZENVE-label-caps">
+                          Brand
+                        </label>
 
-                      <div className="ZENVE-profile-image-editor">
-                        {profileImagePreview ||
-                        activeDesigner?.profile_image ? (
+                        <input
+                          type="text"
+                          className="ZENVE-profile-input"
+                          value={
+                            profileForm.brand
+                          }
+                          onChange={(e) =>
+                            setProfileForm({
+                              ...profileForm,
+                              brand:
+                                e.target.value,
+                            })
+                          }
+                          placeholder="e.g. Velvet Canine"
+                          required
+                        />
+                      </div>
+
+                      <div className="ZENVE-profile-item">
+                        <label className="ZENVE-label-caps">
+                          Owner
+                        </label>
+
+                        <input
+                          type="text"
+                          className="ZENVE-profile-input"
+                          value={
+                            profileForm.name
+                          }
+                          onChange={(e) =>
+                            setProfileForm({
+                              ...profileForm,
+                              name:
+                                e.target.value,
+                            })
+                          }
+                          placeholder="e.g. Rohini Sharma"
+                          required
+                        />
+                      </div>
+
+                      <div className="ZENVE-profile-item">
+                        <label className="ZENVE-label-caps">
+                          Contact
+                        </label>
+
+                        <input
+                          type="text"
+                          className="ZENVE-profile-input"
+                          value={
+                            profileForm.contact
+                          }
+                          onChange={(e) =>
+                            setProfileForm({
+                              ...profileForm,
+                              contact:
+                                e.target.value,
+                            })
+                          }
+                          placeholder="email@brand.com or 9876543210"
+                        />
+                      </div>
+
+                      <div className="ZENVE-profile-item">
+                        <label className="ZENVE-label-caps">
+                          City
+                        </label>
+
+                        <input
+                          type="text"
+                          className="ZENVE-profile-input"
+                          value={
+                            profileForm.city
+                          }
+                          onChange={(e) =>
+                            setProfileForm({
+                              ...profileForm,
+                              city:
+                                e.target.value,
+                            })
+                          }
+                          placeholder="e.g. Mumbai"
+                        />
+                      </div>
+
+                      <div className="ZENVE-profile-item">
+                        <span className="ZENVE-label-caps">
+                          Stage
+                        </span>
+
+                        <div className="ZENVE-profile-readonly-box">
+                          <span className="ZENVE-profile-readonly-val">
+                            {activeDesigner?.stage ||
+                              "—"}
+                          </span>
+
+                          <span className="ZENVE-profile-lock-badge">
+                            CRM Controlled
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="ZENVE-profile-item">
+                        <span className="ZENVE-label-caps">
+                          KYC
+                        </span>
+
+                        <div className="ZENVE-profile-readonly-box">
+                          <span className="ZENVE-profile-readonly-val">
+                            {activeDesigner?.kyc
+                              ? "Verified"
+                              : "Pending"}
+                          </span>
+
+                          <span className="ZENVE-profile-lock-badge">
+                            Verified in CRM
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="ZENVE-profile-item">
+                        <label className="ZENVE-label-caps">
+                          GST
+                        </label>
+
+                        <input
+                          type="text"
+                          className="ZENVE-profile-input"
+                          value={
+                            profileForm.gst
+                          }
+                          onChange={(e) =>
+                            setProfileForm({
+                              ...profileForm,
+                              gst:
+                                e.target.value,
+                            })
+                          }
+                          placeholder="27AAAAA0000A1Z5"
+                        />
+                      </div>
+
+                      <div className="ZENVE-profile-item">
+                        <span className="ZENVE-label-caps">
+                          Contract ends
+                        </span>
+
+                        <div className="ZENVE-profile-readonly-box">
+                          <span className="ZENVE-profile-readonly-val">
+                            {activeDesigner?.contractEnds ||
+                              "—"}
+                          </span>
+
+                          <span className="ZENVE-profile-lock-badge">
+                            CRM Contract
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="ZENVE-profile-item">
+                        <span className="ZENVE-label-caps">
+                          Take rate
+                        </span>
+
+                        <div className="ZENVE-profile-readonly-box">
+                          <span className="ZENVE-profile-readonly-val">
+                            {activeDesigner?.takeRate ??
+                              0}
+                            %
+                          </span>
+
+                          <span className="ZENVE-profile-lock-badge">
+                            Fixed Agreement
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <aside className="ZENVE-profile-image-aside edit-mode">
+                      <span className="ZENVE-label-caps" style={{ marginBottom: "10px" }}>
+                        Profile image
+                      </span>
+
+                      <div
+                        className="ZENVE-profile-avatar-wrapper editable"
+                        onClick={() => profileFileInputRef.current?.click()}
+                        title="Click to select a new profile photo"
+                      >
+                        {profileImagePreview ? (
                           <img
-                            src={
-                              profileImagePreview ||
-                              activeDesigner?.profile_image
-                            }
+                            src={profileImagePreview}
                             alt="Designer profile"
-                            className="ZENVE-profile-image-preview"
+                            className="ZENVE-profile-avatar-img"
+                          />
+                        ) : activeDesigner?.profile_image && !profileImageError ? (
+                          <img
+                            src={activeDesigner.profile_image}
+                            alt="Designer profile"
+                            className="ZENVE-profile-avatar-img"
+                            onError={() => setProfileImageError(true)}
                           />
                         ) : (
-                          <div className="ZENVE-profile-image-placeholder">
-                            No profile image
+                          <div className="ZENVE-profile-avatar-fallback">
+                            {getDesignerInitials(
+                              profileForm.name || activeDesigner?.name,
+                              profileForm.brand || activeDesigner?.brand
+                            )}
                           </div>
                         )}
 
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleProfileImageChange}
-                          disabled={savingProfile}
-                          className="ZENVE-profile-image-input"
-                        />
-
-                        <small className="ZENVE-profile-image-help">
-                          Image only · Maximum 5 MB
-                        </small>
+                        <div className="ZENVE-profile-avatar-overlay">
+                          <span>Change</span>
+                        </div>
                       </div>
-                    </div>
-
-                    <div className="ZENVE-profile-item">
-                      <label className="ZENVE-label-caps">
-                        Brand
-                      </label>
 
                       <input
-                        type="text"
-                        className="ZENVE-profile-input"
-                        value={
-                          profileForm.brand
-                        }
-                        onChange={(e) =>
-                          setProfileForm({
-                            ...profileForm,
-                            brand:
-                              e.target.value,
-                          })
-                        }
-                        placeholder="e.g. Velvet Canine"
-                        required
+                        ref={profileFileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleProfileImageChange}
+                        disabled={savingProfile}
+                        style={{ display: "none" }}
                       />
-                    </div>
 
-                    <div className="ZENVE-profile-item">
-                      <label className="ZENVE-label-caps">
-                        Owner
-                      </label>
+                      <button
+                        type="button"
+                        className="ZENVE-btn-upload-photo"
+                        onClick={() => profileFileInputRef.current?.click()}
+                        disabled={savingProfile}
+                      >
+                        📷 {profileImage || (activeDesigner?.profile_image && !profileImageError) ? "Change photo" : "Upload photo"}
+                      </button>
 
-                      <input
-                        type="text"
-                        className="ZENVE-profile-input"
-                        value={
-                          profileForm.name
-                        }
-                        onChange={(e) =>
-                          setProfileForm({
-                            ...profileForm,
-                            name:
-                              e.target.value,
-                          })
-                        }
-                        placeholder="e.g. Rohini Sharma"
-                        required
-                      />
-                    </div>
+                      {profileImage && (
+                        <button
+                          type="button"
+                          className="ZENVE-btn-remove-photo-link"
+                          onClick={() => {
+                            if (profileImagePreview && profileImagePreview.startsWith("blob:")) {
+                              URL.revokeObjectURL(profileImagePreview);
+                            }
+                            setProfileImage(null);
+                            setProfileImagePreview(activeDesigner?.profile_image || "");
+                          }}
+                        >
+                          Remove selected
+                        </button>
+                      )}
 
-                    <div className="ZENVE-profile-item">
-                      <label className="ZENVE-label-caps">
-                        Contact
-                      </label>
-
-                      <input
-                        type="text"
-                        className="ZENVE-profile-input"
-                        value={
-                          profileForm.contact
-                        }
-                        onChange={(e) =>
-                          setProfileForm({
-                            ...profileForm,
-                            contact:
-                              e.target.value,
-                          })
-                        }
-                        placeholder="email@brand.com or 9876543210"
-                      />
-                    </div>
-
-                    <div className="ZENVE-profile-item">
-                      <label className="ZENVE-label-caps">
-                        City
-                      </label>
-
-                      <input
-                        type="text"
-                        className="ZENVE-profile-input"
-                        value={
-                          profileForm.city
-                        }
-                        onChange={(e) =>
-                          setProfileForm({
-                            ...profileForm,
-                            city:
-                              e.target.value,
-                          })
-                        }
-                        placeholder="e.g. Mumbai"
-                      />
-                    </div>
-
-                    <div className="ZENVE-profile-item">
-                      <span className="ZENVE-label-caps">
-                        Stage
-                      </span>
-
-                      <div className="ZENVE-profile-readonly-box">
-                        <span className="ZENVE-profile-readonly-val">
-                          {activeDesigner?.stage ||
-                            "—"}
-                        </span>
-
-                        <span className="ZENVE-profile-lock-badge">
-                          CRM Controlled
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="ZENVE-profile-item">
-                      <span className="ZENVE-label-caps">
-                        KYC
-                      </span>
-
-                      <div className="ZENVE-profile-readonly-box">
-                        <span className="ZENVE-profile-readonly-val">
-                          {activeDesigner?.kyc
-                            ? "Verified"
-                            : "Pending"}
-                        </span>
-
-                        <span className="ZENVE-profile-lock-badge">
-                          Verified in CRM
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="ZENVE-profile-item">
-                      <label className="ZENVE-label-caps">
-                        GST
-                      </label>
-
-                      <input
-                        type="text"
-                        className="ZENVE-profile-input"
-                        value={
-                          profileForm.gst
-                        }
-                        onChange={(e) =>
-                          setProfileForm({
-                            ...profileForm,
-                            gst:
-                              e.target.value,
-                          })
-                        }
-                        placeholder="27AAAAA0000A1Z5"
-                      />
-                    </div>
-
-                    <div className="ZENVE-profile-item">
-                      <span className="ZENVE-label-caps">
-                        Contract ends
-                      </span>
-
-                      <div className="ZENVE-profile-readonly-box">
-                        <span className="ZENVE-profile-readonly-val">
-                          {activeDesigner?.contractEnds ||
-                            "—"}
-                        </span>
-
-                        <span className="ZENVE-profile-lock-badge">
-                          CRM Contract
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="ZENVE-profile-item">
-                      <span className="ZENVE-label-caps">
-                        Take rate
-                      </span>
-
-                      <div className="ZENVE-profile-readonly-box">
-                        <span className="ZENVE-profile-readonly-val">
-                          {activeDesigner?.takeRate ??
-                            0}
-                          %
-                        </span>
-
-                        <span className="ZENVE-profile-lock-badge">
-                          Fixed Agreement
-                        </span>
-                      </div>
-                    </div>
+                      <small className="ZENVE-profile-image-help">
+                        Image only · Max 5 MB
+                      </small>
+                    </aside>
                   </form>
                 )}
               </section>
@@ -2466,7 +2639,10 @@ export default function DesignerPortal() {
                   ACCOUNT DETAILS
               ================================================= */}
 
-              <section className="ZENVE-portal-card">
+              <section
+                id="zenve-account-section"
+                className="ZENVE-portal-card"
+              >
                 <div className="ZENVE-card-header">
                   <div>
                     <h2 className="ZENVE-card-title">
@@ -2481,24 +2657,26 @@ export default function DesignerPortal() {
                   </div>
 
                   {!isEditingAccount ? (
-                    <button
-                      type="button"
-                      className="ZENVE-btn-edit-profile"
-                      onClick={
-                        handleStartEditAccount
-                      }
-                      disabled={
-                        !activeDesigner ||
-                        loadingAccount
-                      }
-                      title="Edit banking and account details"
-                    >
-                      <EditPencilIcon />
+                    hasAccountDetails ? (
+                      <button
+                        type="button"
+                        className="ZENVE-btn-edit-profile"
+                        onClick={
+                          handleStartEditAccount
+                        }
+                        disabled={
+                          !activeDesigner ||
+                          loadingAccount
+                        }
+                        title="Edit banking and account details"
+                      >
+                        <EditPencilIcon />
 
-                      <span>
-                        Edit account
-                      </span>
-                    </button>
+                        <span>
+                          Edit account
+                        </span>
+                      </button>
+                    ) : null
                   ) : (
                     <div className="ZENVE-edit-actions-row">
                       <button
@@ -3080,21 +3258,12 @@ export default function DesignerPortal() {
                           })
                         }
                       >
-                        <option value="MUMBAI_FC">
-                          Mumbai FC
-                        </option>
-
-                        <option value="BANGALORE_FC">
-                          Bangalore FC
-                        </option>
-
-                        <option value="DELHI_FC">
-                          Delhi FC
-                        </option>
-
-                        <option value="DESIGNER_STUDIO">
-                          Designer Studio
-                        </option>
+                        <option value="MUMBAI_FC">Mumbai FC</option>
+                        <option value="BENGALURU_FC">Bengaluru FC</option>
+                        <option value="KOCHI_FC">Kochi FC</option>
+                        <option value="CHENNAI_FC">Chennai FC</option>
+                        <option value="DELHI_FC">Delhi FC</option>
+                        <option value="DESIGNER_STUDIO">Designer Studio</option>
                       </select>
                     </div>
 
@@ -3391,75 +3560,40 @@ export default function DesignerPortal() {
                       </thead>
 
                       <tbody>
-                        {skus.map(
-                          (skuItem) => {
-                            const qaStatus =
-                              skuItem.status ||
-                              "PENDING_QA";
-
-                            const qaClass =
-                              qaStatus.toLowerCase();
-
-                            return (
-                              <tr
-                                key={
-                                  skuItem.id
-                                }
-                              >
-                                <td>
-                                  <div className="ZENVE-sku-name">
-                                    {
-                                      skuItem.product_name
-                                    }
-                                  </div>
-
-                                  <div className="ZENVE-sku-id-mono">
-                                    {
-                                      skuItem.sku
-                                    }
-                                  </div>
-                                </td>
-
-                                <td>
-                                  {formatInr(
-                                    skuItem.selling_price
-                                  )}
-                                </td>
-
-                                <td>
-                                  <span
-                                    className={`ZENVE-qa-badge tone-${qaClass}`}
-                                  >
-                                    {
-                                      qaStatus
-                                    }
+                        {skus.map((skuItem) => {
+                          const qaStatus = skuItem.status || "PENDING_QA";
+                          const qaClass = qaStatus.toLowerCase();
+                          return (
+                            <tr key={skuItem.id}>
+                              <td>
+                                <div className="ZENVE-sku-name">{skuItem.product_name}</div>
+                                <div className="ZENVE-sku-id-mono">{skuItem.sku}</div>
+                              </td>
+                              <td>{formatInr(skuItem.selling_price)}</td>
+                              <td>
+                                <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                                  <span className={`ZENVE-qa-badge tone-${qaClass}`}>
+                                    {qaStatus}
                                   </span>
-                                </td>
-
-                                <td>
-                                  {skuItem.inventory_quantity ??
-                                    0}
-                                </td>
-
-                                <td>
-                                  {skuItem.reserved_quantity ??
-                                    0}
-                                </td>
-
-                                <td>
-                                  {skuItem.units_sold ??
-                                    0}
-                                </td>
-
-                                <td>
-                                  {skuItem.days_of_stock
-                                    ? `${skuItem.days_of_stock} d`
-                                    : "—"}
-                                </td>
-                              </tr>
-                            );
-                          }
-                        )}
+                                  {skuItem.qa_score !== undefined && skuItem.qa_score !== null && (
+                                    <span
+                                      style={{ fontSize: "11px", color: "var(--text-muted, #8e8e93)" }}
+                                      title={skuItem.qa_note ? `Note: ${skuItem.qa_note}` : "QA Reference Score"}
+                                    >
+                                      Ref: {skuItem.qa_score}/100
+                                    </span>
+                                  )}
+                                </div>
+                              </td>
+                              <td>{skuItem.inventory_quantity ?? 0}</td>
+                              <td>{skuItem.reserved_quantity ?? 0}</td>
+                              <td>{skuItem.units_sold ?? 0}</td>
+                              <td>
+                                {skuItem.days_of_stock ? `${skuItem.days_of_stock} d` : "—"}
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>

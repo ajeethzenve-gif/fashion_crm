@@ -28,7 +28,7 @@ function BackIcon() {
    CONSTANTS & MAPPINGS
 ========================================================= */
 
-const HUBS = ["Mumbai FC", "Bangalore FC", "Designer Studio"];
+const HUBS = ["Mumbai FC", "Bengaluru FC", "Kochi FC", "Chennai FC"];
 
 const MOVEMENT_TONE = {
   FAST: "good",
@@ -48,9 +48,9 @@ function normalizeHub(raw) {
   if (!raw) return "Mumbai FC";
   const str = String(raw).trim();
   const lower = str.toLowerCase();
-  if (lower.includes("bangalore")) return "Bangalore FC";
-  if (lower.includes("designer")) return "Designer Studio";
-  if (lower.includes("delhi")) return "Delhi FC";
+  if (lower.includes("bengaluru") || lower.includes("bangalore")) return "Bengaluru FC";
+  if (lower.includes("kochi") || lower.includes("cochin")) return "Kochi FC";
+  if (lower.includes("chennai") || lower.includes("madras")) return "Chennai FC";
   if (lower.includes("mumbai")) return "Mumbai FC";
   return str.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
@@ -210,8 +210,8 @@ export default function Inventory() {
         velocity > 0
           ? Math.round(available / velocity)
           : available > 0
-          ? sku.days_of_stock || null
-          : null;
+            ? sku.days_of_stock || null
+            : null;
 
       // Reorder point covers 10 days of velocity (Math.ceil(velocity * 10), min 2)
       const reorderPoint = Math.max(2, Math.ceil(velocity * 10));

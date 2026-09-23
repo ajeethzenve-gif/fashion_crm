@@ -729,7 +729,15 @@ class DesignerPortalDashboardAPIView(APIView):
             "notifications": notifications,
             "skus": sku_serializer.data,
             "orders": orders_data,
-            "settlements": settlements_data
+            "settlements": settlements_data,
+            "account_details": (
+                DesignerAccountDetailsSerializer(
+                    designer.account_details,
+                    context={"request": request}
+                ).data
+                if hasattr(designer, "account_details")
+                else None
+            )
         }, status=status.HTTP_200_OK)
 
     def post(self, request, designer_id):

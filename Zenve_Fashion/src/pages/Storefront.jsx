@@ -53,9 +53,9 @@ function normalizeHub(raw) {
   if (!raw) return "Mumbai FC";
   const str = String(raw).trim();
   const lower = str.toLowerCase();
-  if (lower.includes("bangalore")) return "Bangalore FC";
-  if (lower.includes("designer")) return "Designer Studio";
-  if (lower.includes("delhi")) return "Delhi FC";
+  if (lower.includes("bengaluru") || lower.includes("bangalore")) return "Bengaluru FC";
+  if (lower.includes("kochi") || lower.includes("cochin")) return "Kochi FC";
+  if (lower.includes("chennai") || lower.includes("madras")) return "Chennai FC";
   if (lower.includes("mumbai")) return "Mumbai FC";
   return str.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
