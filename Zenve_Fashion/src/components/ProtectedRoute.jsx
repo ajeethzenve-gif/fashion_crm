@@ -1,5 +1,6 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
+import Swal from "sweetalert2";
 import { useAuth, ROLES } from "../context/AuthContext";
 import { layers } from "../data/layers";
 import Header from "./Header";
@@ -16,18 +17,60 @@ function LockIcon() {
 
 export default function ProtectedRoute({ layer, children }) {
   const { currentUser, hasAccess } = useAuth();
+  const location = useLocation();
 
   const isAuthorized = hasAccess(layer);
+
+  // Find layer info
+  const layerInfo = layers.find((l) => l.n === layer) || {
+    n: layer,
+    name: `Layer ${layer}`,
+    group: "Operations",
+    blurb: "Operational subsystem",
+  };
+
+  // Find which roles have clearance for this layer
+  const authorizedRoles = ROLES.filter((r) => r.clearance.includes(layer));
+
+  // SweetAlert bottom-right toast on layer activation
+  const lastPromptedLayerRef = useRef(null);
+
+  useEffect(() => {
+    if (isAuthorized && layerInfo) {
+      if (lastPromptedLayerRef.current === layer) {
+        return;
+      }
+      lastPromptedLayerRef.current = layer;
+
+      Swal.fire({
+        toast: true,
+        position: "bottom-end",
+        showConfirmButton: false,
+        timer: 3500,
+        timerProgressBar: true,
+        background: "#ffffff",
+        customClass: {
+          popup: "zenve-layer-toast",
+        },
+        html: `
+          <div class="zenve-layer-toast-inner">
+            <div class="zenve-layer-toast-badge">${layerInfo.n}</div>
+            <div class="zenve-layer-toast-content">
+              <div class="zenve-layer-toast-header">
+                <span class="zenve-layer-toast-title">${layerInfo.name}</span>
+                <span class="zenve-layer-toast-group">${layerInfo.group}</span>
+              </div>
+              <div class="zenve-layer-toast-desc">${layerInfo.blurb || ""}</div>
+            </div>
+          </div>
+        `,
+      });
+    }
+  }, [layer, isAuthorized, layerInfo, location.pathname]);
 
   if (isAuthorized) {
     return children;
   }
-
-  // Find layer info
-  const layerInfo = layers.find((l) => l.n === layer) || { n: layer, name: `Layer ${layer}`, group: "Operations" };
-
-  // Find which roles have clearance for this layer
-  const authorizedRoles = ROLES.filter((r) => r.clearance.includes(layer));
 
   return (
     <div style={{
