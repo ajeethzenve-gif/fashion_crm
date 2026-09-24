@@ -1,28 +1,32 @@
-from django.shortcuts import render
-from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
-from .models import OfflineFashionCredit
 from rest_framework.response import Response
-from .serializers import offlinecreditsSerializer
+from rest_framework import status
 
+from .models import OfflineFashionCredit
+from .serializers import OfflineFashionCreditSerializer
 
-# Create your views here.
 
 class OfflineFashionListAPI(APIView):
+
     permission_classes = [AllowAny]
 
     def get(self, request, format=None):
 
-        offline_fashion_list = OfflineFashionCredit.objects.filter(isActive=True).order_by('-id')
-        serializer = offlinecreditsSerializer(offline_fashion_list, many=True)
+        offline_fashion_list = (
+            OfflineFashionCredit.objects
+            .filter(is_active=True)
+            .order_by("id")
+        )
 
-        return Response({
-            "offline_fashion_list":
-                serializer.data
+        serializer = OfflineFashionCreditSerializer(
+            offline_fashion_list,
+            many=True,
+        )
+
+        return Response(
+            {
+                "offlinefashionlist": serializer.data
             },
-            status=status.HTTP_200_OK
-
-            )
-
-
+            status=status.HTTP_200_OK,
+        )
