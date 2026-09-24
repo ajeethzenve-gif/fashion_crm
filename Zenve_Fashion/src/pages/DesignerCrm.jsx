@@ -725,6 +725,8 @@ _Team ZENVE Creator Operations_`;
       city: newLead.city.trim() || "",
       primary_category: newLead.category.trim() || "",
       tier: newLead.tier.toUpperCase(),
+      online_membership_plan: newLead.fashionCreditPlan ? newLead.fashionCreditPlan.toUpperCase() : null,
+      credit_points: Number(newLead.creditPoints) || (FASHION_CREDIT_PLANS.find((p) => p.id.toUpperCase() === (newLead.fashionCreditPlan || "").toUpperCase())?.pointsNum || 0),
       take_rate: newLead.takeRate !== "" ? Number(newLead.takeRate) : 0,
       gst_number: newLead.gst.trim()
         ? newLead.gst === "COMPANY_GST_REQUESTED"
@@ -917,6 +919,21 @@ _Team ZENVE Creator Operations_`;
                             {designer.tier || "Emerging"}
                           </span>
 
+                          {designer.online_membership_plan && (
+                            <span
+                              className="tone-badge"
+                              style={{
+                                background: "rgba(223, 177, 108, 0.15)",
+                                color: "#dfb16c",
+                                border: "1px solid rgba(223, 177, 108, 0.35)",
+                                fontWeight: "600",
+                              }}
+                              title={`Credit Points: ${Number(designer.credit_points || 0).toLocaleString("en-IN")}`}
+                            >
+                              ★ {designer.online_membership_plan} ({Number(designer.credit_points || 0).toLocaleString("en-IN")} Pts)
+                            </span>
+                          )}
+
                           <span
                             className={`tone-badge ${econ.isKyc ? "good" : "bad"
                               }`}
@@ -959,6 +976,9 @@ _Team ZENVE Creator Operations_`;
                           {designer.city || "—"} ·{" "}
                           {designer.primary_category || "—"} · take
                           rate {designer.take_rate != null ? `${Number(designer.take_rate)}%` : "0%"}
+                          {designer.online_membership_plan
+                            ? ` · Credits: ${designer.online_membership_plan} (${Number(designer.credit_points || 0).toLocaleString("en-IN")} pts)`
+                            : ""}
                           {designer.contract_end_date
                             ? ` · contract ends ${designer.contract_end_date}`
                             : ""} · GST:{" "}
@@ -1245,6 +1265,29 @@ _Team ZENVE Creator Operations_`;
                                 {owner}
                               </option>
                             ))}
+                          </select>
+                        </div>
+
+                        <div className="crm-control-item">
+                          <span className="label-caps">Given credits plan</span>
+                          <select
+                            className="crm-select"
+                            value={designer.online_membership_plan || ""}
+                            onChange={(e) => {
+                              const plan = FASHION_CREDIT_PLANS.find(
+                                (p) => p.id.toUpperCase() === e.target.value.toUpperCase()
+                              );
+                              handleUpdateField(designer.id, {
+                                online_membership_plan: e.target.value ? e.target.value.toUpperCase() : null,
+                                credit_points: plan ? plan.pointsNum : 0,
+                              });
+                            }}
+                          >
+                            <option value="">No Plan</option>
+                            <option value="SILVER">Silver (1,00,000 Pts)</option>
+                            <option value="GOLD">Gold (3,00,000 Pts)</option>
+                            <option value="PLATINUM">Platinum (4,50,000 Pts)</option>
+                            <option value="PALLADIUM">Palladium (7,00,000 Pts)</option>
                           </select>
                         </div>
 

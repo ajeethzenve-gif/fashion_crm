@@ -186,6 +186,14 @@ class Designer(models.Model):
         ),
     )
 
+    credit_points = models.PositiveBigIntegerField(
+        default=0,
+        verbose_name="Given Credit Points",
+        help_text=(
+            "Online fashion credit points allocated to this designer."
+        ),
+    )
+
     # =====================================================
     # GST
     # =====================================================

@@ -111,6 +111,9 @@ class DesignerSerializer(serializers.ModelSerializer):
 
             "tier",
             "take_rate",
+            "online_membership_plan",
+            "offline_membership_plan",
+            "credit_points",
 
             "gst_number",
 
@@ -180,6 +183,11 @@ class DesignerSerializer(serializers.ModelSerializer):
             "effective_sku_productivity",
             "overdue_tasks_count",
         ]
+
+    def validate_online_membership_plan(self, value):
+        if value:
+            return value.strip().upper()
+        return value
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
