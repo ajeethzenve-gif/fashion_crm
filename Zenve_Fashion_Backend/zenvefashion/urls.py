@@ -58,7 +58,7 @@ urlpatterns = [
         )
     ),
     path("api/credits/",
-        include("orders.credits_urls")
+        include("credits.urls")
     ),
 ]
 
