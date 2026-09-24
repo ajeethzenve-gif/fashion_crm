@@ -3321,7 +3321,7 @@ payload.append(
         MULTIPLE SIZE SELECTION
     ===================================================== */}
 
-    <div className="ZENVE-form-group span-2">
+    <div className="ZENVE-form-group span-3 full-width">
       <label className="ZENVE-label-caps">
         Product Sizes
       </label>
@@ -3398,7 +3398,7 @@ payload.append(
         ONLINE / OFFLINE PRODUCT OPTION
     ===================================================== */}
 
-    <div className="ZENVE-form-group span-2">
+    <div className="ZENVE-form-group span-3 full-width">
 
       <div
         style={{
@@ -3508,67 +3508,51 @@ payload.append(
             <div
               key={size}
               style={{
-                display: "grid",
-
-                gridTemplateColumns:
-                  form.offlineEnabled
-                    ? "100px 1fr 1fr 100px"
-                    : "100px 1fr 100px",
-
-                gap: "15px",
-
-                alignItems: "end",
-
-                marginTop: "15px",
-
-                padding: "15px",
-
-                border:
-                  "1px solid #e4e7ee",
-
+                display: "flex",
+                alignItems: "flex-end",
+                gap: "28px",
+                flexWrap: "wrap",
+                marginTop: "12px",
+                padding: "14px 18px",
+                border: "1px solid #e4e7ee",
                 borderRadius: "10px",
-
                 background: "#ffffff",
               }}
             >
-
               {/* SIZE */}
-
-              <div>
+              <div style={{ minWidth: "60px" }}>
                 <label className="ZENVE-label-caps">
                   Size
                 </label>
-
                 <div
                   style={{
-                    marginTop: "12px",
+                    height: "44px",
+                    display: "flex",
+                    alignItems: "center",
                     fontWeight: "700",
                     fontSize: "16px",
+                    color: "#1c1917",
                   }}
                 >
-                  {size === "FREE"
-                    ? "Free"
-                    : size}
+                  {size === "FREE" ? "Free" : size}
                 </div>
               </div>
 
               {/* ONLINE QUANTITY */}
-
-              <div>
+              <div style={{ width: "180px" }}>
                 <label className="ZENVE-label-caps">
                   Online Quantity
                 </label>
-
                 <input
                   type="number"
                   min="0"
                   step="1"
                   placeholder="Enter quantity"
+                  style={{ width: "180px", maxWidth: "100%" }}
                   value={
                     form.sizeStocks?.[
                       size
-                    ]?.online_quantity ??
-                    ""
+                    ]?.online_quantity ?? ""
                   }
                   onChange={(e) =>
                     handleSizeQuantityChange(
@@ -3582,24 +3566,21 @@ payload.append(
               </div>
 
               {/* OFFLINE QUANTITY */}
-
               {form.offlineEnabled && (
-                <div>
+                <div style={{ width: "180px" }}>
                   <label className="ZENVE-label-caps">
                     Offline Quantity
                   </label>
-
                   <input
                     type="number"
                     min="0"
                     step="1"
                     placeholder="Store quantity"
+                    style={{ width: "180px", maxWidth: "100%" }}
                     value={
                       form.sizeStocks?.[
                         size
-                      ]
-                        ?.offline_quantity ??
-                      ""
+                      ]?.offline_quantity ?? ""
                     }
                     onChange={(e) =>
                       handleSizeQuantityChange(
@@ -3614,17 +3595,18 @@ payload.append(
               )}
 
               {/* SIZE TOTAL */}
-
-              <div>
+              <div style={{ minWidth: "60px" }}>
                 <label className="ZENVE-label-caps">
                   Total
                 </label>
-
                 <div
                   style={{
-                    marginTop: "12px",
+                    height: "44px",
+                    display: "flex",
+                    alignItems: "center",
                     fontWeight: "700",
                     fontSize: "17px",
+                    color: "#1c1917",
                   }}
                 >
                   {sizeTotal}
@@ -3759,7 +3741,7 @@ payload.append(
         PET SAFETY
     ===================================================== */}
 
-    <div className="ZENVE-form-group span-2">
+    <div className="ZENVE-form-group span-2 col-span-2">
       <label className="ZENVE-label-caps">
         Pet safety information
       </label>
@@ -3826,7 +3808,7 @@ payload.append(
         PRODUCT IMAGES
     ===================================================== */}
 
-    <div className="ZENVE-form-group span-2">
+    <div className="ZENVE-form-group span-3 full-width">
       <label className="ZENVE-label-caps">
         Product images
       </label>
@@ -4027,51 +4009,50 @@ payload.append(
     </div>
 
     {/* =====================================================
-        FAST DELIVERY
+        FAST DELIVERY & RETURNABLE TOGGLES
     ===================================================== */}
 
-    <div className="ZENVE-form-toggle-row">
-      <span className="ZENVE-label-caps">
-        Fast delivery eligible
-      </span>
+    <div className="ZENVE-form-group span-3 full-width">
+      <div className="ZENVE-toggles-grid">
+        <div className="ZENVE-form-toggle-row">
+          <span className="ZENVE-label-caps">
+            Fast delivery eligible
+          </span>
 
-      <Switch
-        checked={
-          form.fastDelivery
-        }
-        onChange={(val) =>
-          setForm({
-            ...form,
-            fastDelivery:
-              val,
-          })
-        }
-      />
+          <Switch
+            checked={
+              form.fastDelivery
+            }
+            onChange={(val) =>
+              setForm({
+                ...form,
+                fastDelivery:
+                  val,
+              })
+            }
+          />
+        </div>
+
+        <div className="ZENVE-form-toggle-row">
+          <span className="ZENVE-label-caps">
+            Returnable
+          </span>
+
+          <Switch
+            checked={
+              form.returnable
+            }
+            onChange={(val) =>
+              setForm({
+                ...form,
+                returnable:
+                  val,
+              })
+            }
+          />
+        </div>
+      </div>
     </div>
-
-    {/* =====================================================
-        RETURNABLE
-    ===================================================== */}
-
-    <div className="ZENVE-form-toggle-row">
-      <span className="ZENVE-label-caps">
-        Returnable
-      </span>
-
-      <Switch
-        checked={
-          form.returnable
-        }
-        onChange={(val) =>
-          setForm({
-            ...form,
-            returnable:
-              val,
-          })
-        }
-      />
-    </div>
-
   </div>
 
   {/* =====================================================

@@ -56,17 +56,17 @@ DesignerPortal.css
 ========================================================= */
 
 .ZENVE-label-caps {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--ZENVE-muted);
+  color: var(--ZENVE-ink, #1c1917);
   border: none !important;
   background: transparent !important;
   padding: 0 !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-  line-height: 1.2;
+  line-height: 1.25;
   display: inline-block;
 }
 
@@ -1381,21 +1381,44 @@ DesignerPortal.css
 .ZENVE-form-group label,
 .ZENVE-form-group label.ZENVE-label-caps {
   display: block;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--ZENVE-muted);
+  color: var(--ZENVE-ink, #1c1917);
   border: none !important;
   background: transparent !important;
   padding: 0 !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-  margin-bottom: 2px;
+  margin-bottom: 6px;
 }
 
+.ZENVE-form-group.span-2,
 .ZENVE-form-group.col-span-2 {
   grid-column: span 2;
+}
+
+.ZENVE-form-group.span-3,
+.ZENVE-form-group.col-span-3,
+.ZENVE-form-group.full-width,
+.ZENVE-form-group.span-full {
+  grid-column: 1 / -1;
+}
+
+.ZENVE-toggles-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+}
+
+.ZENVE-sku-form label,
+.ZENVE-sku-form .ZENVE-label-caps {
+  font-size: 12px !important;
+  font-weight: 750 !important;
+  color: #171717 !important;
+  letter-spacing: 0.05em !important;
 }
 
 /* 1. Target all inputs & selects directly to increase height, width, and padding */
