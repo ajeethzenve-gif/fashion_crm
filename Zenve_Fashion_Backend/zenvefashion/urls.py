@@ -57,6 +57,9 @@ urlpatterns = [
             "orders.command_centre_urls"
         )
     ),
+    path("api/credits/",
+        include("orders.credits_urls")
+    ),
 ]
 
 
