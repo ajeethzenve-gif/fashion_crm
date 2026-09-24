@@ -374,148 +374,148 @@ export default function DesignerPortal() {
   /* =======================================================
      SKU FORM
   ======================================================= */
-const PRODUCT_SIZES = [
-  "XS",
-  "S",
-  "M",
-  "L",
-  "XL",
-  "XXL",
-  "FREE",
-];
+  const PRODUCT_SIZES = [
+    "XS",
+    "S",
+    "M",
+    "L",
+    "XL",
+    "XXL",
+    "FREE",
+  ];
 
-const createEmptySizeStocks = () => ({
-  XS: { online_quantity: "", offline_quantity: "" },
-  S: { online_quantity: "", offline_quantity: "" },
-  M: { online_quantity: "", offline_quantity: "" },
-  L: { online_quantity: "", offline_quantity: "" },
-  XL: { online_quantity: "", offline_quantity: "" },
-  XXL: { online_quantity: "", offline_quantity: "" },
-  FREE: { online_quantity: "", offline_quantity: "" },
-});
+  const createEmptySizeStocks = () => ({
+    XS: { online_quantity: "", offline_quantity: "" },
+    S: { online_quantity: "", offline_quantity: "" },
+    M: { online_quantity: "", offline_quantity: "" },
+    L: { online_quantity: "", offline_quantity: "" },
+    XL: { online_quantity: "", offline_quantity: "" },
+    XXL: { online_quantity: "", offline_quantity: "" },
+    FREE: { online_quantity: "", offline_quantity: "" },
+  });
 
   const [form, setForm] = useState({
-  name: "",
-  category: "",
-  colour: "",
+    name: "",
+    category: "",
+    colour: "",
 
-  mrp: "",
-  price: "",
-  fabric: "",
+    mrp: "",
+    price: "",
+    fabric: "",
 
-  petSafety:
-    "No loose beads. Breathable fabric. Supervised wear recommended.",
+    petSafety:
+      "No loose beads. Breathable fabric. Supervised wear recommended.",
 
-  location: "MUMBAI_FC",
+    location: "MUMBAI_FC",
 
-  fastDelivery: true,
-  returnable: true,
+    fastDelivery: true,
+    returnable: true,
 
-  // NEW
-  selectedSizes: [],
+    // NEW
+    selectedSizes: [],
 
-  // NEW
-  offlineEnabled: false,
+    // NEW
+    offlineEnabled: false,
 
-  // NEW
-  sizeStocks: createEmptySizeStocks(),
-});
-const toggleProductSize = (size) => {
-  setForm((prev) => {
-    const alreadySelected =
-      prev.selectedSizes.includes(size);
+    // NEW
+    sizeStocks: createEmptySizeStocks(),
+  });
+  const toggleProductSize = (size) => {
+    setForm((prev) => {
+      const alreadySelected =
+        prev.selectedSizes.includes(size);
 
-    return {
-      ...prev,
+      return {
+        ...prev,
 
-      selectedSizes: alreadySelected
-        ? prev.selectedSizes.filter(
+        selectedSizes: alreadySelected
+          ? prev.selectedSizes.filter(
             (item) => item !== size
           )
-        : [...prev.selectedSizes, size],
-    };
-  });
-};
+          : [...prev.selectedSizes, size],
+      };
+    });
+  };
 
 
-const handleSizeQuantityChange = (
-  size,
-  field,
-  value
-) => {
-  const cleanValue = String(value).replace(
-    /[^0-9]/g,
-    ""
-  );
-
-  setForm((prev) => ({
-    ...prev,
-
-    sizeStocks: {
-      ...prev.sizeStocks,
-
-      [size]: {
-        ...prev.sizeStocks[size],
-        [field]: cleanValue,
-      },
-    },
-  }));
-};
-
-
-const handleOfflineToggle = () => {
-  setForm((prev) => ({
-    ...prev,
-    offlineEnabled: !prev.offlineEnabled,
-  }));
-};
-
-
-const selectedSizeStocks = useMemo(() => {
-  return form.selectedSizes.map((size) => ({
+  const handleSizeQuantityChange = (
     size,
+    field,
+    value
+  ) => {
+    const cleanValue = String(value).replace(
+      /[^0-9]/g,
+      ""
+    );
 
-    online_quantity:
-      Number(
-        form.sizeStocks[size]?.online_quantity
-      ) || 0,
+    setForm((prev) => ({
+      ...prev,
 
-    offline_quantity:
-      form.offlineEnabled
-        ? Number(
+      sizeStocks: {
+        ...prev.sizeStocks,
+
+        [size]: {
+          ...prev.sizeStocks[size],
+          [field]: cleanValue,
+        },
+      },
+    }));
+  };
+
+
+  const handleOfflineToggle = () => {
+    setForm((prev) => ({
+      ...prev,
+      offlineEnabled: !prev.offlineEnabled,
+    }));
+  };
+
+
+  const selectedSizeStocks = useMemo(() => {
+    return form.selectedSizes.map((size) => ({
+      size,
+
+      online_quantity:
+        Number(
+          form.sizeStocks[size]?.online_quantity
+        ) || 0,
+
+      offline_quantity:
+        form.offlineEnabled
+          ? Number(
             form.sizeStocks[size]
               ?.offline_quantity
           ) || 0
-        : 0,
-  }));
-}, [
-  form.selectedSizes,
-  form.sizeStocks,
-  form.offlineEnabled,
-]);
+          : 0,
+    }));
+  }, [
+    form.selectedSizes,
+    form.sizeStocks,
+    form.offlineEnabled,
+  ]);
 
 
-const totalOnlineQuantity = useMemo(() => {
-  return selectedSizeStocks.reduce(
-    (total, item) =>
-      total + item.online_quantity,
-    0
-  );
-}, [selectedSizeStocks]);
+  const totalOnlineQuantity = useMemo(() => {
+    return selectedSizeStocks.reduce(
+      (total, item) =>
+        total + item.online_quantity,
+      0
+    );
+  }, [selectedSizeStocks]);
 
 
-const totalOfflineQuantity = useMemo(() => {
-  return selectedSizeStocks.reduce(
-    (total, item) =>
-      total + item.offline_quantity,
-    0
-  );
-}, [selectedSizeStocks]);
+  const totalOfflineQuantity = useMemo(() => {
+    return selectedSizeStocks.reduce(
+      (total, item) =>
+        total + item.offline_quantity,
+      0
+    );
+  }, [selectedSizeStocks]);
 
 
-const totalInventoryQuantity =
-  totalOnlineQuantity +
-  totalOfflineQuantity;
+  const totalInventoryQuantity =
+    totalOnlineQuantity +
+    totalOfflineQuantity;
   const [submittingSku, setSubmittingSku] = useState(false);
 
   /* =======================================================
@@ -800,11 +800,11 @@ const totalInventoryQuantity =
     );
 
     const sizeCode = cleanCode(
-          form.selectedSizes.length
-            ? form.selectedSizes.join("-")
-            : "SIZE",
-          12
-        );
+      form.selectedSizes.length
+        ? form.selectedSizes.join("-")
+        : "SIZE",
+      12
+    );
 
     return `ZNV-${brandCode}-${catCode}-${nameCode}-${colCode}-${sizeCode}`;
   }, [activeDesigner, form]);
@@ -967,49 +967,49 @@ const totalInventoryQuantity =
     }
 
 
-const missingOnlineQuantity =
-  form.selectedSizes.find(
-    (size) =>
-      form.sizeStocks[size]?.online_quantity === ""
-  );
+    const missingOnlineQuantity =
+      form.selectedSizes.find(
+        (size) =>
+          form.sizeStocks[size]?.online_quantity === ""
+      );
 
-if (missingOnlineQuantity) {
-  setAlertMessage({
-    type: "error",
-    text: `Please enter online quantity for size ${missingOnlineQuantity}.`,
-  });
+    if (missingOnlineQuantity) {
+      setAlertMessage({
+        type: "error",
+        text: `Please enter online quantity for size ${missingOnlineQuantity}.`,
+      });
 
-  return;
-}
-
-
-if (form.offlineEnabled) {
-  const missingOfflineQuantity =
-    form.selectedSizes.find(
-      (size) =>
-        form.sizeStocks[size]
-          ?.offline_quantity === ""
-    );
-
-  if (missingOfflineQuantity) {
-    setAlertMessage({
-      type: "error",
-      text: `Please enter offline quantity for size ${missingOfflineQuantity}.`,
-    });
-
-    return;
-  }
-}
+      return;
+    }
 
 
-if (totalInventoryQuantity <= 0) {
-  setAlertMessage({
-    type: "error",
-    text: "Product total quantity must be greater than 0.",
-  });
+    if (form.offlineEnabled) {
+      const missingOfflineQuantity =
+        form.selectedSizes.find(
+          (size) =>
+            form.sizeStocks[size]
+              ?.offline_quantity === ""
+        );
 
-  return;
-}
+      if (missingOfflineQuantity) {
+        setAlertMessage({
+          type: "error",
+          text: `Please enter offline quantity for size ${missingOfflineQuantity}.`,
+        });
+
+        return;
+      }
+    }
+
+
+    if (totalInventoryQuantity <= 0) {
+      setAlertMessage({
+        type: "error",
+        text: "Product total quantity must be greater than 0.",
+      });
+
+      return;
+    }
 
     if (!Number.isFinite(numMrp) || numMrp <= 0) {
       setAlertMessage({
@@ -1082,47 +1082,47 @@ if (totalInventoryQuantity <= 0) {
       form.colour.trim()
     );
     // Backward compatibility for your existing Django size field
-payload.append(
-  "size",
-  form.selectedSizes[0] || "FREE"
-);
+    payload.append(
+      "size",
+      form.selectedSizes[0] || "FREE"
+    );
 
 
-// ONLINE or ONLINE + OFFLINE
-payload.append(
-  "sales_channel",
-  form.offlineEnabled
-    ? "BOTH"
-    : "ONLINE"
-);
+    // ONLINE or ONLINE + OFFLINE
+    payload.append(
+      "sales_channel",
+      form.offlineEnabled
+        ? "BOTH"
+        : "ONLINE"
+    );
 
 
-// Multiple selected sizes
-payload.append(
-  "sizes",
-  JSON.stringify(form.selectedSizes)
-);
+    // Multiple selected sizes
+    payload.append(
+      "sizes",
+      JSON.stringify(form.selectedSizes)
+    );
 
 
-// Quantity for every size
-payload.append(
-  "size_stocks",
-  JSON.stringify(selectedSizeStocks)
-);
+    // Quantity for every size
+    payload.append(
+      "size_stocks",
+      JSON.stringify(selectedSizeStocks)
+    );
 
 
-// Total online stock
-payload.append(
-  "online_quantity",
-  String(totalOnlineQuantity)
-);
+    // Total online stock
+    payload.append(
+      "online_quantity",
+      String(totalOnlineQuantity)
+    );
 
 
-// Total offline stock
-payload.append(
-  "offline_quantity",
-  String(totalOfflineQuantity)
-);
+    // Total offline stock
+    payload.append(
+      "offline_quantity",
+      String(totalOfflineQuantity)
+    );
 
     payload.append(
       "mrp",
@@ -1322,21 +1322,21 @@ payload.append(
         text: `${skuPreview} submitted — now in Catalogue QA`,
       });
 
-     setForm((prev) => ({
-          ...prev,
+      setForm((prev) => ({
+        ...prev,
 
-          name: "",
-          colour: "",
-          mrp: "",
-          price: "",
-          fabric: "",
+        name: "",
+        colour: "",
+        mrp: "",
+        price: "",
+        fabric: "",
 
-          selectedSizes: [],
-          offlineEnabled: false,
-          sizeStocks: createEmptySizeStocks(),
-        }));
+        selectedSizes: [],
+        offlineEnabled: false,
+        sizeStocks: createEmptySizeStocks(),
+      }));
 
-        setProductImages([]);
+      setProductImages([]);
 
       await loadDashboard(
         selectedDesignerId
@@ -3243,853 +3243,851 @@ payload.append(
                 </div>
 
                 <form
-  onSubmit={handleSkuSubmit}
-  className="ZENVE-sku-form"
->
-  <div className="ZENVE-form-grid">
+                  onSubmit={handleSkuSubmit}
+                  className="ZENVE-sku-form"
+                >
+                  <div className="ZENVE-form-grid">
 
-    {/* =====================================================
+                    {/* =====================================================
         PRODUCT NAME
     ===================================================== */}
 
-    <div className="ZENVE-form-group">
-      <label className="ZENVE-label-caps">
-        Product name
-      </label>
+                    <div className="ZENVE-form-group">
+                      <label className="ZENVE-label-caps">
+                        Product name
+                      </label>
 
-      <input
-        type="text"
-        placeholder="e.g. Ivory Silk Dog Kurta"
-        value={form.name}
-        onChange={(e) =>
-          setForm({
-            ...form,
-            name: e.target.value,
-          })
-        }
-        required
-      />
-    </div>
+                      <input
+                        type="text"
+                        placeholder="e.g. Ivory Silk Dog Kurta"
+                        value={form.name}
+                        onChange={(e) =>
+                          setForm({
+                            ...form,
+                            name: e.target.value,
+                          })
+                        }
+                        required
+                      />
+                    </div>
 
-    {/* =====================================================
+                    {/* =====================================================
         CATEGORY
     ===================================================== */}
 
-    <div className="ZENVE-form-group">
-      <label className="ZENVE-label-caps">
-        Category
-      </label>
+                    <div className="ZENVE-form-group">
+                      <label className="ZENVE-label-caps">
+                        Category
+                      </label>
 
-      <input
-        type="text"
-        placeholder="e.g. Pet Occasion Wear"
-        value={form.category}
-        onChange={(e) =>
-          setForm({
-            ...form,
-            category: e.target.value,
-          })
-        }
-        required
-      />
-    </div>
+                      <input
+                        type="text"
+                        placeholder="e.g. Pet Occasion Wear"
+                        value={form.category}
+                        onChange={(e) =>
+                          setForm({
+                            ...form,
+                            category: e.target.value,
+                          })
+                        }
+                        required
+                      />
+                    </div>
 
-    {/* =====================================================
+                    {/* =====================================================
         COLOUR
     ===================================================== */}
 
-    <div className="ZENVE-form-group">
-      <label className="ZENVE-label-caps">
-        Colour
-      </label>
+                    <div className="ZENVE-form-group">
+                      <label className="ZENVE-label-caps">
+                        Colour
+                      </label>
 
-      <input
-        type="text"
-        placeholder="e.g. Ivory Gold"
-        value={form.colour}
-        onChange={(e) =>
-          setForm({
-            ...form,
-            colour: e.target.value,
-          })
-        }
-        required
-      />
-    </div>
+                      <input
+                        type="text"
+                        placeholder="e.g. Ivory Gold"
+                        value={form.colour}
+                        onChange={(e) =>
+                          setForm({
+                            ...form,
+                            colour: e.target.value,
+                          })
+                        }
+                        required
+                      />
+                    </div>
 
-    {/* =====================================================
+                    {/* =====================================================
         MULTIPLE SIZE SELECTION
     ===================================================== */}
 
-    <div className="ZENVE-form-group span-3 full-width">
-      <label className="ZENVE-label-caps">
-        Product Sizes
-      </label>
+                    <div className="ZENVE-form-group span-3 full-width">
+                      <label className="ZENVE-label-caps">
+                        Product Sizes
+                      </label>
 
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "10px",
-          marginTop: "10px",
-        }}
-      >
-        {[
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "XXL",
-          "FREE",
-        ].map((size) => {
-          const selected =
-            form.selectedSizes?.includes(size);
+                      <div
+                        style={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: "10px",
+                          marginTop: "10px",
+                        }}
+                      >
+                        {[
+                          "XS",
+                          "S",
+                          "M",
+                          "L",
+                          "XL",
+                          "XXL",
+                          "FREE",
+                        ].map((size) => {
+                          const selected =
+                            form.selectedSizes?.includes(size);
 
-          return (
-            <button
-              key={size}
-              type="button"
-              onClick={() =>
-                toggleProductSize(size)
-              }
-              style={{
-                minWidth: "60px",
-                padding: "10px 15px",
+                          return (
+                            <button
+                              key={size}
+                              type="button"
+                              onClick={() =>
+                                toggleProductSize(size)
+                              }
+                              style={{
+                                minWidth: "60px",
+                                padding: "10px 15px",
 
-                borderRadius: "8px",
+                                borderRadius: "8px",
 
-                border: selected
-                  ? "2px solid #1b4dff"
-                  : "1px solid #d8dce6",
+                                border: selected
+                                  ? "2px solid #1b4dff"
+                                  : "1px solid #d8dce6",
 
-                background: selected
-                  ? "#eef3ff"
-                  : "#ffffff",
+                                background: selected
+                                  ? "#eef3ff"
+                                  : "#ffffff",
 
-                color: selected
-                  ? "#1238c7"
-                  : "#252b3a",
+                                color: selected
+                                  ? "#1238c7"
+                                  : "#252b3a",
 
-                fontWeight: "600",
-                cursor: "pointer",
-              }}
-            >
-              {size === "FREE"
-                ? "Free Size"
-                : size}
-            </button>
-          );
-        })}
-      </div>
+                                fontWeight: "600",
+                                cursor: "pointer",
+                              }}
+                            >
+                              {size === "FREE"
+                                ? "Free Size"
+                                : size}
+                            </button>
+                          );
+                        })}
+                      </div>
 
-      <div
-        style={{
-          marginTop: "8px",
-          fontSize: "12px",
-          color: "#666",
-        }}
-      >
-        You can select multiple sizes.
-      </div>
-    </div>
+                      <div
+                        style={{
+                          marginTop: "8px",
+                          fontSize: "12px",
+                          color: "#666",
+                        }}
+                      >
+                        You can select multiple sizes.
+                      </div>
+                    </div>
 
-    {/* =====================================================
+                    {/* =====================================================
         ONLINE / OFFLINE PRODUCT OPTION
     ===================================================== */}
 
-    <div className="ZENVE-form-group span-3 full-width">
+                    <div className="ZENVE-form-group span-3 full-width">
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: "15px",
-        }}
-      >
-        <div>
-          <label className="ZENVE-label-caps">
-            Product Stock
-          </label>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          flexWrap: "wrap",
+                          gap: "15px",
+                        }}
+                      >
+                        <div>
+                          <label className="ZENVE-label-caps">
+                            Product Stock
+                          </label>
 
-          <div
-            style={{
-              marginTop: "5px",
-              fontSize: "12px",
-              color: "#666",
-            }}
-          >
-            Online product is enabled by default.
-            Offline product is optional.
-          </div>
-        </div>
+                          <div
+                            style={{
+                              marginTop: "5px",
+                              fontSize: "12px",
+                              color: "#666",
+                            }}
+                          >
+                            Online product is enabled by default.
+                            Offline product is optional.
+                          </div>
+                        </div>
 
-        <button
-          type="button"
-          onClick={
-            handleOfflineToggle
-          }
-          style={{
-            padding: "10px 16px",
+                        <button
+                          type="button"
+                          onClick={
+                            handleOfflineToggle
+                          }
+                          style={{
+                            padding: "10px 16px",
 
-            borderRadius: "8px",
+                            borderRadius: "8px",
 
-            border:
-              form.offlineEnabled
-                ? "1px solid #159447"
-                : "1px solid #d8dce6",
+                            border:
+                              form.offlineEnabled
+                                ? "1px solid #159447"
+                                : "1px solid #d8dce6",
 
-            background:
-              form.offlineEnabled
-                ? "#edf9f1"
-                : "#ffffff",
+                            background:
+                              form.offlineEnabled
+                                ? "#edf9f1"
+                                : "#ffffff",
 
-            color:
-              form.offlineEnabled
-                ? "#0d7435"
-                : "#333333",
+                            color:
+                              form.offlineEnabled
+                                ? "#0d7435"
+                                : "#333333",
 
-            fontWeight: "600",
-            cursor: "pointer",
-          }}
-        >
-          {form.offlineEnabled
-            ? "✓ Offline Product Enabled"
-            : "+ Add Offline Product"}
-        </button>
-      </div>
+                            fontWeight: "600",
+                            cursor: "pointer",
+                          }}
+                        >
+                          {form.offlineEnabled
+                            ? "✓ Offline Product Enabled"
+                            : "+ Add Offline Product"}
+                        </button>
+                      </div>
 
-      {/* =================================================
+                      {/* =================================================
           SIZE-WISE QUANTITY
       ================================================= */}
 
-      {form.selectedSizes?.length === 0 && (
-        <div
-          style={{
-            marginTop: "15px",
-            padding: "12px",
+                      {form.selectedSizes?.length === 0 && (
+                        <div
+                          style={{
+                            marginTop: "15px",
+                            padding: "12px",
 
-            border:
-              "1px dashed #d8dce6",
+                            border:
+                              "1px dashed #d8dce6",
 
-            borderRadius: "8px",
+                            borderRadius: "8px",
 
-            color: "#777",
-          }}
-        >
-          Please select at least one product
-          size.
-        </div>
-      )}
+                            color: "#777",
+                          }}
+                        >
+                          Please select at least one product
+                          size.
+                        </div>
+                      )}
 
-      {form.selectedSizes?.map(
-        (size) => {
-          const onlineQuantity =
-            Number(
-              form.sizeStocks?.[size]
-                ?.online_quantity
-            ) || 0;
+                      {form.selectedSizes?.map(
+                        (size) => {
+                          const onlineQuantity =
+                            Number(
+                              form.sizeStocks?.[size]
+                                ?.online_quantity
+                            ) || 0;
 
-          const offlineQuantity =
-            form.offlineEnabled
-              ? Number(
-                  form.sizeStocks?.[size]
-                    ?.offline_quantity
-                ) || 0
-              : 0;
+                          const offlineQuantity =
+                            form.offlineEnabled
+                              ? Number(
+                                form.sizeStocks?.[size]
+                                  ?.offline_quantity
+                              ) || 0
+                              : 0;
 
-          const sizeTotal =
-            onlineQuantity +
-            offlineQuantity;
+                          const sizeTotal =
+                            onlineQuantity +
+                            offlineQuantity;
 
-          return (
-            <div
-              key={size}
-              style={{
-                display: "flex",
-                alignItems: "flex-end",
-                gap: "28px",
-                flexWrap: "wrap",
-                marginTop: "12px",
-                padding: "14px 18px",
-                border: "1px solid #e4e7ee",
-                borderRadius: "10px",
-                background: "#ffffff",
-              }}
-            >
-              {/* SIZE */}
-              <div style={{ minWidth: "60px" }}>
-                <label className="ZENVE-label-caps">
-                  Size
-                </label>
-                <div
-                  style={{
-                    height: "44px",
-                    display: "flex",
-                    alignItems: "center",
-                    fontWeight: "700",
-                    fontSize: "16px",
-                    color: "#1c1917",
-                  }}
-                >
-                  {size === "FREE" ? "Free" : size}
-                </div>
-              </div>
+                          return (
+                            <div
+                              key={size}
+                              style={{
+                                display: "flex",
+                                alignItems: "flex-end",
+                                gap: "28px",
+                                flexWrap: "wrap",
+                                marginTop: "12px",
+                                padding: "14px 18px",
+                                border: "1px solid #e4e7ee",
+                                borderRadius: "10px",
+                                background: "#ffffff",
+                              }}
+                            >
+                              {/* SIZE */}
+                              <div style={{ minWidth: "60px" }}>
+                                <label className="ZENVE-label-caps">
+                                  Size
+                                </label>
+                                <div
+                                  style={{
+                                    height: "44px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    fontWeight: "700",
+                                    fontSize: "16px",
+                                    color: "#1c1917",
+                                  }}
+                                >
+                                  {size === "FREE" ? "Free" : size}
+                                </div>
+                              </div>
 
-              {/* ONLINE QUANTITY */}
-              <div style={{ width: "180px" }}>
-                <label className="ZENVE-label-caps">
-                  Online Quantity
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  step="1"
-                  placeholder="Enter quantity"
-                  style={{ width: "180px", maxWidth: "100%" }}
-                  value={
-                    form.sizeStocks?.[
-                      size
-                    ]?.online_quantity ?? ""
-                  }
-                  onChange={(e) =>
-                    handleSizeQuantityChange(
-                      size,
-                      "online_quantity",
-                      e.target.value
-                    )
-                  }
-                  required
-                />
-              </div>
+                              {/* ONLINE QUANTITY */}
+                              <div style={{ width: "180px" }}>
+                                <label className="ZENVE-label-caps">
+                                  Online Quantity
+                                </label>
+                                <input
+                                  type="number"
+                                  min="0"
+                                  step="1"
+                                  placeholder="Enter quantity"
+                                  style={{ width: "180px", maxWidth: "100%" }}
+                                  value={
+                                    form.sizeStocks?.[
+                                      size
+                                    ]?.online_quantity ?? ""
+                                  }
+                                  onChange={(e) =>
+                                    handleSizeQuantityChange(
+                                      size,
+                                      "online_quantity",
+                                      e.target.value
+                                    )
+                                  }
+                                  required
+                                />
+                              </div>
 
-              {/* OFFLINE QUANTITY */}
-              {form.offlineEnabled && (
-                <div style={{ width: "180px" }}>
-                  <label className="ZENVE-label-caps">
-                    Offline Quantity
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="1"
-                    placeholder="Store quantity"
-                    style={{ width: "180px", maxWidth: "100%" }}
-                    value={
-                      form.sizeStocks?.[
-                        size
-                      ]?.offline_quantity ?? ""
-                    }
-                    onChange={(e) =>
-                      handleSizeQuantityChange(
-                        size,
-                        "offline_quantity",
-                        e.target.value
-                      )
-                    }
-                    required
-                  />
-                </div>
-              )}
+                              {/* OFFLINE QUANTITY */}
+                              {form.offlineEnabled && (
+                                <div style={{ width: "180px" }}>
+                                  <label className="ZENVE-label-caps">
+                                    Offline Quantity
+                                  </label>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    step="1"
+                                    placeholder="Store quantity"
+                                    style={{ width: "180px", maxWidth: "100%" }}
+                                    value={
+                                      form.sizeStocks?.[
+                                        size
+                                      ]?.offline_quantity ?? ""
+                                    }
+                                    onChange={(e) =>
+                                      handleSizeQuantityChange(
+                                        size,
+                                        "offline_quantity",
+                                        e.target.value
+                                      )
+                                    }
+                                    required
+                                  />
+                                </div>
+                              )}
 
-              {/* SIZE TOTAL */}
-              <div style={{ minWidth: "60px" }}>
-                <label className="ZENVE-label-caps">
-                  Total
-                </label>
-                <div
-                  style={{
-                    height: "44px",
-                    display: "flex",
-                    alignItems: "center",
-                    fontWeight: "700",
-                    fontSize: "17px",
-                    color: "#1c1917",
-                  }}
-                >
-                  {sizeTotal}
-                </div>
-              </div>
-            </div>
-          );
-        }
-      )}
+                              {/* SIZE TOTAL */}
+                              <div style={{ minWidth: "60px" }}>
+                                <label className="ZENVE-label-caps">
+                                  Total
+                                </label>
+                                <div
+                                  style={{
+                                    height: "44px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    fontWeight: "700",
+                                    fontSize: "17px",
+                                    color: "#1c1917",
+                                  }}
+                                >
+                                  {sizeTotal}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        }
+                      )}
 
-      {/* =================================================
+                      {/* =================================================
           STOCK TOTALS
       ================================================= */}
 
-      {form.selectedSizes?.length >
-        0 && (
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "25px",
+                      {form.selectedSizes?.length >
+                        0 && (
+                          <div
+                            style={{
+                              display: "flex",
+                              flexWrap: "wrap",
+                              gap: "25px",
 
-            marginTop: "18px",
+                              marginTop: "18px",
 
-            padding: "15px",
+                              padding: "15px",
 
-            background: "#f7f8fb",
+                              background: "#f7f8fb",
 
-            borderRadius: "10px",
+                              borderRadius: "10px",
 
-            border:
-              "1px solid #e8eaf0",
-          }}
-        >
-          <span>
-            Online Stock:{" "}
-            <strong>
-              {totalOnlineQuantity}
-            </strong>
-          </span>
+                              border:
+                                "1px solid #e8eaf0",
+                            }}
+                          >
+                            <span>
+                              Online Stock:{" "}
+                              <strong>
+                                {totalOnlineQuantity}
+                              </strong>
+                            </span>
 
-          {form.offlineEnabled && (
-            <span>
-              Offline Stock:{" "}
-              <strong>
-                {totalOfflineQuantity}
-              </strong>
-            </span>
-          )}
+                            {form.offlineEnabled && (
+                              <span>
+                                Offline Stock:{" "}
+                                <strong>
+                                  {totalOfflineQuantity}
+                                </strong>
+                              </span>
+                            )}
 
-          <span>
-            Total Stock:{" "}
-            <strong>
-              {totalInventoryQuantity}
-            </strong>
-          </span>
-        </div>
-      )}
-    </div>
+                            <span>
+                              Total Stock:{" "}
+                              <strong>
+                                {totalInventoryQuantity}
+                              </strong>
+                            </span>
+                          </div>
+                        )}
+                    </div>
 
-    {/* =====================================================
+                    {/* =====================================================
         MRP
     ===================================================== */}
 
-    <div className="ZENVE-form-group">
-      <label className="ZENVE-label-caps">
-        MRP
-      </label>
+                    <div className="ZENVE-form-group">
+                      <label className="ZENVE-label-caps">
+                        MRP
+                      </label>
 
-      <input
-        type="number"
-        min="0"
-        placeholder="e.g. 4500"
-        value={form.mrp}
-        onChange={(e) =>
-          setForm({
-            ...form,
-            mrp: e.target.value,
-          })
-        }
-        required
-      />
-    </div>
+                      <input
+                        type="number"
+                        min="0"
+                        placeholder="e.g. 4500"
+                        value={form.mrp}
+                        onChange={(e) =>
+                          setForm({
+                            ...form,
+                            mrp: e.target.value,
+                          })
+                        }
+                        required
+                      />
+                    </div>
 
-    {/* =====================================================
+                    {/* =====================================================
         SELLING PRICE
     ===================================================== */}
 
-    <div className="ZENVE-form-group">
-      <label className="ZENVE-label-caps">
-        Selling price
-      </label>
+                    <div className="ZENVE-form-group">
+                      <label className="ZENVE-label-caps">
+                        Selling price
+                      </label>
 
-      <input
-        type="number"
-        min="0"
-        placeholder="e.g. 3499"
-        value={form.price}
-        onChange={(e) =>
-          setForm({
-            ...form,
-            price: e.target.value,
-          })
-        }
-        required
-      />
-    </div>
+                      <input
+                        type="number"
+                        min="0"
+                        placeholder="e.g. 3499"
+                        value={form.price}
+                        onChange={(e) =>
+                          setForm({
+                            ...form,
+                            price: e.target.value,
+                          })
+                        }
+                        required
+                      />
+                    </div>
 
-    {/* =====================================================
+                    {/* =====================================================
         FABRIC
     ===================================================== */}
 
-    <div className="ZENVE-form-group">
-      <label className="ZENVE-label-caps">
-        Fabric / material
-      </label>
+                    <div className="ZENVE-form-group">
+                      <label className="ZENVE-label-caps">
+                        Fabric / material
+                      </label>
 
-      <input
-        type="text"
-        placeholder="e.g. Pure Raw Silk"
-        value={form.fabric}
-        onChange={(e) =>
-          setForm({
-            ...form,
-            fabric: e.target.value,
-          })
-        }
-      />
-    </div>
+                      <input
+                        type="text"
+                        placeholder="e.g. Pure Raw Silk"
+                        value={form.fabric}
+                        onChange={(e) =>
+                          setForm({
+                            ...form,
+                            fabric: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
 
-    {/* =====================================================
+                    {/* =====================================================
         PET SAFETY
     ===================================================== */}
 
-    <div className="ZENVE-form-group span-2 col-span-2">
-      <label className="ZENVE-label-caps">
-        Pet safety information
-      </label>
+                    <div className="ZENVE-form-group span-2 col-span-2">
+                      <label className="ZENVE-label-caps">
+                        Pet safety information
+                      </label>
 
-      <input
-        type="text"
-        value={form.petSafety}
-        onChange={(e) =>
-          setForm({
-            ...form,
-            petSafety:
-              e.target.value,
-          })
-        }
-      />
-    </div>
+                      <input
+                        type="text"
+                        value={form.petSafety}
+                        onChange={(e) =>
+                          setForm({
+                            ...form,
+                            petSafety:
+                              e.target.value,
+                          })
+                        }
+                      />
+                    </div>
 
-    {/* =====================================================
+                    {/* =====================================================
         STOCKING LOCATION
     ===================================================== */}
 
-    <div className="ZENVE-form-group">
-      <label className="ZENVE-label-caps">
-        Stocking location
-      </label>
+                    <div className="ZENVE-form-group">
+                      <label className="ZENVE-label-caps">
+                        Stocking location
+                      </label>
 
-      <select
-        value={form.location}
-        onChange={(e) =>
-          setForm({
-            ...form,
-            location:
-              e.target.value,
-          })
-        }
-      >
-        <option value="MUMBAI_FC">
-          Mumbai FC
-        </option>
+                      <select
+                        value={form.location}
+                        onChange={(e) =>
+                          setForm({
+                            ...form,
+                            location:
+                              e.target.value,
+                          })
+                        }
+                      >
+                        <option value="MUMBAI_FC">
+                          Mumbai FC
+                        </option>
 
-        <option value="BENGALURU_FC">
-          Bengaluru FC
-        </option>
+                        <option value="BENGALURU_FC">
+                          Bengaluru FC
+                        </option>
 
-        <option value="KOCHI_FC">
-          Kochi FC
-        </option>
+                        <option value="KOCHI_FC">
+                          Kochi FC
+                        </option>
 
-        <option value="CHENNAI_FC">
-          Chennai FC
-        </option>
+                        <option value="CHENNAI_FC">
+                          Chennai FC
+                        </option>
 
-        <option value="DELHI_FC">
-          Delhi FC
-        </option>
+                        <option value="DELHI_FC">
+                          Delhi FC
+                        </option>
 
-        <option value="DESIGNER_STUDIO">
-          Designer Studio
-        </option>
-      </select>
-    </div>
+                        <option value="DESIGNER_STUDIO">
+                          Designer Studio
+                        </option>
+                      </select>
+                    </div>
 
-    {/* =====================================================
+                    {/* =====================================================
         PRODUCT IMAGES
     ===================================================== */}
 
-    <div className="ZENVE-form-group span-3 full-width">
-      <label className="ZENVE-label-caps">
-        Product images
-      </label>
+                    <div className="ZENVE-form-group span-3 full-width">
+                      <label className="ZENVE-label-caps">
+                        Product images
+                      </label>
 
-      <div
-        style={{
-          border:
-            "1px dashed #cfcfcf",
+                      <div
+                        style={{
+                          border:
+                            "1px dashed #cfcfcf",
 
-          borderRadius:
-            "12px",
+                          borderRadius:
+                            "12px",
 
-          padding:
-            "16px",
+                          padding:
+                            "16px",
 
-          background:
-            "#fafafa",
-        }}
-      >
-        <input
-          id="zenve-product-images"
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={
-            handleProductImageChange
-          }
-          disabled={
-            productImages.length >=
-            MAX_PRODUCT_IMAGES
-          }
-        />
+                          background:
+                            "#fafafa",
+                        }}
+                      >
+                        <input
+                          id="zenve-product-images"
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={
+                            handleProductImageChange
+                          }
+                          disabled={
+                            productImages.length >=
+                            MAX_PRODUCT_IMAGES
+                          }
+                        />
 
-        <div
-          style={{
-            marginTop:
-              "8px",
+                        <div
+                          style={{
+                            marginTop:
+                              "8px",
 
-            fontSize:
-              "12px",
+                            fontSize:
+                              "12px",
 
-            color:
-              "#666",
-          }}
-        >
-          Upload up to 4 images.{" "}
+                            color:
+                              "#666",
+                          }}
+                        >
+                          Upload up to 4 images.{" "}
 
-          {productImages.length}/4
-          selected.
-        </div>
+                          {productImages.length}/4
+                          selected.
+                        </div>
 
-        {productImages.length >
-          0 && (
-          <div
-            style={{
-              display:
-                "grid",
+                        {productImages.length >
+                          0 && (
+                            <div
+                              style={{
+                                display:
+                                  "grid",
 
-              gridTemplateColumns:
-                "repeat(auto-fill, minmax(120px, 1fr))",
+                                gridTemplateColumns:
+                                  "repeat(auto-fill, minmax(120px, 1fr))",
 
-              gap:
-                "12px",
+                                gap:
+                                  "12px",
 
-              marginTop:
-                "14px",
-            }}
-          >
-            {productImages.map(
-              (
-                file,
-                index
-              ) => (
-                <div
-                  key={`${file.name}-${file.lastModified}-${index}`}
-                  style={{
-                    position:
-                      "relative",
+                                marginTop:
+                                  "14px",
+                              }}
+                            >
+                              {productImages.map(
+                                (
+                                  file,
+                                  index
+                                ) => (
+                                  <div
+                                    key={`${file.name}-${file.lastModified}-${index}`}
+                                    style={{
+                                      position:
+                                        "relative",
 
-                    border:
-                      "1px solid #e5e5e5",
+                                      border:
+                                        "1px solid #e5e5e5",
 
-                    borderRadius:
-                      "10px",
+                                      borderRadius:
+                                        "10px",
 
-                    overflow:
-                      "hidden",
+                                      overflow:
+                                        "hidden",
 
-                    background:
-                      "#fff",
-                  }}
-                >
-                  <img
-                    src={
-                      URL.createObjectURL(
-                        file
-                      )
-                    }
-                    alt={`Product ${
-                      index + 1
-                    }`}
-                    style={{
-                      width:
-                        "100%",
+                                      background:
+                                        "#fff",
+                                    }}
+                                  >
+                                    <img
+                                      src={
+                                        URL.createObjectURL(
+                                          file
+                                        )
+                                      }
+                                      alt={`Product ${index + 1
+                                        }`}
+                                      style={{
+                                        width:
+                                          "100%",
 
-                      height:
-                        "110px",
+                                        height:
+                                          "110px",
 
-                      objectFit:
-                        "cover",
+                                        objectFit:
+                                          "cover",
 
-                      display:
-                        "block",
-                    }}
-                  />
+                                        display:
+                                          "block",
+                                      }}
+                                    />
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      removeProductImage(
-                        index
-                      )
-                    }
-                    aria-label={`Remove product image ${
-                      index + 1
-                    }`}
-                    style={{
-                      position:
-                        "absolute",
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        removeProductImage(
+                                          index
+                                        )
+                                      }
+                                      aria-label={`Remove product image ${index + 1
+                                        }`}
+                                      style={{
+                                        position:
+                                          "absolute",
 
-                      top:
-                        "6px",
+                                        top:
+                                          "6px",
 
-                      right:
-                        "6px",
+                                        right:
+                                          "6px",
 
-                      width:
-                        "26px",
+                                        width:
+                                          "26px",
 
-                      height:
-                        "26px",
+                                        height:
+                                          "26px",
 
-                      border:
-                        "none",
+                                        border:
+                                          "none",
 
-                      borderRadius:
-                        "50%",
+                                        borderRadius:
+                                          "50%",
 
-                      background:
-                        "rgba(0,0,0,0.7)",
+                                        background:
+                                          "rgba(0,0,0,0.7)",
 
-                      color:
-                        "#fff",
+                                        color:
+                                          "#fff",
 
-                      cursor:
-                        "pointer",
+                                        cursor:
+                                          "pointer",
 
-                      fontSize:
-                        "16px",
+                                        fontSize:
+                                          "16px",
 
-                      lineHeight:
-                        "26px",
-                    }}
-                  >
-                    ×
-                  </button>
+                                        lineHeight:
+                                          "26px",
+                                      }}
+                                    >
+                                      ×
+                                    </button>
 
-                  <div
-                    style={{
-                      padding:
-                        "6px 8px",
+                                    <div
+                                      style={{
+                                        padding:
+                                          "6px 8px",
 
-                      fontSize:
-                        "11px",
+                                        fontSize:
+                                          "11px",
 
-                      whiteSpace:
-                        "nowrap",
+                                        whiteSpace:
+                                          "nowrap",
 
-                      overflow:
-                        "hidden",
+                                        overflow:
+                                          "hidden",
 
-                      textOverflow:
-                        "ellipsis",
-                    }}
-                    title={
-                      file.name
-                    }
-                  >
-                    {index + 1}.{" "}
-                    {file.name}
-                  </div>
-                </div>
-              )
-            )}
-          </div>
-        )}
-      </div>
-    </div>
+                                        textOverflow:
+                                          "ellipsis",
+                                      }}
+                                      title={
+                                        file.name
+                                      }
+                                    >
+                                      {index + 1}.{" "}
+                                      {file.name}
+                                    </div>
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          )}
+                      </div>
+                    </div>
 
-    {/* =====================================================
+                    {/* =====================================================
         FAST DELIVERY & RETURNABLE TOGGLES
     ===================================================== */}
 
-    <div className="ZENVE-form-group span-3 full-width">
-      <div className="ZENVE-toggles-grid">
-        <div className="ZENVE-form-toggle-row">
-          <span className="ZENVE-label-caps">
-            Fast delivery eligible
-          </span>
+                    <div className="ZENVE-form-group span-3 full-width">
+                      <div className="ZENVE-toggles-grid">
+                        <div className="ZENVE-form-toggle-row">
+                          <span className="ZENVE-label-caps">
+                            Fast delivery eligible
+                          </span>
 
-          <Switch
-            checked={
-              form.fastDelivery
-            }
-            onChange={(val) =>
-              setForm({
-                ...form,
-                fastDelivery:
-                  val,
-              })
-            }
-          />
-        </div>
+                          <Switch
+                            checked={
+                              form.fastDelivery
+                            }
+                            onChange={(val) =>
+                              setForm({
+                                ...form,
+                                fastDelivery:
+                                  val,
+                              })
+                            }
+                          />
+                        </div>
 
-        <div className="ZENVE-form-toggle-row">
-          <span className="ZENVE-label-caps">
-            Returnable
-          </span>
+                        <div className="ZENVE-form-toggle-row">
+                          <span className="ZENVE-label-caps">
+                            Returnable
+                          </span>
 
-          <Switch
-            checked={
-              form.returnable
-            }
-            onChange={(val) =>
-              setForm({
-                ...form,
-                returnable:
-                  val,
-              })
-            }
-          />
-        </div>
-      </div>
-    </div>
-  </div>
+                          <Switch
+                            checked={
+                              form.returnable
+                            }
+                            onChange={(val) =>
+                              setForm({
+                                ...form,
+                                returnable:
+                                  val,
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-  {/* =====================================================
+                  {/* =====================================================
       SKU PREVIEW
   ===================================================== */}
 
-  <div className="ZENVE-sku-preview-row">
-    <span className="ZENVE-preview-text">
-      SKU ID preview:
-    </span>
+                  <div className="ZENVE-sku-preview-row">
+                    <span className="ZENVE-preview-text">
+                      SKU ID preview:
+                    </span>
 
-    <span className="ZENVE-sku-mono">
-      {skuPreview}
-    </span>
-  </div>
+                    <span className="ZENVE-sku-mono">
+                      {skuPreview}
+                    </span>
+                  </div>
 
-  {/* =====================================================
+                  {/* =====================================================
       SUBMIT
   ===================================================== */}
 
-  <div className="ZENVE-form-actions">
-    <button
-      type="submit"
-      className="ZENVE-btn-primary"
-      disabled={
-        submittingSku ||
-        !activeDesigner ||
-        !form.selectedSizes?.length ||
-        totalInventoryQuantity <= 0
-      }
-    >
-      {submittingSku
-        ? "Submitting..."
-        : "Submit to QA"}
-    </button>
-  </div>
-</form>
+                  <div className="ZENVE-form-actions">
+                    <button
+                      type="submit"
+                      className="ZENVE-btn-primary"
+                      disabled={
+                        submittingSku ||
+                        !activeDesigner ||
+                        !form.selectedSizes?.length ||
+                        totalInventoryQuantity <= 0
+                      }
+                    >
+                      {submittingSku
+                        ? "Submitting..."
+                        : "Submit to QA"}
+                    </button>
+                  </div>
+                </form>
               </section>
 
               {/* =================================================

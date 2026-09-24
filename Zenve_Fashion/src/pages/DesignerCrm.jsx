@@ -43,6 +43,49 @@ function WhatsAppIcon({ size = 16, className = "" }) {
   );
 }
 
+export const FASHION_CREDIT_PLANS = [
+  {
+    id: "Silver",
+    name: "Silver",
+    catalogue: 50,
+    products: 50,
+    points: "1,00,000",
+    pointsNum: 100000,
+    catalogueCharges: 500,
+    minDays: 200,
+  },
+  {
+    id: "Gold",
+    name: "Gold",
+    catalogue: 200,
+    products: 200,
+    points: "3,00,000",
+    pointsNum: 300000,
+    catalogueCharges: 500,
+    minDays: 200,
+  },
+  {
+    id: "Platinum",
+    name: "Platinum",
+    catalogue: 300,
+    products: 300,
+    points: "4,50,000",
+    pointsNum: 450000,
+    catalogueCharges: 500,
+    minDays: 200,
+  },
+  {
+    id: "Palladium",
+    name: "Palladium",
+    catalogue: 999,
+    products: 999,
+    points: "7,00,000",
+    pointsNum: 700000,
+    catalogueCharges: 500,
+    minDays: 200,
+  },
+];
+
 const STAGES_SEQUENCE = [
   "LEAD",
   "QUALIFIED",
@@ -129,6 +172,8 @@ export default function DesignerCRM() {
     city: "",
     category: "",
     tier: "Emerging",
+    fashionCreditPlan: "",
+    creditPoints: 0,
     takeRate: "",
     gst: "",
     contractEnds: "",
@@ -722,6 +767,8 @@ _Team ZENVE Creator Operations_`;
         city: "",
         category: "",
         tier: "Emerging",
+        fashionCreditPlan: "",
+        creditPoints: 0,
         takeRate: "",
         gst: "",
         contractEnds: "",
@@ -1259,6 +1306,8 @@ _Team ZENVE Creator Operations_`;
             </div>
           </div>
 
+
+
           <form onSubmit={handleCreateLead} className="lead-form-grid">
             <div className="lead-form-field">
               <label className="label-caps">Designer name</label>
@@ -1394,6 +1443,31 @@ _Team ZENVE Creator Operations_`;
                 <option value="Premium">Premium</option>
                 <option value="Core">Core</option>
                 <option value="Emerging">Emerging</option>
+              </select>
+            </div>
+
+            <div className="lead-form-field">
+              <label className="label-caps">Given credits (Points)</label>
+              <select
+                className="lead-select"
+                value={newLead.fashionCreditPlan}
+                onChange={(e) => {
+                  const selectedVal = e.target.value;
+                  const plan = FASHION_CREDIT_PLANS.find(
+                    (p) => p.id === selectedVal
+                  );
+                  setNewLead({
+                    ...newLead,
+                    fashionCreditPlan: selectedVal,
+                    creditPoints: plan ? plan.pointsNum : 0,
+                  });
+                }}
+              >
+                <option value="">Select a credit plan...</option>
+                <option value="Silver">Silver — 1,00,000 Points</option>
+                <option value="Gold">Gold — 3,00,000 Points</option>
+                <option value="Platinum">Platinum — 4,50,000 Points</option>
+                <option value="Palladium">Palladium — 7,00,000 Points</option>
               </select>
             </div>
 
