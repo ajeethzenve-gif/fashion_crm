@@ -414,7 +414,20 @@ export default function Storefront() {
           MAIN BODY
       ===================================================== */}
       <main className="ZENVE-sf-main">
-
+        {/* ALERT NOTIFICATION */}
+        {alert && alert.type !== "success" && (
+          <div className={`ZENVE-sf-alert ${alert.type}`}>
+            <span>{alert.text}</span>
+            <button
+              type="button"
+              className="ZENVE-alert-close"
+              onClick={() => setAlert(null)}
+              aria-label="Close alert"
+            >
+              ×
+            </button>
+          </div>
+        )}
 
         {/* ===================================================
             TOP 3 SUMMARY KPI CARDS

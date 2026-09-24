@@ -370,29 +370,37 @@ button {
       '. cta';
     row-gap: 6px;
   }
+
   .ledger-num {
     grid-area: num;
   }
+
   .ledger-group {
     grid-area: group;
   }
+
   .ledger-name,
   .ledger-blurb {
     grid-area: name;
   }
+
   .ledger-blurb {
     margin-top: 32px;
   }
+
   .ledger-cta {
     grid-area: cta;
     justify-self: start;
   }
+
   .stats {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .stat:nth-child(3) {
     border-left: none;
   }
+
   .stat:nth-child(3),
   .stat:nth-child(4) {
     padding-top: 20px;
@@ -554,6 +562,7 @@ button {
   .shop-layout {
     grid-template-columns: 1fr;
   }
+
   .shop-stats {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -863,6 +872,7 @@ button {
     white-space: nowrap !important;
     scrollbar-width: none !important;
   }
+
   .tab-group::-webkit-scrollbar,
   .layer-pills::-webkit-scrollbar {
     display: none !important;
@@ -894,7 +904,8 @@ button {
     min-width: 680px !important;
   }
 
-  th, td {
+  th,
+  td {
     padding: 8px 10px !important;
     font-size: 12px !important;
   }
@@ -912,6 +923,7 @@ button {
 
 /* Extra small mobile screens (< 380px) */
 @media (max-width: 380px) {
+
   .kpi-grid,
   .metrics-grid,
   .stats-grid,
@@ -1017,13 +1029,17 @@ button {
   }
 
   /* 4K Data Tables: high readability with comfortable padding */
-  th, td {
+  th,
+  td {
     padding: 16px 20px !important;
     font-size: 15px !important;
   }
 
   /* 4K Buttons & Inputs */
-  button, input, select, textarea {
+  button,
+  input,
+  select,
+  textarea {
     font-size: 14.5px;
   }
 
@@ -1039,7 +1055,7 @@ button {
   :root {
     --page-max-w: 3600px !important;
   }
-  
+
   .kpi-grid,
   .metrics-grid {
     grid-template-columns: repeat(6, 1fr) !important;
@@ -1112,12 +1128,35 @@ button {
   border-radius: 0 0 12px 12px !important;
 }
 
+.zenve-swal-progress-warning {
+  background: #f59e0b !important;
+  height: 3px !important;
+  border-radius: 0 0 12px 12px !important;
+}
+
+.zenve-swal-progress-info {
+  background: #2563eb !important;
+  height: 3px !important;
+  border-radius: 0 0 12px 12px !important;
+}
+
 /* =========================================================
-   HIDE ALL NOTIFICATION BANNERS & TOASTS ON ALL PAGES
+   UNIVERSAL SUPPRESSION OF ALL TOP-OF-PAGE ALERT BANNERS
+   All notifications (success, error, warning) show ONLY via
+   SweetAlert toast notifications. No banners ever appear at the top.
 ========================================================= */
 .ZENVE-alert,
 .ZENVE-alert-success,
 .ZENVE-alert-error,
+.ZENVE-alert-warning,
+.ZENVE-alert-info,
+.ZENVE-alert-danger,
+.ZENVE-alert.error,
+.ZENVE-alert.success,
+.ZENVE-alert.warning,
+.ZENVE-alert.info,
+.ZENVE-alert.danger,
+.ZENVE-alert[class*="alert"],
 .ZENVE-banner-alert,
 .ZENVE-sf-alert,
 .ZENVE-orders-alert,
@@ -1125,15 +1164,12 @@ button {
 .ZENVE-returns-alert,
 .ZENVE-settlement-alert,
 .ZENVE-delivery-alert,
+.crm-error-banner,
+.cc-error-banner,
+.analytics-error-banner,
+.dashboard-error,
 .crm-toast,
 .cc-toast,
-.analytics-toast,
-.crm-error-banner,
-.analytics-error-banner,
-.cc-error-banner,
-.zenve-swal-toast {
+.analytics-toast {
   display: none !important;
 }
-
-
-

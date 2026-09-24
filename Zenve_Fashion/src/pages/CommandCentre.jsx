@@ -867,8 +867,20 @@ export default function CommandCentre() {
         </div>
       </header>
 
+      {/* TOAST ALERT */}
+      {toastMessage && <div className="cc-toast">{toastMessage}</div>}
+
       {/* MAIN CONTAINER */}
       <main className="command-centre-container">
+        {/* ERROR BANNER */}
+        {error && (
+          <div className="cc-error-banner">
+            <span>{error}</span>
+            <button type="button" onClick={() => fetchAllData(true)}>
+              Retry
+            </button>
+          </div>
+        )}
 
         {/* 1. TOP 4 KPIS */}
         <section className="cc-kpi-grid">

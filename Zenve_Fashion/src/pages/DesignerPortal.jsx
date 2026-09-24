@@ -444,8 +444,7 @@ export default function DesignerPortal() {
 
     if (selectedFiles.length > availableSlots) {
       setImageWarningText(
-        `Only ${availableSlots} more image${
-          availableSlots === 1 ? "" : "s"
+        `Only ${availableSlots} more image${availableSlots === 1 ? "" : "s"
         } can be selected. A product requires exactly 4 images.`
       );
       setImageWarningOpen(true);
@@ -1775,11 +1774,10 @@ export default function DesignerPortal() {
             <div className="ZENVE-header-actions-group">
               <button
                 type="button"
-                className={`ZENVE-header-profile-btn ${
-                  showProfileAndAccount
-                    ? "active"
-                    : ""
-                }`}
+                className={`ZENVE-header-profile-btn ${showProfileAndAccount
+                  ? "active"
+                  : ""
+                  }`}
                 onClick={() => {
                   setShowProfileAndAccount(
                     (prev) => {
@@ -1832,12 +1830,11 @@ export default function DesignerPortal() {
                 aria-label="Open notifications sidebar"
                 title={
                   unreadNotifications > 0
-                    ? `${unreadNotifications} unread notification${
-                        unreadNotifications >
-                        1
-                          ? "s"
-                          : ""
-                      }`
+                    ? `${unreadNotifications} unread notification${unreadNotifications >
+                      1
+                      ? "s"
+                      : ""
+                    }`
                     : "Notifications"
                 }
               >
@@ -1854,15 +1851,13 @@ export default function DesignerPortal() {
         </div>
       </header>
 
-
-
       {/* =====================================================
           EMPTY DESIGNER
       ===================================================== */}
 
       {!activeDesigner &&
-      !loadingPortal &&
-      !loadingDesigners ? (
+        !loadingPortal &&
+        !loadingDesigners ? (
         <div className="ZENVE-empty-state-card">
           <h3>
             Create a designer in the Designer CRM
@@ -1913,8 +1908,8 @@ export default function DesignerPortal() {
                     {loadingPortal
                       ? "—"
                       : formatInr(
-                          kpis.monthlyGmv
-                        )}
+                        kpis.monthlyGmv
+                      )}
                   </div>
 
                   <div className="ZENVE-tile-hint">
@@ -1936,9 +1931,8 @@ export default function DesignerPortal() {
                   <div className="ZENVE-tile-hint">
                     {loadingPortal
                       ? "..."
-                      : `${
-                          kpis.units ?? 0
-                        } units sold`}
+                      : `${kpis.units ?? 0
+                      } units sold`}
                   </div>
                 </div>
 
@@ -1951,8 +1945,8 @@ export default function DesignerPortal() {
                     {loadingPortal
                       ? "—"
                       : formatInr(
-                          kpis.commission
-                        )}
+                        kpis.commission
+                      )}
                   </div>
 
                   <div className="ZENVE-tile-hint">
@@ -1972,8 +1966,8 @@ export default function DesignerPortal() {
                     {loadingPortal
                       ? "—"
                       : formatInr(
-                          kpis.netPayable
-                        )}
+                        kpis.netPayable
+                      )}
                   </div>
 
                   <div className="ZENVE-tile-hint">
@@ -1990,10 +1984,9 @@ export default function DesignerPortal() {
                   <div className="ZENVE-tile-value">
                     {loadingPortal
                       ? "—"
-                      : `${
-                          kpis.conversion ??
-                          0.1
-                        }%`}
+                      : `${kpis.conversion ??
+                      0.1
+                      }%`}
                   </div>
 
                   <div className="ZENVE-tile-hint">
@@ -2016,7 +2009,7 @@ export default function DesignerPortal() {
                     {loadingPortal
                       ? "—"
                       : kpis.bestSeller?.name ||
-                        "—"}
+                      "—"}
                   </div>
 
                   <div className="ZENVE-tile-hint">
@@ -2068,7 +2061,7 @@ export default function DesignerPortal() {
                     {loadingPortal
                       ? "—"
                       : kpis.inventoryAlerts ??
-                        0}
+                      0}
                   </div>
 
                   <div className="ZENVE-tile-hint">
@@ -2084,9 +2077,8 @@ export default function DesignerPortal() {
                   <div className="ZENVE-tile-value">
                     {loadingPortal
                       ? "—"
-                      : `${
-                          kpis.health ?? "—"
-                        }/100`}
+                      : `${kpis.health ?? "—"
+                      }/100`}
                   </div>
 
                   <div className="ZENVE-tile-hint">
@@ -2101,7 +2093,7 @@ export default function DesignerPortal() {
                 </span>
 
                 {pendingActions.length ===
-                0 ? (
+                  0 ? (
                   <p className="ZENVE-pending-empty">
                     Nothing needs your attention.
                   </p>
@@ -2748,17 +2740,17 @@ export default function DesignerPortal() {
                       <dd className="ZENVE-account-num-dd">
                         <span>
                           {isAccountMasked &&
-                          accountForm.accountNumber
+                            accountForm.accountNumber
                             ? accountForm
-                                .accountNumber
-                                .length > 4
+                              .accountNumber
+                              .length > 4
                               ? "•••• •••• " +
-                                accountForm.accountNumber.slice(
-                                  -4
-                                )
+                              accountForm.accountNumber.slice(
+                                -4
+                              )
                               : accountForm.accountNumber
                             : accountForm.accountNumber ||
-                              "—"}
+                            "—"}
                         </span>
 
                         {accountForm.accountNumber && (
@@ -3289,126 +3281,124 @@ export default function DesignerPortal() {
 
                         {productImages.length >
                           0 && (
-                          <div
-                            style={{
-                              display:
-                                "grid",
-                              gridTemplateColumns:
-                                "repeat(auto-fill, minmax(120px, 1fr))",
-                              gap: "12px",
-                              marginTop:
-                                "14px",
-                            }}
-                          >
-                            {productImages.map(
-                              (
-                                file,
-                                index
-                              ) => (
-                                <div
-                                  key={`${file.name}-${file.lastModified}-${index}`}
-                                  style={{
-                                    position:
-                                      "relative",
-                                    border:
-                                      "1px solid #e5e5e5",
-                                    borderRadius:
-                                      "10px",
-                                    overflow:
-                                      "hidden",
-                                    background:
-                                      "#fff",
-                                  }}
-                                >
-                                  <img
-                                    src={URL.createObjectURL(
-                                      file
-                                    )}
-                                    alt={`Product ${
-                                      index +
-                                      1
-                                    }`}
-                                    style={{
-                                      width:
-                                        "100%",
-                                      height:
-                                        "110px",
-                                      objectFit:
-                                        "cover",
-                                      display:
-                                        "block",
-                                    }}
-                                  />
-
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      removeProductImage(
-                                        index
-                                      )
-                                    }
-                                    aria-label={`Remove product image ${
-                                      index +
-                                      1
-                                    }`}
+                            <div
+                              style={{
+                                display:
+                                  "grid",
+                                gridTemplateColumns:
+                                  "repeat(auto-fill, minmax(120px, 1fr))",
+                                gap: "12px",
+                                marginTop:
+                                  "14px",
+                              }}
+                            >
+                              {productImages.map(
+                                (
+                                  file,
+                                  index
+                                ) => (
+                                  <div
+                                    key={`${file.name}-${file.lastModified}-${index}`}
                                     style={{
                                       position:
-                                        "absolute",
-                                      top: "6px",
-                                      right:
-                                        "6px",
-                                      width:
-                                        "26px",
-                                      height:
-                                        "26px",
+                                        "relative",
                                       border:
-                                        "none",
+                                        "1px solid #e5e5e5",
                                       borderRadius:
-                                        "50%",
-                                      background:
-                                        "rgba(0,0,0,0.7)",
-                                      color:
-                                        "#fff",
-                                      cursor:
-                                        "pointer",
-                                      fontSize:
-                                        "16px",
-                                      lineHeight:
-                                        "26px",
-                                    }}
-                                  >
-                                    ×
-                                  </button>
-
-                                  <div
-                                    style={{
-                                      padding:
-                                        "6px 8px",
-                                      fontSize:
-                                        "11px",
-                                      whiteSpace:
-                                        "nowrap",
+                                        "10px",
                                       overflow:
                                         "hidden",
-                                      textOverflow:
-                                        "ellipsis",
+                                      background:
+                                        "#fff",
                                     }}
-                                    title={
-                                      file.name
-                                    }
                                   >
-                                    {index +
-                                      1}
-                                    .{" "}
-                                    {
-                                      file.name
-                                    }
+                                    <img
+                                      src={URL.createObjectURL(
+                                        file
+                                      )}
+                                      alt={`Product ${index +
+                                        1
+                                        }`}
+                                      style={{
+                                        width:
+                                          "100%",
+                                        height:
+                                          "110px",
+                                        objectFit:
+                                          "cover",
+                                        display:
+                                          "block",
+                                      }}
+                                    />
+
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        removeProductImage(
+                                          index
+                                        )
+                                      }
+                                      aria-label={`Remove product image ${index +
+                                        1
+                                        }`}
+                                      style={{
+                                        position:
+                                          "absolute",
+                                        top: "6px",
+                                        right:
+                                          "6px",
+                                        width:
+                                          "26px",
+                                        height:
+                                          "26px",
+                                        border:
+                                          "none",
+                                        borderRadius:
+                                          "50%",
+                                        background:
+                                          "rgba(0,0,0,0.7)",
+                                        color:
+                                          "#fff",
+                                        cursor:
+                                          "pointer",
+                                        fontSize:
+                                          "16px",
+                                        lineHeight:
+                                          "26px",
+                                      }}
+                                    >
+                                      ×
+                                    </button>
+
+                                    <div
+                                      style={{
+                                        padding:
+                                          "6px 8px",
+                                        fontSize:
+                                          "11px",
+                                        whiteSpace:
+                                          "nowrap",
+                                        overflow:
+                                          "hidden",
+                                        textOverflow:
+                                          "ellipsis",
+                                      }}
+                                      title={
+                                        file.name
+                                      }
+                                    >
+                                      {index +
+                                        1}
+                                      .{" "}
+                                      {
+                                        file.name
+                                      }
+                                    </div>
                                   </div>
-                                </div>
-                              )
-                            )}
-                          </div>
-                        )}
+                                )
+                              )}
+                            </div>
+                          )}
                       </div>
                     </div>
 
@@ -3586,7 +3576,7 @@ export default function DesignerPortal() {
 
                 <div className="ZENVE-orders-block">
                   {orders.length ===
-                  0 ? (
+                    0 ? (
                     <div className="ZENVE-item-empty">
                       No orders yet — sell something
                       from the Storefront layer.
@@ -3618,7 +3608,7 @@ export default function DesignerPortal() {
                             <span
                               className={`ZENVE-order-badge tone-${String(
                                 ord.status ||
-                                  ""
+                                ""
                               ).toLowerCase()}`}
                             >
                               {
@@ -3634,51 +3624,51 @@ export default function DesignerPortal() {
 
                 {settlements.length >
                   0 && (
-                  <div className="ZENVE-settlements-block">
-                    <div className="ZENVE-settlements-list">
-                      {settlements.map(
-                        (stl) => (
-                          <div
-                            key={stl.id}
-                            className="ZENVE-settlement-row"
-                          >
-                            <span className="ZENVE-stl-id">
-                              {stl.id}
-                            </span>
-
-                            <span className="ZENVE-stl-breakdown">
-                              GMV{" "}
-                              {formatInr(
-                                stl.gmv
-                              )}{" "}
-                              − commission{" "}
-                              {formatInr(
-                                stl.commission
-                              )}
-                            </span>
-
-                            <span className="ZENVE-stl-net">
-                              {formatInr(
-                                stl.net
-                              )}
-                            </span>
-
-                            <span
-                              className={`ZENVE-order-badge tone-${String(
-                                stl.status ||
-                                  ""
-                              ).toLowerCase()}`}
+                    <div className="ZENVE-settlements-block">
+                      <div className="ZENVE-settlements-list">
+                        {settlements.map(
+                          (stl) => (
+                            <div
+                              key={stl.id}
+                              className="ZENVE-settlement-row"
                             >
-                              {
-                                stl.status
-                              }
-                            </span>
-                          </div>
-                        )
-                      )}
+                              <span className="ZENVE-stl-id">
+                                {stl.id}
+                              </span>
+
+                              <span className="ZENVE-stl-breakdown">
+                                GMV{" "}
+                                {formatInr(
+                                  stl.gmv
+                                )}{" "}
+                                − commission{" "}
+                                {formatInr(
+                                  stl.commission
+                                )}
+                              </span>
+
+                              <span className="ZENVE-stl-net">
+                                {formatInr(
+                                  stl.net
+                                )}
+                              </span>
+
+                              <span
+                                className={`ZENVE-order-badge tone-${String(
+                                  stl.status ||
+                                  ""
+                                ).toLowerCase()}`}
+                              >
+                                {
+                                  stl.status
+                                }
+                              </span>
+                            </div>
+                          )
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </section>
             </>
           )}
@@ -3717,7 +3707,7 @@ export default function DesignerPortal() {
                   </h2>
 
                   {unreadNotifications >
-                  0 ? (
+                    0 ? (
                     <span className="ZENVE-notif-count-pill">
                       {
                         unreadNotifications
@@ -3755,28 +3745,28 @@ export default function DesignerPortal() {
               <span className="ZENVE-label-caps">
                 {notifications.length}{" "}
                 {notifications.length ===
-                1
+                  1
                   ? "Update"
                   : "Updates"}
               </span>
 
               {unreadNotifications >
                 0 && (
-                <button
-                  type="button"
-                  className="ZENVE-btn-outline-sm"
-                  onClick={
-                    handleMarkNotificationsRead
-                  }
-                >
-                  Mark all as read
-                </button>
-              )}
+                  <button
+                    type="button"
+                    className="ZENVE-btn-outline-sm"
+                    onClick={
+                      handleMarkNotificationsRead
+                    }
+                  >
+                    Mark all as read
+                  </button>
+                )}
             </div>
 
             <div className="ZENVE-notif-sidebar-body">
               {notifications.length ===
-              0 ? (
+                0 ? (
                 <div className="ZENVE-item-empty">
                   No notifications yet.
                 </div>
@@ -3786,11 +3776,10 @@ export default function DesignerPortal() {
                     (n) => (
                       <div
                         key={n.id}
-                        className={`ZENVE-notification-row ${
-                          !n.read
-                            ? "unread"
-                            : ""
-                        }`}
+                        className={`ZENVE-notification-row ${!n.read
+                          ? "unread"
+                          : ""
+                          }`}
                       >
                         <div className="ZENVE-notif-left">
                           {!n.read && (

@@ -304,7 +304,25 @@ export default function Catalogue() {
         </div>
       </header>
 
+      {/* FEEDBACK BANNER */}
+      {alert && alert.type !== "success" && (
+        <div className={`ZENVE-alert ZENVE-alert-${alert.type}`}>
+          <span>{alert.text}</span>
+          <button type="button" className="ZENVE-alert-close" onClick={() => setAlert(null)}>
+            ×
+          </button>
+        </div>
+      )}
 
+      {/* ERROR BANNER */}
+      {error && (
+        <div className="ZENVE-alert ZENVE-alert-error">
+          <span>{error}</span>
+          <button type="button" className="ZENVE-alert-close" onClick={loadProducts}>
+            Retry
+          </button>
+        </div>
+      )}
 
       <main className="ZENVE-catalogue-main">
         {/* ===================================================

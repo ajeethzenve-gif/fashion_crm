@@ -153,8 +153,8 @@ export default function DeliveryEngine() {
           p.available_quantity !== undefined && p.available_quantity !== null
             ? Number(p.available_quantity)
             : p.inventory_quantity !== undefined && p.inventory_quantity !== null
-            ? Number(p.inventory_quantity)
-            : 0;
+              ? Number(p.inventory_quantity)
+              : 0;
 
         return {
           id: p.id,
@@ -264,7 +264,35 @@ export default function DeliveryEngine() {
           MAIN CONTENT AREA
       ===================================================== */}
       <main className="ZENVE-delivery-main">
+        {/* ALERT NOTIFICATION BANNER */}
+        {alert && alert.type !== "success" && (
+          <div className={`ZENVE-delivery-alert ${alert.type}`}>
+            <span>{alert.text}</span>
+            <button
+              type="button"
+              className="ZENVE-alert-close"
+              onClick={() => setAlert(null)}
+              aria-label="Close alert"
+            >
+              ×
+            </button>
+          </div>
+        )}
 
+        {/* ERROR BANNER */}
+        {error && (
+          <div className="ZENVE-delivery-alert error">
+            <span>{error}</span>
+            <button
+              type="button"
+              className="ZENVE-alert-close"
+              onClick={loadDeliveryProducts}
+              aria-label="Retry loading products"
+            >
+              Retry
+            </button>
+          </div>
+        )}
 
         {/* ===================================================
             TOP 3 KPI METRIC CARDS
@@ -367,8 +395,8 @@ export default function DeliveryEngine() {
                     const tone = promise.fast
                       ? "good"
                       : promise.serviceable
-                      ? "info"
-                      : "bad";
+                        ? "info"
+                        : "bad";
 
                     return (
                       <tr key={item.id || item.sku}>
@@ -385,9 +413,8 @@ export default function DeliveryEngine() {
                             type="button"
                             role="switch"
                             aria-checked={item.fastDelivery}
-                            className={`ZENVE-switch-btn ${
-                              item.fastDelivery ? "checked" : ""
-                            }`}
+                            className={`ZENVE-switch-btn ${item.fastDelivery ? "checked" : ""
+                              }`}
                             disabled={updatingId === item.id}
                             onClick={() => handleToggleFast(item)}
                             aria-label={`Toggle fast delivery for ${item.name}`}

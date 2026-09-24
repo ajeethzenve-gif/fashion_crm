@@ -339,7 +339,35 @@ export default function Settlement() {
           MAIN CONTENT AREA
       ===================================================== */}
       <main className="ZENVE-settlement-main">
+        {/* TOAST / ALERT BANNER */}
+        {alert && alert.type !== "success" && (
+          <div className={`ZENVE-settlement-alert ${alert.type}`}>
+            <span>{alert.text}</span>
+            <button
+              type="button"
+              className="ZENVE-alert-close"
+              onClick={() => setAlert(null)}
+              aria-label="Close alert"
+            >
+              ×
+            </button>
+          </div>
+        )}
 
+        {/* ERROR BANNER */}
+        {error && (
+          <div className="ZENVE-settlement-alert error">
+            <span>{error}</span>
+            <button
+              type="button"
+              className="ZENVE-alert-close"
+              onClick={loadData}
+              aria-label="Retry loading data"
+            >
+              Retry
+            </button>
+          </div>
+        )}
 
         {/* ===================================================
             TOP 4 KPI METRIC CARDS

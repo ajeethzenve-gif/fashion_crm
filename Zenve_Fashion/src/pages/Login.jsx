@@ -4,6 +4,7 @@ import { useAuth, ROLES } from "../context/AuthContext";
 import { layers } from "../data/layers";
 import "../styles/Login.css";
 import zenveLogo from "../assest/logo/zenve-logo-fashion.png";
+import { showInfoToast } from "../utils/zenveToast";
 
 /* =========================================================
    ICONS
@@ -281,7 +282,10 @@ export default function Login() {
                 className="forgot-link"
                 onClick={(e) => {
                   e.preventDefault();
-                  alert(`Demo credentials for ${currentRole.name}:\nEmail: ${currentRole.email}\nRedirects to: Home Dashboard (/)`);
+                  showInfoToast(
+                    `Email: ${currentRole.email} · Redirects to Home Dashboard (/)`,
+                    `Demo credentials for ${currentRole.name}`
+                  );
                 }}
               >
                 Access help?

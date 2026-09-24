@@ -118,12 +118,12 @@ function Home() {
   const getProductStock = (product) => {
     return getNumber(
       product?.stock ??
-        product?.quantity ??
-        product?.stock_quantity ??
-        product?.physical_stock ??
-        product?.inventory ??
-        product?.available_quantity ??
-        0
+      product?.quantity ??
+      product?.stock_quantity ??
+      product?.physical_stock ??
+      product?.inventory ??
+      product?.available_quantity ??
+      0
     );
   };
 
@@ -210,15 +210,15 @@ function Home() {
   const getOrderGmv = (order) => {
     return getNumber(
       order?.total_amount ??
-        order?.grand_total ??
-        order?.order_total ??
-        order?.total ??
-        order?.amount ??
-        order?.gmv ??
-        order?.total_price ??
-        order?.final_amount ??
-        order?.order_value ??
-        0
+      order?.grand_total ??
+      order?.order_total ??
+      order?.total ??
+      order?.amount ??
+      order?.gmv ??
+      order?.total_price ??
+      order?.final_amount ??
+      order?.order_value ??
+      0
     );
   };
 
@@ -449,14 +449,14 @@ function Home() {
     loading
       ? "..."
       : `₹${Number(
-          totalGmv
-        ).toLocaleString(
-          "en-IN",
-          {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 2,
-          }
-        )}`;
+        totalGmv
+      ).toLocaleString(
+        "en-IN",
+        {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 2,
+        }
+      )}`;
 
   /* =========================================================
      RETURN

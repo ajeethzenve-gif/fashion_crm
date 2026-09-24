@@ -14,7 +14,7 @@ import {
 } from "../services/api";
 
 import { maskGstNumber } from "../utils/gstUtils.js";
-import { showSuccessToast, showErrorToast } from "../utils/zenveToast";
+import { showSuccessToast, showErrorToast, showWarningToast } from "../utils/zenveToast";
 
 /* =========================================================
    CONSTANTS & BLUEPRINT SEQUENCE
@@ -166,8 +166,7 @@ export default function DesignerCRM() {
           gst_number: COMPANY_GST_INFO.gstNumber,
         });
         showToast(
-          `Applied Company GST (${masked}) to ${
-            gstModalTarget.brand_name || gstModalTarget.designer_name || "designer"
+          `Applied Company GST (${masked}) to ${gstModalTarget.brand_name || gstModalTarget.designer_name || "designer"
           }`
         );
       } catch (err) {
@@ -182,8 +181,8 @@ export default function DesignerCRM() {
       gstModalTarget === "newLead"
         ? newLead.brand || newLead.name || "New Designer Lead"
         : gstModalTarget?.brand_name ||
-          gstModalTarget?.designer_name ||
-          "Designer";
+        gstModalTarget?.designer_name ||
+        "Designer";
 
     const targetCity =
       gstModalTarget === "newLead"
@@ -536,7 +535,7 @@ _Team ZENVE Creator Operations_`;
       showToast(`Updated stage to ${nextStage}.`);
     } catch (err) {
       console.error("Failed to update stage:", err);
-      alert("Failed to update stage.");
+      showErrorToast("Failed to update stage.");
     }
   };
 
@@ -578,7 +577,7 @@ _Team ZENVE Creator Operations_`;
       );
     } catch (err) {
       console.error("Failed to toggle KYC:", err);
-      alert("Failed to update KYC status.");
+      showErrorToast("Failed to update KYC status.");
     }
   };
 
@@ -621,7 +620,7 @@ _Team ZENVE Creator Operations_`;
     const due = input.due || new Date().toISOString().split("T")[0];
 
     if (!text) {
-      alert("Task title is required.");
+      showWarningToast("Task title is required.");
       return;
     }
 
@@ -661,11 +660,11 @@ _Team ZENVE Creator Operations_`;
   const handleCreateLead = async (e) => {
     e.preventDefault();
     if (!newLead.name.trim() || !newLead.brand.trim()) {
-      alert("Designer name and brand name are required.");
+      showWarningToast("Designer name and brand name are required.");
       return;
     }
     if (!newLead.email.trim() && !newLead.phone.trim()) {
-      alert("Please provide at least an email address or mobile number.");
+      showWarningToast("Please provide at least an email address or mobile number.");
       return;
     }
 
@@ -686,8 +685,8 @@ _Team ZENVE Creator Operations_`;
         ? newLead.gst === "COMPANY_GST_REQUESTED"
           ? "COMPANY_GST_REQUESTED"
           : newLead.gst.trim().toUpperCase() === maskGstNumber(COMPANY_GST_INFO.gstNumber)
-          ? COMPANY_GST_INFO.gstNumber
-          : newLead.gst.trim().toUpperCase()
+            ? COMPANY_GST_INFO.gstNumber
+            : newLead.gst.trim().toUpperCase()
         : null,
       contract_end_date: newLead.contractEnds || null,
       lead_source: newLead.source,
@@ -701,13 +700,13 @@ _Team ZENVE Creator Operations_`;
       follow_up_tasks:
         newLead.gst === "COMPANY_GST_REQUESTED"
           ? [
-              {
-                id: Date.now(),
-                text: `Company Tax Team: Create dedicated company GST for ${newLead.brand.trim()} (${newLead.city.trim() || "Regional Hub"})`,
-                due_date: new Date().toISOString().split("T")[0],
-                completed: false,
-              },
-            ]
+            {
+              id: Date.now(),
+              text: `Company Tax Team: Create dedicated company GST for ${newLead.brand.trim()} (${newLead.city.trim() || "Regional Hub"})`,
+              due_date: new Date().toISOString().split("T")[0],
+              completed: false,
+            },
+          ]
           : [],
     };
 
@@ -735,7 +734,7 @@ _Team ZENVE Creator Operations_`;
       setUseCompanyGst(false);
     } catch (err) {
       console.error("Failed to create designer lead:", err);
-      alert(err.message || "Failed to create designer lead.");
+      showErrorToast(err.message || "Failed to create designer lead.");
     }
   };
 
@@ -771,8 +770,20 @@ _Team ZENVE Creator Operations_`;
         </div>
       </header>
 
+      {/* TOAST ALERT */}
+      {toastMessage && <div className="crm-toast">{toastMessage}</div>}
+
       {/* MAIN CONTAINER */}
       <main className="crm-container">
+        {/* ERROR BANNER */}
+        {error && (
+          <div className="crm-error-banner">
+            <span>{error}</span>
+            <button type="button" onClick={() => loadData(true)}>
+              Retry
+            </button>
+          </div>
+        )}
 
         {/* 1. TOP 5 KPI CARDS */}
         <section className="crm-kpi-grid">
@@ -868,10 +879,10 @@ _Team ZENVE Creator Operations_`;
 
                           <span
                             className={`tone-badge ${econ.health >= 70
-                                ? "good"
-                                : econ.health >= 45
-                                  ? "warn"
-                                  : "bad"
+                              ? "good"
+                              : econ.health >= 45
+                                ? "warn"
+                                : "bad"
                               }`}
                           >
                             Health {econ.health}/100
@@ -887,8 +898,8 @@ _Team ZENVE Creator Operations_`;
                                 ? "Company GST"
                                 : (designer.gst_number === "COMPANY_GST_REQUESTED" ||
                                   designer.gst === "COMPANY_GST_REQUESTED")
-                                ? "GST Requested (Company)"
-                                : "GST Verified")
+                                  ? "GST Requested (Company)"
+                                  : "GST Verified")
                               : "No GST"}
                           </span>
                         </div>
@@ -907,7 +918,7 @@ _Team ZENVE Creator Operations_`;
                           {designer.gst_number || designer.gst ? (
                             <span className="designer-gst-code">
                               {designer.gst_number === "COMPANY_GST_REQUESTED" ||
-                              designer.gst === "COMPANY_GST_REQUESTED" ? (
+                                designer.gst === "COMPANY_GST_REQUESTED" ? (
                                 <span className="tone-badge warn" style={{ fontSize: "11px", padding: "2px 6px" }}>
                                   Creation Requested (Company)
                                 </span>
@@ -1434,8 +1445,8 @@ _Team ZENVE Creator Operations_`;
                   newLead.gst === COMPANY_GST_INFO.gstNumber
                     ? maskGstNumber(newLead.gst)
                     : newLead.gst === "COMPANY_GST_REQUESTED"
-                    ? "Creation Requested (Company creating GST)"
-                    : newLead.gst
+                      ? "Creation Requested (Company creating GST)"
+                      : newLead.gst
                 }
                 onChange={(e) => {
                   const val = e.target.value;
