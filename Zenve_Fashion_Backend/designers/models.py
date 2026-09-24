@@ -1,4 +1,5 @@
 from decimal import Decimal
+
 from django.db import models
 from django.core.validators import (
     MinValueValidator,
@@ -7,10 +8,15 @@ from django.core.validators import (
 )
 
 
+# =========================================================
+# DESIGNER
+# =========================================================
+
 class Designer(models.Model):
-    # =========================================================
+
+    # =====================================================
     # ONBOARDING / PIPELINE STAGES
-    # =========================================================
+    # =====================================================
 
     class Stage(models.TextChoices):
         LEAD = "LEAD", "Lead"
@@ -25,27 +31,37 @@ class Designer(models.Model):
         REJECTED = "REJECTED", "Rejected"
         INACTIVE = "INACTIVE", "Inactive"
 
-    # =========================================================
+    # =====================================================
     # DESIGNER TIER
-    # =========================================================
+    # =====================================================
 
     class Tier(models.TextChoices):
         CORE = "CORE", "Core"
         PREMIUM = "PREMIUM", "Premium"
         EMERGING = "EMERGING", "Emerging"
 
-    # =========================================================
+    # =====================================================
     # KYC STATUS
-    # =========================================================
+    # =====================================================
 
     class KYCStatus(models.TextChoices):
         PENDING = "PENDING", "Pending"
         VERIFIED = "VERIFIED", "Verified"
         REJECTED = "REJECTED", "Rejected"
 
-    # =========================================================
+    # =====================================================
+    # MEMBERSHIP PLAN
+    # =====================================================
+
+    class MembershipPlan(models.TextChoices):
+        SILVER = "SILVER", "Silver"
+        GOLD = "GOLD", "Gold"
+        PLATINUM = "PLATINUM", "Platinum"
+        PALLADIUM = "PALLADIUM", "Palladium"
+
+    # =====================================================
     # BASIC DESIGNER INFORMATION
-    # =========================================================
+    # =====================================================
 
     designer_code = models.CharField(
         max_length=30,
@@ -65,9 +81,9 @@ class Designer(models.Model):
         verbose_name="Brand",
     )
 
-    # =========================================================
+    # =====================================================
     # OWNER / CONTACT DETAILS
-    # =========================================================
+    # =====================================================
 
     owner_name = models.CharField(
         max_length=255,
@@ -85,9 +101,9 @@ class Designer(models.Model):
         verbose_name="Contact Phone",
     )
 
-    # =========================================================
+    # =====================================================
     # LOCATION
-    # =========================================================
+    # =====================================================
 
     city = models.CharField(
         max_length=100,
@@ -107,9 +123,9 @@ class Designer(models.Model):
         verbose_name="Country",
     )
 
-    # =========================================================
+    # =====================================================
     # DESIGNER CATEGORY
-    # =========================================================
+    # =====================================================
 
     primary_category = models.CharField(
         max_length=150,
@@ -117,9 +133,9 @@ class Designer(models.Model):
         help_text="Example: Pet Occasion Wear",
     )
 
-    # =========================================================
+    # =====================================================
     # BUSINESS / COMMERCIAL DETAILS
-    # =========================================================
+    # =====================================================
 
     tier = models.CharField(
         max_length=30,
@@ -140,9 +156,39 @@ class Designer(models.Model):
         help_text="Platform commission percentage.",
     )
 
-    # =========================================================
+    # =====================================================
+    # ONLINE / OFFLINE MEMBERSHIP PLANS
+    # =====================================================
+
+    online_membership_plan = models.CharField(
+        max_length=20,
+        choices=MembershipPlan.choices,
+        blank=True,
+        null=True,
+        db_index=True,
+        verbose_name="Online Membership Plan",
+        help_text=(
+            "Online fashion credit membership plan "
+            "selected by the designer."
+        ),
+    )
+
+    offline_membership_plan = models.CharField(
+        max_length=20,
+        choices=MembershipPlan.choices,
+        blank=True,
+        null=True,
+        db_index=True,
+        verbose_name="Offline Membership Plan",
+        help_text=(
+            "Offline fashion credit membership plan "
+            "selected by the designer."
+        ),
+    )
+
+    # =====================================================
     # GST
-    # =========================================================
+    # =====================================================
 
     gst_number = models.CharField(
         max_length=15,
@@ -153,14 +199,17 @@ class Designer(models.Model):
         validators=[
             RegexValidator(
                 regex=r"^[0-9A-Z]{15}$",
-                message="Enter a valid 15-character GST number.",
+                message=(
+                    "Enter a valid "
+                    "15-character GST number."
+                ),
             )
         ],
     )
 
-    # =========================================================
+    # =====================================================
     # KYC
-    # =========================================================
+    # =====================================================
 
     kyc_status = models.CharField(
         max_length=20,
@@ -176,9 +225,9 @@ class Designer(models.Model):
         verbose_name="KYC Verified At",
     )
 
-    # =========================================================
+    # =====================================================
     # CONTRACT
-    # =========================================================
+    # =====================================================
 
     contract_start_date = models.DateField(
         blank=True,
@@ -197,9 +246,9 @@ class Designer(models.Model):
         verbose_name="Contract Signed",
     )
 
-    # =========================================================
+    # =====================================================
     # DESIGNER PIPELINE STATUS
-    # =========================================================
+    # =====================================================
 
     stage = models.CharField(
         max_length=30,
@@ -215,16 +264,19 @@ class Designer(models.Model):
         verbose_name="Active",
     )
 
-    # =========================================================
+    # =====================================================
     # CRM / PIPELINE SALES TRACKING
-    # =========================================================
+    # =====================================================
 
     lead_source = models.CharField(
         max_length=100,
         default="Referral",
         blank=True,
         verbose_name="Lead Source",
-        help_text="Example: Referral, Instagram, Trade show, Direct outreach, Inbound",
+        help_text=(
+            "Example: Referral, Instagram, "
+            "Trade show, Direct outreach, Inbound"
+        ),
     )
 
     sales_owner = models.CharField(
@@ -232,7 +284,10 @@ class Designer(models.Model):
         default="Nisha Kapoor",
         blank=True,
         verbose_name="Sales Owner",
-        help_text="Internal sales representative assigned to this designer.",
+        help_text=(
+            "Internal sales representative "
+            "assigned to this designer."
+        ),
     )
 
     next_followup_date = models.DateField(
@@ -262,7 +317,10 @@ class Designer(models.Model):
         blank=True,
         null=True,
         verbose_name="Lost Reason",
-        help_text="Reason when a lead or contract is marked lost.",
+        help_text=(
+            "Reason when a lead or contract "
+            "is marked lost."
+        ),
     )
 
     health_score = models.IntegerField(
@@ -278,7 +336,12 @@ class Designer(models.Model):
         default=list,
         blank=True,
         verbose_name="Follow-up Tasks",
-        help_text="List of tasks: [{'id': 1, 'title': '...', 'due_date': 'YYYY-MM-DD', 'completed': False}]",
+        help_text=(
+            "List of tasks: "
+            "[{'id': 1, 'title': '...', "
+            "'due_date': 'YYYY-MM-DD', "
+            "'completed': False}]"
+        ),
     )
 
     monthly_gmv = models.DecimalField(
@@ -302,9 +365,9 @@ class Designer(models.Model):
         verbose_name="SKU Productivity",
     )
 
-    # =========================================================
+    # =====================================================
     # PROFILE
-    # =========================================================
+    # =====================================================
 
     logo = models.ImageField(
         upload_to="designers/logos/",
@@ -332,9 +395,9 @@ class Designer(models.Model):
         verbose_name="Website",
     )
 
-    # =========================================================
+    # =====================================================
     # SOCIAL MEDIA
-    # =========================================================
+    # =====================================================
 
     instagram_url = models.URLField(
         blank=True,
@@ -348,9 +411,9 @@ class Designer(models.Model):
         verbose_name="Facebook URL",
     )
 
-    # =========================================================
+    # =====================================================
     # AUDIT FIELDS
-    # =========================================================
+    # =====================================================
 
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -360,43 +423,74 @@ class Designer(models.Model):
         auto_now=True,
     )
 
-    # =========================================================
+    # =====================================================
     # META
-    # =========================================================
+    # =====================================================
 
     class Meta:
         db_table = "designer"
 
-        ordering = ["-created_at"]
+        ordering = [
+            "-created_at",
+        ]
 
         indexes = [
-            models.Index(fields=["designer_code"]),
-            models.Index(fields=["brand_name"]),
-            models.Index(fields=["city"]),
-            models.Index(fields=["primary_category"]),
-            models.Index(fields=["stage"]),
-            models.Index(fields=["kyc_status"]),
-            models.Index(fields=["tier"]),
-            models.Index(fields=["is_active"]),
+            models.Index(
+                fields=["designer_code"]
+            ),
+            models.Index(
+                fields=["brand_name"]
+            ),
+            models.Index(
+                fields=["city"]
+            ),
+            models.Index(
+                fields=["primary_category"]
+            ),
+            models.Index(
+                fields=["stage"]
+            ),
+            models.Index(
+                fields=["kyc_status"]
+            ),
+            models.Index(
+                fields=["tier"]
+            ),
+            models.Index(
+                fields=["is_active"]
+            ),
+            models.Index(
+                fields=["online_membership_plan"]
+            ),
+            models.Index(
+                fields=["offline_membership_plan"]
+            ),
         ]
 
         verbose_name = "Designer"
         verbose_name_plural = "Designers"
 
-    # =========================================================
+    # =====================================================
     # STRING REPRESENTATION
-    # =========================================================
+    # =====================================================
 
     def __str__(self):
-        return f"{self.brand_name} ({self.designer_code})"
+        return (
+            f"{self.brand_name} "
+            f"({self.designer_code})"
+        )
 
-    # =========================================================
+    # =====================================================
     # PROPERTIES
-    # =========================================================
+    # =====================================================
 
     @property
     def is_kyc_verified(self):
-        return self.kyc_status == self.KYCStatus.VERIFIED
+        return (
+            self.kyc_status
+            ==
+            self.KYCStatus.VERIFIED
+        )
 
     @property
     def is_live(self):
@@ -407,63 +501,169 @@ class Designer(models.Model):
 
     @property
     def contract_is_active(self):
+
         from django.utils import timezone
 
         if not self.contract_end_date:
             return False
 
-        return self.contract_end_date >= timezone.localdate()
+        return (
+            self.contract_end_date
+            >=
+            timezone.localdate()
+        )
 
     @property
     def designer_ltv(self):
-        """Designer LTV = Lifetime GMV * (take_rate / 100)"""
-        gmv = self.lifetime_gmv or Decimal("0.00")
-        tr = self.take_rate or Decimal("0.00")
-        return round(gmv * (tr / Decimal("100")), 2)
+        """
+        Designer LTV =
+        Lifetime GMV * (take_rate / 100)
+        """
+
+        gmv = (
+            self.lifetime_gmv
+            or
+            Decimal("0.00")
+        )
+
+        tr = (
+            self.take_rate
+            or
+            Decimal("0.00")
+        )
+
+        return round(
+            gmv
+            *
+            (
+                tr
+                /
+                Decimal("100")
+            ),
+            2,
+        )
 
     @property
     def designer_cac(self):
-        return self.acquisition_cost or Decimal("0.00")
+
+        return (
+            self.acquisition_cost
+            or
+            Decimal("0.00")
+        )
 
     @property
     def ltv_cac_ratio(self):
-        cac = self.acquisition_cost or Decimal("0.00")
+
+        cac = (
+            self.acquisition_cost
+            or
+            Decimal("0.00")
+        )
+
         if cac <= 0:
             return "0×"
-        ratio = float(self.designer_ltv / cac)
-        return f"{ratio:.2f}×" if ratio > 0 else "0×"
+
+        ratio = float(
+            self.designer_ltv
+            /
+            cac
+        )
+
+        if ratio > 0:
+            return f"{ratio:.2f}×"
+
+        return "0×"
 
     @property
     def effective_sku_productivity(self):
-        if self.sku_productivity and self.sku_productivity > Decimal("0.00"):
+
+        if (
+            self.sku_productivity
+            and
+            self.sku_productivity
+            >
+            Decimal("0.00")
+        ):
             return self.sku_productivity
+
         try:
             count = self.products.count()
+
         except Exception:
             count = 0
+
         if count > 0:
-            return round((self.lifetime_gmv or Decimal("0.00")) / Decimal(count), 2)
-        return self.lifetime_gmv or Decimal("0.00")
+
+            return round(
+                (
+                    self.lifetime_gmv
+                    or
+                    Decimal("0.00")
+                )
+                /
+                Decimal(count),
+                2,
+            )
+
+        return (
+            self.lifetime_gmv
+            or
+            Decimal("0.00")
+        )
 
     @property
     def overdue_tasks_count(self):
+
         from django.utils import timezone
-        today_str = timezone.localdate().isoformat()
-        tasks = self.follow_up_tasks or []
+
+        today_str = (
+            timezone.localdate()
+            .isoformat()
+        )
+
+        tasks = (
+            self.follow_up_tasks
+            or
+            []
+        )
+
         count = 0
-        for t in tasks:
-            if isinstance(t, dict) and not t.get("completed"):
-                due = t.get("due_date")
-                if due and due < today_str:
+
+        for task in tasks:
+
+            if (
+                isinstance(task, dict)
+                and
+                not task.get(
+                    "completed"
+                )
+            ):
+
+                due = task.get(
+                    "due_date"
+                )
+
+                if (
+                    due
+                    and
+                    due < today_str
+                ):
                     count += 1
+
         return count
 
+
+# =========================================================
+# DESIGNER ACCOUNT DETAILS
+# =========================================================
 
 class DesignerAccountDetails(models.Model):
     """
     Bank and payout details for a designer.
 
-    One designer can have only one primary account-details record.
+    One designer can have only one
+    primary account-details record.
     """
 
     designer = models.OneToOneField(
@@ -483,7 +683,10 @@ class DesignerAccountDetails(models.Model):
         validators=[
             RegexValidator(
                 regex=r"^[0-9]{9,18}$",
-                message="Account number must contain 9 to 18 digits.",
+                message=(
+                    "Account number must contain "
+                    "9 to 18 digits."
+                ),
             )
         ],
         verbose_name="Bank Account Number",
@@ -494,7 +697,10 @@ class DesignerAccountDetails(models.Model):
         validators=[
             RegexValidator(
                 regex=r"^[A-Z]{4}0[A-Z0-9]{6}$",
-                message="Enter a valid 11-character IFSC code.",
+                message=(
+                    "Enter a valid "
+                    "11-character IFSC code."
+                ),
             )
         ],
         verbose_name="IFSC Code",
@@ -505,7 +711,10 @@ class DesignerAccountDetails(models.Model):
         validators=[
             RegexValidator(
                 regex=r"^[A-Z]{5}[0-9]{4}[A-Z]$",
-                message="Enter a valid 10-character PAN number.",
+                message=(
+                    "Enter a valid "
+                    "10-character PAN number."
+                ),
             )
         ],
         verbose_name="PAN Number",
@@ -525,10 +734,24 @@ class DesignerAccountDetails(models.Model):
     )
 
     class Meta:
-        db_table = "designer_account_details"
-        verbose_name = "Designer Account Details"
-        verbose_name_plural = "Designer Account Details"
-        ordering = ["-updated_at"]
+        db_table = (
+            "designer_account_details"
+        )
+
+        verbose_name = (
+            "Designer Account Details"
+        )
+
+        verbose_name_plural = (
+            "Designer Account Details"
+        )
+
+        ordering = [
+            "-updated_at"
+        ]
 
     def __str__(self):
-        return f"{self.designer.brand_name} - {self.account_holder_name}"
+        return (
+            f"{self.designer.brand_name} - "
+            f"{self.account_holder_name}"
+        )

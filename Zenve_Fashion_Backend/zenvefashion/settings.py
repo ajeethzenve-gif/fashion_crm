@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     "products",
     "designers",
     "orders",
+    'credits'
 ]
 
 
