@@ -10,7 +10,11 @@ from rest_framework.parsers import (
     MultiPartParser,
 )
 
-from .models import Product
+from .models import (
+    Product,
+    ProductSizeStock,
+)
+
 from .serializers import ProductSerializer
 
 
@@ -20,7 +24,9 @@ from .serializers import ProductSerializer
 
 class ProductListCreateAPIView(APIView):
 
-    permission_classes = [AllowAny]
+    permission_classes = [
+        AllowAny
+    ]
 
     parser_classes = [
         JSONParser,
@@ -34,32 +40,59 @@ class ProductListCreateAPIView(APIView):
 
     def get(self, request):
 
-        designer = request.query_params.get(
-            "designer"
+        designer = (
+            request.query_params.get(
+                "designer"
+            )
         )
 
-        category = request.query_params.get(
-            "category"
+        category = (
+            request.query_params.get(
+                "category"
+            )
         )
 
-        status_filter = request.query_params.get(
-            "status"
+        status_filter = (
+            request.query_params.get(
+                "status"
+            )
         )
 
-        is_live = request.query_params.get(
-            "is_live"
+        is_live = (
+            request.query_params.get(
+                "is_live"
+            )
+        )
+
+        sales_channel = (
+            request.query_params.get(
+                "sales_channel"
+            )
+        )
+
+        size = (
+            request.query_params.get(
+                "size"
+            )
         )
 
         products = (
             Product.objects
-            .select_related("designer")
-            .prefetch_related("product_images")
+            .select_related(
+                "designer"
+            )
+            .prefetch_related(
+                "product_images",
+                "size_stocks",
+            )
             .all()
-            .order_by("-created_at")
+            .order_by(
+                "-created_at"
+            )
         )
 
         # -------------------------------------------------
-        # Designer filter
+        # DESIGNER FILTER
         # -------------------------------------------------
 
         if designer:
@@ -96,27 +129,29 @@ class ProductListCreateAPIView(APIView):
                 )
 
         # -------------------------------------------------
-        # Category filter
+        # CATEGORY FILTER
         # -------------------------------------------------
 
         if category:
 
             products = products.filter(
-                category__iexact=category.strip()
+                category__iexact=
+                category.strip()
             )
 
         # -------------------------------------------------
-        # Status filter
+        # STATUS FILTER
         # -------------------------------------------------
 
         if status_filter:
 
             products = products.filter(
-                status__iexact=status_filter.strip()
+                status__iexact=
+                status_filter.strip()
             )
 
         # -------------------------------------------------
-        # Live filter
+        # LIVE FILTER
         # -------------------------------------------------
 
         if is_live is not None:
@@ -136,6 +171,32 @@ class ProductListCreateAPIView(APIView):
                 is_live=is_live_bool
             )
 
+        # -------------------------------------------------
+        # SALES CHANNEL FILTER
+        # -------------------------------------------------
+
+        if sales_channel:
+
+            products = products.filter(
+                sales_channel__iexact=
+                str(
+                    sales_channel
+                ).strip()
+            )
+
+        # -------------------------------------------------
+        # SIZE FILTER
+        # -------------------------------------------------
+
+        if size:
+
+            products = products.filter(
+                size_stocks__size__iexact=
+                str(size).strip()
+            )
+
+        products = products.distinct()
+
         serializer = ProductSerializer(
             products,
             many=True,
@@ -146,7 +207,8 @@ class ProductListCreateAPIView(APIView):
 
         return Response(
             serializer.data,
-            status=status.HTTP_200_OK,
+            status=
+            status.HTTP_200_OK,
         )
 
     # =====================================================
@@ -155,37 +217,16 @@ class ProductListCreateAPIView(APIView):
 
     def post(self, request):
 
-        print("\n================================")
-        print("PRODUCT CREATE")
-        print("================================")
-        print(
-            "CONTENT TYPE:",
-            request.content_type,
-        )
-        print(
-            "DATA:",
-            request.data,
-        )
-        print(
-            "FILES:",
-            request.FILES,
-        )
-
         # -------------------------------------------------
-        # Get all uploaded images
+        # FILES
         # -------------------------------------------------
 
         images = request.FILES.getlist(
             "images"
         )
 
-        print(
-            "IMAGE COUNT:",
-            len(images),
-        )
-
         # -------------------------------------------------
-        # Require exactly 4 images
+        # EXACTLY FOUR IMAGES
         # -------------------------------------------------
 
         if len(images) != 4:
@@ -194,41 +235,63 @@ class ProductListCreateAPIView(APIView):
                 {
                     "images": [
                         (
-                            "Exactly 4 product images "
-                            "are required."
+                            "Exactly 4 product "
+                            "images are required."
                         )
                     ]
                 },
-                status=status.HTTP_400_BAD_REQUEST,
+                status=
+                status.HTTP_400_BAD_REQUEST,
             )
 
         # -------------------------------------------------
-        # Maximum file size
+        # IMAGE VALIDATION
         # -------------------------------------------------
 
         for image in images:
 
-            if image.size > 5 * 1024 * 1024:
+            if not getattr(
+                image,
+                "content_type",
+                "",
+            ).startswith(
+                "image/"
+            ):
 
                 return Response(
                     {
                         "images": [
                             (
-                                "Each image must be "
-                                "5 MB or smaller."
+                                "Only image files "
+                                "are allowed."
                             )
                         ]
                     },
-                    status=status.HTTP_400_BAD_REQUEST,
+                    status=
+                    status.HTTP_400_BAD_REQUEST,
+                )
+
+            if (
+                image.size
+                >
+                5 * 1024 * 1024
+            ):
+
+                return Response(
+                    {
+                        "images": [
+                            (
+                                "Each image must "
+                                "be 5 MB or smaller."
+                            )
+                        ]
+                    },
+                    status=
+                    status.HTTP_400_BAD_REQUEST,
                 )
 
         # -------------------------------------------------
-        # Build serializer input
-        #
-        # IMPORTANT:
-        # request.data is a QueryDict.
-        # Convert it into a normal dict and explicitly
-        # provide images as a Python list.
+        # NORMALIZE MULTIPART DATA
         # -------------------------------------------------
 
         serializer_data = {}
@@ -238,68 +301,16 @@ class ProductListCreateAPIView(APIView):
             if key == "images":
                 continue
 
-            serializer_data[key] = request.data.get(
-                key
+            serializer_data[key] = (
+                request.data.get(key)
             )
 
-        serializer_data["images"] = images
-
-        print(
-            "SERIALIZER DATA KEYS:",
-            list(serializer_data.keys()),
-        )
-
-        print(
-            "PRODUCT NAME:",
-            serializer_data.get(
-                "product_name"
-            ),
-        )
-
-        print(
-            "SKU:",
-            serializer_data.get(
-                "sku"
-            ),
-        )
-
-        print(
-            "DESIGNER:",
-            serializer_data.get(
-                "designer"
-            ),
-        )
-
-        print(
-            "CATEGORY:",
-            serializer_data.get(
-                "category"
-            ),
-        )
-
-        print(
-            "COLOUR:",
-            serializer_data.get(
-                "colour"
-            ),
-        )
-
-        print(
-            "MRP:",
-            serializer_data.get(
-                "mrp"
-            ),
-        )
-
-        print(
-            "SELLING PRICE:",
-            serializer_data.get(
-                "selling_price"
-            ),
-        )
+        serializer_data[
+            "images"
+        ] = images
 
         # -------------------------------------------------
-        # Validate serializer
+        # SERIALIZER
         # -------------------------------------------------
 
         serializer = ProductSerializer(
@@ -312,22 +323,25 @@ class ProductListCreateAPIView(APIView):
         if not serializer.is_valid():
 
             print(
-                "VALIDATION ERRORS:",
+                "PRODUCT VALIDATION ERRORS:",
                 serializer.errors,
             )
 
             return Response(
                 serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
+                status=
+                status.HTTP_400_BAD_REQUEST,
             )
 
         # -------------------------------------------------
-        # Save
+        # SAVE
         # -------------------------------------------------
 
         try:
 
-            product = serializer.save()
+            product = (
+                serializer.save()
+            )
 
         except Exception as exc:
 
@@ -338,14 +352,29 @@ class ProductListCreateAPIView(APIView):
 
             return Response(
                 {
-                    "detail": str(exc),
+                    "detail": str(exc)
                 },
-                status=status.HTTP_400_BAD_REQUEST,
+                status=
+                status.HTTP_400_BAD_REQUEST,
             )
 
         # -------------------------------------------------
-        # Return created product
+        # RESPONSE
         # -------------------------------------------------
+
+        product = (
+            Product.objects
+            .select_related(
+                "designer"
+            )
+            .prefetch_related(
+                "product_images",
+                "size_stocks",
+            )
+            .get(
+                pk=product.pk
+            )
+        )
 
         return Response(
             ProductSerializer(
@@ -354,7 +383,9 @@ class ProductListCreateAPIView(APIView):
                     "request": request,
                 },
             ).data,
-            status=status.HTTP_201_CREATED,
+
+            status=
+            status.HTTP_201_CREATED,
         )
 
 
@@ -364,7 +395,9 @@ class ProductListCreateAPIView(APIView):
 
 class ProductDetailAPIView(APIView):
 
-    permission_classes = [AllowAny]
+    permission_classes = [
+        AllowAny
+    ]
 
     parser_classes = [
         JSONParser,
@@ -376,12 +409,25 @@ class ProductDetailAPIView(APIView):
     # GET OBJECT
     # =====================================================
 
-    def get_object(self, pk):
+    def get_object(
+        self,
+        pk,
+    ):
 
         try:
 
-            return Product.objects.get(
-                pk=pk
+            return (
+                Product.objects
+                .select_related(
+                    "designer"
+                )
+                .prefetch_related(
+                    "product_images",
+                    "size_stocks",
+                )
+                .get(
+                    pk=pk
+                )
             )
 
         except Product.DoesNotExist:
@@ -392,17 +438,25 @@ class ProductDetailAPIView(APIView):
     # GET
     # =====================================================
 
-    def get(self, request, pk):
+    def get(
+        self,
+        request,
+        pk,
+    ):
 
-        product = self.get_object(pk)
+        product = self.get_object(
+            pk
+        )
 
         if product is None:
 
             return Response(
                 {
-                    "detail": "Product not found."
+                    "detail":
+                        "Product not found."
                 },
-                status=status.HTTP_404_NOT_FOUND,
+                status=
+                status.HTTP_404_NOT_FOUND,
             )
 
         serializer = ProductSerializer(
@@ -414,24 +468,33 @@ class ProductDetailAPIView(APIView):
 
         return Response(
             serializer.data,
-            status=status.HTTP_200_OK,
+            status=
+            status.HTTP_200_OK,
         )
 
     # =====================================================
     # PUT
     # =====================================================
 
-    def put(self, request, pk):
+    def put(
+        self,
+        request,
+        pk,
+    ):
 
-        product = self.get_object(pk)
+        product = self.get_object(
+            pk
+        )
 
         if product is None:
 
             return Response(
                 {
-                    "detail": "Product not found."
+                    "detail":
+                        "Product not found."
                 },
-                status=status.HTTP_404_NOT_FOUND,
+                status=
+                status.HTTP_404_NOT_FOUND,
             )
 
         serializer = ProductSerializer(
@@ -442,40 +505,63 @@ class ProductDetailAPIView(APIView):
             },
         )
 
-        if serializer.is_valid():
+        if not serializer.is_valid():
+
+            return Response(
+                serializer.errors,
+                status=
+                status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
 
             product = serializer.save()
 
+        except Exception as exc:
+
             return Response(
-                ProductSerializer(
-                    product,
-                    context={
-                        "request": request,
-                    },
-                ).data,
-                status=status.HTTP_200_OK,
+                {
+                    "detail": str(exc)
+                },
+                status=
+                status.HTTP_400_BAD_REQUEST,
             )
 
         return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST,
+            ProductSerializer(
+                product,
+                context={
+                    "request": request,
+                },
+            ).data,
+
+            status=
+            status.HTTP_200_OK,
         )
 
     # =====================================================
     # PATCH
     # =====================================================
 
-    def patch(self, request, pk):
+    def patch(
+        self,
+        request,
+        pk,
+    ):
 
-        product = self.get_object(pk)
+        product = self.get_object(
+            pk
+        )
 
         if product is None:
 
             return Response(
                 {
-                    "detail": "Product not found."
+                    "detail":
+                        "Product not found."
                 },
-                status=status.HTTP_404_NOT_FOUND,
+                status=
+                status.HTTP_404_NOT_FOUND,
             )
 
         serializer = ProductSerializer(
@@ -487,78 +573,138 @@ class ProductDetailAPIView(APIView):
             },
         )
 
-        if serializer.is_valid():
+        if not serializer.is_valid():
+
+            return Response(
+                serializer.errors,
+                status=
+                status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
 
             product = serializer.save()
 
+        except Exception as exc:
+
             return Response(
-                ProductSerializer(
-                    product,
-                    context={
-                        "request": request,
-                    },
-                ).data,
-                status=status.HTTP_200_OK,
+                {
+                    "detail": str(exc)
+                },
+                status=
+                status.HTTP_400_BAD_REQUEST,
             )
 
         return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST,
+            ProductSerializer(
+                product,
+                context={
+                    "request": request,
+                },
+            ).data,
+
+            status=
+            status.HTTP_200_OK,
         )
 
     # =====================================================
     # DELETE
     # =====================================================
 
-    def delete(self, request, pk):
+    def delete(
+        self,
+        request,
+        pk,
+    ):
 
-        product = self.get_object(pk)
+        product = self.get_object(
+            pk
+        )
 
         if product is None:
 
             return Response(
                 {
-                    "detail": "Product not found."
+                    "detail":
+                        "Product not found."
                 },
-                status=status.HTTP_404_NOT_FOUND,
+                status=
+                status.HTTP_404_NOT_FOUND,
             )
 
         product.delete()
 
         return Response(
-            status=status.HTTP_204_NO_CONTENT
+            status=
+            status.HTTP_204_NO_CONTENT
         )
 
 
 # =========================================================
-# STOCK ADJUSTMENT
+# PRODUCT STOCK ADJUSTMENT
 # =========================================================
 
 class ProductStockAdjustmentAPIView(APIView):
 
-    permission_classes = [AllowAny]
+    permission_classes = [
+        AllowAny
+    ]
 
-    def post(self, request, pk):
+    # =====================================================
+    # POST
+    # =====================================================
+
+    def post(
+        self,
+        request,
+        pk,
+    ):
 
         try:
 
-            product = Product.objects.get(
-                pk=pk
+            product = (
+                Product.objects
+                .select_related(
+                    "designer"
+                )
+                .prefetch_related(
+                    "product_images",
+                    "size_stocks",
+                )
+                .get(
+                    pk=pk
+                )
             )
 
         except Product.DoesNotExist:
 
             return Response(
                 {
-                    "detail": "Product not found."
+                    "detail":
+                        "Product not found."
                 },
-                status=status.HTTP_404_NOT_FOUND,
+                status=
+                status.HTTP_404_NOT_FOUND,
             )
 
         action = str(
             request.data.get(
                 "action",
                 "",
+            )
+        ).strip().lower()
+
+        size = str(
+            request.data.get(
+                "size",
+                "",
+            )
+        ).strip().upper()
+
+        channel = str(
+            request.data.get(
+                "channel",
+                "online",
             )
         ).strip().lower()
 
@@ -578,11 +724,11 @@ class ProductStockAdjustmentAPIView(APIView):
 
             return Response(
                 {
-                    "detail": (
+                    "detail":
                         "Invalid quantity provided."
-                    )
                 },
-                status=status.HTTP_400_BAD_REQUEST,
+                status=
+                status.HTTP_400_BAD_REQUEST,
             )
 
         if quantity <= 0:
@@ -590,24 +736,155 @@ class ProductStockAdjustmentAPIView(APIView):
             return Response(
                 {
                     "detail": (
-                        "Quantity must be greater "
-                        "than zero."
+                        "Quantity must be "
+                        "greater than zero."
                     )
                 },
-                status=status.HTTP_400_BAD_REQUEST,
+                status=
+                status.HTTP_400_BAD_REQUEST,
             )
 
-        # -------------------------------------------------
-        # RECEIVE
-        # -------------------------------------------------
+        # =================================================
+        # SIZE-LEVEL RECEIVE
+        # =================================================
 
         if action == "receive":
 
-            product.inventory_quantity += quantity
+            if not size:
 
-        # -------------------------------------------------
+                return Response(
+                    {
+                        "detail": (
+                            "Size is required "
+                            "when receiving stock."
+                        )
+                    },
+                    status=
+                    status.HTTP_400_BAD_REQUEST,
+                )
+
+            valid_sizes = {
+                choice[0]
+                for choice
+                in Product.Size.choices
+            }
+
+            if size not in valid_sizes:
+
+                return Response(
+                    {
+                        "detail":
+                            "Invalid product size."
+                    },
+                    status=
+                    status.HTTP_400_BAD_REQUEST,
+                )
+
+            if channel not in [
+                "online",
+                "offline",
+            ]:
+
+                return Response(
+                    {
+                        "detail": (
+                            "Channel must be "
+                            "'online' or 'offline'."
+                        )
+                    },
+                    status=
+                    status.HTTP_400_BAD_REQUEST,
+                )
+
+            # ---------------------------------------------
+            # Validate product sales channel
+            # ---------------------------------------------
+
+            if (
+                channel == "offline"
+                and
+                product.sales_channel
+                ==
+                Product.SalesChannel.ONLINE
+            ):
+
+                return Response(
+                    {
+                        "detail": (
+                            "Offline stock cannot "
+                            "be added to an "
+                            "online-only product."
+                        )
+                    },
+                    status=
+                    status.HTTP_400_BAD_REQUEST,
+                )
+
+            if (
+                channel == "online"
+                and
+                product.sales_channel
+                ==
+                Product.SalesChannel.OFFLINE
+            ):
+
+                return Response(
+                    {
+                        "detail": (
+                            "Online stock cannot "
+                            "be added to an "
+                            "offline-only product."
+                        )
+                    },
+                    status=
+                    status.HTTP_400_BAD_REQUEST,
+                )
+
+            size_stock, _ = (
+                ProductSizeStock.objects
+                .get_or_create(
+                    product=product,
+                    size=size,
+                    defaults={
+                        "online_quantity": 0,
+                        "offline_quantity": 0,
+                    },
+                )
+            )
+
+            if channel == "online":
+
+                size_stock.online_quantity += (
+                    quantity
+                )
+
+            else:
+
+                size_stock.offline_quantity += (
+                    quantity
+                )
+
+            size_stock.save()
+
+            # ---------------------------------------------
+            # Synchronize total inventory
+            # ---------------------------------------------
+
+            product.inventory_quantity = sum(
+                stock.total_quantity
+                for stock
+                in product.size_stocks.all()
+            )
+
+            product.save(
+                update_fields=[
+                    "inventory_quantity"
+                ]
+            )
+
+        # =================================================
         # DAMAGE
-        # -------------------------------------------------
+        # =================================================
 
         elif action in [
             "damage",
@@ -615,40 +892,80 @@ class ProductStockAdjustmentAPIView(APIView):
             "damaged",
         ]:
 
-            available = product.available_quantity
+            available = (
+                product.available_quantity
+            )
 
             quantity_to_damage = min(
                 quantity,
                 available,
             )
 
+            if quantity_to_damage <= 0:
+
+                return Response(
+                    {
+                        "detail":
+                            "No available stock to damage."
+                    },
+                    status=
+                    status.HTTP_400_BAD_REQUEST,
+                )
+
             product.damaged_quantity += (
                 quantity_to_damage
             )
 
-        # -------------------------------------------------
+            product.save(
+                update_fields=[
+                    "damaged_quantity"
+                ]
+            )
+
+        # =================================================
         # QUARANTINE
-        # -------------------------------------------------
+        # =================================================
 
         elif action in [
             "quarantine",
             "quarantined",
         ]:
 
-            available = product.available_quantity
+            available = (
+                product.available_quantity
+            )
 
             quantity_to_quarantine = min(
                 quantity,
                 available,
             )
 
+            if quantity_to_quarantine <= 0:
+
+                return Response(
+                    {
+                        "detail": (
+                            "No available stock "
+                            "to quarantine."
+                        )
+                    },
+                    status=
+                    status.HTTP_400_BAD_REQUEST,
+                )
+
             product.quarantined_quantity += (
                 quantity_to_quarantine
             )
 
-        # -------------------------------------------------
+            product.save(
+                update_fields=[
+                    "quarantined_quantity"
+                ]
+            )
+
+        # =================================================
         # RELEASE QUARANTINE
-        # -------------------------------------------------
+        # =================================================
 
         elif action in [
             "release_quarantine",
@@ -660,30 +977,66 @@ class ProductStockAdjustmentAPIView(APIView):
                 product.quarantined_quantity,
             )
 
+            if quantity_to_release <= 0:
+
+                return Response(
+                    {
+                        "detail":
+                            "No quarantined stock to release."
+                    },
+                    status=
+                    status.HTTP_400_BAD_REQUEST,
+                )
+
             product.quarantined_quantity -= (
                 quantity_to_release
             )
 
-        # -------------------------------------------------
+            product.save(
+                update_fields=[
+                    "quarantined_quantity"
+                ]
+            )
+
+        # =================================================
         # RESERVE
-        # -------------------------------------------------
+        # =================================================
 
         elif action == "reserve":
 
-            available = product.available_quantity
+            available = (
+                product.available_quantity
+            )
 
             quantity_to_reserve = min(
                 quantity,
                 available,
             )
 
+            if quantity_to_reserve <= 0:
+
+                return Response(
+                    {
+                        "detail":
+                            "No available stock to reserve."
+                    },
+                    status=
+                    status.HTTP_400_BAD_REQUEST,
+                )
+
             product.reserved_quantity += (
                 quantity_to_reserve
             )
 
-        # -------------------------------------------------
+            product.save(
+                update_fields=[
+                    "reserved_quantity"
+                ]
+            )
+
+        # =================================================
         # RELEASE RESERVE
-        # -------------------------------------------------
+        # =================================================
 
         elif action in [
             "release_reserve",
@@ -695,13 +1048,30 @@ class ProductStockAdjustmentAPIView(APIView):
                 product.reserved_quantity,
             )
 
+            if quantity_to_release <= 0:
+
+                return Response(
+                    {
+                        "detail":
+                            "No reserved stock to release."
+                    },
+                    status=
+                    status.HTTP_400_BAD_REQUEST,
+                )
+
             product.reserved_quantity -= (
                 quantity_to_release
             )
 
-        # -------------------------------------------------
+            product.save(
+                update_fields=[
+                    "reserved_quantity"
+                ]
+            )
+
+        # =================================================
         # INVALID ACTION
-        # -------------------------------------------------
+        # =================================================
 
         else:
 
@@ -712,10 +1082,29 @@ class ProductStockAdjustmentAPIView(APIView):
                         f"{action}"
                     )
                 },
-                status=status.HTTP_400_BAD_REQUEST,
+                status=
+                status.HTTP_400_BAD_REQUEST,
             )
 
-        product.save()
+        # =================================================
+        # REFRESH
+        # =================================================
+
+        product.refresh_from_db()
+
+        product = (
+            Product.objects
+            .select_related(
+                "designer"
+            )
+            .prefetch_related(
+                "product_images",
+                "size_stocks",
+            )
+            .get(
+                pk=product.pk
+            )
+        )
 
         return Response(
             ProductSerializer(
@@ -724,5 +1113,7 @@ class ProductStockAdjustmentAPIView(APIView):
                     "request": request,
                 },
             ).data,
-            status=status.HTTP_200_OK,
+
+            status=
+            status.HTTP_200_OK,
         )

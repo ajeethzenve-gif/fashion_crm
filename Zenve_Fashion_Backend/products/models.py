@@ -27,9 +27,6 @@ class Product(models.Model):
         BENGALURU_FC = "BENGALURU_FC", "Bengaluru FC"
         KOCHI_FC = "KOCHI_FC", "Kochi FC"
         CHENNAI_FC = "CHENNAI_FC", "Chennai FC"
-        BANGALORE_FC = "BANGALORE_FC", "Bangalore FC"
-        DELHI_FC = "DELHI_FC", "Delhi FC"
-        DESIGNER_STUDIO = "DESIGNER_STUDIO", "Designer Studio"
 
     class Size(models.TextChoices):
         XS = "XS", "XS"
@@ -39,6 +36,11 @@ class Product(models.Model):
         XL = "XL", "XL"
         XXL = "XXL", "XXL"
         FREE = "FREE", "Free Size"
+
+    class SalesChannel(models.TextChoices):
+        ONLINE = "ONLINE", "Online"
+        OFFLINE = "OFFLINE", "Offline"
+        BOTH = "BOTH", "Online & Offline"
 
     # =========================================================
     # BASIC PRODUCT INFORMATION
@@ -94,11 +96,13 @@ class Product(models.Model):
         verbose_name="Colour"
     )
 
+    # Legacy single-size field. New products should use ProductSizeStock.
     size = models.CharField(
         max_length=20,
         choices=Size.choices,
-        default=Size.FREE,
-        verbose_name="Size"
+        blank=True,
+        null=True,
+        verbose_name="Legacy Single Size"
     )
 
     material = models.CharField(
@@ -300,6 +304,19 @@ class Product(models.Model):
             MaxValueValidator(100)
         ],
         verbose_name="Discount Percentage"
+    )
+
+    # =========================================================
+    # SALES CHANNEL
+    # =========================================================
+
+    sales_channel = models.CharField(
+        max_length=20,
+        choices=SalesChannel.choices,
+        default=SalesChannel.ONLINE,
+        db_index=True,
+        verbose_name="Sales Channel",
+        help_text="Choose Online, Offline, or both.",
     )
 
     # =========================================================
@@ -518,6 +535,34 @@ class Product(models.Model):
         return self.inventory_quantity
 
     @property
+    def online_quantity(self):
+        return sum(item.online_quantity for item in self.size_stocks.all())
+
+    @property
+    def offline_quantity(self):
+        return sum(item.offline_quantity for item in self.size_stocks.all())
+
+    @property
+    def total_size_quantity(self):
+        return sum(item.total_quantity for item in self.size_stocks.all())
+
+    @property
+    def selected_sizes(self):
+        return list(self.size_stocks.order_by("id").values_list("size", flat=True))
+
+    @property
+    def size_stock_summary(self):
+        return [
+            {
+                "size": item.size,
+                "online_quantity": item.online_quantity,
+                "offline_quantity": item.offline_quantity,
+                "total_quantity": item.total_quantity,
+            }
+            for item in self.size_stocks.order_by("id")
+        ]
+
+    @property
     def available_quantity(self):
         blocked = self.reserved_quantity + self.damaged_quantity + self.quarantined_quantity
         return max(0, self.inventory_quantity - blocked)
@@ -592,6 +637,83 @@ class Product(models.Model):
     @property
     def qa_status(self):
         return self.status
+
+# =========================================================
+# PRODUCT SIZE / CHANNEL STOCK
+# =========================================================
+
+class ProductSizeStock(models.Model):
+    product = models.ForeignKey(
+        Product,
+        related_name="size_stocks",
+        on_delete=models.CASCADE,
+        verbose_name="Product",
+    )
+
+    size = models.CharField(
+        max_length=20,
+        choices=Product.Size.choices,
+        verbose_name="Size",
+    )
+
+    online_quantity = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Online Quantity",
+    )
+
+    offline_quantity = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Offline Store Quantity",
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "product_size_stock"
+        ordering = ["product_id", "id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["product", "size"],
+                name="unique_product_size_stock",
+            )
+        ]
+        indexes = [
+            models.Index(fields=["product", "size"]),
+        ]
+        verbose_name = "Product Size Stock"
+        verbose_name_plural = "Product Size Stocks"
+
+    def clean(self):
+        super().clean()
+
+        if self.product_id:
+            if (
+                self.product.sales_channel == Product.SalesChannel.ONLINE
+                and self.offline_quantity > 0
+            ):
+                raise ValidationError({
+                    "offline_quantity": "Offline quantity must be 0 for Online-only products."
+                })
+
+            if (
+                self.product.sales_channel == Product.SalesChannel.OFFLINE
+                and self.online_quantity > 0
+            ):
+                raise ValidationError({
+                    "online_quantity": "Online quantity must be 0 for Offline-only products."
+                })
+
+    @property
+    def total_quantity(self):
+        return self.online_quantity + self.offline_quantity
+
+    def __str__(self):
+        return (
+            f"{self.product.product_name} - {self.size} "
+            f"(Online: {self.online_quantity}, Offline: {self.offline_quantity})"
+        )
+
 
 import os
 from django.conf import settings

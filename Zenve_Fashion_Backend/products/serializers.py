@@ -1,9 +1,14 @@
+import json
 from decimal import Decimal
 
 from django.db import transaction
 from rest_framework import serializers
 
-from .models import Product, ProductImage
+from .models import (
+    Product,
+    ProductImage,
+    ProductSizeStock,
+)
 from designers.models import Designer
 
 
@@ -23,7 +28,6 @@ class FlexibleDesignerField(serializers.PrimaryKeyRelatedField):
 
     def to_internal_value(self, data):
 
-        # Designer ID
         if isinstance(data, int):
             return super().to_internal_value(data)
 
@@ -32,18 +36,21 @@ class FlexibleDesignerField(serializers.PrimaryKeyRelatedField):
             value = data.strip()
 
             if value.isdigit():
-                return super().to_internal_value(int(value))
+                return super().to_internal_value(
+                    int(value)
+                )
 
             if value:
-
                 designer = (
                     Designer.objects.filter(
                         brand_name__iexact=value
                     ).first()
-                    or Designer.objects.filter(
+                    or
+                    Designer.objects.filter(
                         designer_name__iexact=value
                     ).first()
-                    or Designer.objects.filter(
+                    or
+                    Designer.objects.filter(
                         designer_code__iexact=value
                     ).first()
                 )
@@ -67,21 +74,47 @@ class FlexibleLocationField(serializers.CharField):
     def to_internal_value(self, data):
 
         mapping = {
-            "mumbai fc": Product.FulfilmentLocation.MUMBAI_FC,
-            "mumbai_fc": Product.FulfilmentLocation.MUMBAI_FC,
-            "bengaluru fc": Product.FulfilmentLocation.BENGALURU_FC,
-            "bengaluru_fc": Product.FulfilmentLocation.BENGALURU_FC,
-            "kochi fc": Product.FulfilmentLocation.KOCHI_FC,
-            "kochi_fc": Product.FulfilmentLocation.KOCHI_FC,
-            "chennai fc": Product.FulfilmentLocation.CHENNAI_FC,
-            "chennai_fc": Product.FulfilmentLocation.CHENNAI_FC,
-            "bangalore fc": Product.FulfilmentLocation.BENGALURU_FC,
-            "bangalore_fc": Product.FulfilmentLocation.BENGALURU_FC,
-            "delhi fc": Product.FulfilmentLocation.DELHI_FC,
-            "delhi_fc": Product.FulfilmentLocation.DELHI_FC,
+            "mumbai fc":
+                Product.FulfilmentLocation.MUMBAI_FC,
 
-            "designer studio": Product.FulfilmentLocation.DESIGNER_STUDIO,
-            "designer_studio": Product.FulfilmentLocation.DESIGNER_STUDIO,
+            "mumbai_fc":
+                Product.FulfilmentLocation.MUMBAI_FC,
+
+            "bengaluru fc":
+                Product.FulfilmentLocation.BENGALURU_FC,
+
+            "bengaluru_fc":
+                Product.FulfilmentLocation.BENGALURU_FC,
+
+            "bangalore fc":
+                Product.FulfilmentLocation.BENGALURU_FC,
+
+            "bangalore_fc":
+                Product.FulfilmentLocation.BENGALURU_FC,
+
+            "kochi fc":
+                Product.FulfilmentLocation.KOCHI_FC,
+
+            "kochi_fc":
+                Product.FulfilmentLocation.KOCHI_FC,
+
+            "chennai fc":
+                Product.FulfilmentLocation.CHENNAI_FC,
+
+            "chennai_fc":
+                Product.FulfilmentLocation.CHENNAI_FC,
+
+            "delhi fc":
+                Product.FulfilmentLocation.DELHI_FC,
+
+            "delhi_fc":
+                Product.FulfilmentLocation.DELHI_FC,
+
+            "designer studio":
+                Product.FulfilmentLocation.DESIGNER_STUDIO,
+
+            "designer_studio":
+                Product.FulfilmentLocation.DESIGNER_STUDIO,
         }
 
         clean_key = str(data).strip().lower()
@@ -93,7 +126,7 @@ class FlexibleLocationField(serializers.CharField):
 
 
 # =========================================================
-# SIZE
+# SIZE FIELD
 # =========================================================
 
 class FlexibleSizeField(serializers.CharField):
@@ -137,16 +170,18 @@ class FlexibleReturnPolicyField(serializers.CharField):
 
         if value in [
             "true",
-            "returnable",
+            "1",
             "yes",
+            "returnable",
         ]:
             return Product.ReturnPolicy.RETURNABLE
 
         if value in [
             "false",
+            "0",
+            "no",
             "final_sale",
             "final sale",
-            "no",
         ]:
             return Product.ReturnPolicy.FINAL_SALE
 
@@ -174,10 +209,75 @@ class ProductImageSerializer(serializers.ModelSerializer):
 
 
 # =========================================================
+# PRODUCT SIZE STOCK SERIALIZER
+# =========================================================
+
+class ProductSizeStockSerializer(
+    serializers.ModelSerializer
+):
+
+    total_quantity = serializers.ReadOnlyField()
+
+    class Meta:
+        model = ProductSizeStock
+
+        fields = [
+            "id",
+            "size",
+            "online_quantity",
+            "offline_quantity",
+            "total_quantity",
+        ]
+
+        read_only_fields = [
+            "id",
+            "total_quantity",
+        ]
+
+    def validate_size(self, value):
+
+        valid_sizes = {
+            choice[0]
+            for choice in Product.Size.choices
+        }
+
+        value = str(value).strip().upper()
+
+        if value not in valid_sizes:
+            raise serializers.ValidationError(
+                "Invalid product size."
+            )
+
+        return value
+
+    def validate_online_quantity(self, value):
+
+        if value < 0:
+            raise serializers.ValidationError(
+                "Online quantity cannot be negative."
+            )
+
+        return value
+
+    def validate_offline_quantity(self, value):
+
+        if value < 0:
+            raise serializers.ValidationError(
+                "Offline quantity cannot be negative."
+            )
+
+        return value
+
+
+# =========================================================
 # PRODUCT SERIALIZER
 # =========================================================
 
 class ProductSerializer(serializers.ModelSerializer):
+
+    # -----------------------------------------------------
+    # Designer
+    # -----------------------------------------------------
 
     designer = FlexibleDesignerField(
         queryset=Designer.objects.all()
@@ -195,6 +295,10 @@ class ProductSerializer(serializers.ModelSerializer):
         source="designer.designer_code"
     )
 
+    # -----------------------------------------------------
+    # Flexible fields
+    # -----------------------------------------------------
+
     fulfilment_location = FlexibleLocationField(
         required=False,
         default=Product.FulfilmentLocation.MUMBAI_FC,
@@ -202,7 +306,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
     size = FlexibleSizeField(
         required=False,
-        default=Product.Size.FREE,
+        allow_null=True,
+        allow_blank=True,
     )
 
     return_policy = FlexibleReturnPolicyField(
@@ -211,7 +316,30 @@ class ProductSerializer(serializers.ModelSerializer):
     )
 
     # -----------------------------------------------------
-    # Calculated / read-only fields
+    # SIZE STOCK
+    # -----------------------------------------------------
+
+    size_stocks = ProductSizeStockSerializer(
+        many=True,
+        required=False,
+    )
+
+    # -----------------------------------------------------
+    # Calculated inventory
+    # -----------------------------------------------------
+
+    online_quantity = serializers.ReadOnlyField()
+
+    offline_quantity = serializers.ReadOnlyField()
+
+    total_size_quantity = serializers.ReadOnlyField()
+
+    selected_sizes = serializers.ReadOnlyField()
+
+    size_stock_summary = serializers.ReadOnlyField()
+
+    # -----------------------------------------------------
+    # Other calculated fields
     # -----------------------------------------------------
 
     discount_amount = serializers.ReadOnlyField()
@@ -225,10 +353,6 @@ class ProductSerializer(serializers.ModelSerializer):
 
     # -----------------------------------------------------
     # Uploaded images
-    #
-    # IMPORTANT:
-    # The view explicitly passes request.FILES.getlist()
-    # as a Python list to this field.
     # -----------------------------------------------------
 
     images = serializers.ListField(
@@ -240,20 +364,43 @@ class ProductSerializer(serializers.ModelSerializer):
     )
 
     # -----------------------------------------------------
-    # Existing product images
+    # Existing images
     # -----------------------------------------------------
 
     product_images = serializers.SerializerMethodField()
 
     def get_product_images(self, product):
 
-        return [
-            {
+        request = self.context.get("request")
+
+        result = []
+
+        for image in product.product_images.all():
+
+            image_url = None
+
+            try:
+                image_url = image.image.url
+            except Exception:
+                image_url = None
+
+            if (
+                image_url
+                and request is not None
+            ):
+                image_url = (
+                    request.build_absolute_uri(
+                        image_url
+                    )
+                )
+
+            result.append({
                 "id": image.id,
                 "position": image.position,
-            }
-            for image in product.product_images.all()
-        ]
+                "image": image_url,
+            })
+
+        return result
 
     # =====================================================
     # INPUT NORMALIZATION
@@ -261,135 +408,235 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def to_internal_value(self, data):
 
-        # Make a normal dictionary so multipart files can
-        # safely be passed as a Python list.
         if hasattr(data, "dict"):
             data_copy = data.dict()
         else:
             data_copy = dict(data)
 
         # -------------------------------------------------
-        # Old / frontend aliases
+        # SIZE STOCK JSON FROM FormData
+        # -------------------------------------------------
+
+        size_stocks = data_copy.get(
+            "size_stocks"
+        )
+
+        if isinstance(size_stocks, str):
+
+            try:
+                data_copy["size_stocks"] = (
+                    json.loads(size_stocks)
+                )
+
+            except (
+                json.JSONDecodeError,
+                TypeError,
+            ):
+                raise serializers.ValidationError({
+                    "size_stocks": (
+                        "Invalid size stock JSON."
+                    )
+                })
+
+        # -------------------------------------------------
+        # Frontend aliases
         # -------------------------------------------------
 
         if (
             "name" in data_copy
-            and "product_name" not in data_copy
+            and
+            "product_name" not in data_copy
         ):
-            data_copy["product_name"] = data_copy["name"]
+            data_copy["product_name"] = (
+                data_copy["name"]
+            )
 
         if (
             "price" in data_copy
-            and "selling_price" not in data_copy
+            and
+            "selling_price" not in data_copy
         ):
-            data_copy["selling_price"] = data_copy["price"]
+            data_copy["selling_price"] = (
+                data_copy["price"]
+            )
 
         if (
             "fabric" in data_copy
-            and "material" not in data_copy
+            and
+            "material" not in data_copy
         ):
-            data_copy["material"] = data_copy["fabric"]
+            data_copy["material"] = (
+                data_copy["fabric"]
+            )
 
         if (
             "petSafety" in data_copy
-            and "pet_safety" not in data_copy
+            and
+            "pet_safety" not in data_copy
         ):
-            data_copy["pet_safety"] = data_copy["petSafety"]
+            data_copy["pet_safety"] = (
+                data_copy["petSafety"]
+            )
 
         if (
             "location" in data_copy
-            and "fulfilment_location" not in data_copy
+            and
+            "fulfilment_location"
+            not in data_copy
         ):
-            data_copy["fulfilment_location"] = data_copy["location"]
+            data_copy[
+                "fulfilment_location"
+            ] = data_copy["location"]
 
         if (
             "fastDelivery" in data_copy
-            and "fast_delivery" not in data_copy
+            and
+            "fast_delivery" not in data_copy
         ):
-            data_copy["fast_delivery"] = data_copy["fastDelivery"]
+            data_copy["fast_delivery"] = (
+                data_copy["fastDelivery"]
+            )
 
         if (
             "returnable" in data_copy
-            and "return_policy" not in data_copy
+            and
+            "return_policy" not in data_copy
         ):
-            value = data_copy["returnable"]
+
+            value = data_copy[
+                "returnable"
+            ]
 
             data_copy["return_policy"] = (
-                "RETURNABLE"
+                Product.ReturnPolicy.RETURNABLE
                 if str(value).lower() in [
                     "true",
                     "1",
                     "yes",
                     "returnable",
                 ]
-                else "FINAL_SALE"
+                else
+                Product.ReturnPolicy.FINAL_SALE
             )
 
         if (
             "designerId" in data_copy
-            and "designer" not in data_copy
+            and
+            "designer" not in data_copy
         ):
-            data_copy["designer"] = data_copy["designerId"]
+            data_copy["designer"] = (
+                data_copy["designerId"]
+            )
 
         if (
             "gstRate" in data_copy
-            and "gst_rate" not in data_copy
+            and
+            "gst_rate" not in data_copy
         ):
-            data_copy["gst_rate"] = data_copy["gstRate"]
+            data_copy["gst_rate"] = (
+                data_copy["gstRate"]
+            )
 
         if (
             "weightG" in data_copy
-            and "weight_g" not in data_copy
+            and
+            "weight_g" not in data_copy
         ):
-            data_copy["weight_g"] = data_copy["weightG"]
+            data_copy["weight_g"] = (
+                data_copy["weightG"]
+            )
 
         if (
             "altText" in data_copy
-            and "alt_text" not in data_copy
+            and
+            "alt_text" not in data_copy
         ):
-            data_copy["alt_text"] = data_copy["altText"]
+            data_copy["alt_text"] = (
+                data_copy["altText"]
+            )
 
         if (
             "seoTitle" in data_copy
-            and "seo_title" not in data_copy
+            and
+            "seo_title" not in data_copy
         ):
-            data_copy["seo_title"] = data_copy["seoTitle"]
+            data_copy["seo_title"] = (
+                data_copy["seoTitle"]
+            )
 
         if (
             "seoDescription" in data_copy
-            and "seo_description" not in data_copy
+            and
+            "seo_description"
+            not in data_copy
         ):
-            data_copy["seo_description"] = data_copy[
+            data_copy[
+                "seo_description"
+            ] = data_copy[
                 "seoDescription"
             ]
 
         if (
             "newArrival" in data_copy
-            and "new_arrival" not in data_copy
+            and
+            "new_arrival" not in data_copy
         ):
-            data_copy["new_arrival"] = data_copy["newArrival"]
+            data_copy["new_arrival"] = (
+                data_copy["newArrival"]
+            )
 
         if (
             "limitedEdition" in data_copy
-            and "limited_edition" not in data_copy
+            and
+            "limited_edition"
+            not in data_copy
         ):
-            data_copy["limited_edition"] = data_copy[
+            data_copy[
+                "limited_edition"
+            ] = data_copy[
                 "limitedEdition"
             ]
 
         if (
             "qaScores" in data_copy
-            and "qa_scores" not in data_copy
+            and
+            "qa_scores" not in data_copy
         ):
-            data_copy["qa_scores"] = data_copy["qaScores"]
+            data_copy["qa_scores"] = (
+                data_copy["qaScores"]
+            )
 
         if (
             "qaNote" in data_copy
-            and "qa_note" not in data_copy
+            and
+            "qa_note" not in data_copy
         ):
-            data_copy["qa_note"] = data_copy["qaNote"]
+            data_copy["qa_note"] = (
+                data_copy["qaNote"]
+            )
 
-        return super().to_internal_value(data_copy)
+        # -------------------------------------------------
+        # Ignore frontend-only helper fields
+        # -------------------------------------------------
+
+        data_copy.pop(
+            "sizes",
+            None,
+        )
+
+        data_copy.pop(
+            "online_quantity",
+            None,
+        )
+
+        data_copy.pop(
+            "offline_quantity",
+            None,
+        )
+
+        return super().to_internal_value(
+            data_copy
+        )
 
     # =====================================================
     # VALIDATION
@@ -416,65 +663,198 @@ class ProductSerializer(serializers.ModelSerializer):
         )
 
         # -------------------------------------------------
-        # Price validation
+        # PRICE VALIDATION
         # -------------------------------------------------
 
-        if selling_price > mrp:
-
+        if (
+            mrp is not None
+            and
+            selling_price is not None
+            and
+            selling_price > mrp
+        ):
             raise serializers.ValidationError({
                 "selling_price": (
-                    "Selling price cannot be greater than MRP."
+                    "Selling price cannot be "
+                    "greater than MRP."
                 )
             })
 
         # -------------------------------------------------
-        # Calculate discount automatically
+        # DISCOUNT
         # -------------------------------------------------
 
-        if mrp > Decimal("0"):
+        if (
+            mrp is not None
+            and
+            mrp > Decimal("0")
+            and
+            selling_price is not None
+        ):
 
             calculated_discount = (
                 (
                     Decimal(str(mrp))
-                    - Decimal(str(selling_price))
+                    -
+                    Decimal(
+                        str(selling_price)
+                    )
                 )
-                / Decimal(str(mrp))
+                /
+                Decimal(str(mrp))
             ) * Decimal("100")
 
-            attrs["discount_percentage"] = round(
-                calculated_discount,
-                2,
+            attrs[
+                "discount_percentage"
+            ] = calculated_discount.quantize(
+                Decimal("0.01")
             )
 
-        else:
+        elif mrp is not None:
 
-            attrs["discount_percentage"] = Decimal("0")
+            attrs[
+                "discount_percentage"
+            ] = Decimal("0")
 
         # -------------------------------------------------
-        # New product image validation
+        # IMAGE VALIDATION
         # -------------------------------------------------
 
         if self.instance is None:
 
-            images = attrs.get("images", [])
+            images = attrs.get(
+                "images",
+                [],
+            )
 
             if len(images) != 4:
 
                 raise serializers.ValidationError({
                     "images": (
-                        "Exactly 4 product images are required."
+                        "Exactly 4 product "
+                        "images are required."
                     )
                 })
 
             for image in images:
 
-                if image.size > 5 * 1024 * 1024:
-
+                if (
+                    image.size
+                    >
+                    5 * 1024 * 1024
+                ):
                     raise serializers.ValidationError({
                         "images": (
-                            "Each image must be 5 MB or smaller."
+                            "Each image must be "
+                            "5 MB or smaller."
                         )
                     })
+
+        # -------------------------------------------------
+        # SIZE STOCK VALIDATION
+        # -------------------------------------------------
+
+        size_stocks = attrs.get(
+            "size_stocks"
+        )
+
+        sales_channel = attrs.get(
+            "sales_channel",
+            getattr(
+                self.instance,
+                "sales_channel",
+                Product.SalesChannel.ONLINE,
+            ),
+        )
+
+        if self.instance is None:
+
+            if not size_stocks:
+
+                raise serializers.ValidationError({
+                    "size_stocks": (
+                        "Select at least one size "
+                        "and enter its quantity."
+                    )
+                })
+
+        if size_stocks is not None:
+
+            used_sizes = set()
+
+            total_quantity = 0
+
+            for item in size_stocks:
+
+                size = item.get("size")
+
+                online = int(
+                    item.get(
+                        "online_quantity",
+                        0,
+                    )
+                )
+
+                offline = int(
+                    item.get(
+                        "offline_quantity",
+                        0,
+                    )
+                )
+
+                if size in used_sizes:
+
+                    raise serializers.ValidationError({
+                        "size_stocks": (
+                            f"Size {size} was "
+                            "provided more than once."
+                        )
+                    })
+
+                used_sizes.add(size)
+
+                if (
+                    sales_channel
+                    ==
+                    Product.SalesChannel.ONLINE
+                    and
+                    offline > 0
+                ):
+                    raise serializers.ValidationError({
+                        "size_stocks": (
+                            f"Size {size}: offline "
+                            "quantity must be 0 for "
+                            "an online-only product."
+                        )
+                    })
+
+                if (
+                    sales_channel
+                    ==
+                    Product.SalesChannel.OFFLINE
+                    and
+                    online > 0
+                ):
+                    raise serializers.ValidationError({
+                        "size_stocks": (
+                            f"Size {size}: online "
+                            "quantity must be 0 for "
+                            "an offline-only product."
+                        )
+                    })
+
+                total_quantity += (
+                    online + offline
+                )
+
+            if total_quantity <= 0:
+
+                raise serializers.ValidationError({
+                    "size_stocks": (
+                        "Total product quantity "
+                        "must be greater than 0."
+                    )
+                })
 
         return attrs
 
@@ -483,24 +863,92 @@ class ProductSerializer(serializers.ModelSerializer):
     # =====================================================
 
     @transaction.atomic
-    def create(self, validated_data):
+    def create(
+        self,
+        validated_data,
+    ):
 
         images = validated_data.pop(
             "images",
             [],
         )
 
-        # -----------------------------------------------
-        # Create product
-        # -----------------------------------------------
+        size_stocks = validated_data.pop(
+            "size_stocks",
+            [],
+        )
+
+        # -------------------------------------------------
+        # LEGACY SIZE
+        # -------------------------------------------------
+
+        if (
+            not validated_data.get("size")
+            and
+            size_stocks
+        ):
+            validated_data["size"] = (
+                size_stocks[0]["size"]
+            )
+
+        # -------------------------------------------------
+        # INVENTORY IS CALCULATED FROM SIZE STOCK
+        # -------------------------------------------------
+
+        total_inventory = sum(
+            int(
+                item.get(
+                    "online_quantity",
+                    0,
+                )
+            )
+            +
+            int(
+                item.get(
+                    "offline_quantity",
+                    0,
+                )
+            )
+            for item in size_stocks
+        )
+
+        validated_data[
+            "inventory_quantity"
+        ] = total_inventory
+
+        # -------------------------------------------------
+        # CREATE PRODUCT
+        # -------------------------------------------------
 
         product = Product.objects.create(
             **validated_data
         )
 
-        # -----------------------------------------------
-        # Create exactly 4 ProductImage records
-        # -----------------------------------------------
+        # -------------------------------------------------
+        # CREATE SIZE STOCK
+        # -------------------------------------------------
+
+        for item in size_stocks:
+
+            ProductSizeStock.objects.create(
+                product=product,
+
+                size=item["size"],
+
+                online_quantity=item.get(
+                    "online_quantity",
+                    0,
+                ),
+
+                offline_quantity=item.get(
+                    "offline_quantity",
+                    0,
+                ),
+            )
+
+        # -------------------------------------------------
+        # CREATE EXACTLY 4 IMAGES
+        # -------------------------------------------------
 
         for position, image in enumerate(
             images,
@@ -513,30 +961,27 @@ class ProductSerializer(serializers.ModelSerializer):
                 image=image,
             )
 
-        # -----------------------------------------------
-        # Set first image as primary image
-        # -----------------------------------------------
+        # -------------------------------------------------
+        # PRIMARY IMAGE
+        # -------------------------------------------------
 
-        if images:
+        first_image = (
+            product.product_images
+            .filter(position=1)
+            .first()
+        )
 
-            first_image = (
-                ProductImage.objects
-                .filter(
-                    product=product,
-                    position=1,
-                )
-                .first()
+        if first_image:
+
+            product.primary_image = (
+                first_image.image
             )
 
-            if first_image:
-
-                product.primary_image = first_image.image
-
-                product.save(
-                    update_fields=[
-                        "primary_image",
-                    ]
-                )
+            product.save(
+                update_fields=[
+                    "primary_image",
+                ]
+            )
 
         return product
 
@@ -551,12 +996,21 @@ class ProductSerializer(serializers.ModelSerializer):
         validated_data,
     ):
 
-        # Remove uploaded images from normal Product update.
-        # Image replacement can be handled separately.
+        # Existing image replacement is not performed
+        # through this normal update endpoint.
         validated_data.pop(
             "images",
             None,
         )
+
+        size_stocks = validated_data.pop(
+            "size_stocks",
+            None,
+        )
+
+        # -------------------------------------------------
+        # NORMAL PRODUCT FIELDS
+        # -------------------------------------------------
 
         for attr, value in validated_data.items():
 
@@ -566,6 +1020,74 @@ class ProductSerializer(serializers.ModelSerializer):
                 value,
             )
 
+        # -------------------------------------------------
+        # SIZE STOCK
+        # -------------------------------------------------
+
+        if size_stocks is not None:
+
+            supplied_sizes = []
+
+            total_inventory = 0
+
+            for item in size_stocks:
+
+                size = item["size"]
+
+                online_quantity = int(
+                    item.get(
+                        "online_quantity",
+                        0,
+                    )
+                )
+
+                offline_quantity = int(
+                    item.get(
+                        "offline_quantity",
+                        0,
+                    )
+                )
+
+                supplied_sizes.append(
+                    size
+                )
+
+                ProductSizeStock.objects.update_or_create(
+                    product=instance,
+                    size=size,
+
+                    defaults={
+                        "online_quantity":
+                            online_quantity,
+
+                        "offline_quantity":
+                            offline_quantity,
+                    },
+                )
+
+                total_inventory += (
+                    online_quantity
+                    +
+                    offline_quantity
+                )
+
+            instance.size_stocks.exclude(
+                size__in=supplied_sizes
+            ).delete()
+
+            instance.inventory_quantity = (
+                total_inventory
+            )
+
+            if (
+                supplied_sizes
+                and
+                not instance.size
+            ):
+                instance.size = (
+                    supplied_sizes[0]
+                )
+
         instance.save()
 
         return instance
@@ -574,9 +1096,14 @@ class ProductSerializer(serializers.ModelSerializer):
     # REPRESENTATION
     # =====================================================
 
-    def to_representation(self, instance):
+    def to_representation(
+        self,
+        instance,
+    ):
 
-        res = super().to_representation(instance)
+        res = super().to_representation(
+            instance
+        )
 
         res["gstRate"] = (
             float(instance.gst_rate)
@@ -584,32 +1111,67 @@ class ProductSerializer(serializers.ModelSerializer):
             else 12.0
         )
 
-        res["weightG"] = instance.weight_g
-        res["altText"] = instance.alt_text
-        res["seoTitle"] = instance.seo_title
-        res["seoDescription"] = instance.seo_description
+        res["weightG"] = (
+            instance.weight_g
+        )
 
-        res["newArrival"] = instance.new_arrival
-        res["limitedEdition"] = instance.limited_edition
+        res["altText"] = (
+            instance.alt_text
+        )
 
-        res["petSafety"] = instance.pet_safety
-        res["fabric"] = instance.material
+        res["seoTitle"] = (
+            instance.seo_title
+        )
 
-        res["location"] = instance.fulfilment_location
-        res["fastDelivery"] = instance.fast_delivery
+        res["seoDescription"] = (
+            instance.seo_description
+        )
+
+        res["newArrival"] = (
+            instance.new_arrival
+        )
+
+        res["limitedEdition"] = (
+            instance.limited_edition
+        )
+
+        res["petSafety"] = (
+            instance.pet_safety
+        )
+
+        res["fabric"] = (
+            instance.material
+        )
+
+        res["location"] = (
+            instance.fulfilment_location
+        )
+
+        res["fastDelivery"] = (
+            instance.fast_delivery
+        )
 
         res["returnable"] = (
             instance.return_policy
-            == Product.ReturnPolicy.RETURNABLE
+            ==
+            Product.ReturnPolicy.RETURNABLE
         )
 
         res["live"] = (
             instance.is_live
-            or instance.status == Product.ProductStatus.LIVE
+            or
+            instance.status
+            ==
+            Product.ProductStatus.LIVE
         )
 
-        res["qaStatus"] = instance.status
-        res["qaScore"] = instance.qa_score
+        res["qaStatus"] = (
+            instance.status
+        )
+
+        res["qaScore"] = (
+            instance.qa_score
+        )
 
         res["qaScores"] = (
             instance.qa_scores
@@ -623,11 +1185,16 @@ class ProductSerializer(serializers.ModelSerializer):
             else ""
         )
 
-        res["name"] = instance.product_name
+        res["name"] = (
+            instance.product_name
+        )
 
         res["price"] = (
-            float(instance.selling_price)
-            if instance.selling_price is not None
+            float(
+                instance.selling_price
+            )
+            if instance.selling_price
+            is not None
             else 0.0
         )
 
@@ -664,6 +1231,13 @@ class ProductSerializer(serializers.ModelSerializer):
             "size",
             "material",
             "pet_safety",
+
+            # Multiple sizes
+            "size_stocks",
+            "selected_sizes",
+
+            # Sales channel
+            "sales_channel",
 
             # Compliance
             "barcode",
@@ -710,6 +1284,12 @@ class ProductSerializer(serializers.ModelSerializer):
             "quarantined_quantity",
             "in_transit_quantity",
             "returned_quantity",
+
+            # Size inventory totals
+            "online_quantity",
+            "offline_quantity",
+            "total_size_quantity",
+            "size_stock_summary",
 
             # Calculated inventory
             "available_quantity",
@@ -761,6 +1341,12 @@ class ProductSerializer(serializers.ModelSerializer):
             "designer_name",
             "designer_brand",
             "designer_code",
+
+            "online_quantity",
+            "offline_quantity",
+            "total_size_quantity",
+            "selected_sizes",
+            "size_stock_summary",
 
             "available_quantity",
             "physical_quantity",
