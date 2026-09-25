@@ -359,6 +359,70 @@ class ProductListCreateAPIView(APIView):
             )
 
         # -------------------------------------------------
+        # GROWTH ADD-ONS & CREDITS PROCESSING
+        # -------------------------------------------------
+        try:
+            from credits.models import DesignerCreditStatement
+            from credits.views import get_or_create_designer_wallet
+            from django.utils import timezone
+
+            today_str = timezone.now().strftime("%d/%m/%Y")
+            designer = product.designer
+            wallet = get_or_create_designer_wallet(designer)
+
+            # 1. Catalogue listing deduction (-500 pts)
+            cat_desc = f"Catalogue listing {product.sku}"
+            if not DesignerCreditStatement.objects.filter(designer=designer, description=cat_desc).exists():
+                DesignerCreditStatement.objects.create(
+                    wallet=wallet,
+                    designer=designer,
+                    description=cat_desc,
+                    channel="ONLINE",
+                    points=-500,
+                    date_str=today_str,
+                )
+
+            # 2. Exclusive video & photo shoot (-5,000 pts)
+            growth_video_shoot = str(
+                request.data.get("growth_video_shoot", "")
+            ).strip().lower() in ["true", "1", "yes"]
+
+            if growth_video_shoot:
+                video_desc = f"Exclusive video & photo shoot — {product.sku}"
+                if not DesignerCreditStatement.objects.filter(designer=designer, description=video_desc).exists():
+                    DesignerCreditStatement.objects.create(
+                        wallet=wallet,
+                        designer=designer,
+                        description=video_desc,
+                        channel="ONLINE",
+                        points=-5000,
+                        date_str=today_str,
+                    )
+
+            # 3. Exclusive social media promotion (-5,000 pts)
+            growth_social_promotion = str(
+                request.data.get("growth_social_promotion", "")
+            ).strip().lower() in ["true", "1", "yes"]
+
+            if growth_social_promotion:
+                social_desc = f"Exclusive social media promotion — {product.sku}"
+                if not DesignerCreditStatement.objects.filter(designer=designer, description=social_desc).exists():
+                    DesignerCreditStatement.objects.create(
+                        wallet=wallet,
+                        designer=designer,
+                        description=social_desc,
+                        channel="ONLINE",
+                        points=-5000,
+                        date_str=today_str,
+                    )
+
+            # Re-sync wallet
+            get_or_create_designer_wallet(designer)
+
+        except Exception as credit_err:
+            print("CREDITS DEDUCTION ERROR ON SKU UPLOAD:", repr(credit_err))
+
+        # -------------------------------------------------
         # RESPONSE
         # -------------------------------------------------
 

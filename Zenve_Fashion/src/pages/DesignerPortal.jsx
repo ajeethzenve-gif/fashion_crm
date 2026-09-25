@@ -414,6 +414,11 @@ export default function DesignerPortal() {
     fastDelivery: true,
     returnable: true,
 
+    // Growth Add-ons (Charged in credit points)
+    growthVideoShoot: false,
+    growthSocialPromotion: false,
+    pushToStore: "ONLINE_ONLY",
+
     // NEW
     selectedSizes: [],
 
@@ -1292,6 +1297,28 @@ export default function DesignerPortal() {
         : "FINAL_SALE"
     );
 
+    // Growth Add-ons
+    payload.append(
+      "growth_video_shoot",
+      form.growthVideoShoot ? "true" : "false"
+    );
+    payload.append(
+      "growth_social_promotion",
+      form.growthSocialPromotion ? "true" : "false"
+    );
+    payload.append(
+      "push_to_store",
+      form.pushToStore || "ONLINE_ONLY"
+    );
+
+    const salesChannel =
+      form.pushToStore === "STORE_HOLDING"
+        ? "OFFLINE"
+        : form.pushToStore === "BOTH"
+        ? "BOTH"
+        : "ONLINE";
+    payload.append("sales_channel", salesChannel);
+
     payload.append(
       "status",
       "PENDING_QA"
@@ -1461,6 +1488,10 @@ export default function DesignerPortal() {
         mrp: "",
         price: "",
         fabric: "",
+
+        growthVideoShoot: false,
+        growthSocialPromotion: false,
+        pushToStore: "ONLINE_ONLY",
 
         selectedSizes: [],
         offlineEnabled: false,
@@ -4375,6 +4406,78 @@ export default function DesignerPortal() {
                               })
                             }
                           />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* =====================================================
+                        GROWTH ADD-ONS (CHARGED IN CREDIT POINTS)
+                    ===================================================== */}
+                    <div className="ZENVE-form-group span-3 full-width">
+                      <div className="ZENVE-growth-addons-container">
+                        <div className="ZENVE-growth-addons-title">
+                          GROWTH ADD-ONS (CHARGED IN CREDIT POINTS)
+                        </div>
+                        <div className="ZENVE-growth-addons-row">
+                          <div className="ZENVE-growth-addon-card">
+                            <div className="ZENVE-growth-addon-info">
+                              <span className="ZENVE-growth-addon-name">
+                                Exclusive video &amp; photo shoot
+                              </span>
+                              <span className="ZENVE-growth-addon-subtext">
+                                Our team visits you · 5,000 pts
+                              </span>
+                            </div>
+                            <Switch
+                              checked={form.growthVideoShoot}
+                              onChange={(val) =>
+                                setForm({
+                                  ...form,
+                                  growthVideoShoot: val,
+                                })
+                              }
+                            />
+                          </div>
+
+                          <div className="ZENVE-growth-addon-card">
+                            <div className="ZENVE-growth-addon-info">
+                              <span className="ZENVE-growth-addon-name">
+                                Exclusive social media promotion
+                              </span>
+                              <span className="ZENVE-growth-addon-subtext">
+                                Boosts product sales · 5,000 pts
+                              </span>
+                            </div>
+                            <Switch
+                              checked={form.growthSocialPromotion}
+                              onChange={(val) =>
+                                setForm({
+                                  ...form,
+                                  growthSocialPromotion: val,
+                                })
+                              }
+                            />
+                          </div>
+
+                          <div className="ZENVE-growth-addon-dropdown">
+                            <label className="ZENVE-growth-addon-dropdown-label">
+                              PUSH TO ZENVE STORE
+                            </label>
+                            <select
+                              className="ZENVE-growth-addon-select"
+                              value={form.pushToStore}
+                              onChange={(e) =>
+                                setForm({
+                                  ...form,
+                                  pushToStore: e.target.value,
+                                })
+                              }
+                            >
+                              <option value="ONLINE_ONLY">Online only (3 pts/day)</option>
+                              <option value="STORE_HOLDING">Zenve store holding (5 pts/day)</option>
+                              <option value="BOTH">Online + Zenve store (8 pts/day)</option>
+                            </select>
+                          </div>
                         </div>
                       </div>
                     </div>
