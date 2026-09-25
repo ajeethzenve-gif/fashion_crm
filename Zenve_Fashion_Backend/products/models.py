@@ -25,8 +25,11 @@ class Product(models.Model):
     class FulfilmentLocation(models.TextChoices):
         MUMBAI_FC = "MUMBAI_FC", "Mumbai FC"
         BENGALURU_FC = "BENGALURU_FC", "Bengaluru FC"
+        BANGALORE_FC = "BANGALORE_FC", "Bangalore FC"
         KOCHI_FC = "KOCHI_FC", "Kochi FC"
         CHENNAI_FC = "CHENNAI_FC", "Chennai FC"
+        DELHI_FC = "DELHI_FC", "Delhi FC"
+        DESIGNER_STUDIO = "DESIGNER_STUDIO", "Designer Studio"
 
     class Size(models.TextChoices):
         XS = "XS", "XS"

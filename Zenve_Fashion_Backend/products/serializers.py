@@ -75,46 +75,46 @@ class FlexibleLocationField(serializers.CharField):
 
         mapping = {
             "mumbai fc":
-                Product.FulfilmentLocation.MUMBAI_FC,
+                getattr(Product.FulfilmentLocation, "MUMBAI_FC", "MUMBAI_FC"),
 
             "mumbai_fc":
-                Product.FulfilmentLocation.MUMBAI_FC,
+                getattr(Product.FulfilmentLocation, "MUMBAI_FC", "MUMBAI_FC"),
 
             "bengaluru fc":
-                Product.FulfilmentLocation.BENGALURU_FC,
+                getattr(Product.FulfilmentLocation, "BENGALURU_FC", "BENGALURU_FC"),
 
             "bengaluru_fc":
-                Product.FulfilmentLocation.BENGALURU_FC,
+                getattr(Product.FulfilmentLocation, "BENGALURU_FC", "BENGALURU_FC"),
 
             "bangalore fc":
-                Product.FulfilmentLocation.BENGALURU_FC,
+                getattr(Product.FulfilmentLocation, "BANGALORE_FC", "BANGALORE_FC"),
 
             "bangalore_fc":
-                Product.FulfilmentLocation.BENGALURU_FC,
+                getattr(Product.FulfilmentLocation, "BANGALORE_FC", "BANGALORE_FC"),
 
             "kochi fc":
-                Product.FulfilmentLocation.KOCHI_FC,
+                getattr(Product.FulfilmentLocation, "KOCHI_FC", "KOCHI_FC"),
 
             "kochi_fc":
-                Product.FulfilmentLocation.KOCHI_FC,
+                getattr(Product.FulfilmentLocation, "KOCHI_FC", "KOCHI_FC"),
 
             "chennai fc":
-                Product.FulfilmentLocation.CHENNAI_FC,
+                getattr(Product.FulfilmentLocation, "CHENNAI_FC", "CHENNAI_FC"),
 
             "chennai_fc":
-                Product.FulfilmentLocation.CHENNAI_FC,
+                getattr(Product.FulfilmentLocation, "CHENNAI_FC", "CHENNAI_FC"),
 
             "delhi fc":
-                Product.FulfilmentLocation.DELHI_FC,
+                getattr(Product.FulfilmentLocation, "DELHI_FC", "DELHI_FC"),
 
             "delhi_fc":
-                Product.FulfilmentLocation.DELHI_FC,
+                getattr(Product.FulfilmentLocation, "DELHI_FC", "DELHI_FC"),
 
             "designer studio":
-                Product.FulfilmentLocation.DESIGNER_STUDIO,
+                getattr(Product.FulfilmentLocation, "DESIGNER_STUDIO", "DESIGNER_STUDIO"),
 
             "designer_studio":
-                Product.FulfilmentLocation.DESIGNER_STUDIO,
+                getattr(Product.FulfilmentLocation, "DESIGNER_STUDIO", "DESIGNER_STUDIO"),
         }
 
         clean_key = str(data).strip().lower()
