@@ -1540,11 +1540,6 @@ _Team ZENVE Creator Operations_`;
               />
             </div>
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 2c99bee (feat(credits): connect offline database plans and designer credit points in designer portal)
             <div className="lead-form-field">
               <label className="label-caps">Renewal likelihood %</label>
               <input
@@ -1562,7 +1557,6 @@ _Team ZENVE Creator Operations_`;
               />
             </div>
 
-<<<<<<< HEAD
             <div className="lead-form-field">
               <label className="label-caps">Contract end date</label>
               <input
@@ -1574,8 +1568,7 @@ _Team ZENVE Creator Operations_`;
                 }
               />
             </div>
-=======
->>>>>>> 2c99bee (feat(credits): connect offline database plans and designer credit points in designer portal)
+
             <div className="lead-form-field lead-form-field-gst">
               <div className="lead-field-header-row">
                 <label className="label-caps">
@@ -1647,22 +1640,7 @@ _Team ZENVE Creator Operations_`;
                 )}
               </div>
             </div>
-<<<<<<< HEAD
-=======
 
-            <div className="lead-form-field">
-              <label className="label-caps">Contract end date</label>
-              <input
-                type="date"
-                className="lead-input"
-                value={newLead.contractEnds}
-                onChange={(e) =>
-                  setNewLead({ ...newLead, contractEnds: e.target.value })
-                }
-              />
-            </div>
-
->>>>>>> 2c99bee (feat(credits): connect offline database plans and designer credit points in designer portal)
             <div style={{ gridColumn: "1 / -1" }}>
               <button type="submit" className="btn-create-lead">
                 Create lead
