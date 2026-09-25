@@ -730,6 +730,10 @@ class DesignerPortalDashboardAPIView(APIView):
             "skus": sku_serializer.data,
             "orders": orders_data,
             "settlements": settlements_data,
+            "credits": (
+                __import__("credits.views", fromlist=["get_designer_credits_data"])
+                .get_designer_credits_data(designer)
+            ),
             "account_details": (
                 DesignerAccountDetailsSerializer(
                     designer.account_details,

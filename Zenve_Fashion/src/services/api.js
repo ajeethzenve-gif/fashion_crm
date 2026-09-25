@@ -1133,6 +1133,63 @@ export async function markDesignerNotificationsRead(
 }
 
 /* =========================================================
+   DESIGNER CREDITS API
+========================================================= */
+
+export async function getDesignerCredits(designerId) {
+  const response = await fetch(`${API_BASE_URL}/credits/designer/${designerId}/`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch designer credits: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export async function buyOfflineCreditPack(designerId, planId, planName) {
+  const response = await fetch(`${API_BASE_URL}/credits/buy-offline-pack/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      designer_id: designerId,
+      plan_id: planId,
+      plan_name: planName,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.detail || `Failed to purchase offline pack: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export async function getOfflineCreditPlans() {
+  const response = await fetch(`${API_BASE_URL}/credits/`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch offline credit plans: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+
+/* =========================================================
    DESIGNER ACCOUNT DETAILS API
    ========================================================= */
 

@@ -1540,8 +1540,6 @@ _Team ZENVE Creator Operations_`;
               />
             </div>
 
-
-
             <div className="lead-form-field">
               <label className="label-caps">Renewal likelihood %</label>
               <input

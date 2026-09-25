@@ -2535,3 +2535,306 @@ DesignerPortal.css
 .zenve-swal-close-btn:hover {
   color: #1c1917 !important;
 }
+
+/* =========================================================
+   CREDIT POINTS SECTION (02 DESIGNER PORTAL)
+========================================================= */
+
+.ZENVE-credits-section-card {
+  margin-top: 24px;
+}
+
+.ZENVE-credits-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.ZENVE-credits-kpi-tile {
+  background-color: #ffffff;
+  border: 1px solid var(--ZENVE-line, #e2ddd5);
+  border-radius: 8px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ZENVE-credits-kpi-tile:hover {
+  border-color: #cfc7bc;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.ZENVE-credits-tile-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ZENVE-muted, #746a60);
+  margin-bottom: 8px;
+}
+
+.ZENVE-credits-tile-value {
+  font-family: var(--ZENVE-font-serif, "Fraunces", serif);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--ZENVE-ink, #1f160f);
+  line-height: 1.15;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.ZENVE-pts-unit {
+  font-family: var(--ZENVE-font-sans, "Manrope", sans-serif);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ZENVE-ink, #1f160f);
+}
+
+.ZENVE-credits-tile-subtext {
+  font-size: 12px;
+  color: var(--ZENVE-muted, #746a60);
+  line-height: 1.3;
+}
+
+/* Daily point burn banner */
+.ZENVE-daily-burn-banner {
+  background-color: #faf7f2;
+  border: 1px solid #eee8df;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ZENVE-daily-burn-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #7d7266;
+}
+
+.ZENVE-daily-burn-calc {
+  font-size: 13.5px;
+  color: #2b2520;
+  line-height: 1.4;
+}
+
+.ZENVE-daily-burn-total {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ZENVE-ink, #1f160f);
+}
+
+.ZENVE-daily-burn-rates {
+  font-size: 12px;
+  color: #7d7266;
+  line-height: 1.4;
+}
+
+/* Blocks */
+.ZENVE-credits-section-block {
+  margin-top: 24px;
+  margin-bottom: 28px;
+}
+
+.ZENVE-credits-block-heading {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #7d7266;
+  margin-bottom: 14px;
+}
+
+/* Offline packs grid */
+.ZENVE-offline-packs-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+}
+
+.ZENVE-offline-pack-card {
+  background-color: #ffffff;
+  border: 1px solid var(--ZENVE-line, #e2ddd5);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.15s ease;
+}
+
+.ZENVE-offline-pack-card:hover {
+  border-color: #c4bbb0;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
+}
+
+.ZENVE-pack-name {
+  font-family: var(--ZENVE-font-serif, "Fraunces", serif);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ZENVE-ink, #1f160f);
+  margin-bottom: 4px;
+}
+
+.ZENVE-pack-pricing {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.ZENVE-pack-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ZENVE-ink, #1f160f);
+}
+
+.ZENVE-pack-original-price {
+  font-size: 12.5px;
+  color: #8f857a;
+  text-decoration: line-through;
+}
+
+.ZENVE-pack-details {
+  font-size: 12px;
+  color: #73685c;
+  line-height: 1.35;
+  margin-bottom: 14px;
+  min-height: 32px;
+}
+
+.ZENVE-btn-buy-pack {
+  align-self: flex-start;
+  background-color: #ffffff;
+  border: 1px solid #d5cec5;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ZENVE-ink, #1f160f);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ZENVE-btn-buy-pack:hover:not(:disabled) {
+  border-color: var(--ZENVE-ink, #1f160f);
+  background-color: #f7f3ee;
+}
+
+.ZENVE-btn-buy-pack:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Statement list */
+.ZENVE-statement-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ZENVE-statement-row {
+  background-color: #ffffff;
+  border: 1px solid var(--ZENVE-line, #e2ddd5);
+  border-radius: 8px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  transition: border-color 0.15s ease;
+}
+
+.ZENVE-statement-row:hover {
+  border-color: #cfc7bc;
+}
+
+.ZENVE-statement-desc {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ZENVE-ink, #1f160f);
+  flex: 1;
+}
+
+.ZENVE-statement-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.ZENVE-channel-tag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 3px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+
+.ZENVE-channel-tag.tag-online {
+  background-color: #f8f3ea;
+  color: #8c6a38;
+}
+
+.ZENVE-channel-tag.tag-offline {
+  background-color: #f0ece6;
+  color: #635b53;
+}
+
+.ZENVE-statement-pts {
+  font-size: 13.5px;
+  font-weight: 600;
+  min-width: 90px;
+  text-align: right;
+}
+
+.ZENVE-statement-pts.positive {
+  color: #247a38;
+}
+
+.ZENVE-statement-pts.negative {
+  color: #b33930;
+}
+
+.ZENVE-statement-date {
+  font-size: 12px;
+  color: #7d7266;
+  min-width: 70px;
+  text-align: right;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .ZENVE-credits-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .ZENVE-offline-packs-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .ZENVE-credits-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+  .ZENVE-offline-packs-grid {
+    grid-template-columns: 1fr;
+  }
+  .ZENVE-statement-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .ZENVE-statement-meta {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

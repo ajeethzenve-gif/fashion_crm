@@ -14,6 +14,8 @@ import {
   updateDesigner,
   getDesignerAccountDetails,
   saveDesignerAccountDetails,
+  getDesignerCredits,
+  buyOfflineCreditPack,
 } from "../services/api";
 
 /* =========================================================
@@ -637,6 +639,14 @@ export default function DesignerPortal() {
     useState(false);
 
   /* =======================================================
+     CREDIT POINTS STATE
+  ======================================================= */
+
+  const [buyingPlanId, setBuyingPlanId] = useState(null);
+  const [creditsOverride, setCreditsOverride] = useState(null);
+
+
+  /* =======================================================
      LOAD DESIGNERS
   ======================================================= */
 
@@ -769,6 +779,87 @@ export default function DesignerPortal() {
   const orders = portalData?.orders || [];
   const settlements =
     portalData?.settlements || [];
+
+  /* =======================================================
+     CREDIT POINTS DATA & ACTIONS
+  ======================================================= */
+
+  const formatPoints = (val) => {
+    if (val === undefined || val === null || isNaN(val)) return "0";
+    return Number(val).toLocaleString("en-IN");
+  };
+
+  const creditsData = creditsOverride || portalData?.credits || null;
+
+  const creditWallet = creditsData?.wallet || {
+    online_credits: activeDesigner?.credit_points || 0,
+    offline_credits: 0,
+    points_used: 0,
+    total_balance: activeDesigner?.credit_points || 0,
+    online_plan: activeDesigner?.online_membership_plan
+      ? activeDesigner.online_membership_plan.charAt(0) +
+      activeDesigner.online_membership_plan.slice(1).toLowerCase()
+      : "—",
+    offline_plan: activeDesigner?.offline_membership_plan
+      ? activeDesigner.offline_membership_plan.charAt(0) +
+      activeDesigner.offline_membership_plan.slice(1).toLowerCase()
+      : "—",
+    online_listings_left: activeDesigner?.credit_points
+      ? Math.floor(activeDesigner.credit_points / 500)
+      : 0,
+    offline_listings_left: 0,
+    offline_pack_expiry: "No active pack",
+    points_used_subtitle: "0 points used",
+  };
+
+  const activeSkusCount = skus.filter(
+    (s) => s.is_live || s.status === "LIVE" || s.status === "APPROVED"
+  ).length;
+  const storeSkusCount = skus.filter((s) =>
+    (s.fulfilment_location || "").toUpperCase().includes("STORE")
+  ).length;
+
+  const dailyBurn = creditsData?.daily_burn || {
+    online_count: activeSkusCount,
+    online_pts_each: 3,
+    online_subtotal: activeSkusCount * 3,
+    store_count: storeSkusCount,
+    store_pts_each: 5,
+    store_subtotal: storeSkusCount * 5,
+    total_burn_per_day: activeSkusCount * 3 + storeSkusCount * 5,
+    rates_text:
+      "Catalogue listing 500 pts · Exclusive video & photo shoot 5,000 pts · Exclusive social media promotion 5,000 pts",
+  };
+
+  const offlinePlans = creditsData?.offline_plans || [];
+  const creditStatements = creditsData?.statements || [];
+
+  const handleBuyOfflinePack = async (plan) => {
+    if (!selectedDesignerId) {
+      showErrorToast("Please select a designer first.");
+      return;
+    }
+
+    try {
+      setBuyingPlanId(plan.id);
+      const res = await buyOfflineCreditPack(
+        selectedDesignerId,
+        plan.id,
+        plan.plan
+      );
+      if (res?.credits) {
+        setCreditsOverride(res.credits);
+      }
+      showToast(res?.detail || "Offline credit pack activated!");
+    } catch (err) {
+      showErrorToast(
+        err.message || "Failed to purchase offline credit pack"
+      );
+    } finally {
+      setBuyingPlanId(null);
+    }
+  };
+
 
   /* =======================================================
      SKU PREVIEW
@@ -2331,6 +2422,175 @@ export default function DesignerPortal() {
                       )
                     )}
                   </ul>
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* ===================================================
+              CREDIT POINTS SECTION
+          =================================================== */}
+
+          {!showProfileAndAccount && (
+            <section
+              className="ZENVE-portal-card ZENVE-credits-section-card"
+              id="zenve-credits-section"
+            >
+              <div className="ZENVE-card-header">
+                <div>
+                  <h2 className="ZENVE-card-title">My credit points</h2>
+                  <p className="ZENVE-card-description">
+                    Free online credits come with your joining plan. Offline credits are bought to keep stock in the Zenve store. Every catalogue listing costs 500 points.
+                  </p>
+                </div>
+              </div>
+
+              {/* 4 KPI TILES */}
+              <div className="ZENVE-credits-kpi-grid">
+                <div className="ZENVE-credits-kpi-tile">
+                  <div className="ZENVE-credits-tile-label">ONLINE CREDITS (FREE)</div>
+                  <div className="ZENVE-credits-tile-value">
+                    {formatPoints(creditWallet.online_credits)}{" "}
+                    <span className="ZENVE-pts-unit">pts</span>
+                  </div>
+                  <div className="ZENVE-credits-tile-subtext">
+                    {creditWallet.online_plan} · {creditWallet.online_listings_left} listings left
+                  </div>
+                </div>
+
+                <div className="ZENVE-credits-kpi-tile">
+                  <div className="ZENVE-credits-tile-label">OFFLINE CREDITS (PAID)</div>
+                  <div className="ZENVE-credits-tile-value">
+                    {formatPoints(creditWallet.offline_credits)}{" "}
+                    <span className="ZENVE-pts-unit">pts</span>
+                  </div>
+                  <div className="ZENVE-credits-tile-subtext">
+                    {creditWallet.offline_plan} · {creditWallet.offline_listings_left} listings left
+                  </div>
+                </div>
+
+                <div className="ZENVE-credits-kpi-tile">
+                  <div className="ZENVE-credits-tile-label">POINTS USED</div>
+                  <div className="ZENVE-credits-tile-value">
+                    {formatPoints(creditWallet.points_used)}{" "}
+                    <span className="ZENVE-pts-unit">pts</span>
+                  </div>
+                  <div className="ZENVE-credits-tile-subtext">
+                    {creditWallet.points_used_subtitle || "5 catalogue listings at 500 pts each"}
+                  </div>
+                </div>
+
+                <div className="ZENVE-credits-kpi-tile">
+                  <div className="ZENVE-credits-tile-label">TOTAL BALANCE</div>
+                  <div className="ZENVE-credits-tile-value">
+                    {formatPoints(creditWallet.total_balance)}{" "}
+                    <span className="ZENVE-pts-unit">pts</span>
+                  </div>
+                  <div className="ZENVE-credits-tile-subtext">
+                    Offline pack valid to {creditWallet.offline_pack_expiry}
+                  </div>
+                </div>
+              </div>
+
+              {/* DAILY POINT BURN */}
+              <div className="ZENVE-daily-burn-banner">
+                <div className="ZENVE-daily-burn-label">DAILY POINT BURN</div>
+                <div className="ZENVE-daily-burn-calc">
+                  {dailyBurn.online_count} product(s) listed online × {dailyBurn.online_pts_each} pts = {dailyBurn.online_subtotal} pts per day · {dailyBurn.store_count} product(s) in a Zenve store × {dailyBurn.store_pts_each} pts = {dailyBurn.store_subtotal} pts per day
+                </div>
+                <div className="ZENVE-daily-burn-total">
+                  Total {dailyBurn.total_burn_per_day} pts per day
+                </div>
+                <div className="ZENVE-daily-burn-rates">
+                  {dailyBurn.rates_text}
+                </div>
+              </div>
+
+              {/* BUY OFFLINE CREDITS */}
+              <div className="ZENVE-credits-section-block">
+                <div className="ZENVE-credits-block-heading">BUY OFFLINE CREDITS (VALID 30 DAYS)</div>
+                <div className="ZENVE-offline-packs-grid">
+                  {offlinePlans.map((plan) => {
+                    const planTitle =
+                      plan.plan === "PALLADIUM_PLUS" || plan.plan === "PALLADIUM++"
+                        ? "Palladium++"
+                        : plan.plan.charAt(0) + plan.plan.slice(1).toLowerCase();
+
+                    return (
+                      <div key={plan.id} className="ZENVE-offline-pack-card">
+                        <div className="ZENVE-pack-name">{planTitle}</div>
+                        <div className="ZENVE-pack-pricing">
+                          <span className="ZENVE-pack-price">
+                            ₹{Number(plan.membership_price).toLocaleString("en-IN")}
+                          </span>
+                          {Number(plan.original_membership_price) > Number(plan.membership_price) && (
+                            <span className="ZENVE-pack-original-price">
+                              ₹{Number(plan.original_membership_price).toLocaleString("en-IN")}
+                            </span>
+                          )}
+                        </div>
+                        <div className="ZENVE-pack-details">
+                          {plan.included_catalogue} catalogue · {plan.per_showroom} per showroom · {Number(plan.credit_points).toLocaleString("en-IN")} pts
+                        </div>
+                        <button
+                          type="button"
+                          className="ZENVE-btn-buy-pack"
+                          disabled={buyingPlanId === plan.id}
+                          onClick={() => handleBuyOfflinePack(plan)}
+                        >
+                          {buyingPlanId === plan.id ? "Activating..." : `Buy ${planTitle}`}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* CREDIT STATEMENT */}
+              <div className="ZENVE-credits-section-block" style={{ marginBottom: 0 }}>
+                <div className="ZENVE-credits-block-heading">CREDIT STATEMENT</div>
+                {creditStatements.length === 0 ? (
+                  <div
+                    style={{
+                      padding: "20px",
+                      background: "#ffffff",
+                      borderRadius: "8px",
+                      border: "1px solid var(--ZENVE-line, #e2ddd5)",
+                      fontSize: "13px",
+                      color: "var(--ZENVE-muted, #746a60)",
+                      textAlign: "center",
+                    }}
+                  >
+                    No credit transactions recorded yet for this designer.
+                  </div>
+                ) : (
+                  <div className="ZENVE-statement-list">
+                    {creditStatements.map((stmt, sIdx) => {
+                      const isPositive = Number(stmt.points) >= 0;
+                      const ptsDisplay = isPositive
+                        ? `+${Number(stmt.points).toLocaleString("en-IN")} pts`
+                        : `-${Number(Math.abs(stmt.points)).toLocaleString("en-IN")} pts`;
+
+                      return (
+                        <div key={stmt.id || sIdx} className="ZENVE-statement-row">
+                          <div className="ZENVE-statement-desc">{stmt.description}</div>
+                          <div className="ZENVE-statement-meta">
+                            <span
+                              className={`ZENVE-channel-tag tag-${(stmt.channel || "ONLINE").toLowerCase()}`}
+                            >
+                              {stmt.channel || "ONLINE"}
+                            </span>
+                            <span
+                              className={`ZENVE-statement-pts ${isPositive ? "positive" : "negative"}`}
+                            >
+                              {ptsDisplay}
+                            </span>
+                            <span className="ZENVE-statement-date">{stmt.date_str || "—"}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 )}
               </div>
             </section>

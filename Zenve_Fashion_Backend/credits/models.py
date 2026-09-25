@@ -10,6 +10,7 @@ class FashionPlan(models.TextChoices):
     GOLD = "GOLD", "Gold"
     PLATINUM = "PLATINUM", "Platinum"
     PALLADIUM = "PALLADIUM", "Palladium"
+    PALLADIUM_PLUS = "PALLADIUM++", "Palladium++"
 
 
 # =========================================================
@@ -178,3 +179,126 @@ class OfflineFashionCredit(models.Model):
             )
 
         return 0
+
+
+# =========================================================
+# DESIGNER CREDIT WALLET
+# =========================================================
+
+class DesignerCreditWallet(models.Model):
+    designer = models.OneToOneField(
+        "designers.Designer",
+        on_delete=models.CASCADE,
+        related_name="credit_wallet",
+    )
+
+    online_credits = models.PositiveBigIntegerField(
+        default=0,
+        verbose_name="Online Credits (Free)",
+    )
+
+    offline_credits = models.PositiveBigIntegerField(
+        default=0,
+        verbose_name="Offline Credits (Paid)",
+    )
+
+    points_used = models.PositiveBigIntegerField(
+        default=0,
+        verbose_name="Points Used",
+    )
+
+    online_plan = models.CharField(
+        max_length=50,
+        default="",
+        blank=True,
+        verbose_name="Online Plan",
+    )
+
+    offline_plan = models.CharField(
+        max_length=50,
+        default="",
+        blank=True,
+        verbose_name="Offline Plan",
+    )
+
+    offline_pack_expiry = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name="Offline Pack Expiry",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        db_table = "designer_credit_wallet"
+        verbose_name = "Designer Credit Wallet"
+        verbose_name_plural = "Designer Credit Wallets"
+
+    def __str__(self):
+        return f"{self.designer.brand_name} Wallet - Total {self.total_balance} pts"
+
+    @property
+    def total_balance(self):
+        return self.online_credits + self.offline_credits
+
+
+# =========================================================
+# DESIGNER CREDIT STATEMENT / TRANSACTIONS
+# =========================================================
+
+class DesignerCreditStatement(models.Model):
+    wallet = models.ForeignKey(
+        DesignerCreditWallet,
+        on_delete=models.CASCADE,
+        related_name="statements",
+        null=True,
+        blank=True,
+    )
+
+    designer = models.ForeignKey(
+        "designers.Designer",
+        on_delete=models.CASCADE,
+        related_name="credit_statements",
+    )
+
+    description = models.CharField(
+        max_length=255,
+        verbose_name="Description",
+    )
+
+    channel = models.CharField(
+        max_length=20,
+        choices=[("ONLINE", "ONLINE"), ("OFFLINE", "OFFLINE")],
+        default="ONLINE",
+        verbose_name="Channel",
+    )
+
+    points = models.IntegerField(
+        verbose_name="Points Change",
+    )
+
+    date_str = models.CharField(
+        max_length=30,
+        blank=True,
+        null=True,
+        verbose_name="Display Date",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    class Meta:
+        db_table = "designer_credit_statement"
+        ordering = ["-id"]
+        verbose_name = "Designer Credit Statement"
+        verbose_name_plural = "Designer Credit Statements"
+
+    def __str__(self):
+        return f"{self.designer.brand_name} - {self.description} ({self.points} pts)"
