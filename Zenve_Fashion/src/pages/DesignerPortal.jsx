@@ -1307,17 +1307,31 @@ export default function DesignerPortal() {
       "growth_social_promotion",
       form.growthSocialPromotion ? "true" : "false"
     );
+    let effectivePushToStore = form.pushToStore || "ONLINE_ONLY";
+    if (totalOfflineQuantity > 0 && totalOnlineQuantity > 0) {
+      if (effectivePushToStore === "ONLINE_ONLY") {
+        effectivePushToStore = "BOTH";
+      }
+    } else if (totalOfflineQuantity > 0 && totalOnlineQuantity === 0) {
+      effectivePushToStore = "STORE_HOLDING";
+    }
     payload.append(
       "push_to_store",
-      form.pushToStore || "ONLINE_ONLY"
+      effectivePushToStore
     );
 
-    const salesChannel =
-      form.pushToStore === "STORE_HOLDING"
-        ? "OFFLINE"
-        : form.pushToStore === "BOTH"
-        ? "BOTH"
-        : "ONLINE";
+    let salesChannel = "ONLINE";
+    if (totalOfflineQuantity > 0 && totalOnlineQuantity > 0) {
+      salesChannel = "BOTH";
+    } else if (totalOfflineQuantity > 0) {
+      salesChannel = "OFFLINE";
+    } else if (effectivePushToStore === "STORE_HOLDING") {
+      salesChannel = "OFFLINE";
+    } else if (effectivePushToStore === "BOTH") {
+      salesChannel = "BOTH";
+    } else {
+      salesChannel = "ONLINE";
+    }
     payload.append("sales_channel", salesChannel);
 
     payload.append(
