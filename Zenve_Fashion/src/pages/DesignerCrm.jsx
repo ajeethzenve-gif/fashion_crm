@@ -1540,6 +1540,36 @@ _Team ZENVE Creator Operations_`;
               />
             </div>
 
+
+
+            <div className="lead-form-field">
+              <label className="label-caps">Renewal likelihood %</label>
+              <input
+                type="number"
+                className="lead-input"
+                min="0"
+                max="100"
+                value={newLead.renewalProbability}
+                onChange={(e) =>
+                  setNewLead({
+                    ...newLead,
+                    renewalProbability: Number(e.target.value),
+                  })
+                }
+              />
+            </div>
+
+            <div className="lead-form-field">
+              <label className="label-caps">Contract end date</label>
+              <input
+                type="date"
+                className="lead-input"
+                value={newLead.contractEnds}
+                onChange={(e) =>
+                  setNewLead({ ...newLead, contractEnds: e.target.value })
+                }
+              />
+            </div>
             <div className="lead-form-field lead-form-field-gst">
               <div className="lead-field-header-row">
                 <label className="label-caps">
@@ -1611,36 +1641,6 @@ _Team ZENVE Creator Operations_`;
                 )}
               </div>
             </div>
-
-            <div className="lead-form-field">
-              <label className="label-caps">Renewal likelihood %</label>
-              <input
-                type="number"
-                className="lead-input"
-                min="0"
-                max="100"
-                value={newLead.renewalProbability}
-                onChange={(e) =>
-                  setNewLead({
-                    ...newLead,
-                    renewalProbability: Number(e.target.value),
-                  })
-                }
-              />
-            </div>
-
-            <div className="lead-form-field">
-              <label className="label-caps">Contract end date</label>
-              <input
-                type="date"
-                className="lead-input"
-                value={newLead.contractEnds}
-                onChange={(e) =>
-                  setNewLead({ ...newLead, contractEnds: e.target.value })
-                }
-              />
-            </div>
-
             <div style={{ gridColumn: "1 / -1" }}>
               <button type="submit" className="btn-create-lead">
                 Create lead
