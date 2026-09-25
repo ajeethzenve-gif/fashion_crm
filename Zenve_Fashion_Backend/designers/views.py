@@ -705,6 +705,9 @@ class DesignerPortalDashboardAPIView(APIView):
                     if designer.logo
                     else None
                 ),
+                "offline_membership_plan": designer.offline_membership_plan,
+                "online_membership_plan": designer.online_membership_plan,
+                "credit_points": designer.credit_points or 0,
             },
             "kpis": {
                 "monthlyGmv": float(monthly_gmv),

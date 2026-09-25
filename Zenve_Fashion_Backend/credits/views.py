@@ -42,29 +42,63 @@ def get_or_create_designer_wallet(designer):
     # Current remaining online credits
     current_online_credits = max(0, allocated_credits - actual_points_used)
 
+    # Determine allocated offline credits based on designer.offline_membership_plan in DB
+    offline_allocated = 0
+    offline_expiry = None
+    offline_plan_title = "None"
+    if designer.offline_membership_plan:
+        off_plan_obj = OfflineFashionCredit.objects.filter(
+            plan__iexact=designer.offline_membership_plan
+        ).first()
+        if off_plan_obj:
+            offline_allocated = off_plan_obj.credit_points
+            offline_expiry = timezone.now().date() + timedelta(days=off_plan_obj.min_days or 30)
+            offline_plan_title = off_plan_obj.get_plan_display()
+
     wallet, created = DesignerCreditWallet.objects.get_or_create(
         designer=designer,
         defaults={
             "online_credits": current_online_credits,
-            "offline_credits": 0,
+            "offline_credits": offline_allocated,
             "points_used": actual_points_used,
             "online_plan": (designer.online_membership_plan or "").title() or "—",
-            "offline_plan": (designer.offline_membership_plan or "").title() or "—",
-            "offline_pack_expiry": None,
+            "offline_plan": offline_plan_title if offline_allocated > 0 else "—",
+            "offline_pack_expiry": offline_expiry,
         },
     )
 
-    if not created:
-        # Sync plan names and points from designer's live profile if changed
-        updated = False
-        if designer.online_membership_plan and wallet.online_plan != designer.online_membership_plan.title():
-            wallet.online_plan = designer.online_membership_plan.title()
+    # ALWAYS sync wallet points and plans with live Designer fields in the database
+    updated = False
+
+    # Sync Online Credits & Plan
+    expected_online = max(0, allocated_credits - actual_points_used)
+    if wallet.online_credits != expected_online:
+        wallet.online_credits = expected_online
+        updated = True
+
+    if wallet.points_used != actual_points_used:
+        wallet.points_used = actual_points_used
+        updated = True
+
+    online_plan_title = (designer.online_membership_plan or "").title() or "—"
+    if wallet.online_plan != online_plan_title:
+        wallet.online_plan = online_plan_title
+        updated = True
+
+    # Sync Offline Credits & Plan
+    if designer.offline_membership_plan and offline_allocated > 0:
+        if wallet.offline_credits == 0:
+            wallet.offline_credits = offline_allocated
             updated = True
-        if designer.offline_membership_plan and wallet.offline_plan != designer.offline_membership_plan.title():
-            wallet.offline_plan = designer.offline_membership_plan.title()
+        if wallet.offline_plan != offline_plan_title:
+            wallet.offline_plan = offline_plan_title
             updated = True
-        if updated:
-            wallet.save()
+        if not wallet.offline_pack_expiry and offline_expiry:
+            wallet.offline_pack_expiry = offline_expiry
+            updated = True
+
+    if updated:
+        wallet.save()
 
     return wallet
 
@@ -103,6 +137,10 @@ def get_designer_credits_data(designer):
         else "0 points used"
     )
 
+    offline_plan_clean = wallet.offline_plan
+    if not offline_plan_clean or str(offline_plan_clean).strip() in ["None", "none", "—", "-"]:
+        offline_plan_clean = "No active pack" if wallet.offline_credits == 0 else "Offline Pack"
+
     return {
         "wallet": {
             "online_credits": wallet.online_credits,
@@ -110,7 +148,7 @@ def get_designer_credits_data(designer):
             "points_used": wallet.points_used,
             "total_balance": wallet.total_balance,
             "online_plan": wallet.online_plan or "—",
-            "offline_plan": wallet.offline_plan or "—",
+            "offline_plan": offline_plan_clean,
             "online_listings_left": wallet.online_credits // 500,
             "offline_listings_left": wallet.offline_credits // 500,
             "offline_pack_expiry": expiry_str,

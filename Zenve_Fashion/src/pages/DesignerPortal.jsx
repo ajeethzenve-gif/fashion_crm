@@ -15,6 +15,7 @@ import {
   getDesignerAccountDetails,
   saveDesignerAccountDetails,
   getDesignerCredits,
+  getOfflineCreditPlans,
   buyOfflineCreditPack,
 } from "../services/api";
 
@@ -644,6 +645,28 @@ export default function DesignerPortal() {
 
   const [buyingPlanId, setBuyingPlanId] = useState(null);
   const [creditsOverride, setCreditsOverride] = useState(null);
+  const [offlineCreditPlans, setOfflineCreditPlans] = useState([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    getOfflineCreditPlans()
+      .then((res) => {
+        if (!isMounted) return;
+        const list =
+          res?.offlinefashionlist ||
+          res?.offline_plans ||
+          (Array.isArray(res) ? res : []);
+        if (Array.isArray(list) && list.length > 0) {
+          setOfflineCreditPlans(list);
+        }
+      })
+      .catch((err) => {
+        console.warn("Could not load offline credit plans directly:", err);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
 
   /* =======================================================
@@ -706,18 +729,32 @@ export default function DesignerPortal() {
   const loadDashboard = async (designerId) => {
     if (!designerId) {
       setPortalData(null);
+      setCreditsOverride(null);
       return;
     }
 
     try {
       setLoadingPortal(true);
       setPortalError("");
+      setCreditsOverride(null);
 
       const response =
         await getDesignerPortalDashboard(designerId);
 
       const data = unwrapApiResponse(response);
       setPortalData(data || null);
+
+      if (!data?.credits) {
+        try {
+          const credRes = await getDesignerCredits(designerId);
+          const credData = unwrapApiResponse(credRes);
+          if (credData) {
+            setCreditsOverride(credData);
+          }
+        } catch (credErr) {
+          console.warn("Direct credits fallback fetch failed:", credErr);
+        }
+      }
 
       if (data?.account_details) {
         const acc = data.account_details;
@@ -797,13 +834,13 @@ export default function DesignerPortal() {
     points_used: 0,
     total_balance: activeDesigner?.credit_points || 0,
     online_plan: activeDesigner?.online_membership_plan
-      ? activeDesigner.online_membership_plan.charAt(0) +
-      activeDesigner.online_membership_plan.slice(1).toLowerCase()
+      ? activeDesigner.online_membership_plan.charAt(0).toUpperCase() +
+        activeDesigner.online_membership_plan.slice(1).toLowerCase()
       : "—",
     offline_plan: activeDesigner?.offline_membership_plan
-      ? activeDesigner.offline_membership_plan.charAt(0) +
-      activeDesigner.offline_membership_plan.slice(1).toLowerCase()
-      : "—",
+      ? activeDesigner.offline_membership_plan.charAt(0).toUpperCase() +
+        activeDesigner.offline_membership_plan.slice(1).toLowerCase()
+      : "No active pack",
     online_listings_left: activeDesigner?.credit_points
       ? Math.floor(activeDesigner.credit_points / 500)
       : 0,
@@ -831,7 +868,10 @@ export default function DesignerPortal() {
       "Catalogue listing 500 pts · Exclusive video & photo shoot 5,000 pts · Exclusive social media promotion 5,000 pts",
   };
 
-  const offlinePlans = creditsData?.offline_plans || [];
+  const offlinePlans =
+    creditsData?.offline_plans && creditsData.offline_plans.length > 0
+      ? creditsData.offline_plans
+      : offlineCreditPlans;
   const creditStatements = creditsData?.statements || [];
 
   const handleBuyOfflinePack = async (plan) => {
@@ -2511,26 +2551,37 @@ export default function DesignerPortal() {
                 <div className="ZENVE-credits-block-heading">BUY OFFLINE CREDITS (VALID 30 DAYS)</div>
                 <div className="ZENVE-offline-packs-grid">
                   {offlinePlans.map((plan) => {
-                    const planTitle =
-                      plan.plan === "PALLADIUM_PLUS" || plan.plan === "PALLADIUM++"
-                        ? "Palladium++"
-                        : plan.plan.charAt(0) + plan.plan.slice(1).toLowerCase();
+                    const rawPlan = String(plan.plan || plan.name || "").trim().toUpperCase();
+                    let planTitle = "Plan";
+                    if (rawPlan === "PALLADIUM_PLUS" || rawPlan === "PALLADIUM++" || rawPlan === "PALLADIUM +") {
+                      planTitle = "Palladium++";
+                    } else if (rawPlan) {
+                      planTitle = rawPlan.charAt(0).toUpperCase() + rawPlan.slice(1).toLowerCase();
+                    } else {
+                      planTitle = `Plan ${plan.id}`;
+                    }
+
+                    const price = Number(plan.membership_price || 0);
+                    const originalPrice = Number(plan.original_membership_price || 0);
+                    const catalogue = plan.included_catalogue ?? 0;
+                    const showroom = plan.per_showroom ?? 0;
+                    const points = Number(plan.credit_points || 0);
 
                     return (
                       <div key={plan.id} className="ZENVE-offline-pack-card">
                         <div className="ZENVE-pack-name">{planTitle}</div>
                         <div className="ZENVE-pack-pricing">
                           <span className="ZENVE-pack-price">
-                            ₹{Number(plan.membership_price).toLocaleString("en-IN")}
+                            ₹{price.toLocaleString("en-IN")}
                           </span>
-                          {Number(plan.original_membership_price) > Number(plan.membership_price) && (
+                          {originalPrice > price && (
                             <span className="ZENVE-pack-original-price">
-                              ₹{Number(plan.original_membership_price).toLocaleString("en-IN")}
+                              ₹{originalPrice.toLocaleString("en-IN")}
                             </span>
                           )}
                         </div>
                         <div className="ZENVE-pack-details">
-                          {plan.included_catalogue} catalogue · {plan.per_showroom} per showroom · {Number(plan.credit_points).toLocaleString("en-IN")} pts
+                          {catalogue} catalogue · {showroom} per showroom · {points.toLocaleString("en-IN")} pts
                         </div>
                         <button
                           type="button"
@@ -2543,6 +2594,22 @@ export default function DesignerPortal() {
                       </div>
                     );
                   })}
+                  {offlinePlans.length === 0 && (
+                    <div
+                      style={{
+                        padding: "20px",
+                        background: "#ffffff",
+                        borderRadius: "8px",
+                        border: "1px solid var(--ZENVE-line, #e2ddd5)",
+                        fontSize: "13px",
+                        color: "var(--ZENVE-muted, #746a60)",
+                        textAlign: "center",
+                        gridColumn: "1 / -1",
+                      }}
+                    >
+                      Loading offline credit plans from database...
+                    </div>
+                  )}
                 </div>
               </div>
 
