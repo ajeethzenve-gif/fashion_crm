@@ -841,11 +841,11 @@ export default function DesignerPortal() {
     total_balance: activeDesigner?.credit_points || 0,
     online_plan: activeDesigner?.online_membership_plan
       ? activeDesigner.online_membership_plan.charAt(0).toUpperCase() +
-        activeDesigner.online_membership_plan.slice(1).toLowerCase()
+      activeDesigner.online_membership_plan.slice(1).toLowerCase()
       : "—",
     offline_plan: activeDesigner?.offline_membership_plan
       ? activeDesigner.offline_membership_plan.charAt(0).toUpperCase() +
-        activeDesigner.offline_membership_plan.slice(1).toLowerCase()
+      activeDesigner.offline_membership_plan.slice(1).toLowerCase()
       : "No active pack",
     online_listings_left: activeDesigner?.credit_points
       ? Math.floor(activeDesigner.credit_points / 500)
@@ -1225,13 +1225,7 @@ export default function DesignerPortal() {
     );
 
 
-    // ONLINE or ONLINE + OFFLINE
-    payload.append(
-      "sales_channel",
-      form.offlineEnabled
-        ? "BOTH"
-        : "ONLINE"
-    );
+
 
 
     // Multiple selected sizes
@@ -1307,32 +1301,24 @@ export default function DesignerPortal() {
       "growth_social_promotion",
       form.growthSocialPromotion ? "true" : "false"
     );
-    let effectivePushToStore = form.pushToStore || "ONLINE_ONLY";
-    if (totalOfflineQuantity > 0 && totalOnlineQuantity > 0) {
-      if (effectivePushToStore === "ONLINE_ONLY") {
-        effectivePushToStore = "BOTH";
-      }
-    } else if (totalOfflineQuantity > 0 && totalOnlineQuantity === 0) {
-      effectivePushToStore = "STORE_HOLDING";
-    }
-    payload.append(
-      "push_to_store",
-      effectivePushToStore
-    );
+    // Derive sales_channel and push_to_store strictly from actual stock counts
+    const derivedSalesChannel =
+      totalOfflineQuantity > 0 && totalOnlineQuantity > 0
+        ? "BOTH"
+        : totalOfflineQuantity > 0
+          ? "OFFLINE"
+          : "ONLINE";
 
-    let salesChannel = "ONLINE";
-    if (totalOfflineQuantity > 0 && totalOnlineQuantity > 0) {
-      salesChannel = "BOTH";
-    } else if (totalOfflineQuantity > 0) {
-      salesChannel = "OFFLINE";
-    } else if (effectivePushToStore === "STORE_HOLDING") {
-      salesChannel = "OFFLINE";
-    } else if (effectivePushToStore === "BOTH") {
-      salesChannel = "BOTH";
-    } else {
-      salesChannel = "ONLINE";
-    }
-    payload.append("sales_channel", salesChannel);
+    payload.append("sales_channel", derivedSalesChannel);
+
+    const derivedPushToStore =
+      derivedSalesChannel === "BOTH"
+        ? "BOTH"
+        : derivedSalesChannel === "OFFLINE"
+          ? "STORE_HOLDING"
+          : "ONLINE_ONLY";
+
+    payload.append("push_to_store", derivedPushToStore);
 
     payload.append(
       "status",

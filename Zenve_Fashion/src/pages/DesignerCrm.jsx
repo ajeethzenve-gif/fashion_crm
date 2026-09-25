@@ -1650,147 +1650,147 @@ _Team ZENVE Creator Operations_`;
         </section >
       </main >
 
-    {/* COMPANY GST INFORMATION & CONFIRMATION MODAL */ }
-  {
-    showGstModal && (
-      <div className="gst-modal-overlay" onClick={handleCloseGstModal}>
-        <div className="gst-modal" onClick={(e) => e.stopPropagation()}>
-          <div className="gst-modal-header">
-            <div className="gst-modal-icon-badge">
-              <svg
-                width="26"
-                height="26"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                <path d="m9 12 2 2 4-4" />
-              </svg>
+      {/* COMPANY GST INFORMATION & CONFIRMATION MODAL */}
+      {
+        showGstModal && (
+          <div className="gst-modal-overlay" onClick={handleCloseGstModal}>
+            <div className="gst-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="gst-modal-header">
+                <div className="gst-modal-icon-badge">
+                  <svg
+                    width="26"
+                    height="26"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    <path d="m9 12 2 2 4-4" />
+                  </svg>
+                </div>
+                <div className="gst-modal-title-wrap">
+                  <span className="gst-modal-badge">PLATFORM TAX COMPLIANCE</span>
+                  <h3 className="gst-modal-title">Company GST Coverage & Creation</h3>
+                  <p className="gst-modal-desc">
+                    Assign our master company GST number or request our company to create a new dedicated GST number for this designer.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className="gst-modal-close-btn"
+                  onClick={handleCloseGstModal}
+                  aria-label="Close dialog"
+                >
+                  &times;
+                </button>
+              </div>
+
+              <div className="gst-modal-body">
+                {/* Option 1: Master Company GSTIN (Masked for Security) */}
+                <div className="gst-company-card">
+                  <div className="gst-company-row">
+                    <span className="gst-field-label">Master Legal Entity</span>
+                    <span className="gst-field-val strong">{COMPANY_GST_INFO.name}</span>
+                  </div>
+                  <div className="gst-company-row">
+                    <span className="gst-field-label">Company GSTIN</span>
+                    <span className="gst-field-val gst-code-val">
+                      <code>{maskGstNumber(COMPANY_GST_INFO.gstNumber)}</code>
+                      <span className="gst-active-pill">ACTIVE · VERIFIED</span>
+                    </span>
+                  </div>
+                  <div className="gst-company-row">
+                    <span className="gst-field-label">Security Mask</span>
+                    <span className="gst-field-val" style={{ color: "#786d5e", fontSize: "12px" }}>
+                      Protected for security (Only last 4 digits shown)
+                    </span>
+                  </div>
+                  <div className="gst-company-row">
+                    <span className="gst-field-label">Jurisdiction</span>
+                    <span className="gst-field-val">{COMPANY_GST_INFO.state}</span>
+                  </div>
+                </div>
+
+                {/* Option 2: Request Company-Side Creation for this Designer */}
+                <div className="gst-request-box">
+                  <div className="gst-request-box-header">
+                    <span className="gst-request-badge">CREATE NEW GST</span>
+                    <h4 className="gst-request-title">Request Company to Create New GST for Designer</h4>
+                  </div>
+                  <p className="gst-request-desc">
+                    Does this designer need their own dedicated company-developed GST number? Submit a request and our company tax team will register a new compliant GSTIN for this designer.
+                  </p>
+                  <button
+                    type="button"
+                    className="btn-request-company-gst"
+                    onClick={handleRequestCompanyGstCreation}
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    Request Company to Create New GST for This Designer
+                  </button>
+                </div>
+
+                {/* Confirmation Question */}
+                <div className="gst-confirm-box">
+                  <p className="gst-confirm-question">
+                    Or apply our existing company master GST (<strong>{maskGstNumber(COMPANY_GST_INFO.gstNumber)}</strong>) for{" "}
+                    <strong>
+                      {gstModalTarget === "newLead"
+                        ? newLead.brand || newLead.name || "this new designer lead"
+                        : gstModalTarget?.brand_name ||
+                        gstModalTarget?.designer_name ||
+                        "this designer"}
+                    </strong> immediately?
+                  </p>
+                </div>
+              </div>
+
+              {/* Modal Actions: Apply Existing / Request New / Cancel */}
+              <div className="gst-modal-actions">
+                <button
+                  type="button"
+                  className="btn-modal-yes"
+                  onClick={handleConfirmCompanyGst}
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  Yes, Use Company GST ({COMPANY_GST_INFO.gstNumber.slice(-4)})
+                </button>
+                <button
+                  type="button"
+                  className="btn-modal-request"
+                  onClick={handleRequestCompanyGstCreation}
+                >
+                  + Request New Company GST
+                </button>
+                <button
+                  type="button"
+                  className="btn-modal-no"
+                  onClick={handleCloseGstModal}
+                >
+                  No, Cancel
+                </button>
+              </div>
             </div>
-            <div className="gst-modal-title-wrap">
-              <span className="gst-modal-badge">PLATFORM TAX COMPLIANCE</span>
-              <h3 className="gst-modal-title">Company GST Coverage & Creation</h3>
-              <p className="gst-modal-desc">
-                Assign our master company GST number or request our company to create a new dedicated GST number for this designer.
-              </p>
-            </div>
-            <button
-              type="button"
-              className="gst-modal-close-btn"
-              onClick={handleCloseGstModal}
-              aria-label="Close dialog"
-            >
-              &times;
-            </button>
           </div>
-
-          <div className="gst-modal-body">
-            {/* Option 1: Master Company GSTIN (Masked for Security) */}
-            <div className="gst-company-card">
-              <div className="gst-company-row">
-                <span className="gst-field-label">Master Legal Entity</span>
-                <span className="gst-field-val strong">{COMPANY_GST_INFO.name}</span>
-              </div>
-              <div className="gst-company-row">
-                <span className="gst-field-label">Company GSTIN</span>
-                <span className="gst-field-val gst-code-val">
-                  <code>{maskGstNumber(COMPANY_GST_INFO.gstNumber)}</code>
-                  <span className="gst-active-pill">ACTIVE · VERIFIED</span>
-                </span>
-              </div>
-              <div className="gst-company-row">
-                <span className="gst-field-label">Security Mask</span>
-                <span className="gst-field-val" style={{ color: "#786d5e", fontSize: "12px" }}>
-                  Protected for security (Only last 4 digits shown)
-                </span>
-              </div>
-              <div className="gst-company-row">
-                <span className="gst-field-label">Jurisdiction</span>
-                <span className="gst-field-val">{COMPANY_GST_INFO.state}</span>
-              </div>
-            </div>
-
-            {/* Option 2: Request Company-Side Creation for this Designer */}
-            <div className="gst-request-box">
-              <div className="gst-request-box-header">
-                <span className="gst-request-badge">CREATE NEW GST</span>
-                <h4 className="gst-request-title">Request Company to Create New GST for Designer</h4>
-              </div>
-              <p className="gst-request-desc">
-                Does this designer need their own dedicated company-developed GST number? Submit a request and our company tax team will register a new compliant GSTIN for this designer.
-              </p>
-              <button
-                type="button"
-                className="btn-request-company-gst"
-                onClick={handleRequestCompanyGstCreation}
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                Request Company to Create New GST for This Designer
-              </button>
-            </div>
-
-            {/* Confirmation Question */}
-            <div className="gst-confirm-box">
-              <p className="gst-confirm-question">
-                Or apply our existing company master GST (<strong>{maskGstNumber(COMPANY_GST_INFO.gstNumber)}</strong>) for{" "}
-                <strong>
-                  {gstModalTarget === "newLead"
-                    ? newLead.brand || newLead.name || "this new designer lead"
-                    : gstModalTarget?.brand_name ||
-                    gstModalTarget?.designer_name ||
-                    "this designer"}
-                </strong> immediately?
-              </p>
-            </div>
-          </div>
-
-          {/* Modal Actions: Apply Existing / Request New / Cancel */}
-          <div className="gst-modal-actions">
-            <button
-              type="button"
-              className="btn-modal-yes"
-              onClick={handleConfirmCompanyGst}
-            >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-              Yes, Use Company GST ({COMPANY_GST_INFO.gstNumber.slice(-4)})
-            </button>
-            <button
-              type="button"
-              className="btn-modal-request"
-              onClick={handleRequestCompanyGstCreation}
-            >
-              + Request New Company GST
-            </button>
-            <button
-              type="button"
-              className="btn-modal-no"
-              onClick={handleCloseGstModal}
-            >
-              No, Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-    )
-  }
+        )
+      }
     </div >
   );
 }

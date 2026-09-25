@@ -779,7 +779,6 @@ class ProductSerializer(serializers.ModelSerializer):
                 })
 
         if size_stocks is not None:
-
             has_online = any(
                 int(item.get("online_quantity", 0) or 0) > 0
                 for item in size_stocks
@@ -789,7 +788,7 @@ class ProductSerializer(serializers.ModelSerializer):
                 for item in size_stocks
             )
 
-            # Auto-align sales_channel if size_stocks clearly indicates online and/or offline quantities
+            # Auto-align sales_channel if size_stocks contains offline / online stock
             if has_online and has_offline:
                 sales_channel = Product.SalesChannel.BOTH
                 attrs["sales_channel"] = Product.SalesChannel.BOTH
