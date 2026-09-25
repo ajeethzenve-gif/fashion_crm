@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import { MediaWorkspace } from "./MediaStudio";
 import { showToast, showErrorToast } from "../utils/zenveToast";
 import "../styles/DesignerPortal.css";
 import SearchBar from "../components/SearchBar";
@@ -2264,6 +2265,7 @@ export default function DesignerPortal() {
         </div>
       ) : (
         <main className="ZENVE-portal-main">
+          {selectedDesignerId && <MediaWorkspace key={selectedDesignerId} designerId={selectedDesignerId} />}
           {/* ===================================================
               DASHBOARD
           =================================================== */}

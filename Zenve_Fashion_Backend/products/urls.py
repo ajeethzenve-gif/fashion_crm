@@ -1,4 +1,5 @@
 from django.urls import path
+from .media_views import MediaQueueView, MediaDetailView, MediaFileView
 
 from .views import (
     ProductListCreateAPIView,
@@ -8,6 +9,9 @@ from .views import (
 
 
 urlpatterns = [
+    path("media/", MediaQueueView.as_view(), name="media-queue"),
+    path("<int:pk>/media/", MediaDetailView.as_view(), name="media-detail"),
+    path("media-files/<str:kind>/<int:pk>/", MediaFileView.as_view(), name="media-file"),
     # GET  /api/products/
     # POST /api/products/
     path(

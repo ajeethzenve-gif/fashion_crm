@@ -9,9 +9,9 @@ export const ROLES = [
     email: "priya.raghavan@zenve.in",
     department: "Executive & Governance",
     landingPath: "/command-centre",
-    description: "Full clearance across all 12 operational layers, approvals, and system controls.",
+    description: "Full clearance across all 13 operational layers, approvals, and system controls.",
     badgeClass: "admin",
-    clearance: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
+    clearance: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13"],
   },
   {
     id: "designer",
@@ -74,6 +74,7 @@ export const ROLES = [
     badgeClass: "finance",
     clearance: ["07", "10", "11"],
   },
+  { id: "media", name: "Media Team", shortRole: "Media", user: "Media Team", email: "media@zenve.in", department: "Creative Operations", landingPath: "/media", description: "Product originals, Figma creative work, and designer image delivery.", badgeClass: "qa", clearance: ["13"] },
 ];
 
 const AuthContext = createContext(null);
@@ -83,12 +84,14 @@ export function AuthProvider({ children }) {
     try {
       const saved = localStorage.getItem("zenve_auth_user");
       if (saved) {
-        return JSON.parse(saved);
+        const user = JSON.parse(saved);
+        const role = ROLES.find(r => r.id === user?.id);
+        return role ? { ...user, clearance: role.clearance } : user;
       }
     } catch {
       // Fallback
     }
-    return ROLES[0]; // Default to Admin
+    return ROLES.find(r => r.id === "admin"); // Default to Admin
   });
 
   useEffect(() => {
@@ -145,6 +148,7 @@ export function AuthProvider({ children }) {
       "/settlement": "10",
       "/analytics": "11",
       "/command-centre": "12",
+      "/media": "13",
     };
     const layerNum = layerPathMap[path];
     if (!layerNum) return true; // public / unspecified

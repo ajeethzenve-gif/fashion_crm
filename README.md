@@ -1,6 +1,6 @@
 # Zenve Fashion Operations & CRM System
 
-A full-stack, enterprise-grade fashion operations platform with 12 modular layers spanning Designer Onboarding, Catalogue QA, Inventory Engine, Commerce Storefront, Order Management (OMS), Delivery Logistics, Reverse Logistics (Returns Engine), Financial Settlements, and Executive Analytics.
+A full-stack fashion operations platform with 13 modular layers spanning Designer Onboarding, Catalogue QA, Inventory Engine, Commerce Storefront, Order Management (OMS), Delivery Logistics, Reverse Logistics (Returns Engine), Financial Settlements, Executive Analytics, and Media Studio.
 
 ---
 
@@ -75,6 +75,17 @@ npm run build
 - **10 Settlement** (`/settlement`) — Auditable designer payouts, take rates, commission tracking.
 - **11 Analytics & Intelligence** (`/analytics`) — GMV, margins, take rates, return ratios, designer leaderboard.
 - **12 Command Centre** (`/command-centre`) — System-wide operations hub with real-time sync.
+- **13 Media Studio** (`/media`) — Four designer originals, Figma links, generated image uploads, and designer review.
+
+### Media workflow
+
+1. Upload a product with four original images in Designer Portal. Existing products with four images also appear in Media Studio.
+2. Open Media Studio as Admin or switch to the Media Team persona. Search or filter the product queue.
+3. Create the creatives in Figma, save the Figma file link, and upload the exported JPG, PNG, or WebP images (up to 12, 10 MB each). Save work or send the images to the designer.
+4. In Designer Portal, select the matching designer and use **Images from the media team** to approve the delivery or request changes with feedback. Use Refresh to check for new deliveries.
+5. A delivery is locked while awaiting review or after approval. Requested changes allow the media team to replace the generated set and send it again. Original product images remain unchanged.
+
+Figma creation/export is manual; sending delivers images inside the portal. The social layer is not included. Apply `python manage.py migrate` when installing this update. Media follows the existing demo persona and public API access model; production authentication and designer ownership enforcement are not provided by this workflow.
 
 ---
 

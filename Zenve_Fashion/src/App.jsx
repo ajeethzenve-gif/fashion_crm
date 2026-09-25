@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 
 import Home from "./pages/Home.jsx";
+import MediaStudio from "./pages/MediaStudio.jsx";
 import LayerPage from "./pages/LayerPage.jsx";
 import DesignerCRM from "./pages/DesignerCrm.jsx";
 import DesignerPortal from "./pages/DesignerPortal.jsx";
@@ -27,8 +28,9 @@ export default function App() {
 
         {/* Role-Based Login */}
         <Route path="/login" element={<Login />} />
+        <Route path="/media" element={<ProtectedRoute layer="13"><MediaStudio /></ProtectedRoute>} />
 
-        {/* 12 Operational Layers (Role Clearance Protected) */}
+        {/* Operational Layers (Role Clearance Protected) */}
         <Route path="/designer-crm" element={<ProtectedRoute layer="01"><DesignerCRM /></ProtectedRoute>} />
         <Route path="/designer-portal" element={<ProtectedRoute layer="02"><DesignerPortal /></ProtectedRoute>} />
         <Route path="/catalogue" element={<ProtectedRoute layer="03"><Catalogue /></ProtectedRoute>} />

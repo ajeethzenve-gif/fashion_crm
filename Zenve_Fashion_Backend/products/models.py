@@ -731,6 +731,24 @@ def product_image_path(instance, filename):
     return f"products/{instance.product_id}/{instance.position}{extension}"
 
 
+class MediaJob(models.Model):
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name="media_job")
+    status = models.CharField(max_length=24, default="IN_PROGRESS", choices=[
+        ("IN_PROGRESS", "In progress"), ("IN_REVIEW", "Designer review"),
+        ("CHANGES_REQUESTED", "Changes requested"), ("APPROVED", "Approved")])
+    figma_url = models.URLField(max_length=1000, blank=True)
+    notes = models.TextField(blank=True)
+    feedback = models.TextField(blank=True)
+    sent_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class MediaAsset(models.Model):
+    job = models.ForeignKey(MediaJob, on_delete=models.CASCADE, related_name="assets")
+    image = models.ImageField(storage=private_storage, upload_to="media_outputs/%Y/%m/")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class ProductImage(models.Model):
     class Position(models.IntegerChoices):
         ONE = 1, "Image 1"
