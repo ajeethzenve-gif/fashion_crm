@@ -619,6 +619,10 @@ class SettlementSerializer(serializers.ModelSerializer):
     quantity = serializers.IntegerField(source="order_item.quantity", read_only=True)
     return_number = serializers.CharField(source="return_request.return_number", read_only=True, default=None)
 
+    order_payment_method = serializers.CharField(source="order.payment_method", read_only=True, default="COD")
+    order_payment_status = serializers.CharField(source="order.payment_status", read_only=True, default="Pending")
+    order_date = serializers.DateTimeField(source="order.created_at", read_only=True, default=None)
+
     class Meta:
         model = Settlement
         fields = [
@@ -626,6 +630,9 @@ class SettlementSerializer(serializers.ModelSerializer):
             "settlement_number",
             "order",
             "order_number",
+            "order_payment_method",
+            "order_payment_status",
+            "order_date",
             "order_item",
             "designer",
             "designer_code",
@@ -642,6 +649,11 @@ class SettlementSerializer(serializers.ModelSerializer):
             "tax_amount",
             "payout_amount",
             "status",
+            "payout_method",
+            "payout_channel",
+            "payment_gateway_fee",
+            "batch_id",
+            "disbursed_by",
             "payout_reference",
             "paid_at",
             "reconciled_at",
@@ -653,6 +665,9 @@ class SettlementSerializer(serializers.ModelSerializer):
             "id",
             "settlement_number",
             "order_number",
+            "order_payment_method",
+            "order_payment_status",
+            "order_date",
             "designer_code",
             "brand_name",
             "product_name",
@@ -666,6 +681,12 @@ class SettlementSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data["orderId"] = instance.order.order_number if instance.order else ""
+        data["payment_method"] = instance.order.payment_method if instance.order else "COD"
+        data["payment_status"] = instance.order.payment_status if instance.order else "Pending"
+        data["customer_name"] = (
+            (instance.order.shipping_full_name or (instance.order.user.get_full_name() if instance.order.user else ""))
+            if instance.order else ""
+        ) or "Customer"
         data["designerId"] = instance.designer_id
         data["designer"] = (
             instance.designer.brand_name
@@ -676,6 +697,7 @@ class SettlementSerializer(serializers.ModelSerializer):
         data["commission"] = float(instance.commission_amount) if instance.commission_amount else 0.0
         data["net"] = float(instance.payout_amount) if instance.payout_amount else 0.0
         data["gmv"] = float(instance.gmv) if instance.gmv else 0.0
+        data["payment_gateway_fee"] = float(instance.payment_gateway_fee) if instance.payment_gateway_fee else 0.0
         data["formatted_gmv"] = f"₹{int(instance.gmv):,}" if instance.gmv else "₹0"
         data["formatted_net"] = f"₹{int(instance.payout_amount):,}" if instance.payout_amount else "₹0"
         data["formatted_commission"] = f"₹{int(instance.commission_amount):,}" if instance.commission_amount else "₹0"

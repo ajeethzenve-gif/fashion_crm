@@ -47,6 +47,11 @@ urlpatterns = [
     ),
 
     path(
+        "api/accounting/",
+        include("orders.accounting_urls")
+    ),
+
+    path(
         "api/analytics/",
         include("orders.analytics_urls")
     ),

@@ -1,4 +1,5 @@
 from django.db import models
+from django.shortcuts import get_object_or_404
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -1181,3 +1182,148 @@ class ProductStockAdjustmentAPIView(APIView):
             status=
             status.HTTP_200_OK,
         )
+
+
+# =========================================================
+# LAYER 15: SOCIAL MEDIA & GROWTH ADD-ONS API
+# =========================================================
+
+class SocialMediaListAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        status_filter = request.query_params.get("status")
+        type_filter = request.query_params.get("type")
+        designer_filter = request.query_params.get("designer")
+        search = request.query_params.get("search", "").strip()
+
+        # All products with at least one growth add-on enabled
+        qs = (
+            Product.objects.filter(
+                models.Q(growth_video_shoot=True) | models.Q(growth_social_promotion=True)
+            )
+            .select_related("designer")
+            .prefetch_related("product_images", "size_stocks")
+            .order_by("-updated_at")
+        )
+
+        if status_filter and status_filter.upper() != "ALL":
+            qs = qs.filter(social_media_status=status_filter.upper())
+
+        if type_filter == "video_shoot":
+            qs = qs.filter(growth_video_shoot=True)
+        elif type_filter == "social_promotion":
+            qs = qs.filter(growth_social_promotion=True)
+
+        if designer_filter:
+            qs = qs.filter(
+                models.Q(designer_id=designer_filter) |
+                models.Q(designer__brand_name__icontains=designer_filter) |
+                models.Q(designer__designer_name__icontains=designer_filter)
+            )
+
+        if search:
+            qs = qs.filter(
+                models.Q(product_name__icontains=search) |
+                models.Q(sku__icontains=search) |
+                models.Q(designer__brand_name__icontains=search) |
+                models.Q(designer__designer_name__icontains=search)
+            )
+
+        all_growth = (
+            Product.objects.filter(
+                models.Q(growth_video_shoot=True) | models.Q(growth_social_promotion=True)
+            )
+        )
+
+        video_count = all_growth.filter(growth_video_shoot=True).count()
+        social_count = all_growth.filter(growth_social_promotion=True).count()
+        total_requests = all_growth.count()
+        total_credits = (video_count * 5000) + (social_count * 5000)
+        scheduled = all_growth.filter(social_media_status__in=["SHOOT_SCHEDULED", "IN_PRODUCTION"]).count()
+        active_live = all_growth.filter(social_media_status__in=["PROMOTION_ACTIVE", "COMPLETED"]).count()
+        pending = all_growth.filter(social_media_status="PENDING_REVIEW").count()
+
+        serializer = ProductSerializer(
+            qs,
+            many=True,
+            context={"request": request}
+        )
+
+        return Response(
+            {
+                "metrics": {
+                    "total_requests": total_requests,
+                    "video_shoots": video_count,
+                    "social_promotions": social_count,
+                    "total_credits": total_credits,
+                    "pending_review": pending,
+                    "in_production": scheduled,
+                    "live_active": active_live,
+                },
+                "results": serializer.data,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class SocialMediaDetailAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def patch(self, request, pk):
+        product = get_object_or_404(Product, pk=pk)
+
+        social_media_status = request.data.get("social_media_status")
+        social_media_shoot_date = request.data.get("social_media_shoot_date")
+        social_media_campaign_url = request.data.get("social_media_campaign_url")
+        social_media_notes = request.data.get("social_media_notes")
+
+        if social_media_status is not None:
+            product.social_media_status = social_media_status
+        if social_media_shoot_date is not None:
+            if isinstance(social_media_shoot_date, str) and "T" in social_media_shoot_date:
+                social_media_shoot_date = social_media_shoot_date.split("T")[0]
+            product.social_media_shoot_date = social_media_shoot_date or None
+        if social_media_campaign_url is not None:
+            product.social_media_campaign_url = social_media_campaign_url
+        if social_media_notes is not None:
+            product.social_media_notes = social_media_notes
+
+        product.save(update_fields=[
+            "social_media_status",
+            "social_media_shoot_date",
+            "social_media_campaign_url",
+            "social_media_notes",
+            "updated_at",
+        ])
+
+        serializer = ProductSerializer(product, context={"request": request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, pk):
+        """Directly approach designer for social media campaign or shoot"""
+        product = get_object_or_404(Product, pk=pk)
+        message = request.data.get("message", "Zenve Social Media team is reaching out regarding your Growth Add-on.")
+        scheduled_date = request.data.get("shoot_date")
+
+        if scheduled_date:
+            if isinstance(scheduled_date, str) and "T" in scheduled_date:
+                scheduled_date = scheduled_date.split("T")[0]
+            product.social_media_shoot_date = scheduled_date
+            product.social_media_status = "SHOOT_SCHEDULED"
+
+        if message:
+            existing = product.social_media_notes or ""
+            product.social_media_notes = f"{existing}\n[Team Outreach]: {message}".strip()
+
+        product.save(update_fields=[
+            "social_media_shoot_date",
+            "social_media_status",
+            "social_media_notes",
+            "updated_at"
+        ])
+
+        return Response({
+            "message": f"Designer {product.designer.designer_name} ({product.designer.brand_name}) approached successfully!",
+            "product": ProductSerializer(product, context={"request": request}).data
+        }, status=status.HTTP_200_OK)

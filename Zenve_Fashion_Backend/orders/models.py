@@ -678,6 +678,54 @@ class Settlement(models.Model):
         verbose_name="Payout Reference / UTR"
     )
 
+    class PayoutMethod(models.TextChoices):
+        BANK_TRANSFER = "Bank Transfer", "Bank Transfer (NEFT/RTGS/IMPS)"
+        UPI = "UPI", "UPI Payout"
+        RAZORPAYX = "RazorpayX", "RazorpayX Payout"
+        ESCROW = "Escrow Release", "Escrow Release"
+        COD_OFFSET = "COD Courier Offset", "COD Courier Offset"
+        CHEQUE = "Cheque", "Cheque / DD"
+
+    payout_method = models.CharField(
+        max_length=50,
+        choices=PayoutMethod.choices,
+        default=PayoutMethod.BANK_TRANSFER,
+        blank=True,
+        null=True,
+        verbose_name="Payout Method",
+    )
+
+    payout_channel = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        default="HDFC Corporate Primary A/C",
+        verbose_name="Payout Channel / Account",
+    )
+
+    payment_gateway_fee = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=Decimal("0.00"),
+        verbose_name="Payment Gateway Fee / MDR",
+    )
+
+    batch_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        db_index=True,
+        verbose_name="Batch ID",
+    )
+
+    disbursed_by = models.CharField(
+        max_length=150,
+        blank=True,
+        null=True,
+        default="Finance Controller",
+        verbose_name="Disbursed By",
+    )
+
     paid_at = models.DateTimeField(
         blank=True,
         null=True,

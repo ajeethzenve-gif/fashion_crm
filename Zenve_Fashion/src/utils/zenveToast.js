@@ -27,6 +27,36 @@ export const showSuccessToast = (text, title = "") => {
   });
 };
 
+export const showDesignerAcceptedToast = (productName = "", sku = "") => {
+  return Swal.fire({
+    toast: true,
+    position: "bottom-end",
+    icon: "success",
+    iconColor: "#16a34a",
+    title: "Images Accepted by Designer",
+    html: `
+      <div style="font-family: inherit; text-align: left; margin-top: 4px;">
+        <div style="font-size: 13px; font-weight: 600; color: #1c1917;">
+          ${productName ? String(productName) : "Product Media Deliverables"}
+        </div>
+        ${sku ? `<div style="font-size: 11px; color: #78716c; font-family: monospace; margin-top: 2px;">SKU: ${sku}</div>` : ""}
+        <div style="font-size: 12px; color: #15803d; margin-top: 6px; font-weight: 500; display: flex; align-items: center; gap: 4px;">
+          <span>✓</span> <span>Creative visuals accepted & approved for live storefront</span>
+        </div>
+      </div>
+    `,
+    showConfirmButton: false,
+    timer: 4500,
+    timerProgressBar: true,
+    background: "#ffffff",
+    customClass: {
+      popup: "zenve-swal-toast zenve-swal-toast-success zenve-swal-toast-accepted",
+      title: "zenve-swal-toast-title",
+      timerProgressBar: "zenve-swal-progress-success",
+    },
+  });
+};
+
 export const showErrorToast = (text, title = "") => {
   const message = typeof text === "string" ? text : (text?.text || text?.message || "An unexpected error occurred");
   return Swal.fire({

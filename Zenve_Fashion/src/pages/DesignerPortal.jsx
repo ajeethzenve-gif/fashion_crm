@@ -4481,6 +4481,15 @@ export default function DesignerPortal() {
                             </select>
                           </div>
                         </div>
+
+                        {(form.growthVideoShoot || form.growthSocialPromotion) && (
+                          <div className="ZENVE-growth-addons-routed-notice">
+                            <span className="notice-icon">✨</span>
+                            <span>
+                              <strong>Layer 15 (Social Media) Activated:</strong> Our creative production team will directly approach your atelier to coordinate on-site shoots and social campaigns upon SKU submission.
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

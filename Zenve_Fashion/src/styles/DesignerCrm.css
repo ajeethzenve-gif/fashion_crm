@@ -664,7 +664,7 @@
   border: 1px solid #d5cec5;
   border-radius: 6px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--ZENVE-ink);
   outline: none;
   transition: border-color 0.15s ease;

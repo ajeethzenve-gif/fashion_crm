@@ -1078,7 +1078,8 @@ button {
   border: 1px solid #e7e5e4 !important;
   align-items: center !important;
   min-width: 280px !important;
-  max-width: 400px !important;
+  max-width: 420px !important;
+  z-index: 999999 !important;
 }
 
 .zenve-swal-toast.zenve-swal-toast-success {

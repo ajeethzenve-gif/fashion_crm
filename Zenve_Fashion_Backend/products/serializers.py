@@ -616,6 +616,28 @@ class ProductSerializer(serializers.ModelSerializer):
             )
 
         # -------------------------------------------------
+        # GROWTH ADD-ONS (LAYER 15 SOCIAL MEDIA)
+        # -------------------------------------------------
+        if "growth_video_shoot" in data_copy:
+            val = str(data_copy["growth_video_shoot"]).lower()
+            data_copy["growth_video_shoot"] = val in ["true", "1", "yes"]
+
+        if "growth_social_promotion" in data_copy:
+            val = str(data_copy["growth_social_promotion"]).lower()
+            data_copy["growth_social_promotion"] = val in ["true", "1", "yes"]
+
+        if "growthVideoShoot" in data_copy and "growth_video_shoot" not in data_copy:
+            val = str(data_copy["growthVideoShoot"]).lower()
+            data_copy["growth_video_shoot"] = val in ["true", "1", "yes"]
+
+        if "growthSocialPromotion" in data_copy and "growth_social_promotion" not in data_copy:
+            val = str(data_copy["growthSocialPromotion"]).lower()
+            data_copy["growth_social_promotion"] = val in ["true", "1", "yes"]
+
+        if (data_copy.get("growth_video_shoot") or data_copy.get("growth_social_promotion")) and not data_copy.get("social_media_status"):
+            data_copy["social_media_status"] = Product.SocialMediaStatus.PENDING_REVIEW
+
+        # -------------------------------------------------
         # Ignore frontend-only helper fields
         # -------------------------------------------------
 
@@ -1221,6 +1243,13 @@ class ProductSerializer(serializers.ModelSerializer):
             else 0.0
         )
 
+        res["growthVideoShoot"] = instance.growth_video_shoot
+        res["growthSocialPromotion"] = instance.growth_social_promotion
+        res["socialMediaStatus"] = instance.social_media_status
+        res["socialMediaShootDate"] = instance.social_media_shoot_date
+        res["socialMediaCampaignUrl"] = instance.social_media_campaign_url
+        res["socialMediaNotes"] = instance.social_media_notes
+
         return res
 
     # =====================================================
@@ -1340,6 +1369,14 @@ class ProductSerializer(serializers.ModelSerializer):
             "status",
             "is_active",
             "is_live",
+
+            # Growth Add-ons / Social Media Layer 15
+            "growth_video_shoot",
+            "growth_social_promotion",
+            "social_media_status",
+            "social_media_shoot_date",
+            "social_media_campaign_url",
+            "social_media_notes",
 
             # Images
             "primary_image",

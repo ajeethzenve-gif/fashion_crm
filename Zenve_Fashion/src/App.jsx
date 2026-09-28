@@ -16,6 +16,8 @@ import Returns from "./pages/Returns.jsx";
 import Settlement from "./pages/Settlement.jsx";
 import Analytics from "./pages/Analytics.jsx";
 import CommandCentre from "./pages/CommandCentre.jsx";
+import Accounting from "./pages/Accounting.jsx";
+import SocialMedia from "./pages/SocialMedia.jsx";
 import Login from "./pages/Login.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
@@ -44,6 +46,8 @@ export default function App() {
         <Route path="/settlement" element={<ProtectedRoute layer="10"><Settlement /></ProtectedRoute>} />
         <Route path="/analytics" element={<ProtectedRoute layer="11"><Analytics /></ProtectedRoute>} />
         <Route path="/command-centre" element={<ProtectedRoute layer="12"><CommandCentre /></ProtectedRoute>} />
+        <Route path="/accounting" element={<ProtectedRoute layer="14"><Accounting /></ProtectedRoute>} />
+        <Route path="/social-media" element={<ProtectedRoute layer="15"><SocialMedia /></ProtectedRoute>} />
       </Routes>
     </AuthProvider>
   );

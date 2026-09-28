@@ -277,6 +277,57 @@ class Product(models.Model):
     )
 
     # =========================================================
+    # GROWTH ADD-ONS & SOCIAL MEDIA CAMPAIGN (LAYER 15)
+    # =========================================================
+
+    class SocialMediaStatus(models.TextChoices):
+        NONE = "NONE", "No Growth Add-on"
+        PENDING_REVIEW = "PENDING_REVIEW", "Pending Review"
+        SHOOT_SCHEDULED = "SHOOT_SCHEDULED", "Shoot Scheduled"
+        IN_PRODUCTION = "IN_PRODUCTION", "In Production"
+        CONTENT_READY = "CONTENT_READY", "Content Ready"
+        PROMOTION_ACTIVE = "PROMOTION_ACTIVE", "Live / Promotion Active"
+        COMPLETED = "COMPLETED", "Completed"
+
+    growth_video_shoot = models.BooleanField(
+        default=False,
+        verbose_name="Exclusive Video & Photo Shoot (5,000 pts)"
+    )
+
+    growth_social_promotion = models.BooleanField(
+        default=False,
+        verbose_name="Exclusive Social Media Promotion (5,000 pts)"
+    )
+
+    social_media_status = models.CharField(
+        max_length=30,
+        choices=SocialMediaStatus.choices,
+        default=SocialMediaStatus.NONE,
+        db_index=True,
+        verbose_name="Social Media Status"
+    )
+
+    social_media_shoot_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name="Shoot Date"
+    )
+
+    social_media_campaign_url = models.URLField(
+        max_length=500,
+        blank=True,
+        default="",
+        verbose_name="Social Media / Reel URL"
+    )
+
+    social_media_notes = models.TextField(
+        blank=True,
+        default="",
+        verbose_name="Social Media Team Notes"
+    )
+
+
+    # =========================================================
     # PRICING
     # =========================================================
 
