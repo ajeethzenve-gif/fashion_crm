@@ -250,6 +250,9 @@ export default function Catalogue() {
         p.occasion,
         p.designer_brand,
         p.designer_name,
+        p.designer_code,
+        p.designer_id ? String(p.designer_id) : "",
+        p.designer ? String(p.designer) : "",
       ]
         .filter(Boolean)
         .join(" ")
@@ -285,7 +288,7 @@ export default function Catalogue() {
           <div className="ZENVE-header-title-block">
             <Link to="/" className="ZENVE-back-link">
               <BackIcon />
-              <span>ALL 12 LAYERS</span>
+              <span>ALL 15 LAYERS</span>
             </Link>
 
             <h1 className="ZENVE-portal-title">
@@ -386,6 +389,8 @@ export default function Catalogue() {
                 const isLive = sku.live || sku.is_live || sku.status === "LIVE";
                 const isReturnable = sku.returnable ?? sku.return_policy === "RETURNABLE";
                 const designerBrand = sku.designer_brand || sku.designer_name || "—";
+                const designerCode = sku.designer_code || (sku.designer ? `DSG-${sku.designer}` : (sku.designer_id ? `DSG-${sku.designer_id}` : "—"));
+                const designerId = sku.designer_id || (typeof sku.designer === "number" ? sku.designer : (sku.designer?.id || (typeof sku.designer === "string" ? sku.designer : "—")));
                 const fulfilmentText = `${sku.location || sku.fulfilment_location || "Mumbai FC"} · ${sku.available_quantity ?? sku.inventory_quantity ?? 0
                   } available`;
                 const collectionText =
@@ -426,9 +431,17 @@ export default function Catalogue() {
 
                     {/* QUICK METADATA GRID */}
                     <div className="ZENVE-sku-meta-grid">
-                      <div>
+                      <div className="ZENVE-sku-designer-cell">
                         <span className="ZENVE-label-caps">Designer</span>
-                        <p>{designerBrand}</p>
+                        <p className="ZENVE-sku-designer-name">{designerBrand}</p>
+                        <div className="ZENVE-sku-designer-meta">
+                          <span
+                            className="ZENVE-sku-designer-id-badge"
+                            title={`Designer ID: ${designerCode}`}
+                          >
+                            <span className="badge-tag">ID:</span> {designerCode}
+                          </span>
+                        </div>
                       </div>
 
                       <div>

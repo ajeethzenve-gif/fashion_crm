@@ -379,6 +379,50 @@
   word-break: break-word;
 }
 
+.ZENVE-sku-designer-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.ZENVE-sku-designer-name {
+  margin: 2px 0 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ZENVE-ink, #17130f);
+  line-height: 1.35;
+}
+
+.ZENVE-sku-designer-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.ZENVE-sku-designer-id-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-family: monospace, -apple-system, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  background-color: var(--ZENVE-gold-light, #f5eedf);
+  color: var(--ZENVE-gold-dark, #8a5a2b);
+  border: 1px solid rgba(194, 139, 81, 0.35);
+}
+
+.ZENVE-sku-designer-meta .badge-tag {
+  font-size: 9.5px;
+  font-weight: 700;
+  opacity: 0.75;
+  letter-spacing: 0.04em;
+}
+
 /* ACTIONS ROW */
 .ZENVE-sku-actions-row {
   display: flex;

@@ -139,7 +139,7 @@ export default function Login() {
             <div className="clearance-matrix-title">
               <span>Operating Layer Permissions</span>
               <span className="clearance-count">
-                {currentRole.clearance.length} of 12 Authorized
+                {currentRole.clearance.length} of {layers.length} Authorized
               </span>
             </div>
 

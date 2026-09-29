@@ -1146,7 +1146,7 @@ export default function MediaStudio() {
           <div className="ZENVE-header-title-block">
             <Link to="/" className="ZENVE-back-link">
               <BackIcon />
-              <span>ALL 14 LAYERS</span>
+              <span>ALL 15 LAYERS</span>
             </Link>
 
             <h1 className="ZENVE-portal-title">

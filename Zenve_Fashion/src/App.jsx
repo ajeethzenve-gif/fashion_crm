@@ -46,8 +46,8 @@ export default function App() {
         <Route path="/settlement" element={<ProtectedRoute layer="10"><Settlement /></ProtectedRoute>} />
         <Route path="/analytics" element={<ProtectedRoute layer="11"><Analytics /></ProtectedRoute>} />
         <Route path="/command-centre" element={<ProtectedRoute layer="12"><CommandCentre /></ProtectedRoute>} />
-        <Route path="/accounting" element={<ProtectedRoute layer="14"><Accounting /></ProtectedRoute>} />
-        <Route path="/social-media" element={<ProtectedRoute layer="15"><SocialMedia /></ProtectedRoute>} />
+        <Route path="/social-media" element={<ProtectedRoute layer="14"><SocialMedia /></ProtectedRoute>} />
+        <Route path="/accounting" element={<ProtectedRoute layer="15"><Accounting /></ProtectedRoute>} />
       </Routes>
     </AuthProvider>
   );

@@ -24,7 +24,7 @@ export const ROLES = [
     landingPath: "/designer-portal",
     description: "Supply layer partner portal, SKU uploads, live inventory, and settlements.",
     badgeClass: "designer",
-    clearance: ["02", "03", "06", "15"],
+    clearance: ["02", "03", "06", "14", "15"],
   },
   {
     id: "merchandiser",
@@ -36,7 +36,7 @@ export const ROLES = [
     landingPath: "/designer-crm",
     description: "Brand lead pipeline, designer onboarding, KYC review, and contracts.",
     badgeClass: "merchandiser",
-    clearance: ["01", "03", "10", "15"],
+    clearance: ["01", "03", "10", "14", "15"],
   },
   {
     id: "qa",
@@ -72,9 +72,9 @@ export const ROLES = [
     landingPath: "/accounting",
     description: "Multi-payment settlement handling, payout disbursement, and escrow management.",
     badgeClass: "finance",
-    clearance: ["07", "10", "11", "14"],
+    clearance: ["07", "10", "11", "14", "15"],
   },
-  { id: "media", name: "Media Team", shortRole: "Media", user: "Media Team", email: "media@zenve.in", department: "Creative Operations", landingPath: "/media", description: "Product originals, Figma creative work, and designer image delivery.", badgeClass: "qa", clearance: ["13", "15"] },
+  { id: "media", name: "Media Team", shortRole: "Media", user: "Media Team", email: "media@zenve.in", department: "Creative Operations", landingPath: "/media", description: "Product originals, Figma creative work, and designer image delivery.", badgeClass: "qa", clearance: ["13", "14", "15"] },
 ];
 
 const AuthContext = createContext(null);
@@ -149,8 +149,8 @@ export function AuthProvider({ children }) {
       "/analytics": "11",
       "/command-centre": "12",
       "/media": "13",
-      "/accounting": "14",
-      "/social-media": "15",
+      "/social-media": "14",
+      "/accounting": "15",
     };
     const layerNum = layerPathMap[path];
     if (!layerNum) return true; // public / unspecified

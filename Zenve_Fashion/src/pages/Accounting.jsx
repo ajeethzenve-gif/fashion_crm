@@ -38,9 +38,9 @@ function CheckIcon() {
 function DownloadIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M7 10L12 15L17 10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M12 15V3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7 10L12 15L17 10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12 15V3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -48,9 +48,9 @@ function DownloadIcon() {
 function RefreshIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M23 4V10H17" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M1 20V14H7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M3.51 9A9 9 0 0120.49 15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M23 4V10H17" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M1 20V14H7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3.51 9A9 9 0 0120.49 15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   );
 }
@@ -58,10 +58,10 @@ function RefreshIcon() {
 function ReceiptIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4 2V22L7 20L10 22L13 20L16 22L19 20L22 22V2L19 4L16 2L13 4L10 2L7 4L4 2Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M8 8H16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-      <path d="M8 12H16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-      <path d="M8 16H12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M4 2V22L7 20L10 22L13 20L16 22L19 20L22 22V2L19 4L16 2L13 4L10 2L7 4L4 2Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8 8H16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M8 12H16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M8 16H12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   );
 }
@@ -428,11 +428,11 @@ export default function Accounting() {
           <div className="ZENVE-header-title-block">
             <Link to="/" className="ZENVE-back-link">
               <BackIcon />
-              <span>ALL 14 LAYERS</span>
+              <span>ALL 15 LAYERS</span>
             </Link>
 
             <h1 className="ZENVE-portal-title">
-              <span className="ZENVE-layer-num">14</span>
+              <span className="ZENVE-layer-num">15</span>
               <span>Accounting</span>
             </h1>
 

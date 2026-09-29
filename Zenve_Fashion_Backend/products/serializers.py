@@ -283,6 +283,10 @@ class ProductSerializer(serializers.ModelSerializer):
         queryset=Designer.objects.all()
     )
 
+    designer_id = serializers.ReadOnlyField(
+        source="designer.id"
+    )
+
     designer_name = serializers.ReadOnlyField(
         source="designer.designer_name"
     )
@@ -1270,6 +1274,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
             # Designer
             "designer",
+            "designer_id",
             "designer_name",
             "designer_brand",
             "designer_code",
@@ -1398,6 +1403,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
 
+            "designer_id",
             "designer_name",
             "designer_brand",
             "designer_code",

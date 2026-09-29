@@ -378,7 +378,7 @@ export default function SocialMedia() {
             </Link>
 
             <h1 className="ZENVE-portal-title">
-              <span className="ZENVE-layer-num">15</span>
+              <span className="ZENVE-layer-num">14</span>
               <span>Social Media</span>
             </h1>
 
