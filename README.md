@@ -40,8 +40,8 @@ pip install -r requirements.txt
 # Run migrations
 python manage.py migrate
 
-# Start the Django development server (runs on http://127.0.0.1:8000/)
-python manage.py runserver 8000
+# Start the Django development server (runs on http://127.0.0.1:8001/)
+python manage.py runserver 127.0.0.1:8001
 ```
 
 ### 2. Frontend Setup (React + Vite)
@@ -52,12 +52,14 @@ cd Zenve_Fashion
 # Install dependencies
 npm install
 
-# Start Vite dev server (runs on http://localhost:5174/ or http://localhost:5173/)
+# Start Vite dev server (runs on http://localhost:5173/)
 npm run dev
 
 # Build for production
 npm run build
 ```
+
+Zenve uses port 5173 for the frontend and 8001 for the backend. Stop any other frontend using port 5173 before starting Zenve. The frontend sends `/api` requests through Vite's proxy to port 8001. For deployment, route `/api` to Django or set `VITE_API_BASE_URL` to the deployed backend API URL before building.
 
 ---
 
