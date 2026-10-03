@@ -19,6 +19,7 @@ import CommandCentre from "./pages/CommandCentre.jsx";
 import Accounting from "./pages/Accounting.jsx";
 import SocialMedia from "./pages/SocialMedia.jsx";
 import Login from "./pages/Login.jsx";
+import DesignerLogin from "./pages/DesignerLogin.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 export default function App() {
@@ -28,8 +29,11 @@ export default function App() {
         {/* Home Page */}
         <Route path="/" element={<Home />} />
 
-        {/* Role-Based Login */}
+        {/* Role-Based Staff Login */}
         <Route path="/login" element={<Login />} />
+
+        {/* Exclusive Brand Designer Login */}
+        <Route path="/designer-login" element={<DesignerLogin />} />
         <Route path="/media" element={<ProtectedRoute layer="13"><MediaStudio /></ProtectedRoute>} />
 
         {/* Operational Layers (Role Clearance Protected) */}

@@ -1,0 +1,971 @@
+/* =========================================================
+   ZENVE FASHION CRM - EXCLUSIVE DESIGNER LOGIN STYLESHEET
+   Exact Replica of Reference Design Image
+   Warm Luxury Ivory Card, Golden Silhouettes, Crisp Inputs
+   ========================================================= */
+
+.designer-login-page {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  background-color: #17130f;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-family: var(--sans, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  padding: clamp(12px, 2.5vh, 28px) clamp(16px, 4vw, 70px);
+}
+
+/* Luxury Warm Studio Vignette Overlay */
+.designer-login-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 80% 50%,
+      rgba(20, 15, 10, 0.22) 0%,
+      rgba(20, 15, 10, 0.48) 100%),
+    linear-gradient(90deg,
+      rgba(15, 12, 8, 0.28) 0%,
+      rgba(15, 12, 8, 0.05) 50%,
+      rgba(15, 12, 8, 0.42) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Ambient Editorial Branding on Left Studio Wall */
+.designer-ambient-brand {
+  position: absolute;
+  top: 50%;
+  left: clamp(24px, 7vw, 140px);
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 2;
+  pointer-events: none;
+  user-select: none;
+  max-width: 440px;
+}
+
+.ambient-script-slogan {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  margin-bottom: clamp(10px, 1.8vh, 18px);
+}
+
+.ambient-script-word {
+  font-family: var(--serif, 'Playfair Display', 'Fraunces', Georgia, serif);
+  font-size: clamp(17px, 1.6vw, 25px);
+  font-style: italic;
+  font-weight: 500;
+  color: #f7e8ce;
+  text-shadow: 0 2px 10px rgba(25, 18, 10, 0.7);
+  letter-spacing: 0.5px;
+  line-height: 1.25;
+}
+
+.ambient-heart-icon {
+  display: inline-block;
+  color: #dcb36f;
+  margin-top: 2px;
+}
+
+.ambient-crest-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ambient-crest-svg,
+.ambient-crest-logo-img {
+  width: auto;
+  height: clamp(52px, 6.8vh, 76px);
+  max-width: 220px;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.65));
+  margin-bottom: 8px;
+  display: block;
+}
+
+.ambient-title {
+  font-family: var(--serif, 'Playfair Display', 'Fraunces', Georgia, serif);
+  font-size: clamp(22px, 2.2vw, 32px);
+  font-weight: 700;
+  letter-spacing: 5px;
+  color: #fff9f0;
+  text-shadow: 0 3px 12px rgba(20, 12, 5, 0.85);
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.ambient-subtitle {
+  font-size: clamp(9.5px, 0.9vw, 11px);
+  font-weight: 600;
+  letter-spacing: 3.5px;
+  color: #e5cb9e;
+  text-transform: uppercase;
+  margin: 3px 0 8px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
+}
+
+.ambient-strip {
+  font-size: clamp(8px, 0.8vw, 9.5px);
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #edd9b9;
+  text-transform: uppercase;
+  opacity: 0.9;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+
+/* =========================================================
+   LOGIN CARD CONTAINER & LUXURY ELEVATION
+   Exact Ivory Card with Golden Corner Botanical Leaves
+   ========================================================= */
+
+.designer-card-wrapper {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-width: 420px;
+  margin-left: auto;
+  box-sizing: border-box;
+}
+
+.designer-login-card {
+  position: relative;
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.76) 0%,
+      rgba(253, 248, 240, 0.56) 50%,
+      rgba(255, 255, 255, 0.72) 100%);
+  border-radius: 28px;
+  padding: clamp(20px, 2.5vh, 28px) clamp(20px, 2.5vw, 28px) clamp(18px, 2.2vh, 24px);
+  box-shadow: 0 30px 65px -10px rgba(18, 12, 6, 0.38),
+    0 0 0 1px rgba(255, 255, 255, 0.8) inset,
+    0 10px 30px -5px rgba(212, 168, 83, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-sizing: border-box;
+  overflow: hidden;
+  backdrop-filter: blur(28px) saturate(185%);
+  -webkit-backdrop-filter: blur(28px) saturate(185%);
+  animation: cardFadeIn 0.45s ease-out;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Delicate Botanical Branches in Top Corners (Exact to Reference Image) */
+.botanical-leaf-left {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: clamp(90px, 10vw, 125px);
+  height: clamp(90px, 10vw, 125px);
+  opacity: 0.62;
+  pointer-events: none;
+  color: #cca462;
+}
+
+.botanical-leaf-right {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: clamp(90px, 10vw, 125px);
+  height: clamp(90px, 10vw, 125px);
+  opacity: 0.62;
+  pointer-events: none;
+  transform: scaleX(-1);
+  color: #cca462;
+}
+
+/* Card Header Section */
+.designer-card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  margin-bottom: clamp(10px, 1.6vh, 16px);
+}
+
+.designer-crest-logo,
+.designer-card-logo-img {
+  width: auto;
+  height: clamp(48px, 6vh, 60px);
+  max-width: 200px;
+  object-fit: contain;
+  margin-bottom: 8px;
+  display: block;
+  flex-shrink: 0;
+}
+
+.designer-card-brand {
+  font-family: var(--serif, 'Playfair Display', 'Fraunces', Georgia, serif);
+  font-size: clamp(22px, 2.5vh, 26px);
+  font-weight: 700;
+  letter-spacing: 5px;
+  color: #735327;
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.designer-card-crm {
+  font-size: clamp(9.5px, 1.1vh, 11px);
+  font-weight: 600;
+  letter-spacing: 3.5px;
+  color: #9c7f53;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+.designer-welcome-title {
+  font-family: var(--serif, 'Playfair Display', Georgia, serif);
+  font-size: clamp(19px, 2.3vh, 23px);
+  font-weight: 600;
+  color: #211910;
+  margin: clamp(6px, 1vh, 9px) 0 3px;
+  letter-spacing: 0.2px;
+}
+
+.designer-welcome-sub {
+  font-size: clamp(11px, 1.25vh, 12px);
+  line-height: 1.35;
+  color: #5f5244;
+  max-width: 300px;
+  margin: 0;
+}
+
+/* =========================================================
+   TWO LOGIN METHOD SWITCHER TABS (EXACT MATCH)
+   No Outer Pill Box: Two Clean Buttons Side-by-Side
+   ========================================================= */
+
+.designer-tabs-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: clamp(10px, 1.4vh, 14px);
+  position: relative;
+  z-index: 2;
+  box-sizing: border-box;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.designer-tab-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: none;
+  background: transparent;
+  padding: clamp(8px, 1.1vh, 10px) 12px;
+  border-radius: 9px;
+  font-size: clamp(11.5px, 1.25vh, 12.5px);
+  font-weight: 500;
+  color: #2e2316;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.designer-tab-btn svg {
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+}
+
+.designer-tab-btn.active {
+  background: #d4a753;
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(212, 167, 83, 0.3);
+}
+
+.designer-tab-btn.active svg {
+  color: #ffffff;
+  stroke: #ffffff;
+}
+
+.designer-tab-btn:hover:not(.active) {
+  background: rgba(212, 167, 83, 0.12);
+}
+
+/* =========================================================
+   FORM ELEMENTS (INTEGRATED WHITE INPUT & GOLD BUTTONS)
+   ========================================================= */
+
+.designer-form-body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Unified Mobile Phone Input Container (Single White Box) */
+.designer-phone-row {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  height: clamp(38px, 4.4vh, 44px);
+  padding: 0 12px;
+  margin-bottom: clamp(8px, 1.2vh, 12px);
+  box-sizing: border-box;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  transition: all 0.2s ease;
+}
+
+.designer-phone-row:focus-within {
+  border-color: #cca04b;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 0 0 3px rgba(204, 160, 75, 0.22);
+}
+
+.designer-country-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: default;
+  flex-shrink: 0;
+}
+
+.designer-flag-icon {
+  font-size: 17px;
+  line-height: 1;
+}
+
+.designer-code-text {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #2a2217;
+}
+
+.designer-chevron-icon {
+  display: flex;
+  align-items: center;
+  color: #4a3e30;
+  margin-left: 1px;
+}
+
+.designer-phone-divider {
+  width: 1px;
+  height: 18px;
+  background: #e6dfd4;
+  margin: 0 10px;
+  flex-shrink: 0;
+}
+
+.designer-phone-input-wrap {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.designer-phone-input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13px;
+  color: #2a2217;
+  padding: 0;
+}
+
+.designer-phone-input::placeholder {
+  color: #9c9285;
+}
+
+/* Standard Gold Action Button with Dark Text (Exact to Reference Image) */
+.btn-designer-gold {
+  width: 100%;
+  height: clamp(38px, 4.4vh, 44px);
+  background: #d8ad56;
+  border: none;
+  border-radius: 9px;
+  color: #2b2012;
+  font-size: clamp(12.5px, 1.35vh, 13.5px);
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(216, 173, 86, 0.28);
+  box-sizing: border-box;
+}
+
+.btn-designer-gold svg {
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+  stroke: #2b2012;
+}
+
+.btn-designer-gold:hover:not(:disabled) {
+  background: #cca047;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(216, 173, 86, 0.35);
+}
+
+.btn-designer-gold:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-designer-gold:disabled {
+  background: #e0cca4;
+  cursor: not-allowed;
+  box-shadow: none;
+  color: #6d5b40;
+}
+
+/* OR Divider */
+.designer-divider-or {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: clamp(7px, 1.1vh, 12px) 0;
+  position: relative;
+}
+
+.designer-divider-or::before,
+.designer-divider-or::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e0d8cc;
+}
+
+.designer-divider-or span {
+  padding: 0 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #3b3022;
+  text-transform: uppercase;
+}
+
+/* 6 OTP Boxes Row (Crisp White Squares) */
+.designer-otp-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: clamp(5px, 0.8vw, 8px);
+  margin-bottom: clamp(8px, 1.2vh, 12px);
+}
+
+.designer-otp-cell {
+  height: clamp(38px, 4.4vh, 44px);
+  width: 100%;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 9px;
+  font-size: clamp(17px, 2vh, 19px);
+  font-weight: 700;
+  color: #2b2116;
+  outline: none;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  transition: all 0.18s ease;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.designer-otp-cell:focus {
+  border-color: #cca04b;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 3px rgba(204, 160, 75, 0.25);
+}
+
+.designer-otp-cell.filled {
+  border-color: #b78a3c;
+  background: rgba(255, 253, 248, 0.92);
+}
+
+/* Helper Status / Countdown Strip */
+.designer-otp-helper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #6a5e50;
+  margin-bottom: 8px;
+  padding: 0 2px;
+}
+
+.btn-resend-otp {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #b78a3c;
+  font-weight: 600;
+  font-size: 11px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Username / Password Form */
+.designer-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 10px;
+}
+
+.designer-input-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #5d5145;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.designer-input-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  height: clamp(38px, 4.4vh, 44px);
+  box-sizing: border-box;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  transition: all 0.2s ease;
+}
+
+.designer-input-box:focus-within {
+  border-color: #cca04b;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 3px rgba(204, 160, 75, 0.22);
+}
+
+.designer-input-icon {
+  position: absolute;
+  left: 12px;
+  color: #8c7e70;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.designer-text-input {
+  width: 100%;
+  height: 100%;
+  padding: 0 38px 0 36px;
+  box-sizing: border-box;
+  background: transparent;
+  border: none;
+  font-size: 13px;
+  color: #221a12;
+  outline: none;
+}
+
+.designer-text-input::placeholder {
+  color: #9c9285;
+}
+
+.designer-eye-btn {
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #8c7e70;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.designer-options-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 11.5px;
+}
+
+.designer-remember-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #635649;
+  cursor: pointer;
+  user-select: none;
+}
+
+.designer-remember-wrap input[type="checkbox"] {
+  accent-color: #cf9f4c;
+  cursor: pointer;
+  width: 13px;
+  height: 13px;
+}
+
+.designer-forgot-link {
+  color: #9f732b;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.designer-forgot-link:hover {
+  text-decoration: underline;
+}
+
+/* Alerts & Error Banner */
+.designer-error-alert {
+  background: #fdf3f2;
+  border: 1px solid #f2c7c4;
+  border-radius: 7px;
+  padding: 6px 10px;
+  font-size: 11px;
+  color: #a32d26;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.designer-success-alert {
+  background: #f1f8f3;
+  border: 1px solid #c0e2c8;
+  border-radius: 7px;
+  padding: 6px 10px;
+  font-size: 11px;
+  color: #1a652e;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* =========================================================
+   FOUR CARD FOOTER FEATURES (EXACT TO REFERENCE IMAGE)
+   Solid Gold Silhouettes, 2-Line Labels, Vertical Dividers
+   ========================================================= */
+
+.designer-features-footer {
+  margin-top: clamp(14px, 2vh, 20px);
+  padding: clamp(10px, 1.4vh, 14px) 6px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.designer-feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+  position: relative;
+}
+
+.designer-feature-item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: -2px;
+  top: 10%;
+  height: 80%;
+  width: 1px;
+  background: #ded7cc;
+}
+
+.feature-icon-badge {
+  width: clamp(24px, 3vh, 30px);
+  height: clamp(24px, 3vh, 30px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b0883b;
+}
+
+.feature-icon-badge svg {
+  width: clamp(20px, 2.5vh, 24px);
+  height: clamp(20px, 2.5vh, 24px);
+}
+
+.feature-label {
+  font-size: clamp(8.5px, 1.1vh, 9.5px);
+  font-weight: 600;
+  color: #2a2217;
+  line-height: 1.25;
+  max-width: 68px;
+}
+
+/* =========================================================
+   EXTERNAL NAVIGATION BELOW CARD
+   Subtle & Elegant Outside the Luxury Card
+   ========================================================= */
+
+.designer-portal-switch {
+  margin-top: 14px;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: #8c7f73;
+}
+
+.designer-switch-link {
+  color: #dcb670;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+
+.designer-switch-link:hover {
+  color: #fff9f0;
+  text-decoration: underline;
+}
+
+.designer-demo-toggle-btn {
+  background: rgba(220, 182, 112, 0.16);
+  border: 1px solid rgba(220, 182, 112, 0.35);
+  border-radius: 12px;
+  padding: 3px 9px;
+  color: #ecd09b;
+  font-size: 10.5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.designer-demo-toggle-btn:hover {
+  background: #d4a753;
+  color: #ffffff;
+}
+
+/* Optional Quick Demo Designer Selectors below card */
+.designer-quick-demo {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: rgba(250, 246, 238, 0.95);
+  border: 1px dashed #ded4c3;
+  border-radius: 10px;
+  font-size: 10.5px;
+  color: #6a5e50;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  box-sizing: border-box;
+}
+
+.designer-quick-demo-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  color: #3a2e20;
+  font-size: 10px;
+}
+
+.designer-quick-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.demo-chip-btn {
+  background: #ffffff;
+  border: 1px solid #d5c8b5;
+  border-radius: 12px;
+  padding: 3px 8px;
+  font-size: 9.5px;
+  color: #55483a;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.demo-chip-btn:hover {
+  background: #cf9f4c;
+  color: #ffffff;
+  border-color: #cf9f4c;
+}
+
+/* =========================================================
+   COMPREHENSIVE RESPONSIVE DESIGN BREAKPOINTS
+   ========================================================= */
+
+@media (max-height: 760px) {
+  .designer-login-page {
+    padding: 8px clamp(12px, 3vw, 40px);
+  }
+
+  .designer-login-card {
+    padding: 16px 20px 14px;
+    border-radius: 22px;
+  }
+
+  .designer-crest-logo,
+  .designer-card-logo-img {
+    height: 42px;
+    max-width: 170px;
+    margin-bottom: 3px;
+  }
+
+  .designer-card-brand {
+    font-size: 21px;
+  }
+
+  .designer-welcome-title {
+    font-size: 18px;
+    margin: 4px 0 2px;
+  }
+
+  .designer-welcome-sub {
+    font-size: 11px;
+  }
+
+  .designer-tab-btn {
+    padding: 7px 10px;
+    font-size: 11.5px;
+  }
+
+  .designer-phone-row,
+  .btn-designer-gold,
+  .designer-input-box {
+    height: 38px;
+  }
+
+  .designer-otp-cell {
+    height: 38px;
+    font-size: 17px;
+  }
+
+  .designer-features-footer {
+    margin-top: 12px;
+    padding-top: 10px;
+  }
+}
+
+@media (max-height: 640px) {
+  .designer-login-card {
+    padding: 12px 16px 10px;
+    border-radius: 18px;
+  }
+
+  .designer-crest-logo,
+  .designer-card-logo-img {
+    height: 34px;
+    max-width: 140px;
+  }
+
+  .designer-welcome-sub {
+    display: none;
+  }
+
+  .designer-phone-row,
+  .btn-designer-gold,
+  .designer-input-box {
+    height: 35px;
+  }
+
+  .designer-otp-cell {
+    height: 35px;
+  }
+}
+
+@media (max-width: 1280px) {
+  .designer-ambient-brand {
+    left: clamp(16px, 4vw, 50px);
+    max-width: 360px;
+  }
+}
+
+@media (max-width: 992px) {
+  .designer-ambient-brand {
+    display: none;
+  }
+
+  .designer-login-page {
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .designer-card-wrapper {
+    margin: 0 auto;
+    max-width: 420px;
+  }
+}
+
+@media (max-width: 480px) {
+  .designer-login-page {
+    padding: 12px 10px;
+  }
+
+  .designer-card-wrapper {
+    max-width: 100%;
+  }
+
+  .designer-login-card {
+    padding: 18px 16px 16px;
+    border-radius: 20px;
+  }
+
+  .designer-tab-btn {
+    font-size: 11px;
+    padding: 8px 6px;
+    gap: 5px;
+  }
+
+  .designer-features-footer {
+    gap: 2px;
+  }
+
+  .feature-label {
+    font-size: 8px;
+    max-width: 58px;
+  }
+}
