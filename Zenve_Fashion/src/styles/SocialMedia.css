@@ -1,0 +1,1309 @@
+/* =========================================================
+   SOCIAL MEDIA & GROWTH ADD-ONS LAYER (LAYER 14)
+   Zenve Fashion Luxury Operations Stylesheet
+========================================================= */
+
+:root {
+  --ZENVE-paper: #fbf9f5;
+  --ZENVE-panel: #ffffff;
+  --ZENVE-line: #e8e3da;
+  --ZENVE-line-light: #f2eee8;
+  --ZENVE-ink: #17130f;
+  --ZENVE-muted: #736b63;
+  --ZENVE-gold: #c28b51;
+  --ZENVE-gold-dark: #a1703c;
+  --ZENVE-gold-light: #f5eedf;
+  --ZENVE-gold-glow: rgba(194, 139, 81, 0.12);
+  --ZENVE-green: #2e7d32;
+  --ZENVE-green-bg: #e8f5e9;
+  --ZENVE-amber: #e65100;
+  --ZENVE-amber-bg: #fff3e0;
+  --ZENVE-purple: #6a1b9a;
+  --ZENVE-purple-bg: #f3e5f5;
+  --ZENVE-blue: #1565c0;
+  --ZENVE-blue-bg: #e3f2fd;
+  --ZENVE-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --ZENVE-font-display: "Outfit", -apple-system, BlinkMacSystemFont, sans-serif;
+  --ZENVE-font-serif: "Playfair Display", Georgia, serif;
+}
+
+/* Base Layout */
+.ZENVE-sm-layout {
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--ZENVE-paper);
+  color: var(--ZENVE-ink);
+  font-family: var(--ZENVE-font-sans);
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 60px;
+}
+
+/* =========================================================
+   HEADER SECTION (EXACT LAYER 14 / ACCOUNTING STYLE)
+========================================================= */
+.ZENVE-sm-header {
+  width: 100%;
+  background-color: var(--ZENVE-panel);
+  border-bottom: 1px solid var(--ZENVE-line);
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.ZENVE-header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.ZENVE-portal-logo {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.ZENVE-portal-logo img {
+  height: 38px;
+  width: auto;
+  display: block;
+}
+
+.ZENVE-header-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.ZENVE-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ZENVE-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.ZENVE-back-link:hover {
+  color: var(--ZENVE-ink);
+}
+
+.ZENVE-portal-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ZENVE-ink);
+  font-family: var(--ZENVE-font-serif, "Playfair Display", Georgia, serif);
+}
+
+.ZENVE-layer-num {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  background-color: var(--ZENVE-gold);
+  border-radius: 4px;
+  padding: 2px 7px;
+  display: inline-block;
+  line-height: 1.4;
+  font-family: var(--ZENVE-font-sans);
+}
+
+.ZENVE-portal-desc {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ZENVE-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 720px;
+}
+
+.ZENVE-sm-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* Hero Banner */
+.ZENVE-sm-hero-banner {
+  background: linear-gradient(135deg, #f5efe6 0%, #ffffff 100%);
+  border-bottom: 1px solid var(--ZENVE-line);
+  padding: 24px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.ZENVE-sm-hero-content {
+  max-width: 820px;
+}
+
+.ZENVE-sm-hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ZENVE-gold-dark);
+  margin-bottom: 6px;
+}
+
+.ZENVE-sm-hero-content h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: var(--ZENVE-ink);
+}
+
+.ZENVE-sm-hero-content p {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #575047;
+  margin: 0;
+}
+
+.ZENVE-sm-hero-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ZENVE-sm-hero-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--ZENVE-gold);
+  color: #fff;
+  text-decoration: none;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.ZENVE-sm-hero-link:hover {
+  background: var(--ZENVE-gold-dark);
+}
+
+.ZENVE-sm-hero-link.secondary {
+  background: var(--ZENVE-panel);
+  color: var(--ZENVE-ink);
+  border: 1px solid var(--ZENVE-line);
+}
+
+.ZENVE-sm-hero-link.secondary:hover {
+  background: #f7f3eb;
+}
+
+/* KPI Strip */
+.ZENVE-sm-metrics-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  padding: 24px 32px 12px 32px;
+}
+
+.ZENVE-sm-kpi-card {
+  background: var(--ZENVE-panel);
+  border: 1px solid var(--ZENVE-line);
+  border-radius: 8px;
+  padding: 16px 18px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+
+.ZENVE-sm-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.ZENVE-sm-kpi-card.highlight {
+  border-left: 4px solid var(--ZENVE-gold);
+}
+
+.ZENVE-sm-kpi-card.gold-border {
+  border: 1px solid #ebd9c2;
+  background: linear-gradient(180deg, #fdfbf7 0%, #ffffff 100%);
+}
+
+.ZENVE-sm-kpi-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.ZENVE-sm-kpi-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--ZENVE-muted);
+}
+
+.ZENVE-sm-kpi-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.ZENVE-sm-kpi-badge.primary {
+  background: #efebe4;
+  color: var(--ZENVE-ink);
+}
+
+.ZENVE-sm-kpi-badge.gold {
+  background: var(--ZENVE-gold-light);
+  color: var(--ZENVE-gold-dark);
+}
+
+.ZENVE-sm-kpi-badge.amber {
+  background: var(--ZENVE-amber-bg);
+  color: var(--ZENVE-amber);
+}
+
+.ZENVE-sm-kpi-badge.green {
+  background: var(--ZENVE-green-bg);
+  color: var(--ZENVE-green);
+}
+
+.ZENVE-sm-kpi-icon-wrap {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ZENVE-sm-kpi-icon-wrap.video {
+  background: var(--ZENVE-purple-bg);
+  color: var(--ZENVE-purple);
+}
+
+.ZENVE-sm-kpi-icon-wrap.promo {
+  background: var(--ZENVE-blue-bg);
+  color: var(--ZENVE-blue);
+}
+
+.ZENVE-sm-kpi-value {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--ZENVE-ink);
+  line-height: 1.1;
+  font-family: var(--ZENVE-font-display);
+}
+
+.ZENVE-sm-kpi-value.gold {
+  color: var(--ZENVE-gold-dark);
+}
+
+.ZENVE-sm-kpi-value .pts {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ZENVE-muted);
+}
+
+.ZENVE-sm-kpi-subtext {
+  font-size: 11px;
+  color: var(--ZENVE-muted);
+  margin-top: 5px;
+}
+
+/* Controls Section */
+.ZENVE-sm-controls-section {
+  padding: 12px 32px 18px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ZENVE-sm-tabs-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.ZENVE-sm-tab-btn {
+  background: var(--ZENVE-panel);
+  border: 1px solid var(--ZENVE-line);
+  color: var(--ZENVE-muted);
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.16s ease;
+}
+
+.ZENVE-sm-tab-btn:hover {
+  background: #f7f4ee;
+  color: var(--ZENVE-ink);
+}
+
+.ZENVE-sm-tab-btn.active {
+  background: var(--ZENVE-ink);
+  color: #fff;
+  border-color: var(--ZENVE-ink);
+}
+
+.ZENVE-sm-filters-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.ZENVE-sm-search-input-wrap {
+  flex: 1 1 260px;
+  min-width: 220px;
+  max-width: 380px;
+}
+
+.ZENVE-sm-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--ZENVE-panel);
+  border: 1px solid var(--ZENVE-line);
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: var(--ZENVE-ink);
+  outline: none;
+  transition: border-color 0.18s;
+  font-family: inherit;
+}
+
+.ZENVE-sm-search-input:focus {
+  border-color: var(--ZENVE-gold);
+}
+
+.ZENVE-sm-sync-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--ZENVE-panel);
+  border: 1px solid var(--ZENVE-line);
+  color: var(--ZENVE-ink);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  margin-left: auto;
+}
+
+.ZENVE-sm-sync-btn:hover:not(:disabled) {
+  background: #f7f4ee;
+  border-color: #d1c8bb;
+}
+
+.ZENVE-sm-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--ZENVE-muted);
+  font-weight: 500;
+}
+
+.ZENVE-sm-select {
+  background: var(--ZENVE-panel);
+  border: 1px solid var(--ZENVE-line);
+  padding: 7px 12px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: var(--ZENVE-ink);
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+}
+
+.ZENVE-sm-select:focus {
+  border-color: var(--ZENVE-gold);
+}
+
+/* Grid & Cards */
+.ZENVE-sm-main-container {
+  padding: 0 32px;
+}
+
+.ZENVE-sm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
+  gap: 20px;
+}
+
+.ZENVE-sm-card {
+  background: var(--ZENVE-panel);
+  border: 1px solid var(--ZENVE-line);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.ZENVE-sm-card:hover {
+  border-color: #d1c8bb;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* Card Top */
+.ZENVE-sm-card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.ZENVE-sm-thumb-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 6px;
+  border: 1px solid var(--ZENVE-line);
+  overflow: hidden;
+  background: #f7f5f0;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.ZENVE-sm-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s;
+}
+
+.ZENVE-sm-thumb:hover {
+  transform: scale(1.06);
+}
+
+.ZENVE-sm-thumb-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ZENVE-muted);
+}
+
+.ZENVE-sm-product-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ZENVE-sm-brand-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ZENVE-gold-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+
+.ZENVE-sm-product-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: var(--ZENVE-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ZENVE-sm-sku-meta {
+  font-size: 11.5px;
+  color: var(--ZENVE-muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.ZENVE-sm-sku-meta .sku-code {
+  font-family: monospace;
+  background: #f5f2eb;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 10.5px;
+}
+
+.ZENVE-sm-sku-meta .price {
+  font-weight: 700;
+  color: var(--ZENVE-ink);
+}
+
+.ZENVE-sm-status-badge-container {
+  flex-shrink: 0;
+}
+
+/* Status Badges */
+.ZENVE-sm-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 14px;
+  text-align: center;
+}
+
+.zenve-status-pending {
+  background: #fff8e1;
+  color: #b78103;
+  border: 1px solid #ffe082;
+}
+
+.zenve-status-scheduled {
+  background: #ede7f6;
+  color: #512da8;
+  border: 1px solid #d1c4e9;
+}
+
+.zenve-status-production {
+  background: #e1f5fe;
+  color: #0277bd;
+  border: 1px solid #b3e5fc;
+}
+
+.zenve-status-ready {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.zenve-status-live {
+  background: #fce4ec;
+  color: #c2185b;
+  border: 1px solid #f8bbd0;
+}
+
+.zenve-status-completed {
+  background: #e8f5e9;
+  color: #1b5e20;
+  border: 1px solid #a5d6a7;
+}
+
+/* Add-ons Opt-in Ribbon */
+.ZENVE-sm-addons-pills-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #faf8f4;
+  border: 1px solid var(--ZENVE-line-light);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.ZENVE-sm-addon-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ZENVE-sm-addon-chip.video {
+  color: #5e35b1;
+}
+
+.ZENVE-sm-addon-chip.promo {
+  color: #1565c0;
+}
+
+.ZENVE-sm-addon-chip .chip-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.ZENVE-sm-addon-chip .chip-text strong {
+  font-size: 12.5px;
+  color: var(--ZENVE-ink);
+}
+
+.ZENVE-sm-addon-chip .chip-text span {
+  font-size: 11px;
+  color: var(--ZENVE-muted);
+}
+
+.ZENVE-sm-credits-badge {
+  border-top: 1px dashed var(--ZENVE-line);
+  padding-top: 6px;
+  margin-top: 2px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ZENVE-gold-dark);
+  text-align: right;
+}
+
+/* Pipeline Stepper */
+.ZENVE-sm-pipeline-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding: 10px 4px 4px 4px;
+}
+
+.ZENVE-sm-pipeline-stepper::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  height: 2px;
+  background: var(--ZENVE-line);
+  z-index: 1;
+}
+
+.ZENVE-sm-step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  transition: transform 0.15s;
+}
+
+.ZENVE-sm-step-item:hover {
+  transform: translateY(-1px);
+}
+
+.ZENVE-sm-step-item .step-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #f0ece3;
+  color: var(--ZENVE-muted);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--ZENVE-panel);
+  transition: all 0.2s;
+}
+
+.ZENVE-sm-step-item.completed .step-circle {
+  background: var(--ZENVE-gold);
+  color: #fff;
+}
+
+.ZENVE-sm-step-item.current .step-circle {
+  background: var(--ZENVE-ink);
+  color: #fff;
+  box-shadow: 0 0 0 3px rgba(23, 19, 15, 0.15);
+}
+
+.ZENVE-sm-step-item .step-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ZENVE-muted);
+}
+
+.ZENVE-sm-step-item.completed .step-label {
+  color: var(--ZENVE-gold-dark);
+}
+
+.ZENVE-sm-step-item.current .step-label {
+  color: var(--ZENVE-ink);
+  font-weight: 700;
+}
+
+/* Details Box */
+.ZENVE-sm-details-box {
+  background: #fff;
+  border: 1px solid var(--ZENVE-line-light);
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ZENVE-sm-designer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.contact-line {
+  font-size: 12px;
+  color: var(--ZENVE-ink);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.contact-line .label {
+  color: var(--ZENVE-muted);
+  width: 75px;
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+.contact-line.date .date-val {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #6a1b9a;
+  background: #f3e5f5;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 11.5px;
+}
+
+.ZENVE-sm-campaign-url-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  border-top: 1px dashed var(--ZENVE-line-light);
+  padding-top: 6px;
+}
+
+.ZENVE-sm-campaign-url-box .label {
+  color: var(--ZENVE-muted);
+  font-weight: 500;
+}
+
+.ZENVE-sm-campaign-url-box .url-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ZENVE-blue);
+  text-decoration: none;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ZENVE-sm-notes-preview {
+  background: #faf8f5;
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 11.5px;
+  border-left: 3px solid var(--ZENVE-gold);
+}
+
+.ZENVE-sm-notes-preview .notes-label {
+  font-weight: 700;
+  color: var(--ZENVE-gold-dark);
+  display: block;
+  margin-bottom: 2px;
+  font-size: 10.5px;
+  text-transform: uppercase;
+}
+
+.ZENVE-sm-notes-preview p {
+  margin: 0;
+  color: #4b443c;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+/* Actions Bar */
+.ZENVE-sm-actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.ZENVE-sm-btn-approach {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  background: var(--ZENVE-gold);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-shadow: 0 2px 6px rgba(194, 139, 81, 0.25);
+}
+
+.ZENVE-sm-btn-approach:hover {
+  background: var(--ZENVE-gold-dark);
+  box-shadow: 0 4px 10px rgba(194, 139, 81, 0.35);
+}
+
+.ZENVE-sm-btn-manage {
+  background: var(--ZENVE-panel);
+  border: 1px solid var(--ZENVE-line);
+  color: var(--ZENVE-ink);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.ZENVE-sm-btn-manage:hover {
+  background: #f7f4ee;
+  border-color: #d1c8ba;
+}
+
+/* Modals */
+.ZENVE-sm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(18, 14, 10, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.ZENVE-sm-modal-card {
+  background: var(--ZENVE-panel);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 580px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 90vh;
+}
+
+.ZENVE-sm-modal-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--ZENVE-line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #faf8f4;
+}
+
+.ZENVE-sm-modal-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--ZENVE-gold-dark);
+}
+
+.ZENVE-sm-modal-title {
+  margin: 3px 0 0 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ZENVE-ink);
+}
+
+.ZENVE-sm-modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--ZENVE-muted);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.ZENVE-sm-modal-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Outreach Designer Strip */
+.ZENVE-sm-outreach-designer-strip {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fbf9f5;
+  border: 1px solid var(--ZENVE-line);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.ZENVE-sm-outreach-designer-strip .designer-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--ZENVE-gold);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.ZENVE-sm-outreach-designer-strip .designer-text {
+  flex: 1;
+}
+
+.ZENVE-sm-outreach-designer-strip .designer-text h4 {
+  margin: 0 0 2px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ZENVE-ink);
+}
+
+.ZENVE-sm-outreach-designer-strip .designer-text p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ZENVE-muted);
+}
+
+.addons-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.addon-tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.addon-tag.video {
+  background: #ede7f6;
+  color: #512da8;
+}
+
+.addon-tag.promo {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+/* Channel Selector */
+.ZENVE-sm-channel-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.channel-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--ZENVE-panel);
+  border: 1px solid var(--ZENVE-line);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
+  color: var(--ZENVE-ink);
+}
+
+.channel-btn:hover {
+  background: #f7f4ee;
+}
+
+.channel-btn.active.whatsapp {
+  background: #e8f5e9;
+  border-color: #4caf50;
+  color: #2e7d32;
+}
+
+.channel-btn.active.phone {
+  background: #e3f2fd;
+  border-color: #2196f3;
+  color: #1565c0;
+}
+
+.channel-btn.active.schedule {
+  background: #ede7f6;
+  border-color: #7e57c2;
+  color: #512da8;
+}
+
+/* Form Groups */
+.ZENVE-sm-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ZENVE-sm-form-group label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ZENVE-ink);
+}
+
+.ZENVE-sm-input,
+.ZENVE-sm-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  border: 1px solid var(--ZENVE-line);
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--ZENVE-ink);
+  outline: none;
+  transition: border-color 0.18s;
+}
+
+.ZENVE-sm-input:focus,
+.ZENVE-sm-textarea:focus {
+  border-color: var(--ZENVE-gold);
+}
+
+.field-hint {
+  font-size: 11px;
+  color: var(--ZENVE-muted);
+}
+
+.ZENVE-sm-quick-links-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.quick-action-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ZENVE-ink);
+  text-decoration: none;
+  background: #f7f4ee;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--ZENVE-line);
+  transition: all 0.18s;
+}
+
+.quick-action-link:hover {
+  background: #eee8dc;
+}
+
+.quick-action-link.wa {
+  color: #2e7d32;
+  background: #e8f5e9;
+  border-color: #c8e6c9;
+}
+
+.quick-action-link.wa:hover {
+  background: #d7edd8;
+}
+
+.ZENVE-sm-modal-footer {
+  padding: 14px 24px;
+  border-top: 1px solid var(--ZENVE-line);
+  background: #faf8f4;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.ZENVE-sm-btn-secondary {
+  background: var(--ZENVE-panel);
+  border: 1px solid var(--ZENVE-line);
+  color: var(--ZENVE-ink);
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ZENVE-sm-btn-primary {
+  background: var(--ZENVE-gold);
+  border: none;
+  color: #fff;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+
+.ZENVE-sm-btn-primary:hover:not(:disabled) {
+  background: var(--ZENVE-gold-dark);
+}
+
+/* Image Zoom Modal */
+.ZENVE-sm-img-preview-card {
+  position: relative;
+  max-width: 80vw;
+  max-height: 85vh;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  background: #000;
+}
+
+.ZENVE-sm-img-preview-full {
+  max-width: 100%;
+  max-height: 85vh;
+  object-fit: contain;
+  display: block;
+}
+
+.ZENVE-sm-img-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: none;
+  font-size: 26px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Empty State */
+.ZENVE-sm-empty-state {
+  background: var(--ZENVE-panel);
+  border: 1px dashed var(--ZENVE-line);
+  border-radius: 12px;
+  padding: 50px 30px;
+  text-align: center;
+  max-width: 580px;
+  margin: 40px auto;
+}
+
+.ZENVE-sm-empty-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--ZENVE-gold-light);
+  color: var(--ZENVE-gold-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px auto;
+}
+
+.ZENVE-sm-empty-state h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: var(--ZENVE-ink);
+}
+
+.ZENVE-sm-empty-state p {
+  font-size: 13.5px;
+  color: var(--ZENVE-muted);
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+}
+
+.ZENVE-sm-empty-action {
+  display: inline-block;
+  background: var(--ZENVE-ink);
+  color: #fff;
+  text-decoration: none;
+  padding: 9px 18px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.ZENVE-sm-empty-action:hover {
+  opacity: 0.9;
+}
+
+/* Spinner Animation */
+.zenve-spin {
+  animation: zenveSpinAnim 1s linear infinite;
+}
+
+.zenve-spin-large {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--ZENVE-line);
+  border-top-color: var(--ZENVE-gold);
+  border-radius: 50%;
+  animation: zenveSpinAnim 0.8s linear infinite;
+  margin: 0 auto 12px auto;
+}
+
+@keyframes zenveSpinAnim {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsiveness */
+@media (max-width: 900px) {
+  .ZENVE-sm-header {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 16px;
+  }
+  .ZENVE-sm-header-center {
+    max-width: 100%;
+  }
+  .ZENVE-sm-metrics-strip,
+  .ZENVE-sm-controls-section,
+  .ZENVE-sm-main-container,
+  .ZENVE-sm-hero-banner {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .ZENVE-sm-grid {
+    grid-template-columns: 1fr;
+  }
+}

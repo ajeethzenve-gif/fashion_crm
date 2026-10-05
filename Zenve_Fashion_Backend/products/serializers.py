@@ -75,46 +75,46 @@ class FlexibleLocationField(serializers.CharField):
 
         mapping = {
             "mumbai fc":
-                Product.FulfilmentLocation.MUMBAI_FC,
+                getattr(Product.FulfilmentLocation, "MUMBAI_FC", "MUMBAI_FC"),
 
             "mumbai_fc":
-                Product.FulfilmentLocation.MUMBAI_FC,
+                getattr(Product.FulfilmentLocation, "MUMBAI_FC", "MUMBAI_FC"),
 
             "bengaluru fc":
-                Product.FulfilmentLocation.BENGALURU_FC,
+                getattr(Product.FulfilmentLocation, "BENGALURU_FC", "BENGALURU_FC"),
 
             "bengaluru_fc":
-                Product.FulfilmentLocation.BENGALURU_FC,
+                getattr(Product.FulfilmentLocation, "BENGALURU_FC", "BENGALURU_FC"),
 
             "bangalore fc":
-                Product.FulfilmentLocation.BENGALURU_FC,
+                getattr(Product.FulfilmentLocation, "BANGALORE_FC", "BANGALORE_FC"),
 
             "bangalore_fc":
-                Product.FulfilmentLocation.BENGALURU_FC,
+                getattr(Product.FulfilmentLocation, "BANGALORE_FC", "BANGALORE_FC"),
 
             "kochi fc":
-                Product.FulfilmentLocation.KOCHI_FC,
+                getattr(Product.FulfilmentLocation, "KOCHI_FC", "KOCHI_FC"),
 
             "kochi_fc":
-                Product.FulfilmentLocation.KOCHI_FC,
+                getattr(Product.FulfilmentLocation, "KOCHI_FC", "KOCHI_FC"),
 
             "chennai fc":
-                Product.FulfilmentLocation.CHENNAI_FC,
+                getattr(Product.FulfilmentLocation, "CHENNAI_FC", "CHENNAI_FC"),
 
             "chennai_fc":
-                Product.FulfilmentLocation.CHENNAI_FC,
+                getattr(Product.FulfilmentLocation, "CHENNAI_FC", "CHENNAI_FC"),
 
             "delhi fc":
-                Product.FulfilmentLocation.DELHI_FC,
+                getattr(Product.FulfilmentLocation, "DELHI_FC", "DELHI_FC"),
 
             "delhi_fc":
-                Product.FulfilmentLocation.DELHI_FC,
+                getattr(Product.FulfilmentLocation, "DELHI_FC", "DELHI_FC"),
 
             "designer studio":
-                Product.FulfilmentLocation.DESIGNER_STUDIO,
+                getattr(Product.FulfilmentLocation, "DESIGNER_STUDIO", "DESIGNER_STUDIO"),
 
             "designer_studio":
-                Product.FulfilmentLocation.DESIGNER_STUDIO,
+                getattr(Product.FulfilmentLocation, "DESIGNER_STUDIO", "DESIGNER_STUDIO"),
         }
 
         clean_key = str(data).strip().lower()
@@ -281,6 +281,10 @@ class ProductSerializer(serializers.ModelSerializer):
 
     designer = FlexibleDesignerField(
         queryset=Designer.objects.all()
+    )
+
+    designer_id = serializers.ReadOnlyField(
+        source="designer.id"
     )
 
     designer_name = serializers.ReadOnlyField(
@@ -616,6 +620,28 @@ class ProductSerializer(serializers.ModelSerializer):
             )
 
         # -------------------------------------------------
+        # GROWTH ADD-ONS (LAYER 15 SOCIAL MEDIA)
+        # -------------------------------------------------
+        if "growth_video_shoot" in data_copy:
+            val = str(data_copy["growth_video_shoot"]).lower()
+            data_copy["growth_video_shoot"] = val in ["true", "1", "yes"]
+
+        if "growth_social_promotion" in data_copy:
+            val = str(data_copy["growth_social_promotion"]).lower()
+            data_copy["growth_social_promotion"] = val in ["true", "1", "yes"]
+
+        if "growthVideoShoot" in data_copy and "growth_video_shoot" not in data_copy:
+            val = str(data_copy["growthVideoShoot"]).lower()
+            data_copy["growth_video_shoot"] = val in ["true", "1", "yes"]
+
+        if "growthSocialPromotion" in data_copy and "growth_social_promotion" not in data_copy:
+            val = str(data_copy["growthSocialPromotion"]).lower()
+            data_copy["growth_social_promotion"] = val in ["true", "1", "yes"]
+
+        if (data_copy.get("growth_video_shoot") or data_copy.get("growth_social_promotion")) and not data_copy.get("social_media_status"):
+            data_copy["social_media_status"] = Product.SocialMediaStatus.PENDING_REVIEW
+
+        # -------------------------------------------------
         # Ignore frontend-only helper fields
         # -------------------------------------------------
 
@@ -779,6 +805,29 @@ class ProductSerializer(serializers.ModelSerializer):
                 })
 
         if size_stocks is not None:
+            has_online = any(
+                int(item.get("online_quantity", 0) or 0) > 0
+                for item in size_stocks
+            )
+            has_offline = any(
+                int(item.get("offline_quantity", 0) or 0) > 0
+                for item in size_stocks
+            )
+
+            # Auto-align sales_channel if size_stocks contains offline / online stock
+            if has_online and has_offline:
+                sales_channel = Product.SalesChannel.BOTH
+                attrs["sales_channel"] = Product.SalesChannel.BOTH
+            elif has_offline and not has_online:
+                sales_channel = Product.SalesChannel.OFFLINE
+                attrs["sales_channel"] = Product.SalesChannel.OFFLINE
+            elif has_online and not has_offline:
+                if sales_channel not in [
+                    Product.SalesChannel.BOTH,
+                    Product.SalesChannel.OFFLINE,
+                ]:
+                    sales_channel = Product.SalesChannel.ONLINE
+                    attrs["sales_channel"] = Product.SalesChannel.ONLINE
 
             used_sizes = set()
 
@@ -1198,6 +1247,13 @@ class ProductSerializer(serializers.ModelSerializer):
             else 0.0
         )
 
+        res["growthVideoShoot"] = instance.growth_video_shoot
+        res["growthSocialPromotion"] = instance.growth_social_promotion
+        res["socialMediaStatus"] = instance.social_media_status
+        res["socialMediaShootDate"] = instance.social_media_shoot_date
+        res["socialMediaCampaignUrl"] = instance.social_media_campaign_url
+        res["socialMediaNotes"] = instance.social_media_notes
+
         return res
 
     # =====================================================
@@ -1218,6 +1274,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
             # Designer
             "designer",
+            "designer_id",
             "designer_name",
             "designer_brand",
             "designer_code",
@@ -1318,6 +1375,14 @@ class ProductSerializer(serializers.ModelSerializer):
             "is_active",
             "is_live",
 
+            # Growth Add-ons / Social Media Layer 15
+            "growth_video_shoot",
+            "growth_social_promotion",
+            "social_media_status",
+            "social_media_shoot_date",
+            "social_media_campaign_url",
+            "social_media_notes",
+
             # Images
             "primary_image",
             "images",
@@ -1338,6 +1403,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
 
+            "designer_id",
             "designer_name",
             "designer_brand",
             "designer_code",

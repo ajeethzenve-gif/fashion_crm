@@ -10,9 +10,9 @@
   align-items: center;
   justify-content: flex-end;
 
-  gap: 24px;
+  gap: 14px;
 
-  flex-shrink: 1;
+  flex-shrink: 0;
 }
 
 
@@ -24,7 +24,7 @@
   position: relative;
   z-index: 1000;
 
-  flex: 0 1 205px;
+  flex: 0 0 205px;
 
   min-width: 0;
 }
@@ -140,24 +140,34 @@
 ========================================================= */
 
 .home-user {
+  height: 36px;
   display: flex;
   align-items: center;
   flex-direction: row;
 
-  gap: 8px;
+  gap: 10px;
 
-  flex: 0 1 auto;
+  flex: 0 0 auto;
   min-width: 0;
 
+  padding: 0 12px;
+  border: 1px solid #dedbd4;
+  border-radius: 7px;
+  background: #fbf9f1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+
+  box-sizing: border-box;
   white-space: nowrap;
   text-decoration: none;
   color: inherit;
   cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
 
 .home-user:hover {
-  opacity: 0.85;
+  opacity: 0.95;
+  border-color: #c9c4ba;
+  background: #f8f5eb;
   transform: translateY(-1px);
 }
 
@@ -167,10 +177,10 @@
 ========================================================= */
 
 .home-user .user-icon {
-  width: 21px;
-  height: 21px;
+  width: 18px;
+  height: 18px;
 
-  flex: 0 0 21px;
+  flex: 0 0 18px;
 
   color: #17130f;
 }
@@ -183,31 +193,39 @@
 .home-user-name {
   display: block;
 
-  max-width: 150px;
+  max-width: 140px;
 
   overflow: hidden;
 
   text-overflow: ellipsis;
   white-space: nowrap;
 
-  color: #17130f;
+  color: #15120f;
 
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 500;
 }
 
 
 /* =========================================================
-   ADMIN
+   ADMIN BADGE
 ========================================================= */
 
 .home-admin {
-  display: block;
+  height: 22px;
+  padding: 0 10px;
 
-  color: #817a72;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 20px;
+  background: #f1e4d3;
+
+  color: #17120d;
 
   font-size: 12px;
-  font-weight: 400;
+  font-weight: 500;
 
   white-space: nowrap;
 }

@@ -1,12 +1,96 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { loginRequest, normalizeSession, saveTokens, clearTokens } from "../services/authApi";
 
-
 const SESSION_KEY = "zenve_session";
 const LEGACY_KEY = "zenve_auth_user";
 
-// Kept empty only so old imports do not break. Roles now come from the database.
-export const ROLES = [];
+export const ROLES = [
+  {
+    id: "admin",
+    name: "Executive Admin",
+    shortRole: "Admin",
+    user: "Priya Raghavan",
+    email: "priya.raghavan@zenve.in",
+    department: "Executive & Governance",
+    landingPath: "/command-centre",
+    description: "Full clearance across all 15 operational layers, approvals, and system controls.",
+    badgeClass: "admin",
+    clearance: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15"],
+  },
+  {
+    id: "designer",
+    name: "Brand Designer",
+    shortRole: "Designer",
+    user: "Aarav Mehta",
+    brand: "Aarav Pet Atelier",
+    email: "aarav@petatelier.in",
+    department: "External Supply Partner",
+    landingPath: "/designer-portal",
+    description: "Supply layer partner portal, SKU uploads, live inventory, and settlements.",
+    badgeClass: "designer",
+    clearance: ["02", "03", "06", "14", "15"],
+  },
+  {
+    id: "merchandiser",
+    name: "Merchandising & CRM",
+    shortRole: "Merchandiser",
+    user: "Ananya Roy",
+    email: "ananya.roy@zenve.in",
+    department: "Supply & Brand Acquisition",
+    landingPath: "/designer-crm",
+    description: "Brand lead pipeline, designer onboarding, KYC review, and contracts.",
+    badgeClass: "merchandiser",
+    clearance: ["01", "03", "10", "14", "15"],
+  },
+  {
+    id: "qa",
+    name: "Catalogue QA Lead",
+    shortRole: "Catalogue QA",
+    user: "Rohan Varma",
+    email: "rohan.varma@zenve.in",
+    department: "Quality & Media Standards",
+    landingPath: "/catalogueqa",
+    description: "SKU specification validation, media quality checks, and approval audit trail.",
+    badgeClass: "qa",
+    clearance: ["03", "04"],
+  },
+  {
+    id: "inventory",
+    name: "Inventory & Logistics",
+    shortRole: "Inventory Ops",
+    user: "Vikram Singh",
+    email: "vikram.singh@zenve.in",
+    department: "Warehouse & Fulfillment",
+    landingPath: "/inventory",
+    description: "Stock receipts, physical vs reserved counts, damage quarantine, and returns.",
+    badgeClass: "inventory",
+    clearance: ["05", "07", "08", "09"],
+  },
+  {
+    id: "finance",
+    name: "Finance Controller",
+    shortRole: "Finance",
+    user: "Neha Kapoor",
+    email: "neha.kapoor@zenve.in",
+    department: "Settlement & Accounting",
+    landingPath: "/accounting",
+    description: "Multi-payment settlement handling, payout disbursement, and escrow management.",
+    badgeClass: "finance",
+    clearance: ["07", "10", "11", "14", "15"],
+  },
+  {
+    id: "media",
+    name: "Media Team",
+    shortRole: "Media",
+    user: "Media Team",
+    email: "media@zenve.in",
+    department: "Creative Operations",
+    landingPath: "/media",
+    description: "Product originals, Figma creative work, and designer image delivery.",
+    badgeClass: "qa",
+    clearance: ["13", "14", "15"],
+  },
+];
 
 const LAYER_PATH_MAP = {
   "/designer-crm": "01",
@@ -22,6 +106,9 @@ const LAYER_PATH_MAP = {
   "/settlement": "10",
   "/analytics": "11",
   "/command-centre": "12",
+  "/media": "13",
+  "/social-media": "14",
+  "/accounting": "15",
 };
 
 const AuthContext = createContext(null);
@@ -34,6 +121,8 @@ export function AuthProvider({ children }) {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed && Array.isArray(parsed.clearance)) return parsed;
+        const role = ROLES.find((r) => r.id === parsed?.id);
+        return role ? { ...parsed, clearance: role.clearance } : parsed;
       }
     } catch {
       // ignore
@@ -72,6 +161,13 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const loginWithRole = (roleId, profile = {}) => {
+    const found = ROLES.find((r) => r.id === roleId) || ROLES[0];
+    const user = { ...found, ...profile };
+    setCurrentUser(user);
+    return user;
+  };
+
   const logout = () => {
     clearTokens();
     setCurrentUser(null);
@@ -86,7 +182,7 @@ export function AuthProvider({ children }) {
   const canAccessPath = (path) => {
     if (!currentUser) return false;
     const layerNum = LAYER_PATH_MAP[path];
-    if (!layerNum) return true;
+    if (!layerNum) return true; // public / unspecified
     return hasAccess(layerNum);
   };
 
@@ -97,6 +193,7 @@ export function AuthProvider({ children }) {
         isLoggedIn: !!currentUser,
         ROLES,
         login,
+        loginWithRole,
         logout,
         hasAccess,
         canAccessPath,

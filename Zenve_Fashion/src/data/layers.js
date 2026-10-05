@@ -84,15 +84,38 @@ export const layers = [
     blurb: "Approvals, controls, exceptions",
     path: "/command-centre",
   },
+  {
+    n: "13",
+    group: "Media",
+    name: "Media Studio",
+    blurb: "Designer originals, Figma creatives, image delivery and review",
+    path: "/media",
+  },
+
+    {
+    n: "14",
+    group: "Marketing",
+    name: "Social Media",
+    blurb: "Growth add-ons pipeline, video & photo shoots, creator campaigns, and social promotion",
+    path: "/social-media",
+  },
+  {
+    n: "15",
+    group: "Finance",
+    name: "Accounting",
+    blurb: "Multi-payment settlement ledger, gateway filtering, payout disbursements, and reconciliation",
+    path: "/accounting",
+  },
+
 ];
 
 export const getLayerByPath = (path) => {
   return layers.find((layer) => layer.path === path);
 };
-
 /**
  * All roles land directly on the Main Layers Overview page ("/")
  */
 export const getRoleLandingPath = () => {
   return "/";
 };
+

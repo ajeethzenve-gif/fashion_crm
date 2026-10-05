@@ -63,6 +63,11 @@ class Designer(models.Model):
     # BASIC DESIGNER INFORMATION
     # =====================================================
 
+    user = models.OneToOneField(
+        "auth.User", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="designer_profile", editable=False,
+    )
+
     designer_code = models.CharField(
         max_length=30,
         unique=True,
@@ -482,6 +487,20 @@ class Designer(models.Model):
     # STRING REPRESENTATION
     # =====================================================
 
+    def save(self, *args, **kwargs):
+        from django.db import transaction
+        from .authentication import provision_designer_user
+        with transaction.atomic():
+            if self.pk:
+                linked_user_id = type(self).objects.select_for_update().filter(
+                    pk=self.pk
+                ).values_list("user_id", flat=True).first()
+                if linked_user_id:
+                    self.user_id = linked_user_id
+            super().save(*args, **kwargs)
+            if self.stage == self.Stage.APPROVED:
+                provision_designer_user(self)
+
     def __str__(self):
         return (
             f"{self.brand_name} "
@@ -665,6 +684,15 @@ class Designer(models.Model):
 # =========================================================
 # DESIGNER ACCOUNT DETAILS
 # =========================================================
+
+class DesignerLoginOTP(models.Model):
+    designer = models.OneToOneField(Designer, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=15, blank=True)
+    otp_hash = models.CharField(max_length=255, blank=True)
+    sent_at = models.DateTimeField(null=True)
+    expires_at = models.DateTimeField(null=True)
+    attempts = models.PositiveSmallIntegerField(default=0)
+
 
 class DesignerAccountDetails(models.Model):
     """

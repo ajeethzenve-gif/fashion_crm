@@ -1,6 +1,6 @@
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
-  "http://127.0.0.1:8000/api";
+  "/api";
 
 export { API_BASE_URL };
 
@@ -837,7 +837,7 @@ export async function getSettlements(
 
   if (
     params.is_reversal !==
-      undefined &&
+    undefined &&
     params.is_reversal !== null
   ) {
     query.set(
@@ -1272,3 +1272,248 @@ export async function saveDesignerAccountDetails(
 
   return data;
 }
+
+
+/* =========================================================
+   ACCOUNTING API (LAYER 15)
+   Multi-payment settlement ledger & payout management
+========================================================= */
+
+export async function getAccountingSettlements(params = {}) {
+  const query = new URLSearchParams();
+
+  if (params.payment_method) {
+    query.set("payment_method", params.payment_method);
+  }
+  if (params.payment_status) {
+    query.set("payment_status", params.payment_status);
+  }
+  if (params.payout_method) {
+    query.set("payout_method", params.payout_method);
+  }
+  if (params.status) {
+    query.set("status", params.status);
+  }
+  if (params.designer_id) {
+    query.set("designer_id", params.designer_id);
+  }
+  if (params.search) {
+    query.set("search", params.search);
+  }
+  if (params.is_reversal !== undefined && params.is_reversal !== null) {
+    query.set("is_reversal", params.is_reversal);
+  }
+  if (params.batch_id) {
+    query.set("batch_id", params.batch_id);
+  }
+
+  const queryString = query.toString();
+  const url = `${API_BASE_URL}/accounting/settlements/` + (queryString ? `?${queryString}` : "");
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch accounting settlements: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export async function getAccountingStats() {
+  const response = await fetch(`${API_BASE_URL}/accounting/stats/`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch accounting stats: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export async function disburseSettlementPayment(payload = {}) {
+  const response = await fetch(`${API_BASE_URL}/accounting/disburse/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await parseResponse(response);
+  if (!response.ok) {
+    throw new Error(formatApiError(data, `Failed to disburse settlement payment: ${response.status}`));
+  }
+
+  return data;
+}
+
+export async function batchDisbursePayments(payload = {}) {
+  const response = await fetch(`${API_BASE_URL}/accounting/batch-payout/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await parseResponse(response);
+  if (!response.ok) {
+    throw new Error(formatApiError(data, `Failed to execute batch payout: ${response.status}`));
+  }
+
+  return data;
+}
+
+export async function reconcileAccountingSettlements(payload = {}) {
+  const response = await fetch(`${API_BASE_URL}/accounting/reconcile/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await parseResponse(response);
+  if (!response.ok) {
+    throw new Error(formatApiError(data, `Failed to reconcile settlements: ${response.status}`));
+  }
+
+  return data;
+}
+
+export function getAccountingExportUrl() {
+  return `${API_BASE_URL}/accounting/export/`;
+}
+
+
+/* =========================================================
+   MEDIA STUDIO API (LAYER 13)
+   Creative operations & designer visual delivery pipeline
+========================================================= */
+
+export async function getMediaQueue(designerId = null) {
+  const url = designerId
+    ? `${API_BASE_URL}/products/media/?designer=${encodeURIComponent(designerId)}`
+    : `${API_BASE_URL}/products/media/`;
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  const data = await parseResponse(response);
+  if (!response.ok) {
+    throw new Error(formatApiError(data, `Failed to load media queue: ${response.status}`));
+  }
+
+  return Array.isArray(data) ? data : [];
+}
+
+export async function submitMediaAction(productId, body) {
+  const isFormData = body instanceof FormData;
+  const options = {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+    },
+    body: isFormData ? body : JSON.stringify(body),
+  };
+
+  if (!isFormData) {
+    options.headers["Content-Type"] = "application/json";
+  }
+
+  const response = await fetch(`${API_BASE_URL}/products/${productId}/media/`, options);
+  const data = await parseResponse(response);
+
+  if (!response.ok) {
+    throw new Error(formatApiError(data, `Failed to update product media: ${response.status}`));
+  }
+
+  return data;
+}
+
+
+/* =========================================================
+   SOCIAL MEDIA LAYER API (LAYER 15)
+   Growth Add-ons Pipeline & Direct Designer Approaching
+========================================================= */
+
+export async function getSocialMediaCampaigns(params = {}) {
+  const query = new URLSearchParams();
+  if (params.status) query.set("status", params.status);
+  if (params.addon_type) query.set("addon_type", params.addon_type);
+  if (params.designer) query.set("designer", params.designer);
+  if (params.search) query.set("search", params.search);
+
+  const qs = query.toString();
+  const url = `${API_BASE_URL}/products/social-media/${qs ? `?${qs}` : ""}`;
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  const data = await parseResponse(response);
+  if (!response.ok) {
+    throw new Error(formatApiError(data, `Failed to load social media campaigns: ${response.status}`));
+  }
+
+  return data;
+}
+
+export async function updateSocialMediaCampaign(productId, payload = {}) {
+  const response = await fetch(`${API_BASE_URL}/products/${productId}/social-media/`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await parseResponse(response);
+  if (!response.ok) {
+    throw new Error(formatApiError(data, `Failed to update social media campaign: ${response.status}`));
+  }
+
+  return data;
+}
+
+export async function approachDesignerForGrowth(productId, payload = {}) {
+  const response = await fetch(`${API_BASE_URL}/products/${productId}/social-media/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      action: "approach_designer",
+      ...payload,
+    }),
+  });
+
+  const data = await parseResponse(response);
+  if (!response.ok) {
+    throw new Error(formatApiError(data, `Failed to approach designer: ${response.status}`));
+  }
+
+  return data;
+}
+

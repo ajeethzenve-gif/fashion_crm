@@ -445,6 +445,9 @@ const ALL_12_LAYERS = [
   { no: 10, module: "Settlement", to: "/settlement" },
   { no: 11, module: "Analytics & BI", to: "/analytics" },
   { no: 12, module: "Command Centre", to: "/command-centre" },
+  { no: 13, module: "Media Studio", to: "/media" },
+  { no: 14, module: "Social Media", to: "/social-media" },
+  { no: 15, module: "Accounting", to: "/accounting" },
 ];
 
 /* =========================================================

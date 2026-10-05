@@ -133,6 +133,27 @@ export default function ProtectedRoute({ layer, children }) {
           </p>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            {layer === "02" && (
+              <Link
+                to="/designer-login"
+                style={{
+                  height: "44px",
+                  borderRadius: "6px",
+                  background: "#cf9f4c",
+                  color: "#ffffff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: "600",
+                  fontSize: "13.5px",
+                  textDecoration: "none",
+                  boxShadow: "0 4px 12px rgba(207, 159, 76, 0.35)",
+                }}
+              >
+                Sign in to Designer Login Portal →
+              </Link>
+            )}
+
             <Link
               to="/login"
               style={{

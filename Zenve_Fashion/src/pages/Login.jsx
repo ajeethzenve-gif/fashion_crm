@@ -67,8 +67,6 @@ export default function Login() {
 
   return (
     <div className="zl-page">
-
-
       <div className="zl-stage">
         <img
           className="zl-bg"

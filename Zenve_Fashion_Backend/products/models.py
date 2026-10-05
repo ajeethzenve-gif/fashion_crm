@@ -25,8 +25,11 @@ class Product(models.Model):
     class FulfilmentLocation(models.TextChoices):
         MUMBAI_FC = "MUMBAI_FC", "Mumbai FC"
         BENGALURU_FC = "BENGALURU_FC", "Bengaluru FC"
+        BANGALORE_FC = "BANGALORE_FC", "Bangalore FC"
         KOCHI_FC = "KOCHI_FC", "Kochi FC"
         CHENNAI_FC = "CHENNAI_FC", "Chennai FC"
+        DELHI_FC = "DELHI_FC", "Delhi FC"
+        DESIGNER_STUDIO = "DESIGNER_STUDIO", "Designer Studio"
 
     class Size(models.TextChoices):
         XS = "XS", "XS"
@@ -272,6 +275,57 @@ class Product(models.Model):
         default=False,
         verbose_name="Limited Edition"
     )
+
+    # =========================================================
+    # GROWTH ADD-ONS & SOCIAL MEDIA CAMPAIGN (LAYER 15)
+    # =========================================================
+
+    class SocialMediaStatus(models.TextChoices):
+        NONE = "NONE", "No Growth Add-on"
+        PENDING_REVIEW = "PENDING_REVIEW", "Pending Review"
+        SHOOT_SCHEDULED = "SHOOT_SCHEDULED", "Shoot Scheduled"
+        IN_PRODUCTION = "IN_PRODUCTION", "In Production"
+        CONTENT_READY = "CONTENT_READY", "Content Ready"
+        PROMOTION_ACTIVE = "PROMOTION_ACTIVE", "Live / Promotion Active"
+        COMPLETED = "COMPLETED", "Completed"
+
+    growth_video_shoot = models.BooleanField(
+        default=False,
+        verbose_name="Exclusive Video & Photo Shoot (5,000 pts)"
+    )
+
+    growth_social_promotion = models.BooleanField(
+        default=False,
+        verbose_name="Exclusive Social Media Promotion (5,000 pts)"
+    )
+
+    social_media_status = models.CharField(
+        max_length=30,
+        choices=SocialMediaStatus.choices,
+        default=SocialMediaStatus.NONE,
+        db_index=True,
+        verbose_name="Social Media Status"
+    )
+
+    social_media_shoot_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name="Shoot Date"
+    )
+
+    social_media_campaign_url = models.URLField(
+        max_length=500,
+        blank=True,
+        default="",
+        verbose_name="Social Media / Reel URL"
+    )
+
+    social_media_notes = models.TextField(
+        blank=True,
+        default="",
+        verbose_name="Social Media Team Notes"
+    )
+
 
     # =========================================================
     # PRICING
@@ -726,6 +780,24 @@ private_storage = FileSystemStorage(location=settings.PRIVATE_MEDIA_ROOT)
 def product_image_path(instance, filename):
     extension = os.path.splitext(filename)[1].lower()
     return f"products/{instance.product_id}/{instance.position}{extension}"
+
+
+class MediaJob(models.Model):
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name="media_job")
+    status = models.CharField(max_length=24, default="IN_PROGRESS", choices=[
+        ("IN_PROGRESS", "In progress"), ("IN_REVIEW", "Designer review"),
+        ("CHANGES_REQUESTED", "Changes requested"), ("APPROVED", "Approved")])
+    figma_url = models.URLField(max_length=1000, blank=True)
+    notes = models.TextField(blank=True)
+    feedback = models.TextField(blank=True)
+    sent_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class MediaAsset(models.Model):
+    job = models.ForeignKey(MediaJob, on_delete=models.CASCADE, related_name="assets")
+    image = models.ImageField(storage=private_storage, upload_to="media_outputs/%Y/%m/")
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class ProductImage(models.Model):

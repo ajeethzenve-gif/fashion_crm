@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import { MediaWorkspace } from "./MediaStudio";
 import { showToast, showErrorToast } from "../utils/zenveToast";
 import "../styles/DesignerPortal.css";
 import SearchBar from "../components/SearchBar";
@@ -413,6 +414,11 @@ export default function DesignerPortal() {
 
     fastDelivery: true,
     returnable: true,
+
+    // Growth Add-ons (Charged in credit points)
+    growthVideoShoot: false,
+    growthSocialPromotion: false,
+    pushToStore: "ONLINE_ONLY",
 
     // NEW
     selectedSizes: [],
@@ -835,11 +841,11 @@ export default function DesignerPortal() {
     total_balance: activeDesigner?.credit_points || 0,
     online_plan: activeDesigner?.online_membership_plan
       ? activeDesigner.online_membership_plan.charAt(0).toUpperCase() +
-        activeDesigner.online_membership_plan.slice(1).toLowerCase()
+      activeDesigner.online_membership_plan.slice(1).toLowerCase()
       : "—",
     offline_plan: activeDesigner?.offline_membership_plan
       ? activeDesigner.offline_membership_plan.charAt(0).toUpperCase() +
-        activeDesigner.offline_membership_plan.slice(1).toLowerCase()
+      activeDesigner.offline_membership_plan.slice(1).toLowerCase()
       : "No active pack",
     online_listings_left: activeDesigner?.credit_points
       ? Math.floor(activeDesigner.credit_points / 500)
@@ -1219,13 +1225,7 @@ export default function DesignerPortal() {
     );
 
 
-    // ONLINE or ONLINE + OFFLINE
-    payload.append(
-      "sales_channel",
-      form.offlineEnabled
-        ? "BOTH"
-        : "ONLINE"
-    );
+
 
 
     // Multiple selected sizes
@@ -1291,6 +1291,34 @@ export default function DesignerPortal() {
         ? "RETURNABLE"
         : "FINAL_SALE"
     );
+
+    // Growth Add-ons
+    payload.append(
+      "growth_video_shoot",
+      form.growthVideoShoot ? "true" : "false"
+    );
+    payload.append(
+      "growth_social_promotion",
+      form.growthSocialPromotion ? "true" : "false"
+    );
+    // Derive sales_channel and push_to_store strictly from actual stock counts
+    const derivedSalesChannel =
+      totalOfflineQuantity > 0 && totalOnlineQuantity > 0
+        ? "BOTH"
+        : totalOfflineQuantity > 0
+          ? "OFFLINE"
+          : "ONLINE";
+
+    payload.append("sales_channel", derivedSalesChannel);
+
+    const derivedPushToStore =
+      derivedSalesChannel === "BOTH"
+        ? "BOTH"
+        : derivedSalesChannel === "OFFLINE"
+          ? "STORE_HOLDING"
+          : "ONLINE_ONLY";
+
+    payload.append("push_to_store", derivedPushToStore);
 
     payload.append(
       "status",
@@ -1461,6 +1489,10 @@ export default function DesignerPortal() {
         mrp: "",
         price: "",
         fabric: "",
+
+        growthVideoShoot: false,
+        growthSocialPromotion: false,
+        pushToStore: "ONLINE_ONLY",
 
         selectedSizes: [],
         offlineEnabled: false,
@@ -2233,6 +2265,9 @@ export default function DesignerPortal() {
         </div>
       ) : (
         <main className="ZENVE-portal-main">
+          {!showProfileAndAccount && selectedDesignerId && (
+            <MediaWorkspace key={selectedDesignerId} designerId={selectedDesignerId} />
+          )}
           {/* ===================================================
               DASHBOARD
           =================================================== */}
@@ -4376,6 +4411,87 @@ export default function DesignerPortal() {
                             }
                           />
                         </div>
+                      </div>
+                    </div>
+
+                    {/* =====================================================
+                        GROWTH ADD-ONS (CHARGED IN CREDIT POINTS)
+                    ===================================================== */}
+                    <div className="ZENVE-form-group span-3 full-width">
+                      <div className="ZENVE-growth-addons-container">
+                        <div className="ZENVE-growth-addons-title">
+                          GROWTH ADD-ONS (CHARGED IN CREDIT POINTS)
+                        </div>
+                        <div className="ZENVE-growth-addons-row">
+                          <div className="ZENVE-growth-addon-card">
+                            <div className="ZENVE-growth-addon-info">
+                              <span className="ZENVE-growth-addon-name">
+                                Exclusive video &amp; photo shoot
+                              </span>
+                              <span className="ZENVE-growth-addon-subtext">
+                                Our team visits you · 5,000 pts
+                              </span>
+                            </div>
+                            <Switch
+                              checked={form.growthVideoShoot}
+                              onChange={(val) =>
+                                setForm({
+                                  ...form,
+                                  growthVideoShoot: val,
+                                })
+                              }
+                            />
+                          </div>
+
+                          <div className="ZENVE-growth-addon-card">
+                            <div className="ZENVE-growth-addon-info">
+                              <span className="ZENVE-growth-addon-name">
+                                Exclusive social media promotion
+                              </span>
+                              <span className="ZENVE-growth-addon-subtext">
+                                Boosts product sales · 5,000 pts
+                              </span>
+                            </div>
+                            <Switch
+                              checked={form.growthSocialPromotion}
+                              onChange={(val) =>
+                                setForm({
+                                  ...form,
+                                  growthSocialPromotion: val,
+                                })
+                              }
+                            />
+                          </div>
+
+                          <div className="ZENVE-growth-addon-dropdown">
+                            <label className="ZENVE-growth-addon-dropdown-label">
+                              PUSH TO ZENVE STORE
+                            </label>
+                            <select
+                              className="ZENVE-growth-addon-select"
+                              value={form.pushToStore}
+                              onChange={(e) =>
+                                setForm({
+                                  ...form,
+                                  pushToStore: e.target.value,
+                                })
+                              }
+                            >
+                              <option value="ONLINE_ONLY">Online only (3 pts/day)</option>
+                              <option value="STORE_HOLDING">Zenve store holding (5 pts/day)</option>
+                              <option value="BOTH">Online + Zenve store (8 pts/day)</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        {(form.growthVideoShoot || form.growthSocialPromotion) && (
+                          <div className="ZENVE-growth-addons-routed-notice">
+                            <span className="notice-icon">✨</span>
+                            <span>
+                              <strong>Layer 14 (Social Media) Activated:</strong> Our creative production team will directly approach your atelier to coordinate on-site shoots and social campaigns upon SKU submission.
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

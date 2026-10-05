@@ -1,3 +1,4 @@
+from django.db import models
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -25,10 +26,13 @@ def get_or_create_designer_wallet(designer):
     """Retrieve or create the designer credit wallet with genuine database values."""
     from products.models import Product
 
-    # Calculate actual catalogue listings count
+    # Calculate actual catalogue listings count & statement deductions
     designer_skus = Product.objects.filter(designer=designer)
-    actual_listings_count = designer_skus.filter(status__in=["APPROVED", "LIVE"]).count()
-    actual_points_used = actual_listings_count * 500
+    actual_listings_count = designer_skus.filter(status__in=["APPROVED", "LIVE", "PENDING_QA"]).count()
+    statement_deductions = abs(sum(
+        s.points for s in DesignerCreditStatement.objects.filter(designer=designer, points__lt=0)
+    ))
+    actual_points_used = max(actual_listings_count * 500, statement_deductions)
 
     # Determine allocated online credits based on plan or designer credit_points
     allocated_credits = designer.credit_points or 0
@@ -113,7 +117,10 @@ def get_designer_credits_data(designer):
     # Compute daily point burn dynamically based strictly on designer products
     designer_skus = Product.objects.filter(designer=designer)
     online_count = designer_skus.filter(is_live=True).count()
-    store_count = designer_skus.filter(fulfilment_location__icontains="STORE").count()
+    store_count = designer_skus.filter(
+        models.Q(fulfilment_location__icontains="STORE") |
+        models.Q(sales_channel__in=["OFFLINE", "BOTH"])
+    ).count()
 
     online_burn = online_count * 3
     store_burn = store_count * 5
@@ -130,12 +137,16 @@ def get_designer_credits_data(designer):
         else "No active pack"
     )
 
-    listings_charged_count = wallet.points_used // 500 if wallet.points_used else 0
-    points_used_subtitle = (
-        f"{listings_charged_count} catalogue listing(s) at 500 pts each"
-        if listings_charged_count > 0
-        else "0 points used"
-    )
+    add_ons_deductions = abs(sum(
+        s.points for s in statements.filter(points__lte=-5000)
+    ))
+    listings_charged_count = (wallet.points_used - add_ons_deductions) // 500 if wallet.points_used >= add_ons_deductions else 0
+    if add_ons_deductions > 0:
+        points_used_subtitle = f"{wallet.points_used:,} pts used across catalogue & add-ons"
+    elif listings_charged_count > 0:
+        points_used_subtitle = f"{listings_charged_count} catalogue listing(s) at 500 pts each"
+    else:
+        points_used_subtitle = "0 points used"
 
     offline_plan_clean = wallet.offline_plan
     if not offline_plan_clean or str(offline_plan_clean).strip() in ["None", "none", "—", "-"]:

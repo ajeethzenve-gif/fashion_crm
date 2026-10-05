@@ -412,3 +412,25 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
 PRIVATE_MEDIA_ROOT = BASE_DIR / "private_uploads"
+
+SMS_PROVIDER = os.getenv("SMS_PROVIDER", "APITXT")
+
+SMS_API_KEY = os.getenv("SMS_API_KEY", "")
+SMS_AUTH_KEY = os.getenv("SMS_AUTH_KEY", "")
+
+SMS_SENDER_ID = os.getenv(
+    "SMS_SENDER_ID",
+    "Zenve Zippy Vendor CRM"
+)
+
+SMS_API_URL = os.getenv(
+    "SMS_API_URL",
+    "https://apitxt.com/api/sendOTP"
+)
+
+SMS_ROUTE = os.getenv("SMS_ROUTE", "otp")
+
+# Dotted callable accepting (phone_number, otp) for designer SMS delivery.
+DESIGNER_OTP_SMS_SENDER = os.getenv(
+    "DESIGNER_OTP_SMS_SENDER", "accounts.sms.send_designer_otp"
+)
