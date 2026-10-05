@@ -1,8 +1,7 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 
 import Home from "./pages/Home.jsx";
-import LayerPage from "./pages/LayerPage.jsx";
 import DesignerCRM from "./pages/DesignerCrm.jsx";
 import DesignerPortal from "./pages/DesignerPortal.jsx";
 import Catalogue from "./pages/Catalogue.jsx";
@@ -17,18 +16,19 @@ import Analytics from "./pages/Analytics.jsx";
 import CommandCentre from "./pages/CommandCentre.jsx";
 import Login from "./pages/Login.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import RequireAuth from "./components/RequireAuth.jsx";
 
 export default function App() {
   return (
     <AuthProvider>
       <Routes>
-        {/* Home Page */}
-        <Route path="/" element={<Home />} />
+        {/* Main (layers) page — only after login */}
+        <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
 
-        {/* Role-Based Login */}
+        {/* Authentication page */}
         <Route path="/login" element={<Login />} />
 
-        {/* 12 Operational Layers (Role Clearance Protected) */}
+        {/* 12 Operational Layers — role access protected */}
         <Route path="/designer-crm" element={<ProtectedRoute layer="01"><DesignerCRM /></ProtectedRoute>} />
         <Route path="/designer-portal" element={<ProtectedRoute layer="02"><DesignerPortal /></ProtectedRoute>} />
         <Route path="/catalogue" element={<ProtectedRoute layer="03"><Catalogue /></ProtectedRoute>} />
@@ -42,6 +42,9 @@ export default function App() {
         <Route path="/settlement" element={<ProtectedRoute layer="10"><Settlement /></ProtectedRoute>} />
         <Route path="/analytics" element={<ProtectedRoute layer="11"><Analytics /></ProtectedRoute>} />
         <Route path="/command-centre" element={<ProtectedRoute layer="12"><CommandCentre /></ProtectedRoute>} />
+
+        {/* Any unknown URL -> "/" (which sends to /login if not signed in) */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AuthProvider>
   );

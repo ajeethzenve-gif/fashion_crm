@@ -278,3 +278,45 @@ class CustomerAddress(models.Model):
 
     def __str__(self):
         return self.full_name
+
+
+class RoleLayerAccess(models.Model):
+    """
+    Which of the 12 Zenve operating layers a Role can open.
+    Edit these rows in Django admin -> new roles / changes need no frontend change.
+    """
+
+    LAYER_CHOICES = (
+        ("01", "01 - Designer CRM"),
+        ("02", "02 - Designer Portal"),
+        ("03", "03 - Product / SKU"),
+        ("04", "04 - Catalogue QA"),
+        ("05", "05 - Inventory Engine"),
+        ("06", "06 - Storefront"),
+        ("07", "07 - OMS"),
+        ("08", "08 - Delivery Engine"),
+        ("09", "09 - Returns Engine"),
+        ("10", "10 - Settlement"),
+        ("11", "11 - BI Dashboards"),
+        ("12", "12 - Command Centre"),
+    )
+
+    role = models.ForeignKey(
+        Role,
+        on_delete=models.CASCADE,
+        related_name="layer_access"
+    )
+
+    layer = models.CharField(
+        max_length=2,
+        choices=LAYER_CHOICES
+    )
+
+    class Meta:
+        unique_together = ("role", "layer")
+        ordering = ["role__name", "layer"]
+        verbose_name = "Role Layer Access"
+        verbose_name_plural = "Role Layer Access"
+
+    def __str__(self):
+        return f"{self.role.name} -> {self.layer}"

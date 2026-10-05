@@ -144,3 +144,13 @@ class CustomerAddressAdmin(admin.ModelAdmin):
         "created_at",
     )
 
+# Paste this at the BOTTOM of accounts/admin.py
+# (if "from django.contrib import admin" is not already at the top of that file, add it)
+
+from .models import RoleLayerAccess
+
+
+@admin.register(RoleLayerAccess)
+class RoleLayerAccessAdmin(admin.ModelAdmin):
+    list_display = ("role", "layer")
+    list_filter = ("role",)

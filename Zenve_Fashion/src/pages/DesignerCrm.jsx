@@ -163,7 +163,7 @@ export default function DesignerCRM() {
   // New task inputs per designer
   const [taskInputs, setTaskInputs] = useState({});
 
-  // Add lead form state (clean initial state)
+  // Add lead form state
   const [newLead, setNewLead] = useState({
     name: "",
     brand: "",
@@ -184,10 +184,9 @@ export default function DesignerCRM() {
     renewalProbability: "",
   });
 
-  // GST Modal & Company GST State
   const [showGstModal, setShowGstModal] = useState(false);
   const [useCompanyGst, setUseCompanyGst] = useState(false);
-  const [gstModalTarget, setGstModalTarget] = useState("newLead"); // 'newLead' | designer object
+  const [gstModalTarget, setGstModalTarget] = useState("newLead");
 
   const showToast = (msg, isError = false) => {
     setToastMessage(msg);
@@ -211,7 +210,8 @@ export default function DesignerCRM() {
           gst_number: COMPANY_GST_INFO.gstNumber,
         });
         showToast(
-          `Applied Company GST (${masked}) to ${gstModalTarget.brand_name || gstModalTarget.designer_name || "designer"
+          `Applied Company GST (${masked}) to ${
+            gstModalTarget.brand_name || gstModalTarget.designer_name || "designer"
           }`
         );
       } catch (err) {
@@ -226,8 +226,8 @@ export default function DesignerCRM() {
       gstModalTarget === "newLead"
         ? newLead.brand || newLead.name || "New Designer Lead"
         : gstModalTarget?.brand_name ||
-        gstModalTarget?.designer_name ||
-        "Designer";
+          gstModalTarget?.designer_name ||
+          "Designer";
 
     const targetCity =
       gstModalTarget === "newLead"
@@ -286,7 +286,6 @@ export default function DesignerCRM() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [showGstModal, newLead.gst, gstModalTarget]);
 
-  // Send WhatsApp portal access notification with direct access link
   const handleSendWhatsAppPortalLink = (designer) => {
     if (!designer) return;
     const phoneRaw = designer.phone || designer.contact || "";
@@ -295,7 +294,9 @@ export default function DesignerCRM() {
 
     if (!cleanPhone) {
       const input = window.prompt(
-        `Enter WhatsApp phone number for ${designer.designer_name || designer.brand_name} (with country code, e.g. 919876543210):`,
+        `Enter WhatsApp phone number for ${
+          designer.designer_name || designer.brand_name
+        } (with country code, e.g. 919876543210):`,
         "91"
       );
       if (!input) return;
@@ -305,7 +306,9 @@ export default function DesignerCRM() {
     const designerName = designer.designer_name || designer.brand_name || "Designer";
     const brandName = designer.brand_name || designer.designer_name || "Designer Brand";
     const gstVal = designer.gst_number || designer.gst || COMPANY_GST_INFO.gstNumber;
-    const portalUrl = `${window.location.origin}/designer-portal?designer=${encodeURIComponent(brandName)}&code=${encodeURIComponent(designer.designer_code || `DSG-${designer.id}`)}`;
+    const portalUrl = `${window.location.origin}/designer-portal?designer=${encodeURIComponent(
+      brandName
+    )}&code=${encodeURIComponent(designer.designer_code || `DSG-${designer.id}`)}`;
 
     const message = `🌟 *ZENVE FASHION - DESIGNER PORTAL ACCESS* 🌟
 
@@ -328,12 +331,13 @@ Click the link above to directly access your Designer Portal to manage your cata
 Welcome to ZENVE Fashion!
 _Team ZENVE Creator Operations_`;
 
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(
+      message
+    )}`;
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
     showToast(`WhatsApp portal access link opened for ${brandName}!`);
   };
 
-  // Fetch all live records
   const loadData = async (isManual = false) => {
     try {
       if (isManual) setRefreshing(true);
@@ -341,12 +345,7 @@ _Team ZENVE Creator Operations_`;
       setError(null);
 
       const designersRes = await getDesigners();
-      const [
-        ordersRes,
-        productsRes,
-        returnsRes,
-        settlementsRes,
-      ] = await Promise.all([
+      const [ordersRes, productsRes, returnsRes, settlementsRes] = await Promise.all([
         getOrders().catch(() => []),
         getProducts().catch(() => []),
         getReturns().catch(() => []),
@@ -373,7 +372,6 @@ _Team ZENVE Creator Operations_`;
     loadData();
   }, []);
 
-  // Top 5 KPIs
   const pipelineCount = designers.length;
 
   const sellingNowCount = useMemo(() => {
@@ -423,13 +421,11 @@ _Team ZENVE Creator Operations_`;
       );
   }, [settlements]);
 
-  // Designer Economics & Health Score calculation from live DB metrics
   const getDesignerEconomics = (designer) => {
     const isKyc =
       designer.is_kyc_verified ??
       (designer.kyc_verified || designer.kyc_status === "VERIFIED");
 
-    // Match all products belonging to this designer
     const designerProducts = products.filter(
       (p) =>
         p.designer === designer.id ||
@@ -443,7 +439,6 @@ _Team ZENVE Creator Operations_`;
     const designerProductIds = designerProducts.map((p) => String(p.id));
     const designerSkus = designerProducts.map((p) => p.sku).filter(Boolean);
 
-    // Calculate line-item totals from database orders
     let orderItemsSum = 0;
     let orderItemsMonthlySum = 0;
     const monthAgo = Date.now() - 30 * 24 * 3600 * 1000;
@@ -469,8 +464,8 @@ _Team ZENVE Creator Operations_`;
           const itemTotal =
             Number(
               item.total ||
-              item.total_price ||
-              (Number(item.price || 0) * Number(item.quantity || item.qty || 1))
+                item.total_price ||
+                Number(item.price || 0) * Number(item.quantity || item.qty || 1)
             ) || 0;
           orderItemsSum += itemTotal;
           if (isRecent) {
@@ -480,7 +475,6 @@ _Team ZENVE Creator Operations_`;
       });
     });
 
-    // Prefer backend calculated DB metrics if available, fallback to computed items
     const gmv =
       designer.lifetime_gmv !== undefined && Number(designer.lifetime_gmv) > 0
         ? Number(designer.lifetime_gmv)
@@ -489,7 +483,9 @@ _Team ZENVE Creator Operations_`;
     const monthlyGmv =
       designer.monthly_gmv !== undefined && Number(designer.monthly_gmv) > 0
         ? Number(designer.monthly_gmv)
-        : (orderItemsMonthlySum > 0 ? orderItemsMonthlySum : gmv);
+        : orderItemsMonthlySum > 0
+        ? orderItemsMonthlySum
+        : gmv;
 
     const takeRatePct = Number(designer.take_rate) || 0;
     const ltv =
@@ -500,9 +496,7 @@ _Team ZENVE Creator Operations_`;
     const cac = Number(designer.designer_cac ?? designer.acquisition_cost) || 0;
     const roi =
       designer.ltv_cac_ratio ||
-      (cac > 0 && ltv > 0
-        ? `${Math.round((ltv / cac) * 100) / 100}×`
-        : "0×");
+      (cac > 0 && ltv > 0 ? `${Math.round((ltv / cac) * 100) / 100}×` : "0×");
 
     const liveSkus = designerProducts.filter(
       (p) => p.status === "LIVE" || p.status === "APPROVED" || p.is_live
@@ -510,11 +504,12 @@ _Team ZENVE Creator Operations_`;
 
     const skuProductivity =
       designer.effective_sku_productivity !== undefined &&
-        Number(designer.effective_sku_productivity) > 0
+      Number(designer.effective_sku_productivity) > 0
         ? Number(designer.effective_sku_productivity)
-        : (liveSkus > 0 ? Math.round(gmv / liveSkus) : Math.round(gmv));
+        : liveSkus > 0
+        ? Math.round(gmv / liveSkus)
+        : Math.round(gmv);
 
-    // Health score from real DB data
     const totalProds = designerProducts.length;
     const qaApproved = designerProducts.filter(
       (p) =>
@@ -533,27 +528,27 @@ _Team ZENVE Creator Operations_`;
       designer.health_score !== undefined && Number(designer.health_score) > 0
         ? Number(designer.health_score)
         : totalProds > 0 || gmv > 0
-          ? Math.max(
+        ? Math.max(
             0,
             Math.min(
               100,
               Math.round(
                 qaRate * 0.25 +
-                stockRate * 0.2 +
-                Math.min(100, monthlyGmv / 500) * 0.25 +
-                (isKyc ? 100 : 0) * 0.1 +
-                renewalProb * 0.2
+                  stockRate * 0.2 +
+                  Math.min(100, monthlyGmv / 500) * 0.25 +
+                  (isKyc ? 100 : 0) * 0.1 +
+                  renewalProb * 0.2
               )
             )
           )
-          : Math.max(
+        : Math.max(
             0,
             Math.min(
               100,
               Math.round(
                 (isKyc ? 100 : 0) * 0.3 +
-                renewalProb * 0.4 +
-                (designer.contract_signed ? 30 : 0)
+                  renewalProb * 0.4 +
+                  (designer.contract_signed ? 30 : 0)
               )
             )
           );
@@ -570,7 +565,6 @@ _Team ZENVE Creator Operations_`;
     };
   };
 
-  // Actions
   const handleStageChange = async (designerId, nextStage) => {
     try {
       await updateDesigner(designerId, { stage: nextStage });
@@ -608,10 +602,10 @@ _Team ZENVE Creator Operations_`;
         list.map((d) =>
           d.id === designer.id
             ? {
-              ...d,
-              kyc_status: nextStatus,
-              kyc_verified: !currentVerified,
-            }
+                ...d,
+                kyc_status: nextStatus,
+                kyc_verified: !currentVerified,
+              }
             : d
         )
       );
@@ -638,7 +632,6 @@ _Team ZENVE Creator Operations_`;
     }
   };
 
-  // Follow-up tasks
   const handleToggleTask = async (designerId, taskId) => {
     const target = designers.find((d) => d.id === designerId);
     if (!target) return;
@@ -701,7 +694,6 @@ _Team ZENVE Creator Operations_`;
     }
   };
 
-  // Create lead
   const handleCreateLead = async (e) => {
     e.preventDefault();
     if (!newLead.name.trim() || !newLead.brand.trim()) {
@@ -720,40 +712,56 @@ _Team ZENVE Creator Operations_`;
       designer_name: newLead.name.trim(),
       brand_name: newLead.brand.trim(),
       owner_name: newLead.name.trim(),
-      email: newLead.email.trim() || `${newLead.name.toLowerCase().replace(/\s+/g, "")}@example.com`,
+      email:
+        newLead.email.trim() ||
+        `${newLead.name.toLowerCase().replace(/\s+/g, "")}@example.com`,
       phone: newLead.phone.trim(),
       city: newLead.city.trim() || "",
       primary_category: newLead.category.trim() || "",
       tier: newLead.tier.toUpperCase(),
-      online_membership_plan: newLead.fashionCreditPlan ? newLead.fashionCreditPlan.toUpperCase() : null,
-      credit_points: Number(newLead.creditPoints) || (FASHION_CREDIT_PLANS.find((p) => p.id.toUpperCase() === (newLead.fashionCreditPlan || "").toUpperCase())?.pointsNum || 0),
+      online_membership_plan: newLead.fashionCreditPlan
+        ? newLead.fashionCreditPlan.toUpperCase()
+        : null,
+      credit_points:
+        Number(newLead.creditPoints) ||
+        (FASHION_CREDIT_PLANS.find(
+          (p) =>
+            p.id.toUpperCase() ===
+            (newLead.fashionCreditPlan || "").toUpperCase()
+        )?.pointsNum || 0),
       take_rate: newLead.takeRate !== "" ? Number(newLead.takeRate) : 0,
       gst_number: newLead.gst.trim()
         ? newLead.gst === "COMPANY_GST_REQUESTED"
           ? "COMPANY_GST_REQUESTED"
-          : newLead.gst.trim().toUpperCase() === maskGstNumber(COMPANY_GST_INFO.gstNumber)
-            ? COMPANY_GST_INFO.gstNumber
-            : newLead.gst.trim().toUpperCase()
+          : newLead.gst.trim().toUpperCase() ===
+            maskGstNumber(COMPANY_GST_INFO.gstNumber)
+          ? COMPANY_GST_INFO.gstNumber
+          : newLead.gst.trim().toUpperCase()
         : null,
       contract_end_date: newLead.contractEnds || null,
       lead_source: newLead.source,
       sales_owner: newLead.owner,
       next_followup_date: newLead.nextFollowUp || null,
       acquisition_cost: newLead.cac !== "" ? Number(newLead.cac) : 0,
-      renewal_likelihood: newLead.renewalProbability !== "" ? Number(newLead.renewalProbability) : 0,
+      renewal_likelihood:
+        newLead.renewalProbability !== ""
+          ? Number(newLead.renewalProbability)
+          : 0,
       stage: "LEAD",
       kyc_status: "PENDING",
       kyc_verified: false,
       follow_up_tasks:
         newLead.gst === "COMPANY_GST_REQUESTED"
           ? [
-            {
-              id: Date.now(),
-              text: `Company Tax Team: Create dedicated company GST for ${newLead.brand.trim()} (${newLead.city.trim() || "Regional Hub"})`,
-              due_date: new Date().toISOString().split("T")[0],
-              completed: false,
-            },
-          ]
+              {
+                id: Date.now(),
+                text: `Company Tax Team: Create dedicated company GST for ${newLead.brand.trim()} (${
+                  newLead.city.trim() || "Regional Hub"
+                })`,
+                due_date: new Date().toISOString().split("T")[0],
+                completed: false,
+              },
+            ]
           : [],
     };
 
@@ -798,7 +806,8 @@ _Team ZENVE Creator Operations_`;
             </div>
 
             <div className="ZENVE-header-title-block">
-              <Link to="/command-centre" className="ZENVE-back-link">
+              {/* FIXED TO NAVIGATE TO ROOT HOME PAGE ("/") */}
+              <Link to="/" className="ZENVE-back-link">
                 ← ALL 12 LAYERS
               </Link>
 
@@ -899,7 +908,6 @@ _Team ZENVE Creator Operations_`;
 
                 return (
                   <article className="designer-card" key={designer.id}>
-                    {/* Top Row: Brand, Badges, Stage Actions */}
                     <div className="designer-card-top">
                       <div className="designer-info-left">
                         <div className="designer-header-row">
@@ -928,77 +936,104 @@ _Team ZENVE Creator Operations_`;
                                 border: "1px solid rgba(223, 177, 108, 0.35)",
                                 fontWeight: "600",
                               }}
-                              title={`Credit Points: ${Number(designer.credit_points || 0).toLocaleString("en-IN")}`}
+                              title={`Credit Points: ${Number(
+                                designer.credit_points || 0
+                              ).toLocaleString("en-IN")}`}
                             >
-                              ★ {designer.online_membership_plan} ({Number(designer.credit_points || 0).toLocaleString("en-IN")} Pts)
+                              ★ {designer.online_membership_plan} (
+                              {Number(
+                                designer.credit_points || 0
+                              ).toLocaleString("en-IN")}{" "}
+                              Pts)
                             </span>
                           )}
 
                           <span
-                            className={`tone-badge ${econ.isKyc ? "good" : "bad"
-                              }`}
+                            className={`tone-badge ${
+                              econ.isKyc ? "good" : "bad"
+                            }`}
                           >
                             {econ.isKyc ? "KYC verified" : "KYC missing"}
                           </span>
 
                           <span
-                            className={`tone-badge ${econ.health >= 70
-                              ? "good"
-                              : econ.health >= 45
+                            className={`tone-badge ${
+                              econ.health >= 70
+                                ? "good"
+                                : econ.health >= 45
                                 ? "warn"
                                 : "bad"
-                              }`}
+                            }`}
                           >
                             Health {econ.health}/100
                           </span>
 
                           <span
-                            className={`tone-badge ${designer.gst_number || designer.gst ? "good" : "warn"
-                              }`}
+                            className={`tone-badge ${
+                              designer.gst_number || designer.gst ? "good" : "warn"
+                            }`}
                           >
                             {designer.gst_number || designer.gst
-                              ? (designer.gst_number === COMPANY_GST_INFO.gstNumber ||
+                              ? designer.gst_number ===
+                                  COMPANY_GST_INFO.gstNumber ||
                                 designer.gst === COMPANY_GST_INFO.gstNumber
                                 ? "Company GST"
-                                : (designer.gst_number === "COMPANY_GST_REQUESTED" ||
-                                  designer.gst === "COMPANY_GST_REQUESTED")
-                                  ? "GST Requested (Company)"
-                                  : "GST Verified")
+                                : designer.gst_number ===
+                                    "COMPANY_GST_REQUESTED" ||
+                                  designer.gst === "COMPANY_GST_REQUESTED"
+                                ? "GST Requested (Company)"
+                                : "GST Verified"
                               : "No GST"}
                           </span>
                         </div>
 
-                        {/* Meta Line 1 */}
                         <p className="designer-subtext-line">
                           {designer.designer_code || `DSG-${designer.id}`} ·{" "}
                           {designer.designer_name || designer.owner_name || "—"} ·{" "}
                           {designer.email || designer.phone || "—"} ·{" "}
                           {designer.city || "—"} ·{" "}
-                          {designer.primary_category || "—"} · take
-                          rate {designer.take_rate != null ? `${Number(designer.take_rate)}%` : "0%"}
+                          {designer.primary_category || "—"} · take rate{" "}
+                          {designer.take_rate != null
+                            ? `${Number(designer.take_rate)}%`
+                            : "0%"}
                           {designer.online_membership_plan
-                            ? ` · Credits: ${designer.online_membership_plan} (${Number(designer.credit_points || 0).toLocaleString("en-IN")} pts)`
+                            ? ` · Credits: ${
+                                designer.online_membership_plan
+                              } (${Number(
+                                designer.credit_points || 0
+                              ).toLocaleString("en-IN")} pts)`
                             : ""}
                           {designer.contract_end_date
                             ? ` · contract ends ${designer.contract_end_date}`
                             : ""} · GST:{" "}
                           {designer.gst_number || designer.gst ? (
                             <span className="designer-gst-code">
-                              {designer.gst_number === "COMPANY_GST_REQUESTED" ||
-                                designer.gst === "COMPANY_GST_REQUESTED" ? (
-                                <span className="tone-badge warn" style={{ fontSize: "11px", padding: "2px 6px" }}>
+                              {designer.gst_number ===
+                                "COMPANY_GST_REQUESTED" ||
+                              designer.gst === "COMPANY_GST_REQUESTED" ? (
+                                <span
+                                  className="tone-badge warn"
+                                  style={{ fontSize: "11px", padding: "2px 6px" }}
+                                >
                                   Creation Requested (Company)
                                 </span>
                               ) : (
                                 <>
-                                  {(designer.gst_number === COMPANY_GST_INFO.gstNumber ||
-                                    designer.gst === COMPANY_GST_INFO.gstNumber)
-                                    ? maskGstNumber(designer.gst_number || designer.gst)
-                                    : (designer.gst_number || designer.gst)}
-                                  {(designer.gst_number === COMPANY_GST_INFO.gstNumber ||
-                                    designer.gst === COMPANY_GST_INFO.gstNumber) && (
-                                      <span className="designer-gst-corp-tag">ZENVE</span>
-                                    )}
+                                  {designer.gst_number ===
+                                    COMPANY_GST_INFO.gstNumber ||
+                                  designer.gst === COMPANY_GST_INFO.gstNumber
+                                    ? maskGstNumber(
+                                        designer.gst_number || designer.gst
+                                      )
+                                    : designer.gst_number || designer.gst}
+                                  {(designer.gst_number ===
+                                    COMPANY_GST_INFO.gstNumber ||
+                                    designer.gst ===
+                                      COMPANY_GST_INFO.gstNumber) && (
+                                    <span className="designer-gst-corp-tag">
+                                      ZENVE
+                                    </span>
+                                  )}
                                 </>
                               )}
                               <button
@@ -1027,24 +1062,24 @@ _Team ZENVE Creator Operations_`;
                           )}
                         </p>
 
-                        {/* Meta Line 2 */}
                         <p className="designer-subtext-line">
                           Source {designer.lead_source || "Referral"} · owner{" "}
                           {designer.sales_owner || "Unassigned"} · next follow-up{" "}
                           {designer.next_followup_date
                             ? new Date(
-                              designer.next_followup_date
-                            ).toLocaleDateString()
+                                designer.next_followup_date
+                              ).toLocaleDateString()
                             : "not set"}{" "}
                           · renewal likelihood{" "}
-                          {designer.renewal_likelihood != null ? `${designer.renewal_likelihood}%` : "—"}
+                          {designer.renewal_likelihood != null
+                            ? `${designer.renewal_likelihood}%`
+                            : "—"}
                           {designer.lost_reason
                             ? ` · lost: ${designer.lost_reason}`
                             : ""}
                         </p>
                       </div>
 
-                      {/* Right Actions */}
                       <div className="designer-actions-right">
                         <select
                           className="designer-stage-select"
@@ -1078,7 +1113,6 @@ _Team ZENVE Creator Operations_`;
                       </div>
                     </div>
 
-                    {/* 6 Economics Boxes */}
                     <div className="designer-economics-grid">
                       <div className="econ-box">
                         <span className="label-caps">Monthly GMV</span>
@@ -1123,27 +1157,44 @@ _Team ZENVE Creator Operations_`;
                       </div>
                     </div>
 
-                    {/* EXTRA DIV: WHATSAPP DIRECT PORTAL ACCESS NOTIFICATION */}
                     <div className="crm-whatsapp-portal-card">
                       <div className="whatsapp-card-badge-row">
                         <span className="whatsapp-pill">
                           <WhatsAppIcon size={13} /> WHATSAPP DIRECT ACCESS
                         </span>
                         <span className="whatsapp-status-tag">
-                          {designer.phone || designer.contact ? "WhatsApp Ready" : "Contact On File"}
+                          {designer.phone || designer.contact
+                            ? "WhatsApp Ready"
+                            : "Contact On File"}
                         </span>
                       </div>
 
                       <div className="whatsapp-card-content">
                         <div className="whatsapp-card-info">
                           <h4 className="whatsapp-designer-title">
-                            {designer.brand_name || designer.designer_name} Company Access
+                            {designer.brand_name || designer.designer_name} Company
+                            Access
                           </h4>
                           <p className="whatsapp-designer-desc">
-                            Company details confirmed: <strong>{COMPANY_GST_INFO.name}</strong> · GST: <strong>{maskGstNumber(designer.gst_number || designer.gst || COMPANY_GST_INFO.gstNumber)}</strong> · City: <strong>{designer.city || "Corporate Hub"}</strong>
+                            Company details confirmed:{" "}
+                            <strong>{COMPANY_GST_INFO.name}</strong> · GST:{" "}
+                            <strong>
+                              {maskGstNumber(
+                                designer.gst_number ||
+                                  designer.gst ||
+                                  COMPANY_GST_INFO.gstNumber
+                              )}
+                            </strong>{" "}
+                            · City: <strong>{designer.city || "Corporate Hub"}</strong>
                           </p>
                           <span className="whatsapp-phone-hint">
-                            📱 Registered contact: <strong>{designer.phone || designer.contact || designer.email || "No phone added"}</strong>
+                            📱 Registered contact:{" "}
+                            <strong>
+                              {designer.phone ||
+                                designer.contact ||
+                                designer.email ||
+                                "No phone added"}
+                            </strong>
                           </span>
                         </div>
 
@@ -1159,9 +1210,7 @@ _Team ZENVE Creator Operations_`;
                       </div>
                     </div>
 
-                    {/* Bottom Row: Follow-Up Tasks (Left) & Controls (Right) */}
                     <div className="designer-bottom-grid">
-                      {/* Left: Follow-up Tasks */}
                       <div className="crm-col-box">
                         <span className="label-caps">Follow-up tasks</span>
                         {tasks.length === 0 ? (
@@ -1174,7 +1223,7 @@ _Team ZENVE Creator Operations_`;
                                 !isDone &&
                                 task.due_date &&
                                 task.due_date <
-                                new Date().toISOString().split("T")[0];
+                                  new Date().toISOString().split("T")[0];
                               return (
                                 <li key={task.id} className="task-row-item">
                                   <input
@@ -1185,8 +1234,9 @@ _Team ZENVE Creator Operations_`;
                                     }
                                   />
                                   <span
-                                    className={`task-title ${isDone ? "done" : ""
-                                      }`}
+                                    className={`task-title ${
+                                      isDone ? "done" : ""
+                                    }`}
                                   >
                                     {task.title || task.text}
                                   </span>
@@ -1196,9 +1246,7 @@ _Team ZENVE Creator Operations_`;
                                     </span>
                                   )}
                                   {isOverdue && (
-                                    <span className="tone-badge bad">
-                                      Overdue
-                                    </span>
+                                    <span className="tone-badge bad">Overdue</span>
                                   )}
                                 </li>
                               );
@@ -1206,7 +1254,6 @@ _Team ZENVE Creator Operations_`;
                           </ul>
                         )}
 
-                        {/* Add task inline */}
                         <div className="task-add-row">
                           <input
                             type="text"
@@ -1247,7 +1294,6 @@ _Team ZENVE Creator Operations_`;
                         </div>
                       </div>
 
-                      {/* Right: Sales Controls */}
                       <div className="crm-controls-grid">
                         <div className="crm-control-item">
                           <span className="label-caps">Sales owner</span>
@@ -1275,10 +1321,14 @@ _Team ZENVE Creator Operations_`;
                             value={designer.online_membership_plan || ""}
                             onChange={(e) => {
                               const plan = FASHION_CREDIT_PLANS.find(
-                                (p) => p.id.toUpperCase() === e.target.value.toUpperCase()
+                                (p) =>
+                                  p.id.toUpperCase() ===
+                                  e.target.value.toUpperCase()
                               );
                               handleUpdateField(designer.id, {
-                                online_membership_plan: e.target.value ? e.target.value.toUpperCase() : null,
+                                online_membership_plan: e.target.value
+                                  ? e.target.value.toUpperCase()
+                                  : null,
                                 credit_points: plan ? plan.pointsNum : 0,
                               });
                             }}
@@ -1301,7 +1351,10 @@ _Team ZENVE Creator Operations_`;
                             value={designer.renewal_likelihood ?? ""}
                             onChange={(e) =>
                               handleUpdateField(designer.id, {
-                                renewal_likelihood: e.target.value === "" ? 0 : Number(e.target.value),
+                                renewal_likelihood:
+                                  e.target.value === ""
+                                    ? 0
+                                    : Number(e.target.value),
                               })
                             }
                           />
@@ -1338,7 +1391,7 @@ _Team ZENVE Creator Operations_`;
           )}
         </section>
 
-        {/* 3. ADD A DESIGNER LEAD (15 Fields) */}
+        {/* 3. ADD A DESIGNER LEAD */}
         <section className="crm-panel">
           <div className="crm-panel-header">
             <div className="crm-panel-title-block">
@@ -1348,8 +1401,6 @@ _Team ZENVE Creator Operations_`;
               </p>
             </div>
           </div>
-
-
 
           <form onSubmit={handleCreateLead} className="lead-form-grid">
             <div className="lead-form-field">
@@ -1585,14 +1636,16 @@ _Team ZENVE Creator Operations_`;
               </div>
               <input
                 type="text"
-                className={`lead-input ${useCompanyGst ? "input-company-gst" : ""}`}
+                className={`lead-input ${
+                  useCompanyGst ? "input-company-gst" : ""
+                }`}
                 placeholder="27AAAAA0000A1Z5 (or use company GST)"
                 value={
                   newLead.gst === COMPANY_GST_INFO.gstNumber
                     ? maskGstNumber(newLead.gst)
                     : newLead.gst === "COMPANY_GST_REQUESTED"
-                      ? "Creation Requested (Company creating GST)"
-                      : newLead.gst
+                    ? "Creation Requested (Company creating GST)"
+                    : newLead.gst
                 }
                 onChange={(e) => {
                   const val = e.target.value;
@@ -1616,7 +1669,8 @@ _Team ZENVE Creator Operations_`;
                       } else {
                         setUseCompanyGst(false);
                         if (
-                          newLead.gst.trim().toUpperCase() === COMPANY_GST_INFO.gstNumber ||
+                          newLead.gst.trim().toUpperCase() ===
+                            COMPANY_GST_INFO.gstNumber ||
                           newLead.gst === "COMPANY_GST_REQUESTED"
                         ) {
                           setNewLead({ ...newLead, gst: "" });
@@ -1624,7 +1678,10 @@ _Team ZENVE Creator Operations_`;
                       }
                     }}
                   />
-                  <span>Designer doesn't have a GST number? (Use / Request Company GST)</span>
+                  <span>
+                    Designer doesn't have a GST number? (Use / Request Company
+                    GST)
+                  </span>
                 </label>
                 {useCompanyGst && (
                   <button
@@ -1646,151 +1703,168 @@ _Team ZENVE Creator Operations_`;
                 Create lead
               </button>
             </div>
-          </form >
-        </section >
-      </main >
+          </form>
+        </section>
+      </main>
 
-    {/* COMPANY GST INFORMATION & CONFIRMATION MODAL */ }
-  {
-    showGstModal && (
-      <div className="gst-modal-overlay" onClick={handleCloseGstModal}>
-        <div className="gst-modal" onClick={(e) => e.stopPropagation()}>
-          <div className="gst-modal-header">
-            <div className="gst-modal-icon-badge">
-              <svg
-                width="26"
-                height="26"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                <path d="m9 12 2 2 4-4" />
-              </svg>
-            </div>
-            <div className="gst-modal-title-wrap">
-              <span className="gst-modal-badge">PLATFORM TAX COMPLIANCE</span>
-              <h3 className="gst-modal-title">Company GST Coverage & Creation</h3>
-              <p className="gst-modal-desc">
-                Assign our master company GST number or request our company to create a new dedicated GST number for this designer.
-              </p>
-            </div>
-            <button
-              type="button"
-              className="gst-modal-close-btn"
-              onClick={handleCloseGstModal}
-              aria-label="Close dialog"
-            >
-              &times;
-            </button>
-          </div>
-
-          <div className="gst-modal-body">
-            {/* Option 1: Master Company GSTIN (Masked for Security) */}
-            <div className="gst-company-card">
-              <div className="gst-company-row">
-                <span className="gst-field-label">Master Legal Entity</span>
-                <span className="gst-field-val strong">{COMPANY_GST_INFO.name}</span>
+      {/* COMPANY GST INFORMATION & CONFIRMATION MODAL */}
+      {showGstModal && (
+        <div className="gst-modal-overlay" onClick={handleCloseGstModal}>
+          <div className="gst-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="gst-modal-header">
+              <div className="gst-modal-icon-badge">
+                <svg
+                  width="26"
+                  height="26"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  <path d="m9 12 2 2 4-4" />
+                </svg>
               </div>
-              <div className="gst-company-row">
-                <span className="gst-field-label">Company GSTIN</span>
-                <span className="gst-field-val gst-code-val">
-                  <code>{maskGstNumber(COMPANY_GST_INFO.gstNumber)}</code>
-                  <span className="gst-active-pill">ACTIVE · VERIFIED</span>
-                </span>
+              <div className="gst-modal-title-wrap">
+                <span className="gst-modal-badge">PLATFORM TAX COMPLIANCE</span>
+                <h3 className="gst-modal-title">Company GST Coverage & Creation</h3>
+                <p className="gst-modal-desc">
+                  Assign our master company GST number or request our company to
+                  create a new dedicated GST number for this designer.
+                </p>
               </div>
-              <div className="gst-company-row">
-                <span className="gst-field-label">Security Mask</span>
-                <span className="gst-field-val" style={{ color: "#786d5e", fontSize: "12px" }}>
-                  Protected for security (Only last 4 digits shown)
-                </span>
-              </div>
-              <div className="gst-company-row">
-                <span className="gst-field-label">Jurisdiction</span>
-                <span className="gst-field-val">{COMPANY_GST_INFO.state}</span>
-              </div>
-            </div>
-
-            {/* Option 2: Request Company-Side Creation for this Designer */}
-            <div className="gst-request-box">
-              <div className="gst-request-box-header">
-                <span className="gst-request-badge">CREATE NEW GST</span>
-                <h4 className="gst-request-title">Request Company to Create New GST for Designer</h4>
-              </div>
-              <p className="gst-request-desc">
-                Does this designer need their own dedicated company-developed GST number? Submit a request and our company tax team will register a new compliant GSTIN for this designer.
-              </p>
               <button
                 type="button"
-                className="btn-request-company-gst"
-                onClick={handleRequestCompanyGstCreation}
+                className="gst-modal-close-btn"
+                onClick={handleCloseGstModal}
+                aria-label="Close dialog"
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                Request Company to Create New GST for This Designer
+                &times;
               </button>
             </div>
 
-            {/* Confirmation Question */}
-            <div className="gst-confirm-box">
-              <p className="gst-confirm-question">
-                Or apply our existing company master GST (<strong>{maskGstNumber(COMPANY_GST_INFO.gstNumber)}</strong>) for{" "}
-                <strong>
-                  {gstModalTarget === "newLead"
-                    ? newLead.brand || newLead.name || "this new designer lead"
-                    : gstModalTarget?.brand_name ||
-                    gstModalTarget?.designer_name ||
-                    "this designer"}
-                </strong> immediately?
-              </p>
+            <div className="gst-modal-body">
+              <div className="gst-company-card">
+                <div className="gst-company-row">
+                  <span className="gst-field-label">Master Legal Entity</span>
+                  <span className="gst-field-val strong">
+                    {COMPANY_GST_INFO.name}
+                  </span>
+                </div>
+                <div className="gst-company-row">
+                  <span className="gst-field-label">Company GSTIN</span>
+                  <span className="gst-field-val gst-code-val">
+                    <code>{maskGstNumber(COMPANY_GST_INFO.gstNumber)}</code>
+                    <span className="gst-active-pill">ACTIVE · VERIFIED</span>
+                  </span>
+                </div>
+                <div className="gst-company-row">
+                  <span className="gst-field-label">Security Mask</span>
+                  <span
+                    className="gst-field-val"
+                    style={{ color: "#786d5e", fontSize: "12px" }}
+                  >
+                    Protected for security (Only last 4 digits shown)
+                  </span>
+                </div>
+                <div className="gst-company-row">
+                  <span className="gst-field-label">Jurisdiction</span>
+                  <span className="gst-field-val">{COMPANY_GST_INFO.state}</span>
+                </div>
+              </div>
+
+              <div className="gst-request-box">
+                <div className="gst-request-box-header">
+                  <span className="gst-request-badge">CREATE NEW GST</span>
+                  <h4 className="gst-request-title">
+                    Request Company to Create New GST for Designer
+                  </h4>
+                </div>
+                <p className="gst-request-desc">
+                  Does this designer need their own dedicated company-developed GST
+                  number? Submit a request and our company tax team will register a
+                  new compliant GSTIN for this designer.
+                </p>
+                <button
+                  type="button"
+                  className="btn-request-company-gst"
+                  onClick={handleRequestCompanyGstCreation}
+                >
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                  Request Company to Create New GST for This Designer
+                </button>
+              </div>
+
+              <div className="gst-confirm-box">
+                <p className="gst-confirm-question">
+                  Or apply our existing company master GST (
+                  <strong>{maskGstNumber(COMPANY_GST_INFO.gstNumber)}</strong>) for{" "}
+                  <strong>
+                    {gstModalTarget === "newLead"
+                      ? newLead.brand ||
+                        newLead.name ||
+                        "this new designer lead"
+                      : gstModalTarget?.brand_name ||
+                        gstModalTarget?.designer_name ||
+                        "this designer"}
+                  </strong>{" "}
+                  immediately?
+                </p>
+              </div>
+            </div>
+
+            <div className="gst-modal-actions">
+              <button
+                type="button"
+                className="btn-modal-yes"
+                onClick={handleConfirmCompanyGst}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                Yes, Use Company GST ({COMPANY_GST_INFO.gstNumber.slice(-4)})
+              </button>
+              <button
+                type="button"
+                className="btn-modal-request"
+                onClick={handleRequestCompanyGstCreation}
+              >
+                + Request New Company GST
+              </button>
+              <button
+                type="button"
+                className="btn-modal-no"
+                onClick={handleCloseGstModal}
+              >
+                No, Cancel
+              </button>
             </div>
           </div>
-
-          {/* Modal Actions: Apply Existing / Request New / Cancel */}
-          <div className="gst-modal-actions">
-            <button
-              type="button"
-              className="btn-modal-yes"
-              onClick={handleConfirmCompanyGst}
-            >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-              Yes, Use Company GST ({COMPANY_GST_INFO.gstNumber.slice(-4)})
-            </button>
-            <button
-              type="button"
-              className="btn-modal-request"
-              onClick={handleRequestCompanyGstCreation}
-            >
-              + Request New Company GST
-            </button>
-            <button
-              type="button"
-              className="btn-modal-no"
-              onClick={handleCloseGstModal}
-            >
-              No, Cancel
-            </button>
-          </div>
         </div>
-      </div>
-    )
-  }
-    </div >
+      )}
+    </div>
   );
 }

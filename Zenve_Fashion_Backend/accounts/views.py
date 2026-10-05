@@ -1,4 +1,3 @@
-
 import random
 import secrets
 
@@ -179,6 +178,22 @@ class LoginAPIView(APIView):
             role = None
 
 
+        # Get Layers this role can open (stored in database)
+
+        try:
+
+            layers = list(
+                user.user_role.role.layer_access.values_list(
+                    "layer",
+                    flat=True
+                )
+            )
+
+        except Exception:
+
+            layers = []
+
+
 
         return Response(
             {
@@ -203,7 +218,10 @@ class LoginAPIView(APIView):
                 user.last_name,
 
                 "role":
-                role
+                role,
+
+                "layers":
+                layers
             },
 
             status=status.HTTP_200_OK

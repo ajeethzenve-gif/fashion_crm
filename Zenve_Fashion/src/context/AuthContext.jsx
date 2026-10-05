@@ -1,127 +1,80 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { loginRequest, normalizeSession, saveTokens, clearTokens } from "../services/authApi";
 
-export const ROLES = [
-  {
-    id: "admin",
-    name: "Executive Admin",
-    shortRole: "Admin",
-    user: "Priya Raghavan",
-    email: "priya.raghavan@zenve.in",
-    department: "Executive & Governance",
-    landingPath: "/command-centre",
-    description: "Full clearance across all 12 operational layers, approvals, and system controls.",
-    badgeClass: "admin",
-    clearance: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
-  },
-  {
-    id: "designer",
-    name: "Brand Designer",
-    shortRole: "Designer",
-    user: "Aarav Mehta",
-    brand: "Aarav Pet Atelier",
-    email: "aarav@petatelier.in",
-    department: "External Supply Partner",
-    landingPath: "/designer-portal",
-    description: "Supply layer partner portal, SKU uploads, live inventory, and settlements.",
-    badgeClass: "designer",
-    clearance: ["02", "03", "06"],
-  },
-  {
-    id: "merchandiser",
-    name: "Merchandising & CRM",
-    shortRole: "Merchandiser",
-    user: "Ananya Roy",
-    email: "ananya.roy@zenve.in",
-    department: "Supply & Brand Acquisition",
-    landingPath: "/designer-crm",
-    description: "Brand lead pipeline, designer onboarding, KYC review, and contracts.",
-    badgeClass: "merchandiser",
-    clearance: ["01", "03", "10"],
-  },
-  {
-    id: "qa",
-    name: "Catalogue QA Lead",
-    shortRole: "Catalogue QA",
-    user: "Rohan Varma",
-    email: "rohan.varma@zenve.in",
-    department: "Quality & Media Standards",
-    landingPath: "/catalogueqa",
-    description: "SKU specification validation, media quality checks, and approval audit trail.",
-    badgeClass: "qa",
-    clearance: ["03", "04"],
-  },
-  {
-    id: "inventory",
-    name: "Inventory & Logistics",
-    shortRole: "Inventory Ops",
-    user: "Vikram Singh",
-    email: "vikram.singh@zenve.in",
-    department: "Warehouse & Fulfillment",
-    landingPath: "/inventory",
-    description: "Stock receipts, physical vs reserved counts, damage quarantine, and returns.",
-    badgeClass: "inventory",
-    clearance: ["05", "07", "08", "09"],
-  },
-  {
-    id: "finance",
-    name: "Finance Controller",
-    shortRole: "Finance",
-    user: "Neha Kapoor",
-    email: "neha.kapoor@zenve.in",
-    department: "Settlement & Accounting",
-    landingPath: "/settlement",
-    description: "Take-rate calculation, designer payout reconciliation, and escrow management.",
-    badgeClass: "finance",
-    clearance: ["07", "10", "11"],
-  },
-];
+
+const SESSION_KEY = "zenve_session";
+const LEGACY_KEY = "zenve_auth_user";
+
+// Kept empty only so old imports do not break. Roles now come from the database.
+export const ROLES = [];
+
+const LAYER_PATH_MAP = {
+  "/designer-crm": "01",
+  "/designer-portal": "02",
+  "/catalogue": "03",
+  "/catalogueqa": "04",
+  "/catalogue-qa": "04",
+  "/inventory": "05",
+  "/storefront": "06",
+  "/orders": "07",
+  "/delivery": "08",
+  "/returns": "09",
+  "/settlement": "10",
+  "/analytics": "11",
+  "/command-centre": "12",
+};
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(() => {
     try {
-      const saved = localStorage.getItem("zenve_auth_user");
+      localStorage.removeItem(LEGACY_KEY); // remove old mock session
+      const saved = sessionStorage.getItem(SESSION_KEY);
       if (saved) {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (parsed && Array.isArray(parsed.clearance)) return parsed;
       }
     } catch {
-      // Fallback
+      // ignore
     }
-    return ROLES[0]; // Default to Admin
+    return null; // nobody logged in
   });
 
   useEffect(() => {
     try {
-      localStorage.setItem("zenve_auth_user", JSON.stringify(currentUser));
+      if (currentUser) {
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
+      } else {
+        sessionStorage.removeItem(SESSION_KEY);
+      }
     } catch (e) {
       console.error("Could not persist auth state", e);
     }
   }, [currentUser]);
 
-  const loginWithRole = (roleId) => {
-    const found = ROLES.find((r) => r.id === roleId) || ROLES[0];
-    setCurrentUser(found);
-    return found;
-  };
+  // Real login: username + password are checked by the backend.
+  // The role and allowed layers come back from the database.
+  const login = async (username, password) => {
+    try {
+      const data = await loginRequest(username.trim(), password);
+      const { user, tokens } = normalizeSession(data);
 
-  const loginCustom = (email, password, roleId) => {
-    const roleObj = ROLES.find((r) => r.id === roleId) || ROLES[0];
-    const updated = {
-      ...roleObj,
-      email: email || roleObj.email,
-    };
-    setCurrentUser(updated);
-    return updated;
+      if (user.clearance.length === 0) {
+        return { ok: false, error: "No layers are assigned to your role. Please contact the admin." };
+      }
+
+      saveTokens(tokens);
+      setCurrentUser(user);
+      return { ok: true, user };
+    } catch (err) {
+      return { ok: false, error: err.message || "Login failed." };
+    }
   };
 
   const logout = () => {
+    clearTokens();
     setCurrentUser(null);
-    try {
-      localStorage.removeItem("zenve_auth_user");
-    } catch {
-      // Ignore
-    }
   };
 
   const hasAccess = (layerNum) => {
@@ -132,32 +85,18 @@ export function AuthProvider({ children }) {
 
   const canAccessPath = (path) => {
     if (!currentUser) return false;
-    const layerPathMap = {
-      "/designer-crm": "01",
-      "/designer-portal": "02",
-      "/catalogue": "03",
-      "/catalogueqa": "04",
-      "/inventory": "05",
-      "/storefront": "06",
-      "/orders": "07",
-      "/delivery": "08",
-      "/returns": "09",
-      "/settlement": "10",
-      "/analytics": "11",
-      "/command-centre": "12",
-    };
-    const layerNum = layerPathMap[path];
-    if (!layerNum) return true; // public / unspecified
+    const layerNum = LAYER_PATH_MAP[path];
+    if (!layerNum) return true;
     return hasAccess(layerNum);
   };
 
   return (
     <AuthContext.Provider
       value={{
-        currentUser: currentUser || ROLES[0],
+        currentUser,
+        isLoggedIn: !!currentUser,
         ROLES,
-        loginWithRole,
-        loginCustom,
+        login,
         logout,
         hasAccess,
         canAccessPath,
