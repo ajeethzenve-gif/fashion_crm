@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth, ROLES } from "../context/AuthContext";
-import { getDesigners } from "../services/api";
+import { API_BASE_URL, getDesigners } from "../services/api";
 import "../styles/DesignerLogin.css";
 import designerBg from "../assest/designer-bg.png";
 
@@ -153,7 +153,7 @@ export default function DesignerLogin() {
   const [phone, setPhone] = useState("");
   const [countryCode, setCountryCode] = useState("+91");
   const [otpSent, setOtpSent] = useState(false);
-  const [generatedOtp, setGeneratedOtp] = useState("");
+
   const [otpDigits, setOtpDigits] = useState(["", "", "", "", "", ""]);
   const [countdown, setCountdown] = useState(0);
   const [isSendingOtp, setIsSendingOtp] = useState(false);
@@ -296,7 +296,7 @@ export default function DesignerLogin() {
       console.warn("Storage warning:", e);
     }
 
-    loginWithRole("designer");
+    loginWithRole("designer", authenticatedDesigner);
     setSuccessMsg(`Welcome, ${targetName}! Redirecting to your Designer Studio...`);
 
     setTimeout(() => {
@@ -308,79 +308,40 @@ export default function DesignerLogin() {
      METHOD 1: SEND OTP HANDLER
      ========================================================= */
 
-  const handleSendOtp = (e) => {
-    if (e) e.preventDefault();
-    setErrorMsg("");
-    setSuccessMsg("");
-
-    const cleanPhone = phone.replace(/[\s\-\(\)]/g, "");
-    if (!cleanPhone || cleanPhone.length < 8) {
-      setErrorMsg("Please enter a valid 10-digit mobile number.");
-      return;
-    }
-
-    setIsSendingOtp(true);
-
-    setTimeout(() => {
-      // Generate a 6-digit OTP code (e.g. 849201 or 123456)
-      const code = Math.floor(100000 + Math.random() * 900000).toString();
-      setGeneratedOtp(code);
-      setOtpSent(true);
-      setCountdown(30);
-      setIsSendingOtp(false);
-      setSuccessMsg(`OTP sent to ${countryCode} ${cleanPhone}. (Demo Verification OTP: ${code})`);
-
-      // Automatically focus first OTP cell
-      setTimeout(() => {
-        otpInputRefs.current[0]?.focus();
-      }, 100);
-    }, 600);
+  const designerAuthRequest = async (action, payload) => {
+    const response = await fetch(`${API_BASE_URL}/designer/${action}/`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || "Unable to sign in.");
+    return data;
   };
 
-  /* =========================================================
-     METHOD 1: VERIFY OTP HANDLER
-     ========================================================= */
-
-  const handleVerifyOtp = (e) => {
+  const handleSendOtp = async (e) => {
     if (e) e.preventDefault();
-    setErrorMsg("");
-    setSuccessMsg("");
+    setErrorMsg(""); setSuccessMsg(""); setIsSendingOtp(true);
+    try {
+      const data = await designerAuthRequest("send-otp", { phone_number: `${countryCode}${phone}` });
+      setOtpSent(true); setOtpDigits(["", "", "", "", "", ""]);
+      setCountdown(data.retry_after || 30); setSuccessMsg(data.message);
+      otpInputRefs.current[0]?.focus();
+    } catch (err) { setErrorMsg(err.message); }
+    finally { setIsSendingOtp(false); }
+  };
 
-    const enteredOtp = otpDigits.join("");
-    if (enteredOtp.length !== 6) {
-      setErrorMsg("Please enter all 6 digits of the OTP.");
-      return;
-    }
-
-    // Check if matches generated OTP or universal testing passcode "123456"
-    if (enteredOtp !== generatedOtp && enteredOtp !== "123456") {
-      setErrorMsg("Invalid OTP code. Please enter the 6-digit code shown or '123456'.");
-      return;
-    }
-
-    setIsVerifyingOtp(true);
-
-    setTimeout(() => {
-      setIsVerifyingOtp(false);
-
-      // Match phone to registered designer or default to primary designer
-      const cleanPhone = phone.replace(/[\s\-\(\)\+]/g, "");
-      const matched = registeredDesigners.find((d) => {
-        if (!d.phone) return false;
-        const p = String(d.phone).replace(/[\s\-\(\)\+]/g, "");
-        return p.includes(cleanPhone) || cleanPhone.includes(p);
+  const handleVerifyOtp = async (e) => {
+    if (e) e.preventDefault();
+    setErrorMsg(""); setSuccessMsg(""); setIsVerifyingOtp(true);
+    try {
+      const data = await designerAuthRequest("verify-otp", {
+        phone_number: `${countryCode}${phone}`, otp: otpDigits.join(""),
       });
-
-      const designer = matched || registeredDesigners[0] || {
-        id: 19,
-        designer_name: "Aarav Mehta",
-        brand_name: "Aarav Pet Atelier",
-        email: "aarav@petatelier.in",
-        phone: phone,
-      };
-
-      completeDesignerLogin(designer);
-    }, 800);
+      localStorage.setItem("access_token", data.access);
+      localStorage.setItem("refresh_token", data.refresh);
+      completeDesignerLogin(data.designer);
+    } catch (err) { setErrorMsg(err.message); }
+    finally { setIsVerifyingOtp(false); }
   };
 
   /* =========================================================
@@ -402,37 +363,7 @@ export default function DesignerLogin() {
       return;
     }
 
-    // STRICT CHECK: Ensure only designers can log in here!
-    const nonDesignerStaff = ["priya.raghavan@zenve.in", "admin", "neha.kapoor@zenve.in", "rohan.varma@zenve.in", "vikram.singh@zenve.in"];
-    if (nonDesignerStaff.includes(term)) {
-      setErrorMsg("Access restricted: This portal is exclusively for Zenve Brand Designers. Staff personnel please sign in through the Staff CRM Login.");
-      return;
-    }
-
-    setIsSubmittingCredentials(true);
-
-    setTimeout(() => {
-      setIsSubmittingCredentials(false);
-
-      // Search registered designers by code, name, or email
-      const matched = registeredDesigners.find(
-        (d) =>
-          d.email?.toLowerCase() === term ||
-          d.designer_code?.toLowerCase() === term ||
-          d.designer_name?.toLowerCase().includes(term) ||
-          d.brand_name?.toLowerCase().includes(term)
-      );
-
-      // If entered term is designer or demo, authenticate
-      const designer = matched || {
-        id: 19,
-        designer_name: username.includes("@") ? username.split("@")[0] : username,
-        brand_name: "Exclusive Pet Atelier",
-        email: username.includes("@") ? username : `${username}@petatelier.in`,
-      };
-
-      completeDesignerLogin(designer);
-    }, 700);
+    setErrorMsg("Use mobile OTP login. Password login is unavailable for designer accounts.");
   };
 
   // Quick Demo Autofill Helper
@@ -441,11 +372,9 @@ export default function DesignerLogin() {
     setSuccessMsg("");
     if (activeTab === "phone") {
       setPhone(designer.phone || "9820011223");
-      const demoCode = "123456";
-      setGeneratedOtp(demoCode);
-      setOtpSent(true);
-      setOtpDigits(["1", "2", "3", "4", "5", "6"]);
-      setSuccessMsg(`Loaded demo for ${designer.designer_name} (${designer.phone || "9820011223"}). Click 'Verify OTP' to sign in!`);
+      setOtpSent(false);
+      setOtpDigits(["", "", "", "", "", ""]);
+      setSuccessMsg("Mobile number filled. Request an OTP to sign in.");
     } else {
       setUsername(designer.email || designer.designer_code || "aarav@petatelier.in");
       setPassword("ZenveDesigner@2026");
@@ -631,11 +560,6 @@ export default function DesignerLogin() {
                       </button>
                     )}
                   </span>
-                  {generatedOtp && (
-                    <span style={{ color: "#b78a3c", fontWeight: 600 }}>
-                      Code: {generatedOtp}
-                    </span>
-                  )}
                 </div>
               )}
 

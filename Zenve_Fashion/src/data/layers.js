@@ -97,7 +97,13 @@ export const layers = [
 
 
   },
-  { n: "13", group: "Media", name: "Media Studio", blurb: "Designer originals, Figma creatives, image delivery and review", path: "/media" },
+  {
+    n: "13",
+    group: "Media",
+    name: "Media Studio",
+    blurb: "Designer originals, Figma creatives, image delivery and review",
+    path: "/media",
+  },
 
     {
     n: "14",

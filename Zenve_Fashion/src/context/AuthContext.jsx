@@ -102,9 +102,9 @@ export function AuthProvider({ children }) {
     }
   }, [currentUser]);
 
-  const loginWithRole = (roleId) => {
+  const loginWithRole = (roleId, profile = {}) => {
     const found = ROLES.find((r) => r.id === roleId) || ROLES[0];
-    setCurrentUser(found);
+    setCurrentUser({ ...found, ...profile });
     return found;
   };
 

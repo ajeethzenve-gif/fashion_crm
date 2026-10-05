@@ -2265,7 +2265,9 @@ export default function DesignerPortal() {
         </div>
       ) : (
         <main className="ZENVE-portal-main">
-          {selectedDesignerId && <MediaWorkspace key={selectedDesignerId} designerId={selectedDesignerId} />}
+          {!showProfileAndAccount && selectedDesignerId && (
+            <MediaWorkspace key={selectedDesignerId} designerId={selectedDesignerId} />
+          )}
           {/* ===================================================
               DASHBOARD
           =================================================== */}
