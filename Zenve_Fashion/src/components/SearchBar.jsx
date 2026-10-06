@@ -503,26 +503,7 @@ function SearchBar() {
         )}
       </div>
 
-      {/* =================================================
-          USER INFORMATION (SWITCH ROLE / LOGIN)
-      ================================================= */}
-
-      <Link
-        to="/login"
-        className="home-user"
-        title="Click to switch role or sign in"
-      >
-        <UserIcon />
-
-        <span className="home-user-name">
-          {currentUser ? currentUser.user : "Sign In"}
-        </span>
-
-        <span className="home-admin">
-          {currentUser ? currentUser.shortRole : "Role"}
-        </span>
-      </Link>
-
+      {/* User profile button has been moved to the Sidebar */}
     </div>
   );
 }
