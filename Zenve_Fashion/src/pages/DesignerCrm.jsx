@@ -446,7 +446,7 @@ _Team ZENVE Creator Operations_`;
     } catch (error) {
       showErrorToast(
         error.message ||
-          (unfreezing ? "Could not unfreeze designer." : "Could not freeze designer.")
+        (unfreezing ? "Could not unfreeze designer." : "Could not freeze designer.")
       );
     } finally {
       setFreezingDesignerId(null);

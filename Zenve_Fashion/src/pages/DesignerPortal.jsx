@@ -2633,7 +2633,7 @@ export default function DesignerPortal() {
                     <div
                       style={{
                         padding: "20px",
-                        background: "#ffffff",
+                        background: "#FFFCF5",
                         borderRadius: "8px",
                         border: "1px solid var(--ZENVE-line, #e2ddd5)",
                         fontSize: "13px",
@@ -2655,7 +2655,7 @@ export default function DesignerPortal() {
                   <div
                     style={{
                       padding: "20px",
-                      background: "#ffffff",
+                      background: "#FFFCF5",
                       borderRadius: "8px",
                       border: "1px solid var(--ZENVE-line, #e2ddd5)",
                       fontSize: "13px",
@@ -3727,7 +3727,7 @@ export default function DesignerPortal() {
 
                                 background: selected
                                   ? "#eef3ff"
-                                  : "#ffffff",
+                                  : "#FFFCF5",
 
                                 color: selected
                                   ? "#1238c7"
@@ -3806,7 +3806,7 @@ export default function DesignerPortal() {
                             background:
                               form.offlineEnabled
                                 ? "#edf9f1"
-                                : "#ffffff",
+                                : "#FFFCF5",
 
                             color:
                               form.offlineEnabled
@@ -3878,7 +3878,7 @@ export default function DesignerPortal() {
                                 padding: "14px 18px",
                                 border: "1px solid #e4e7ee",
                                 borderRadius: "10px",
-                                background: "#ffffff",
+                                background: "#FFFCF5",
                               }}
                             >
                               {/* SIZE */}
@@ -3893,7 +3893,7 @@ export default function DesignerPortal() {
                                     alignItems: "center",
                                     fontWeight: "700",
                                     fontSize: "16px",
-                                    color: "#1c1917",
+                                    color: "#1F2937",
                                   }}
                                 >
                                   {size === "FREE" ? "Free" : size}
@@ -3968,7 +3968,7 @@ export default function DesignerPortal() {
                                     alignItems: "center",
                                     fontWeight: "700",
                                     fontSize: "17px",
-                                    color: "#1c1917",
+                                    color: "#1F2937",
                                   }}
                                 >
                                   {sizeTotal}
@@ -4260,7 +4260,7 @@ export default function DesignerPortal() {
                                         "hidden",
 
                                       background:
-                                        "#fff",
+                                        "#FFFCF5",
                                     }}
                                   >
                                     <img
@@ -4321,7 +4321,7 @@ export default function DesignerPortal() {
                                           "rgba(0,0,0,0.7)",
 
                                         color:
-                                          "#fff",
+                                          "#FFFCF5",
 
                                         cursor:
                                           "pointer",
@@ -4935,7 +4935,7 @@ export default function DesignerPortal() {
             style={{
               width: "100%",
               maxWidth: "430px",
-              background: "#fff",
+              background: "#FFFCF5",
               borderRadius: "16px",
               padding: "26px",
               boxShadow:
@@ -4995,7 +4995,7 @@ export default function DesignerPortal() {
                 borderRadius: "8px",
                 padding: "10px 20px",
                 background: "#171717",
-                color: "#fff",
+                color: "#FFFCF5",
                 fontWeight: 600,
                 cursor: "pointer",
               }}

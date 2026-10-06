@@ -4,13 +4,13 @@
 ========================================================= */
 
 :root {
-  --ZENVE-paper: #fbf9f5;
-  --ZENVE-card: #ffffff;
-  --ZENVE-ink: #17130f;
-  --ZENVE-muted: #736b63;
-  --ZENVE-border: #e8e3da;
-  --ZENVE-border-hover: #c28b51;
-  --ZENVE-gold: #c28b51;
+  --ZENVE-paper: #FFF8E8;
+  --ZENVE-card: #FFFCF5;
+  --ZENVE-ink: #1F2937;
+  --ZENVE-muted: #6B5A45;
+  --ZENVE-border: #E7C77A;
+  --ZENVE-border-hover: #D4A017;
+  --ZENVE-gold: #D4A017;
   --ZENVE-gold-light: #fdfaf6;
   --ZENVE-font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
@@ -156,7 +156,7 @@
 
 .cc-header-btn.primary {
   background-color: var(--ZENVE-ink);
-  color: #ffffff;
+  color: #FFFCF5;
   border-color: var(--ZENVE-ink);
 }
 
@@ -629,8 +629,8 @@
   position: fixed;
   bottom: 24px;
   right: 24px;
-  background-color: #17130f;
-  color: #ffffff;
+  background-color: #1F2937;
+  color: #FFFCF5;
   padding: 12px 20px;
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);

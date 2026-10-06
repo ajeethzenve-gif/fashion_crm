@@ -18,7 +18,7 @@ export const showSuccessToast = (text, title = "") => {
     showConfirmButton: false,
     timer: 3500,
     timerProgressBar: true,
-    background: "#ffffff",
+    background: "#FFFCF5",
     customClass: {
       popup: "zenve-swal-toast zenve-swal-toast-success",
       title: "zenve-swal-toast-title",
@@ -36,7 +36,7 @@ export const showDesignerAcceptedToast = (productName = "", sku = "") => {
     title: "Images Accepted by Designer",
     html: `
       <div style="font-family: inherit; text-align: left; margin-top: 4px;">
-        <div style="font-size: 13px; font-weight: 600; color: #1c1917;">
+        <div style="font-size: 13px; font-weight: 600; color: #1F2937;">
           ${productName ? String(productName) : "Product Media Deliverables"}
         </div>
         ${sku ? `<div style="font-size: 11px; color: #78716c; font-family: monospace; margin-top: 2px;">SKU: ${sku}</div>` : ""}
@@ -48,7 +48,7 @@ export const showDesignerAcceptedToast = (productName = "", sku = "") => {
     showConfirmButton: false,
     timer: 4500,
     timerProgressBar: true,
-    background: "#ffffff",
+    background: "#FFFCF5",
     customClass: {
       popup: "zenve-swal-toast zenve-swal-toast-success zenve-swal-toast-accepted",
       title: "zenve-swal-toast-title",
@@ -69,7 +69,7 @@ export const showErrorToast = (text, title = "") => {
     showConfirmButton: false,
     timer: 4500,
     timerProgressBar: true,
-    background: "#ffffff",
+    background: "#FFFCF5",
     customClass: {
       popup: "zenve-swal-toast zenve-swal-toast-error",
       title: "zenve-swal-toast-title",
@@ -90,7 +90,7 @@ export const showWarningToast = (text, title = "") => {
     showConfirmButton: false,
     timer: 4000,
     timerProgressBar: true,
-    background: "#ffffff",
+    background: "#FFFCF5",
     customClass: {
       popup: "zenve-swal-toast zenve-swal-toast-warning",
       title: "zenve-swal-toast-title",
@@ -111,7 +111,7 @@ export const showInfoToast = (text, title = "") => {
     showConfirmButton: false,
     timer: 3500,
     timerProgressBar: true,
-    background: "#ffffff",
+    background: "#FFFCF5",
     customClass: {
       popup: "zenve-swal-toast zenve-swal-toast-info",
       title: "zenve-swal-toast-title",

@@ -4,15 +4,15 @@
 ========================================================= */
 
 :root {
-  --ZENVE-paper: #fbf9f5;
-  --ZENVE-panel: #ffffff;
-  --ZENVE-line: #e8e3da;
-  --ZENVE-line-light: #f0ece5;
-  --ZENVE-ink: #17130f;
-  --ZENVE-muted: #736b63;
-  --ZENVE-gold: #c28b51;
-  --ZENVE-gold-dark: #a1703c;
-  --ZENVE-gold-light: #f5eedf;
+  --ZENVE-paper: #FFF8E8;
+  --ZENVE-panel: #FFFCF5;
+  --ZENVE-line: #E7C77A;
+  --ZENVE-line-light: #F4D58D;
+  --ZENVE-ink: #1F2937;
+  --ZENVE-muted: #6B5A45;
+  --ZENVE-gold: #D4A017;
+  --ZENVE-gold-dark: #B8860B;
+  --ZENVE-gold-light: #FFF1C7;
   --ZENVE-green: #2e7d32;
   --ZENVE-green-bg: #e8f5e9;
   --ZENVE-amber: #e65100;
@@ -114,7 +114,7 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
-  color: #ffffff;
+  color: #FFFCF5;
   background-color: var(--ZENVE-gold);
   border-radius: 4px;
   padding: 2px 7px;
@@ -291,7 +291,7 @@
 
 .ZENVE-pm-tile:hover {
   border-color: var(--ZENVE-gold);
-  background: #fff;
+  background: #FFFCF5;
 }
 
 .ZENVE-pm-tile.selected {
@@ -392,7 +392,7 @@
 
 .ZENVE-btn-primary {
   background: var(--ZENVE-ink);
-  color: #ffffff;
+  color: #FFFCF5;
 }
 
 .ZENVE-btn-primary:hover {
@@ -426,7 +426,7 @@
 /* Controls Bar */
 .ZENVE-accounting-controls-bar {
   padding: 14px 22px;
-  background: #faf8f5;
+  background: #FFF8E8;
   border-bottom: 1px solid var(--ZENVE-line-light);
   display: flex;
   flex-direction: column;
@@ -462,12 +462,12 @@
 .ZENVE-tab-btn:hover {
   color: var(--ZENVE-ink);
   border-color: #ccc;
-  background: #ffffff;
+  background: #FFFCF5;
 }
 
 .ZENVE-tab-btn.active {
   background: var(--ZENVE-ink);
-  color: #ffffff;
+  color: #FFFCF5;
   border-color: var(--ZENVE-ink);
 }
 
@@ -503,7 +503,7 @@
   border: 1px solid var(--ZENVE-line);
   border-radius: 6px;
   font-size: 12.5px;
-  background: #ffffff;
+  background: #FFFCF5;
   color: var(--ZENVE-ink);
   min-width: 220px;
 }
@@ -513,7 +513,7 @@
   border: 1px solid var(--ZENVE-line);
   border-radius: 6px;
   font-size: 12.5px;
-  background: #ffffff;
+  background: #FFFCF5;
   color: var(--ZENVE-ink);
 }
 
@@ -569,7 +569,7 @@
 
 .ZENVE-accounting-table th {
   padding: 12px 14px;
-  background: #faf8f5;
+  background: #FFF8E8;
   color: var(--ZENVE-muted);
   font-size: 11px;
   font-weight: 600;
@@ -724,7 +724,7 @@
 
 .ZENVE-action-btn.primary {
   background: var(--ZENVE-gold);
-  color: #ffffff;
+  color: #FFFCF5;
 }
 
 .ZENVE-action-btn.primary:hover {
@@ -867,7 +867,7 @@
 }
 
 .ZENVE-modal-card {
-  background: #ffffff;
+  background: #FFFCF5;
   border-radius: 12px;
   width: 100%;
   max-width: 580px;
@@ -978,7 +978,7 @@
 
 .ZENVE-modal-footer {
   padding: 14px 24px;
-  background: #faf8f5;
+  background: #FFF8E8;
   border-top: 1px solid var(--ZENVE-line-light);
   display: flex;
   align-items: center;

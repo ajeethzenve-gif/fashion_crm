@@ -5,15 +5,15 @@
 ========================================================= */
 
 :root {
-  --ZENVE-paper: #fbf9f5;
-  --ZENVE-card: #ffffff;
-  --ZENVE-ink: #17130f;
-  --ZENVE-muted: #736b63;
-  --ZENVE-border: #e8e3da;
-  --ZENVE-border-hover: #c28b51;
-  --ZENVE-gold: #c28b51;
+  --ZENVE-paper: #FFF8E8;
+  --ZENVE-card: #FFFCF5;
+  --ZENVE-ink: #1F2937;
+  --ZENVE-muted: #6B5A45;
+  --ZENVE-border: #E7C77A;
+  --ZENVE-border-hover: #D4A017;
+  --ZENVE-gold: #D4A017;
   --ZENVE-gold-light: #fdfaf6;
-  --ZENVE-secondary: #f5f2ec;
+  --ZENVE-secondary: #FFF8E8;
   --ZENVE-font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
@@ -41,11 +41,12 @@
 
 .ZENVE-header {
   width: 100%;
-  background-color: var(--ZENVE-card);
+  background: url('/header-bg.png') no-repeat center right;
+  background-size: cover;
   border-bottom: 1px solid var(--ZENVE-border);
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 50;
+  min-height: 140px;
 }
 
 .ZENVE-header-inner {
@@ -448,7 +449,7 @@
 .btn-crm-action.primary {
   background-color: var(--ZENVE-ink);
   border: 1px solid var(--ZENVE-ink);
-  color: #ffffff;
+  color: #FFFCF5;
 }
 
 .btn-crm-action.primary:hover {
@@ -686,7 +687,7 @@
   margin-top: 8px;
   padding: 8px 18px;
   background-color: var(--ZENVE-ink);
-  color: #ffffff;
+  color: #FFFCF5;
   border: 1px solid var(--ZENVE-ink);
   border-radius: 6px;
   font-size: 13px;
@@ -709,8 +710,8 @@
   position: fixed;
   bottom: 24px;
   right: 24px;
-  background-color: #17130f;
-  color: #ffffff;
+  background-color: #1F2937;
+  color: #FFFCF5;
   padding: 12px 20px;
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -758,12 +759,12 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: #c28b51;
+  background-color: #D4A017;
 }
 
 .input-company-gst {
-  border-color: #c28b51 !important;
-  background-color: #fdfbf7 !important;
+  border-color: #D4A017 !important;
+  background-color: #FFF8E8 !important;
   font-weight: 500;
   letter-spacing: 0.03em;
 }
@@ -786,12 +787,12 @@
 .lead-gst-checkbox-label input[type="checkbox"] {
   width: 15px;
   height: 15px;
-  accent-color: #c28b51;
+  accent-color: #D4A017;
   cursor: pointer;
 }
 
 .lead-gst-checkbox-label:hover span {
-  color: #c28b51;
+  color: #D4A017;
 }
 
 .designer-gst-code {
@@ -828,7 +829,7 @@
 }
 
 .crm-gst-assign-link:hover {
-  color: #17130f;
+  color: #1F2937;
 }
 
 /* =========================================================
@@ -863,7 +864,7 @@
 .gst-modal {
   width: 100%;
   max-width: 580px;
-  background: #ffffff;
+  background: #FFFCF5;
   border: 1px solid #ded7cc;
   border-radius: 12px;
   box-shadow: 0 20px 50px rgba(23, 19, 15, 0.25), 0 0 1px rgba(0, 0, 0, 0.1);
@@ -891,7 +892,7 @@
   gap: 16px;
   padding: 24px 28px 20px;
   border-bottom: 1px solid #ebe5dc;
-  background-color: #fdfbf7;
+  background-color: #FFF8E8;
   position: relative;
 }
 
@@ -998,7 +999,7 @@
 
 .gst-field-val.strong {
   font-weight: 600;
-  color: #17130f;
+  color: #1F2937;
 }
 
 .gst-code-val {
@@ -1030,7 +1031,7 @@
 }
 
 .gst-info-box {
-  background: #ffffff;
+  background: #FFFCF5;
   border: 1px solid #ebe5dc;
   border-radius: 8px;
   padding: 16px 18px;
@@ -1077,7 +1078,7 @@
 
 .gst-confirm-box {
   background: #faf6f0;
-  border-left: 3px solid #c28b51;
+  border-left: 3px solid #D4A017;
   padding: 12px 16px;
   border-radius: 0 6px 6px 0;
 }
@@ -1090,7 +1091,7 @@
 }
 
 .gst-confirm-question strong {
-  color: #17130f;
+  color: #1F2937;
 }
 
 .gst-modal-actions {
@@ -1100,7 +1101,7 @@
   gap: 12px;
   padding: 18px 28px;
   border-top: 1px solid #ebe5dc;
-  background-color: #fdfbf7;
+  background-color: #FFF8E8;
 }
 
 .btn-modal-yes {
@@ -1108,9 +1109,9 @@
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background-color: #17130f;
-  color: #ffffff;
-  border: 1px solid #17130f;
+  background-color: #1F2937;
+  color: #FFFCF5;
+  border: 1px solid #1F2937;
   border-radius: 6px;
   font-size: 13px;
   font-weight: 600;
@@ -1126,7 +1127,7 @@
 
 .btn-modal-no {
   padding: 10px 18px;
-  background-color: #ffffff;
+  background-color: #FFFCF5;
   color: #665c52;
   border: 1px solid #ded7cc;
   border-radius: 6px;
@@ -1139,7 +1140,7 @@
 .btn-modal-no:hover {
   border-color: #b5aba0;
   color: var(--ZENVE-ink);
-  background-color: #f7f4ef;
+  background-color: #FFF8E8;
 }
 
 .btn-modal-request {
@@ -1159,13 +1160,13 @@
 
 .btn-modal-request:hover {
   background-color: #92400e;
-  color: #ffffff;
+  color: #FFFCF5;
   border-color: #92400e;
   transform: translateY(-1px);
 }
 
 .gst-request-box {
-  background: #fffdf9;
+  background: #FFFCF5;
   border: 1px dashed #e2cba9;
   border-radius: 8px;
   padding: 14px 16px;
@@ -1194,7 +1195,7 @@
   margin: 0;
   font-size: 13.5px;
   font-weight: 600;
-  color: #17130f;
+  color: #1F2937;
 }
 
 .gst-request-desc {
@@ -1211,7 +1212,7 @@
   gap: 7px;
   padding: 8px 14px;
   background: #92400e;
-  color: #ffffff;
+  color: #FFFCF5;
   border: none;
   border-radius: 6px;
   font-size: 12.5px;
@@ -1319,7 +1320,7 @@
   gap: 8px;
   padding: 8px 16px;
   background-color: #25d366;
-  color: #ffffff;
+  color: #FFFCF5;
   border: 1px solid #1ebe5d;
   border-radius: 6px;
   font-size: 12.5px;
@@ -2072,7 +2073,7 @@
   padding: 22px 26px;
   margin-bottom: 24px;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
-  color: #e5dfd5;
+  color: #E7C77A;
 }
 
 .crm-credits-header {
@@ -2273,7 +2274,7 @@
 
 .crm-plan-modal-close-btn:hover {
   background: rgba(223, 177, 108, 0.2);
-  color: #fff;
+  color: #FFFCF5;
   border-color: #dfb16c;
 }
 
@@ -2363,7 +2364,7 @@
 
 .crm-plan-btn-close:hover {
   background: rgba(223, 177, 108, 0.18);
-  color: #fff;
+  color: #FFFCF5;
   border-color: #dfb16c;
 }
 
@@ -2379,8 +2380,8 @@
   gap: 14px;
   margin-bottom: 20px;
   padding: 14px 18px;
-  background: var(--ZENVE-card, #ffffff);
-  border: 1px solid var(--ZENVE-border, #e8e3da);
+  background: var(--ZENVE-card, #FFFCF5);
+  border: 1px solid var(--ZENVE-border, #E7C77A);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
@@ -2396,7 +2397,7 @@
 .crm-search-icon {
   position: absolute;
   left: 12px;
-  color: var(--ZENVE-muted, #736b63);
+  color: var(--ZENVE-muted, #6B5A45);
   pointer-events: none;
 }
 
@@ -2404,18 +2405,18 @@
   width: 100%;
   height: 40px;
   padding: 0 34px 0 38px;
-  background: var(--ZENVE-secondary, #f5f2ec);
-  border: 1px solid var(--ZENVE-border, #e8e3da);
+  background: var(--ZENVE-secondary, #FFF8E8);
+  border: 1px solid var(--ZENVE-border, #E7C77A);
   border-radius: 8px;
   font-size: 13.5px;
-  color: var(--ZENVE-ink, #17130f);
+  color: var(--ZENVE-ink, #1F2937);
   outline: none;
   transition: all 0.15s ease;
 }
 
 .crm-search-input:focus {
-  background: #ffffff;
-  border-color: var(--ZENVE-gold, #c28b51);
+  background: #FFFCF5;
+  border-color: var(--ZENVE-gold, #D4A017);
   box-shadow: 0 0 0 3px rgba(194, 139, 81, 0.15);
 }
 
@@ -2425,7 +2426,7 @@
   background: none;
   border: none;
   font-size: 13px;
-  color: var(--ZENVE-muted, #736b63);
+  color: var(--ZENVE-muted, #6B5A45);
   cursor: pointer;
   padding: 4px;
 }
@@ -2440,22 +2441,22 @@
 .crm-status-select {
   height: 40px;
   padding: 0 12px;
-  border: 1px solid var(--ZENVE-border, #e8e3da);
+  border: 1px solid var(--ZENVE-border, #E7C77A);
   border-radius: 8px;
-  background: var(--ZENVE-card, #ffffff);
+  background: var(--ZENVE-card, #FFFCF5);
   font-size: 12.5px;
   font-weight: 500;
-  color: var(--ZENVE-ink, #17130f);
+  color: var(--ZENVE-ink, #1F2937);
   cursor: pointer;
   outline: none;
 }
 
 .crm-view-switcher {
   display: flex;
-  border: 1px solid var(--ZENVE-border, #e8e3da);
+  border: 1px solid var(--ZENVE-border, #E7C77A);
   border-radius: 8px;
   overflow: hidden;
-  background: var(--ZENVE-secondary, #f5f2ec);
+  background: var(--ZENVE-secondary, #FFF8E8);
 }
 
 .crm-view-btn {
@@ -2468,14 +2469,14 @@
   background: transparent;
   font-size: 12px;
   font-weight: 600;
-  color: var(--ZENVE-muted, #736b63);
+  color: var(--ZENVE-muted, #6B5A45);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .crm-view-btn.active {
-  background: var(--ZENVE-ink, #17130f);
-  color: #ffffff;
+  background: var(--ZENVE-ink, #1F2937);
+  color: #FFFCF5;
 }
 
 .btn-fresh-designer {
@@ -2484,8 +2485,8 @@
   gap: 7px;
   height: 40px;
   padding: 0 18px;
-  background: var(--ZENVE-gold, #c28b51);
-  color: #ffffff;
+  background: var(--ZENVE-gold, #D4A017);
+  color: #FFFCF5;
   border: none;
   border-radius: 8px;
   font-size: 13px;
@@ -2509,8 +2510,8 @@
 .crm-table-wrapper {
   width: 100%;
   overflow-x: auto;
-  background: var(--ZENVE-card, #ffffff);
-  border: 1px solid var(--ZENVE-border, #e8e3da);
+  background: var(--ZENVE-card, #FFFCF5);
+  border: 1px solid var(--ZENVE-border, #E7C77A);
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
 }
@@ -2531,7 +2532,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding: 13px 16px;
-  border-bottom: 1px solid var(--ZENVE-border, #e8e3da);
+  border-bottom: 1px solid var(--ZENVE-border, #E7C77A);
   white-space: nowrap;
 }
 
@@ -2539,7 +2540,7 @@
   padding: 14px 16px;
   border-bottom: 1px solid #f2ede4;
   vertical-align: middle;
-  color: var(--ZENVE-ink, #17130f);
+  color: var(--ZENVE-ink, #1F2937);
 }
 
 .crm-designers-table tr:hover td {
@@ -2552,7 +2553,7 @@
   position: sticky;
   right: 0;
   z-index: 4;
-  background: var(--ZENVE-card, #ffffff);
+  background: var(--ZENVE-card, #FFFCF5);
   box-shadow: -4px 0 10px rgba(0, 0, 0, 0.05);
 }
 
@@ -2574,7 +2575,7 @@
   font-family: monospace;
   font-size: 10px;
   font-weight: 700;
-  color: var(--ZENVE-gold, #c28b51);
+  color: var(--ZENVE-gold, #D4A017);
   letter-spacing: 0.5px;
 }
 
@@ -2597,7 +2598,7 @@
 
 .table-person-owner {
   font-size: 10.5px;
-  color: var(--ZENVE-muted, #736b63);
+  color: var(--ZENVE-muted, #6B5A45);
 }
 
 .table-contact-cell {
@@ -2641,7 +2642,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
+  color: #FFFCF5;
   cursor: pointer;
   padding: 0;
   transition: opacity 0.15s;
@@ -2677,19 +2678,19 @@
 
 .table-advance-btn {
   background: none;
-  border: 1px solid var(--ZENVE-border, #e8e3da);
+  border: 1px solid var(--ZENVE-border, #E7C77A);
   border-radius: 4px;
   padding: 2px 6px;
   font-size: 10.5px;
-  color: var(--ZENVE-muted, #736b63);
+  color: var(--ZENVE-muted, #6B5A45);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .table-advance-btn:hover {
-  background: var(--ZENVE-gold, #c28b51);
-  color: #ffffff;
-  border-color: var(--ZENVE-gold, #c28b51);
+  background: var(--ZENVE-gold, #D4A017);
+  color: #FFFCF5;
+  border-color: var(--ZENVE-gold, #D4A017);
 }
 
 .table-compliance-cell {
@@ -2771,9 +2772,9 @@
 }
 
 .btn-table-edit:hover {
-  background: #c28b51;
-  color: #ffffff;
-  border-color: #c28b51;
+  background: #D4A017;
+  color: #FFFCF5;
+  border-color: #D4A017;
 }
 
 .btn-table-portal {
@@ -2781,18 +2782,18 @@
   align-items: center;
   padding: 5px 10px;
   background: transparent;
-  border: 1px solid var(--ZENVE-border, #e8e3da);
+  border: 1px solid var(--ZENVE-border, #E7C77A);
   border-radius: 6px;
   font-size: 11px;
   font-weight: 500;
-  color: var(--ZENVE-muted, #736b63);
+  color: var(--ZENVE-muted, #6B5A45);
   text-decoration: none;
   transition: all 0.15s ease;
 }
 
 .btn-table-portal:hover {
-  color: var(--ZENVE-ink, #17130f);
-  border-color: var(--ZENVE-ink, #17130f);
+  color: var(--ZENVE-ink, #1F2937);
+  border-color: var(--ZENVE-ink, #1F2937);
 }
 
 .btn-table-freeze {
@@ -2856,7 +2857,7 @@
 
 .table-location-cell {
   font-size: 12px;
-  color: var(--ZENVE-ink, #17130f);
+  color: var(--ZENVE-ink, #1F2937);
   white-space: nowrap;
 }
 
@@ -2985,7 +2986,7 @@
   padding: 0 12px;
   border: 1px solid #d8cdbf;
   border-radius: 7px;
-  background: #ffffff;
+  background: #FFFCF5;
   font-size: 13px;
   color: #221910;
   outline: none;
@@ -2994,7 +2995,7 @@
 
 .crm-form-input:focus,
 .crm-form-select:focus {
-  border-color: #c28b51;
+  border-color: #D4A017;
   box-shadow: 0 0 0 2.5px rgba(194, 139, 81, 0.2);
 }
 
@@ -3009,8 +3010,8 @@
 
 .btn-modal-save {
   padding: 10px 22px;
-  background: #c28b51;
-  color: #ffffff;
+  background: #D4A017;
+  color: #FFFCF5;
   border: none;
   border-radius: 7px;
   font-size: 13px;
@@ -3047,8 +3048,8 @@
   max-width: 980px;
   width: 95%;
   max-height: 92vh;
-  background: var(--ZENVE-paper, #fbf9f5);
-  border: 1px solid var(--ZENVE-border, #e8e3da);
+  background: var(--ZENVE-paper, #FFF8E8);
+  border: 1px solid var(--ZENVE-border, #E7C77A);
   border-radius: 16px;
   display: flex;
   flex-direction: column;
@@ -3066,15 +3067,15 @@
 
 .designer-card.designer-card-modal-view {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-  border: 1px solid var(--ZENVE-border, #e8e3da);
+  border: 1px solid var(--ZENVE-border, #E7C77A);
   margin: 0;
   width: 100%;
-  background: var(--ZENVE-card, #ffffff);
+  background: var(--ZENVE-card, #FFFCF5);
 }
 
 /* Inline Details Editor inside Card */
 .card-inline-editor {
-  background: #fdfbf7;
+  background: #FFF8E8;
   border: 1px solid #ebdcc8;
   border-radius: 10px;
   padding: 16px 18px;
@@ -3150,20 +3151,20 @@
   gap: 16px;
   padding-top: 16px;
   margin-top: 8px;
-  border-top: 1px solid var(--ZENVE-border, #e8e3da);
+  border-top: 1px solid var(--ZENVE-border, #E7C77A);
   flex-wrap: wrap;
 }
 
 .card-modal-footer-hint {
   font-size: 12px;
-  color: var(--ZENVE-muted, #736b63);
+  color: var(--ZENVE-muted, #6B5A45);
 }
 
 .btn-modal-done {
   padding: 8px 20px;
-  background: #17130f;
-  color: #ffffff;
-  border: 1px solid #17130f;
+  background: #1F2937;
+  color: #FFFCF5;
+  border: 1px solid #1F2937;
   border-radius: 7px;
   font-size: 12.5px;
   font-weight: 600;

@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
+import AppLayout from "./components/AppLayout.jsx";
 
 import Home from "./pages/Home.jsx";
 import MediaStudio from "./pages/MediaStudio.jsx";
@@ -26,32 +27,34 @@ export default function App() {
   return (
     <AuthProvider>
       <Routes>
-        {/* Home Page */}
-        <Route path="/" element={<Home />} />
-
         {/* Role-Based Staff Login */}
         <Route path="/login" element={<Login />} />
 
         {/* Exclusive Brand Designer Login */}
         <Route path="/designer-login" element={<DesignerLogin />} />
-        <Route path="/media" element={<ProtectedRoute layer="13"><MediaStudio /></ProtectedRoute>} />
 
-        {/* Operational Layers (Role Clearance Protected) */}
-        <Route path="/designer-crm" element={<ProtectedRoute layer="01"><DesignerCRM /></ProtectedRoute>} />
-        <Route path="/designer-portal" element={<ProtectedRoute layer="02"><DesignerPortal /></ProtectedRoute>} />
-        <Route path="/catalogue" element={<ProtectedRoute layer="03"><Catalogue /></ProtectedRoute>} />
-        <Route path="/catalogueqa" element={<ProtectedRoute layer="04"><CatalogueQA /></ProtectedRoute>} />
-        <Route path="/catalogue-qa" element={<ProtectedRoute layer="04"><CatalogueQA /></ProtectedRoute>} />
-        <Route path="/inventory" element={<ProtectedRoute layer="05"><Inventory /></ProtectedRoute>} />
-        <Route path="/storefront" element={<ProtectedRoute layer="06"><Storefront /></ProtectedRoute>} />
-        <Route path="/orders" element={<ProtectedRoute layer="07"><Orders /></ProtectedRoute>} />
-        <Route path="/delivery" element={<ProtectedRoute layer="08"><DeliveryEngine /></ProtectedRoute>} />
-        <Route path="/returns" element={<ProtectedRoute layer="09"><Returns /></ProtectedRoute>} />
-        <Route path="/settlement" element={<ProtectedRoute layer="10"><Settlement /></ProtectedRoute>} />
-        <Route path="/analytics" element={<ProtectedRoute layer="11"><Analytics /></ProtectedRoute>} />
-        <Route path="/command-centre" element={<ProtectedRoute layer="12"><CommandCentre /></ProtectedRoute>} />
-        <Route path="/social-media" element={<ProtectedRoute layer="14"><SocialMedia /></ProtectedRoute>} />
-        <Route path="/accounting" element={<ProtectedRoute layer="15"><Accounting /></ProtectedRoute>} />
+        <Route element={<AppLayout />}>
+          {/* Home Page */}
+          <Route path="/" element={<Home />} />
+
+          {/* Operational Layers (Role Clearance Protected) */}
+          <Route path="/media" element={<ProtectedRoute layer="13"><MediaStudio /></ProtectedRoute>} />
+          <Route path="/designer-crm" element={<ProtectedRoute layer="01"><DesignerCRM /></ProtectedRoute>} />
+          <Route path="/designer-portal" element={<ProtectedRoute layer="02"><DesignerPortal /></ProtectedRoute>} />
+          <Route path="/catalogue" element={<ProtectedRoute layer="03"><Catalogue /></ProtectedRoute>} />
+          <Route path="/catalogueqa" element={<ProtectedRoute layer="04"><CatalogueQA /></ProtectedRoute>} />
+          <Route path="/catalogue-qa" element={<ProtectedRoute layer="04"><CatalogueQA /></ProtectedRoute>} />
+          <Route path="/inventory" element={<ProtectedRoute layer="05"><Inventory /></ProtectedRoute>} />
+          <Route path="/storefront" element={<ProtectedRoute layer="06"><Storefront /></ProtectedRoute>} />
+          <Route path="/orders" element={<ProtectedRoute layer="07"><Orders /></ProtectedRoute>} />
+          <Route path="/delivery" element={<ProtectedRoute layer="08"><DeliveryEngine /></ProtectedRoute>} />
+          <Route path="/returns" element={<ProtectedRoute layer="09"><Returns /></ProtectedRoute>} />
+          <Route path="/settlement" element={<ProtectedRoute layer="10"><Settlement /></ProtectedRoute>} />
+          <Route path="/analytics" element={<ProtectedRoute layer="11"><Analytics /></ProtectedRoute>} />
+          <Route path="/command-centre" element={<ProtectedRoute layer="12"><CommandCentre /></ProtectedRoute>} />
+          <Route path="/social-media" element={<ProtectedRoute layer="14"><SocialMedia /></ProtectedRoute>} />
+          <Route path="/accounting" element={<ProtectedRoute layer="15"><Accounting /></ProtectedRoute>} />
+        </Route>
       </Routes>
     </AuthProvider>
   );

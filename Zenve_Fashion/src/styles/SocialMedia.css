@@ -4,15 +4,15 @@
 ========================================================= */
 
 :root {
-  --ZENVE-paper: #fbf9f5;
-  --ZENVE-panel: #ffffff;
-  --ZENVE-line: #e8e3da;
-  --ZENVE-line-light: #f2eee8;
-  --ZENVE-ink: #17130f;
-  --ZENVE-muted: #736b63;
-  --ZENVE-gold: #c28b51;
-  --ZENVE-gold-dark: #a1703c;
-  --ZENVE-gold-light: #f5eedf;
+  --ZENVE-paper: #FFF8E8;
+  --ZENVE-panel: #FFFCF5;
+  --ZENVE-line: #E7C77A;
+  --ZENVE-line-light: #F4D58D;
+  --ZENVE-ink: #1F2937;
+  --ZENVE-muted: #6B5A45;
+  --ZENVE-gold: #D4A017;
+  --ZENVE-gold-dark: #B8860B;
+  --ZENVE-gold-light: #FFF1C7;
   --ZENVE-gold-glow: rgba(194, 139, 81, 0.12);
   --ZENVE-green: #2e7d32;
   --ZENVE-green-bg: #e8f5e9;
@@ -118,7 +118,7 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
-  color: #ffffff;
+  color: #FFFCF5;
   background-color: var(--ZENVE-gold);
   border-radius: 4px;
   padding: 2px 7px;
@@ -147,7 +147,7 @@
 
 /* Hero Banner */
 .ZENVE-sm-hero-banner {
-  background: linear-gradient(135deg, #f5efe6 0%, #ffffff 100%);
+  background: linear-gradient(135deg, #FFF8E8 0%, #FFFCF5 100%);
   border-bottom: 1px solid var(--ZENVE-line);
   padding: 24px 32px;
   display: flex;
@@ -198,7 +198,7 @@
   align-items: center;
   gap: 6px;
   background: var(--ZENVE-gold);
-  color: #fff;
+  color: #FFFCF5;
   text-decoration: none;
   font-size: 12.5px;
   font-weight: 600;
@@ -218,7 +218,7 @@
 }
 
 .ZENVE-sm-hero-link.secondary:hover {
-  background: #f7f3eb;
+  background: #FFF8E8;
 }
 
 /* KPI Strip */
@@ -248,8 +248,8 @@
 }
 
 .ZENVE-sm-kpi-card.gold-border {
-  border: 1px solid #ebd9c2;
-  background: linear-gradient(180deg, #fdfbf7 0%, #ffffff 100%);
+  border: 1px solid #E7C77A;
+  background: linear-gradient(180deg, #FFF8E8 0%, #FFFCF5 100%);
 }
 
 .ZENVE-sm-kpi-header {
@@ -274,7 +274,7 @@
 }
 
 .ZENVE-sm-kpi-badge.primary {
-  background: #efebe4;
+  background: #FFF8E8;
   color: var(--ZENVE-ink);
 }
 
@@ -366,13 +366,13 @@
 }
 
 .ZENVE-sm-tab-btn:hover {
-  background: #f7f4ee;
+  background: #FFF8E8;
   color: var(--ZENVE-ink);
 }
 
 .ZENVE-sm-tab-btn.active {
   background: var(--ZENVE-ink);
-  color: #fff;
+  color: #FFFCF5;
   border-color: var(--ZENVE-ink);
 }
 
@@ -424,8 +424,8 @@
 }
 
 .ZENVE-sm-sync-btn:hover:not(:disabled) {
-  background: #f7f4ee;
-  border-color: #d1c8bb;
+  background: #FFF8E8;
+  border-color: #E7C77A;
 }
 
 .ZENVE-sm-filter-group {
@@ -477,7 +477,7 @@
 }
 
 .ZENVE-sm-card:hover {
-  border-color: #d1c8bb;
+  border-color: #E7C77A;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
 }
 
@@ -494,7 +494,7 @@
   border-radius: 6px;
   border: 1px solid var(--ZENVE-line);
   overflow: hidden;
-  background: #f7f5f0;
+  background: #FFF8E8;
   flex-shrink: 0;
   cursor: pointer;
 }
@@ -556,7 +556,7 @@
 
 .ZENVE-sm-sku-meta .sku-code {
   font-family: monospace;
-  background: #f5f2eb;
+  background: #FFF8E8;
   padding: 1px 4px;
   border-radius: 3px;
   font-size: 10.5px;
@@ -622,7 +622,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: #faf8f4;
+  background: #FFF8E8;
   border: 1px solid var(--ZENVE-line-light);
   border-radius: 8px;
   padding: 10px 14px;
@@ -706,7 +706,7 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #f0ece3;
+  background: #FFF8E8;
   color: var(--ZENVE-muted);
   font-size: 10px;
   font-weight: 700;
@@ -719,12 +719,12 @@
 
 .ZENVE-sm-step-item.completed .step-circle {
   background: var(--ZENVE-gold);
-  color: #fff;
+  color: #FFFCF5;
 }
 
 .ZENVE-sm-step-item.current .step-circle {
   background: var(--ZENVE-ink);
-  color: #fff;
+  color: #FFFCF5;
   box-shadow: 0 0 0 3px rgba(23, 19, 15, 0.15);
 }
 
@@ -745,7 +745,7 @@
 
 /* Details Box */
 .ZENVE-sm-details-box {
-  background: #fff;
+  background: #FFFCF5;
   border: 1px solid var(--ZENVE-line-light);
   border-radius: 6px;
   padding: 12px;
@@ -813,7 +813,7 @@
 }
 
 .ZENVE-sm-notes-preview {
-  background: #faf8f5;
+  background: #FFF8E8;
   border-radius: 4px;
   padding: 8px 10px;
   font-size: 11.5px;
@@ -851,7 +851,7 @@
   justify-content: center;
   gap: 7px;
   background: var(--ZENVE-gold);
-  color: #fff;
+  color: #FFFCF5;
   border: none;
   border-radius: 6px;
   padding: 9px 14px;
@@ -880,8 +880,8 @@
 }
 
 .ZENVE-sm-btn-manage:hover {
-  background: #f7f4ee;
-  border-color: #d1c8ba;
+  background: #FFF8E8;
+  border-color: #E7C77A;
 }
 
 /* Modals */
@@ -918,7 +918,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #faf8f4;
+  background: #FFF8E8;
 }
 
 .ZENVE-sm-modal-tag {
@@ -957,7 +957,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  background: #fbf9f5;
+  background: #FFF8E8;
   border: 1px solid var(--ZENVE-line);
   border-radius: 8px;
   padding: 12px 14px;
@@ -968,7 +968,7 @@
   height: 40px;
   border-radius: 50%;
   background: var(--ZENVE-gold);
-  color: #fff;
+  color: #FFFCF5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1042,7 +1042,7 @@
 }
 
 .channel-btn:hover {
-  background: #f7f4ee;
+  background: #FFF8E8;
 }
 
 .channel-btn.active.whatsapp {
@@ -1080,7 +1080,7 @@
 .ZENVE-sm-textarea {
   width: 100%;
   box-sizing: border-box;
-  background: #fff;
+  background: #FFFCF5;
   border: 1px solid var(--ZENVE-line);
   border-radius: 6px;
   padding: 9px 12px;
@@ -1116,7 +1116,7 @@
   font-weight: 600;
   color: var(--ZENVE-ink);
   text-decoration: none;
-  background: #f7f4ee;
+  background: #FFF8E8;
   padding: 6px 12px;
   border-radius: 4px;
   border: 1px solid var(--ZENVE-line);
@@ -1124,7 +1124,7 @@
 }
 
 .quick-action-link:hover {
-  background: #eee8dc;
+  background: #FFF8E8;
 }
 
 .quick-action-link.wa {
@@ -1140,7 +1140,7 @@
 .ZENVE-sm-modal-footer {
   padding: 14px 24px;
   border-top: 1px solid var(--ZENVE-line);
-  background: #faf8f4;
+  background: #FFF8E8;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -1161,7 +1161,7 @@
 .ZENVE-sm-btn-primary {
   background: var(--ZENVE-gold);
   border: none;
-  color: #fff;
+  color: #FFFCF5;
   border-radius: 6px;
   padding: 8px 20px;
   font-size: 13px;
@@ -1182,7 +1182,7 @@
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-  background: #000;
+  background: #1F2937;
 }
 
 .ZENVE-sm-img-preview-full {
@@ -1197,7 +1197,7 @@
   top: 10px;
   right: 12px;
   background: rgba(0, 0, 0, 0.6);
-  color: #fff;
+  color: #FFFCF5;
   border: none;
   font-size: 26px;
   width: 36px;
@@ -1249,7 +1249,7 @@
 .ZENVE-sm-empty-action {
   display: inline-block;
   background: var(--ZENVE-ink);
-  color: #fff;
+  color: #FFFCF5;
   text-decoration: none;
   padding: 9px 18px;
   border-radius: 6px;

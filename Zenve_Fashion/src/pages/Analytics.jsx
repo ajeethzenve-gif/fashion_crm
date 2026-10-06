@@ -487,7 +487,7 @@ function FranchiseGmvChart({ data = [], popupFranchise, onSelectFranchise }) {
               <Cell
                 key={`franchise-cell-${index}`}
                 fill={isSelected ? "var(--ZENVE-gold)" : "rgba(194, 139, 81, 0.7)"}
-                stroke={isSelected ? "#ffffff" : "transparent"}
+                stroke={isSelected ? "#FFFCF5" : "transparent"}
                 strokeWidth={isSelected ? 2 : 0}
                 style={{ cursor: "pointer" }}
               />

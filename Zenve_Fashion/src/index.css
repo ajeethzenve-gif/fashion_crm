@@ -1,12 +1,12 @@
 :root {
-  --ink: #14181f;
-  --ink-soft: #3b4149;
-  --paper: #f7f5f0;
-  --panel: #fffdf9;
-  --line: #dcd6c8;
-  --brass: #a8712f;
-  --brass-deep: #7c521f;
-  --moss: #57684f;
+  --ink: #1F2937;
+  --ink-soft: #6B5A45;
+  --paper: #FFF8E8;
+  --panel: #FFFCF5;
+  --line: #E7C77A;
+  --brass: #D4A017;
+  --brass-deep: #B8860B;
+  --moss: #16803C;
   --brick: #a34c3f;
   --brick-soft: #f4e6e2;
   --moss-soft: #e9efe4;
@@ -609,7 +609,7 @@ button {
   width: 100%;
   aspect-ratio: 4 / 3;
   border-radius: 3px;
-  background: linear-gradient(135deg, var(--swatch-a, #e7ded0), var(--swatch-b, #cfc4ac));
+  background: linear-gradient(135deg, var(--swatch-a, #F4D58D), var(--swatch-b, #D4A017));
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -1069,7 +1069,7 @@ button {
 
 .zenve-swal-toast {
   font-family: var(--sans, 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif) !important;
-  background: #ffffff !important;
+  background: #FFFCF5 !important;
   border-radius: 12px !important;
   padding: 12px 18px !important;
   margin-bottom: 24px !important;
@@ -1110,7 +1110,7 @@ button {
 .zenve-swal-toast-title {
   font-size: 13.5px !important;
   font-weight: 600 !important;
-  color: var(--ink, #1c1917) !important;
+  color: var(--ink, #1F2937) !important;
   margin: 0 !important;
   padding: 0 !important;
   text-align: left !important;
@@ -1172,5 +1172,40 @@ button {
 .crm-toast,
 .cc-toast,
 .analytics-toast {
+  display: none !important;
+}
+
+/* =========================================================
+   GLOBAL HEADER BANNER FOR ALL PAGES
+========================================================= */
+.ZENVE-accounting-header,
+.ZENVE-header,
+.ZENVE-catalogue-header,
+.ZENVE-qa-header,
+.ZENVE-delivery-header,
+.ZENVE-portal-header,
+.home-header,
+.ZENVE-inv-header,
+.layer-header,
+.ZENVE-media-header,
+.ZENVE-orders-header,
+.ZENVE-returns-header,
+.ZENVE-settlement-header,
+.ZENVE-sm-header,
+.ZENVE-sf-header {
+  background: url('/header-bg.png') no-repeat center right !important;
+  background-size: cover !important;
+  position: relative !important;
+  border-bottom: 2px solid var(--line, #E7C77A) !important;
+}
+/* Hide logo globally to move title to the corner */
+.ZENVE-portal-logo {
+  display: none !important;
+}
+
+/* Hide global search bar from all pages */
+.home-search,
+.search-box,
+.search-fake {
   display: none !important;
 }

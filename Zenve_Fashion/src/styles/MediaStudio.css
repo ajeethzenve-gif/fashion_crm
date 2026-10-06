@@ -4,15 +4,15 @@
 ========================================================= */
 
 :root {
-  --ZENVE-paper: #fbf9f5;
-  --ZENVE-panel: #ffffff;
-  --ZENVE-line: #e8e3da;
-  --ZENVE-line-light: #f0ece5;
-  --ZENVE-ink: #17130f;
-  --ZENVE-muted: #736b63;
-  --ZENVE-gold: #c28b51;
-  --ZENVE-gold-dark: #a1703c;
-  --ZENVE-gold-light: #f5eedf;
+  --ZENVE-paper: #FFF8E8;
+  --ZENVE-panel: #FFFCF5;
+  --ZENVE-line: #E7C77A;
+  --ZENVE-line-light: #F4D58D;
+  --ZENVE-ink: #1F2937;
+  --ZENVE-muted: #6B5A45;
+  --ZENVE-gold: #D4A017;
+  --ZENVE-gold-dark: #B8860B;
+  --ZENVE-gold-light: #FFF1C7;
   --ZENVE-green: #2e7d32;
   --ZENVE-green-bg: #e8f5e9;
   --ZENVE-amber: #e65100;
@@ -118,7 +118,7 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
-  color: #ffffff;
+  color: #FFFCF5;
   background-color: var(--ZENVE-gold);
   border-radius: 4px;
   padding: 2px 7px;
@@ -278,7 +278,7 @@
 .search-input:focus {
   outline: none;
   border-color: var(--ZENVE-gold);
-  background: #fff;
+  background: #FFFCF5;
 }
 
 .clear-search-btn {
@@ -306,7 +306,7 @@
   border: 1px solid var(--ZENVE-line);
   border-radius: 6px;
   font-size: 12px;
-  background: #ffffff;
+  background: #FFFCF5;
   color: var(--ZENVE-ink);
   cursor: pointer;
 }
@@ -383,7 +383,7 @@
   font-family: monospace;
   font-size: 11px;
   font-weight: 600;
-  background: #f0ece5;
+  background: #F4D58D;
   color: var(--ZENVE-ink);
   padding: 2px 7px;
   border-radius: 4px;
@@ -502,7 +502,7 @@
   font-size: 10px;
   font-weight: 700;
   background: var(--ZENVE-ink);
-  color: #fff;
+  color: #FFFCF5;
   padding: 1px 6px;
   border-radius: 10px;
 }
@@ -559,7 +559,7 @@
   align-items: center;
   justify-content: center;
   gap: 5px;
-  color: #ffffff;
+  color: #FFFCF5;
   font-size: 11px;
   font-weight: 600;
   opacity: 0;
@@ -577,7 +577,7 @@
   font-size: 9.5px;
   font-weight: 600;
   background: rgba(23, 19, 15, 0.75);
-  color: #ffffff;
+  color: #FFFCF5;
   padding: 1px 5px;
   border-radius: 3px;
   backdrop-filter: blur(2px);
@@ -627,7 +627,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 16px;
-  background: #faf8f5;
+  background: #FFF8E8;
   border: 1px solid var(--ZENVE-line-light);
   border-radius: 8px;
   gap: 12px;
@@ -653,7 +653,7 @@
   font-weight: 600;
   color: var(--ZENVE-blue);
   text-decoration: none;
-  background: #fff;
+  background: #FFFCF5;
   border: 1px solid var(--ZENVE-line);
   padding: 4px 10px;
   border-radius: 5px;
@@ -666,7 +666,7 @@
 }
 
 .figma-copy-btn {
-  background: #fff;
+  background: #FFFCF5;
   border: 1px solid var(--ZENVE-line);
   padding: 4px 8px;
   border-radius: 5px;
@@ -843,7 +843,7 @@
   border: 1px solid var(--ZENVE-line);
   border-radius: 6px;
   font-size: 12.5px;
-  background: #ffffff;
+  background: #FFFCF5;
   color: var(--ZENVE-ink);
   box-sizing: border-box;
 }
@@ -886,7 +886,7 @@
 
 .media-upload-dropzone:hover:not(.disabled) {
   border-color: var(--ZENVE-gold);
-  background: #fffdf9;
+  background: #FFFCF5;
 }
 
 .media-upload-dropzone.drag-over {
@@ -921,7 +921,7 @@
 
 /* Selected Previews */
 .selected-files-preview-strip {
-  background: #faf8f5;
+  background: #FFF8E8;
   border: 1px solid var(--ZENVE-line);
   border-radius: 8px;
   padding: 12px 14px;
@@ -955,7 +955,7 @@
 
 .preview-thumb-card {
   position: relative;
-  background: #fff;
+  background: #FFFCF5;
   border: 1px solid var(--ZENVE-line);
   border-radius: 6px;
   overflow: hidden;
@@ -995,7 +995,7 @@
   top: 4px;
   right: 4px;
   background: rgba(0, 0, 0, 0.65);
-  color: #fff;
+  color: #FFFCF5;
   border: none;
   border-radius: 50%;
   width: 18px;
@@ -1055,7 +1055,7 @@
 
 .ZENVE-btn-primary {
   background: var(--ZENVE-gold);
-  color: #ffffff;
+  color: #FFFCF5;
 }
 
 .ZENVE-btn-primary:hover:not(:disabled) {
@@ -1075,7 +1075,7 @@
 
 .ZENVE-btn-success {
   background: var(--ZENVE-green);
-  color: #ffffff;
+  color: #FFFCF5;
   border: 1px solid transparent;
   padding: 8px 14px;
   border-radius: 6px;
@@ -1094,7 +1094,7 @@
 
 .ZENVE-btn-warning {
   background: var(--ZENVE-amber);
-  color: #ffffff;
+  color: #FFFCF5;
   border: 1px solid transparent;
   padding: 8px 14px;
   border-radius: 6px;
@@ -1224,14 +1224,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #fff;
+  color: #FFFCF5;
   gap: 16px;
 }
 
 .caption-text strong {
   display: block;
   font-size: 14px;
-  color: #ffffff;
+  color: #FFFCF5;
 }
 
 .caption-text span {
@@ -1260,7 +1260,7 @@
   background: transparent;
   border: none;
   font-size: 32px;
-  color: #ffffff;
+  color: #FFFCF5;
   cursor: pointer;
   line-height: 1;
 }
@@ -1270,7 +1270,7 @@
   top: 50%;
   transform: translateY(-50%);
   background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
+  color: #FFFCF5;
   border: none;
   font-size: 32px;
   width: 44px;
@@ -1347,8 +1347,8 @@
   width: 36px;
   height: 36px;
   border-radius: 7px;
-  border: 1px solid #dedbd4;
-  background: #fbf9f1;
+  border: 1px solid #E7C77A;
+  background: #FFF8E8;
   color: var(--ZENVE-ink);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1356,7 +1356,7 @@
 }
 
 .ZENVE-media-notif-btn:hover {
-  background: #f5eedf;
+  background: #FFF1C7;
   border-color: var(--ZENVE-gold);
   color: var(--ZENVE-gold-dark);
   transform: translateY(-1px);
@@ -1371,13 +1371,13 @@
   padding: 0 4px;
   border-radius: 9px;
   background: var(--ZENVE-green);
-  color: #ffffff;
+  color: #FFFCF5;
   font-size: 11px;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #ffffff;
+  border: 2px solid #FFFCF5;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   animation: notifPulse 2s infinite ease-in-out;
 }
@@ -1455,7 +1455,7 @@
 
 .media-approval-alert-banner .btn-banner-view {
   background: var(--ZENVE-green);
-  color: #ffffff;
+  color: #FFFCF5;
   border: none;
   padding: 8px 14px;
   border-radius: 6px;
@@ -1657,7 +1657,7 @@
 }
 
 .ZENVE-notification-row:hover {
-  border-color: #dedbd4;
+  border-color: #E7C77A;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
@@ -1727,7 +1727,7 @@
 }
 
 .btn-media-notif-view {
-  background: #fbf9f5;
+  background: #FFF8E8;
   border: 1px solid var(--ZENVE-line);
   color: var(--ZENVE-ink);
   padding: 4px 8px;
@@ -1740,7 +1740,7 @@
 
 .btn-media-notif-view:hover {
   background: var(--ZENVE-gold);
-  color: #ffffff;
+  color: #FFFCF5;
   border-color: var(--ZENVE-gold);
 }
 

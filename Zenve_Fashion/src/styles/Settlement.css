@@ -13,13 +13,13 @@
 ========================================================= */
 
 :root {
-  --ZENVE-paper: #fbf9f5;
-  --ZENVE-panel: #ffffff;
-  --ZENVE-line: #e8e3da;
-  --ZENVE-line-light: #f0ece5;
-  --ZENVE-ink: #17130f;
-  --ZENVE-muted: #736b63;
-  --ZENVE-gold: #c28b51;
+  --ZENVE-paper: #FFF8E8;
+  --ZENVE-panel: #FFFCF5;
+  --ZENVE-line: #E7C77A;
+  --ZENVE-line-light: #F4D58D;
+  --ZENVE-ink: #1F2937;
+  --ZENVE-muted: #6B5A45;
+  --ZENVE-gold: #D4A017;
   --ZENVE-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --ZENVE-font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
   --ZENVE-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -362,7 +362,7 @@
 }
 
 .ZENVE-settlement-table tr:hover td {
-  background-color: #faf7f2;
+  background-color: #FFF8E8;
 }
 
 .settlement-cell-id {
@@ -403,21 +403,21 @@
 }
 
 .ZENVE-btn-sm.outline {
-  background-color: #ffffff;
+  background-color: #FFFCF5;
   border-color: var(--ZENVE-line);
   color: var(--ZENVE-ink);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .ZENVE-btn-sm.outline:hover:not(:disabled) {
-  background-color: #faf7f2;
-  border-color: #d6cfc4;
+  background-color: #FFF8E8;
+  border-color: #E7C77A;
 }
 
 .ZENVE-btn-sm:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  background-color: #fdfdfc;
+  background-color: #FFF8E8;
   border-color: var(--ZENVE-line);
 }
 
@@ -462,9 +462,9 @@
 }
 
 .ZENVE-tone-badge.neutral {
-  background-color: #f5f2ec;
+  background-color: #FFF8E8;
   color: #5c554e;
-  border: 1px solid #e5dfd5;
+  border: 1px solid #E7C77A;
 }
 
 /* =========================================================
@@ -478,7 +478,7 @@
   border-radius: 6px;
   color: var(--ZENVE-muted);
   font-size: 13.5px;
-  background-color: #fdfbf8;
+  background-color: #FFF8E8;
 }
 
 /* =========================================================
@@ -1055,4 +1055,4 @@
   .settlement-cell-id {
     font-size: 18px;
   }
-}
+}

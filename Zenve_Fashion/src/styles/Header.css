@@ -16,7 +16,9 @@
 
   box-sizing: border-box;
 
-  background: #fdfcf9;
+  background: url('/header-bg.png') no-repeat center right;
+  background-size: cover;
+  position: relative;
 
   border-top: 1px solid #2f2c29;
   border-bottom: 1px solid #dedad3;
@@ -258,7 +260,7 @@
   align-items: center;
   justify-content: center;
 
-  background: #faf8f4;
+  background: #FFF8E8;
 
   border: 1px solid #dedad3;
 
@@ -382,7 +384,7 @@
 
   border-radius: 20px;
 
-  background: #f1e4d3;
+  background: #FFF1C7;
 
   color: #18130f;
 

@@ -8,8 +8,8 @@
 .ZENVE-qa-layout {
   min-height: 100vh;
   width: 100%;
-  background-color: var(--ZENVE-paper, #fbf9f5);
-  color: var(--ZENVE-ink, #17130f);
+  background-color: var(--ZENVE-paper, #FFF8E8);
+  color: var(--ZENVE-ink, #1F2937);
   font-family: var(--ZENVE-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
   box-sizing: border-box;
 }
@@ -20,8 +20,8 @@
 
 .ZENVE-qa-header {
   width: 100%;
-  background: var(--ZENVE-panel, #ffffff);
-  border-bottom: 1px solid var(--ZENVE-line, #e8e3da);
+  background: var(--ZENVE-panel, #FFFCF5);
+  border-bottom: 1px solid var(--ZENVE-line, #E7C77A);
   padding: 16px 28px;
   display: flex;
   align-items: center;
@@ -65,7 +65,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--ZENVE-muted, #736b63);
+  color: var(--ZENVE-muted, #6B5A45);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -75,7 +75,7 @@
 }
 
 .ZENVE-back-link:hover {
-  color: var(--ZENVE-ink, #17130f);
+  color: var(--ZENVE-ink, #1F2937);
 }
 
 .ZENVE-portal-title {
@@ -84,7 +84,7 @@
   font-size: 24px;
   font-weight: 600;
   line-height: 1.2;
-  color: var(--ZENVE-ink, #17130f);
+  color: var(--ZENVE-ink, #1F2937);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -98,7 +98,7 @@
 .ZENVE-portal-subtitle {
   margin: 3px 0 0;
   font-size: 12.5px;
-  color: var(--ZENVE-muted, #736b63);
+  color: var(--ZENVE-muted, #6B5A45);
 }
 
 .ZENVE-header-right {
@@ -167,8 +167,8 @@
 }
 
 .ZENVE-kpi-card {
-  background: var(--ZENVE-panel, #ffffff);
-  border: 1px solid var(--ZENVE-line, #e8e3da);
+  background: var(--ZENVE-panel, #FFFCF5);
+  border: 1px solid var(--ZENVE-line, #E7C77A);
   border-radius: 8px;
   padding: 14px 16px;
   display: flex;
@@ -181,7 +181,7 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--ZENVE-muted, #736b63);
+  color: var(--ZENVE-muted, #6B5A45);
 }
 
 .ZENVE-kpi-val {
@@ -189,14 +189,14 @@
   font-family: var(--ZENVE-font-serif, Georgia, serif);
   font-size: 24px;
   font-weight: 600;
-  color: var(--ZENVE-ink, #17130f);
+  color: var(--ZENVE-ink, #1F2937);
   line-height: 1.15;
 }
 
 .ZENVE-kpi-sub {
   margin: 3px 0 0;
   font-size: 11.5px;
-  color: var(--ZENVE-muted, #736b63);
+  color: var(--ZENVE-muted, #6B5A45);
 }
 
 /* =========================================================
@@ -204,8 +204,8 @@
 ========================================================= */
 
 .ZENVE-portal-card {
-  background: var(--ZENVE-panel, #ffffff);
-  border: 1px solid var(--ZENVE-line, #e8e3da);
+  background: var(--ZENVE-panel, #FFFCF5);
+  border: 1px solid var(--ZENVE-line, #E7C77A);
   border-radius: 8px;
   padding: 22px 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
@@ -224,21 +224,21 @@
   font-family: var(--ZENVE-font-serif, Georgia, serif);
   font-size: 19px;
   font-weight: 600;
-  color: var(--ZENVE-ink, #17130f);
+  color: var(--ZENVE-ink, #1F2937);
 }
 
 .ZENVE-card-description {
   margin: 4px 0 0;
   font-size: 13px;
-  color: var(--ZENVE-muted, #736b63);
+  color: var(--ZENVE-muted, #6B5A45);
 }
 
 .ZENVE-item-empty {
   padding: 28px;
   text-align: center;
   font-size: 13.5px;
-  color: var(--ZENVE-muted, #736b63);
-  border: 1px dashed var(--ZENVE-line, #e8e3da);
+  color: var(--ZENVE-muted, #6B5A45);
+  border: 1px dashed var(--ZENVE-line, #E7C77A);
   border-radius: 6px;
 }
 
@@ -253,8 +253,8 @@
 }
 
 .ZENVE-qa-card {
-  background: var(--ZENVE-panel, #ffffff);
-  border: 1px solid var(--ZENVE-line, #e8e3da);
+  background: var(--ZENVE-panel, #FFFCF5);
+  border: 1px solid var(--ZENVE-line, #E7C77A);
   border-radius: 8px;
   padding: 18px 20px;
   transition: box-shadow 0.15s ease;
@@ -275,20 +275,20 @@
   margin: 0;
   font-size: 16px;
   font-weight: 600;
-  color: var(--ZENVE-ink, #17130f);
+  color: var(--ZENVE-ink, #1F2937);
 }
 
 .ZENVE-sku-id-mono {
   font-family: monospace;
   font-size: 11.5px;
-  color: var(--ZENVE-muted, #736b63);
+  color: var(--ZENVE-muted, #6B5A45);
   margin-top: 4px;
 }
 
 .ZENVE-qa-meta-line {
   margin: 6px 0 0;
   font-size: 13.5px;
-  color: var(--ZENVE-muted, #736b63);
+  color: var(--ZENVE-muted, #6B5A45);
   line-height: 1.4;
 }
 
@@ -357,7 +357,7 @@
 
 .ZENVE-dimension-tile {
   background: #f8f6f0;
-  border: 1px solid var(--ZENVE-line, #e8e3da);
+  border: 1px solid var(--ZENVE-line, #E7C77A);
   border-radius: 6px;
   padding: 8px 10px;
   display: flex;
@@ -370,18 +370,18 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--ZENVE-muted, #736b63);
+  color: var(--ZENVE-muted, #6B5A45);
   line-height: 1.2;
 }
 
 .ZENVE-dim-input {
   height: 32px;
-  border: 1px solid var(--ZENVE-line, #e8e3da);
+  border: 1px solid var(--ZENVE-line, #E7C77A);
   border-radius: 4px;
   padding: 0 8px;
   font-size: 13px;
-  background: #ffffff;
-  color: var(--ZENVE-ink, #17130f);
+  background: #FFFCF5;
+  color: var(--ZENVE-ink, #1F2937);
   outline: none;
   width: 100%;
 }
@@ -404,12 +404,12 @@
 .ZENVE-note-input {
   width: 280px;
   height: 36px;
-  border: 1px solid var(--ZENVE-line, #e8e3da);
+  border: 1px solid var(--ZENVE-line, #E7C77A);
   border-radius: 6px;
   padding: 0 12px;
   font-size: 13px;
-  background: var(--ZENVE-panel, #ffffff);
-  color: var(--ZENVE-ink, #17130f);
+  background: var(--ZENVE-panel, #FFFCF5);
+  color: var(--ZENVE-ink, #1F2937);
   outline: none;
 }
 
@@ -418,9 +418,9 @@
 }
 
 .ZENVE-btn-primary-sm {
-  background: #17130f;
-  color: #ffffff;
-  border: 1px solid #17130f;
+  background: #1F2937;
+  color: #FFFCF5;
+  border: 1px solid #1F2937;
   padding: 7px 14px;
   border-radius: 5px;
   font-size: 12.5px;
@@ -439,12 +439,12 @@
 
 .ZENVE-btn-outline-sm {
   background: transparent;
-  border: 1px solid var(--ZENVE-line, #e8e3da);
+  border: 1px solid var(--ZENVE-line, #E7C77A);
   padding: 6px 12px;
   border-radius: 5px;
   font-size: 12px;
   font-weight: 500;
-  color: var(--ZENVE-ink, #17130f);
+  color: var(--ZENVE-ink, #1F2937);
   cursor: pointer;
   transition: background 0.15s ease;
   white-space: nowrap;
@@ -468,10 +468,10 @@
 }
 
 .ZENVE-reviewed-row {
-  border: 1px solid var(--ZENVE-line, #e8e3da);
+  border: 1px solid var(--ZENVE-line, #E7C77A);
   border-radius: 6px;
   padding: 12px 14px;
-  background: var(--ZENVE-panel, #ffffff);
+  background: var(--ZENVE-panel, #FFFCF5);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -488,7 +488,7 @@
 
 .ZENVE-reviewed-name {
   font-weight: 600;
-  color: var(--ZENVE-ink, #17130f);
+  color: var(--ZENVE-ink, #1F2937);
 }
 
 .ZENVE-reviewed-score {
@@ -499,14 +499,14 @@
 .ZENVE-reviewed-breakdown {
   margin: 4px 0 0;
   font-size: 12px;
-  color: var(--ZENVE-muted, #736b63);
+  color: var(--ZENVE-muted, #6B5A45);
   line-height: 1.4;
 }
 
 .ZENVE-reviewed-note {
   margin: 4px 0 0;
   font-size: 12.5px;
-  color: var(--ZENVE-ink, #17130f);
+  color: var(--ZENVE-ink, #1F2937);
   font-style: italic;
 }
 
@@ -531,13 +531,13 @@
 }
 
 .ZENVE-audit-time {
-  color: var(--ZENVE-muted, #736b63);
+  color: var(--ZENVE-muted, #6B5A45);
   font-size: 12px;
   white-space: nowrap;
 }
 
 .ZENVE-audit-msg {
-  color: var(--ZENVE-ink, #17130f);
+  color: var(--ZENVE-ink, #1F2937);
 }
 
 /* =========================================================
@@ -781,7 +781,7 @@
   .ZENVE-portal-subtitle {
     font-size: 12.5px;
     line-height: 1.45;
-    color: var(--ZENVE-muted, #736b63);
+    color: var(--ZENVE-muted, #6B5A45);
     white-space: normal;
     margin-top: 2px;
   }
@@ -793,7 +793,7 @@
     justify-content: space-between;
     gap: 16px;
     padding-top: 12px;
-    border-top: 1px solid var(--ZENVE-line, #e8e3da);
+    border-top: 1px solid var(--ZENVE-line, #E7C77A);
   }
 
   .ZENVE-header-right .search-user-wrapper {

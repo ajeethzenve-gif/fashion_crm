@@ -7,7 +7,7 @@
   min-height: 100vh;
   width: 100%;
   background: var(--paper, #f8f6f1);
-  color: var(--ink, #14181f);
+  color: var(--ink, #1F2937);
   font-family: var(--sans, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
   display: flex;
   flex-direction: column;
@@ -57,8 +57,8 @@
   font-weight: 600;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: var(--brass, #a8712f);
-  border-left: 1px solid var(--line, #dcd6c8);
+  color: var(--brass, #D4A017);
+  border-left: 1px solid var(--line, #E7C77A);
   padding-left: 12px;
   margin-left: 4px;
 }
@@ -73,7 +73,7 @@
   text-transform: uppercase;
   color: #746b62;
   text-decoration: none;
-  border: 1px solid #ddd7cf;
+  border: 1px solid #E7C77A;
   border-radius: 6px;
   padding: 8px 14px;
   background: #fffdfa;
@@ -81,8 +81,8 @@
 }
 
 .login-back-link:hover {
-  color: #17130f;
-  border-color: var(--brass, #a8712f);
+  color: #1F2937;
+  border-color: var(--brass, #D4A017);
   transform: translateX(-2px);
 }
 
@@ -190,7 +190,7 @@
 }
 
 .clearance-count {
-  color: var(--brass, #a8712f);
+  color: var(--brass, #D4A017);
   font-weight: 700;
 }
 
@@ -207,9 +207,9 @@
   padding: 8px 10px;
   border-radius: 6px;
   border: 1px solid #e8e3dc;
-  background: #faf8f4;
+  background: #FFF8E8;
   font-size: 12px;
-  color: #8c8278;
+  color: #6B5A45;
   transition: all 0.2s ease;
 }
 
@@ -275,7 +275,7 @@
 .trust-value {
   font-size: 12.5px;
   font-weight: 600;
-  color: #17130f;
+  color: #1F2937;
   margin-top: 4px;
   display: block;
 }
@@ -338,7 +338,7 @@
   padding: 10px 12px;
   border-radius: 7px;
   border: 1px solid #ded8cf;
-  background: #fbf9f5;
+  background: #FFF8E8;
   cursor: pointer;
   text-align: left;
   transition: all 0.2s ease;
@@ -348,13 +348,13 @@
 }
 
 .role-chip:hover {
-  border-color: #a8712f;
+  border-color: #D4A017;
   background: #fffdfa;
   transform: translateY(-1px);
 }
 
 .role-chip.selected {
-  border-color: #a8712f;
+  border-color: #D4A017;
   background: #fdfaf4;
   box-shadow: 0 0 0 2px rgba(168, 113, 47, 0.2);
 }
@@ -362,7 +362,7 @@
 .role-chip-name {
   font-size: 12.5px;
   font-weight: 600;
-  color: #17130f;
+  color: #1F2937;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -381,7 +381,7 @@
   font-weight: 600;
   letter-spacing: 0.8px;
   text-transform: uppercase;
-  color: #a8712f;
+  color: #D4A017;
   margin-top: 2px;
 }
 
@@ -424,7 +424,7 @@
 
 .btn-autofill:hover {
   background: #251b14;
-  color: #ffffff;
+  color: #FFFCF5;
   border-color: #251b14;
 }
 
@@ -463,7 +463,7 @@
   border: 1px solid #ded8d0;
   border-radius: 6px;
   background: #fffdfa;
-  color: #17130f;
+  color: #1F2937;
   font-family: inherit;
   font-size: 14px;
   outline: none;
@@ -472,7 +472,7 @@
 }
 
 .login-input:focus {
-  border-color: var(--brass, #a8712f);
+  border-color: var(--brass, #D4A017);
   box-shadow: 0 0 0 3px rgba(168, 113, 47, 0.12);
 }
 
@@ -519,13 +519,13 @@
 }
 
 .remember-me-label input[type="checkbox"] {
-  accent-color: var(--brass, #a8712f);
+  accent-color: var(--brass, #D4A017);
   width: 15px;
   height: 15px;
 }
 
 .forgot-link {
-  color: var(--brass, #a8712f);
+  color: var(--brass, #D4A017);
   text-decoration: none;
   font-weight: 500;
 }
@@ -543,7 +543,7 @@
   border: none;
   border-radius: 6px;
   background: #231b14;
-  color: #ffffff;
+  color: #FFFCF5;
   font-family: inherit;
   font-size: 14px;
   font-weight: 600;
