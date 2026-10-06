@@ -309,38 +309,67 @@ export default function DesignerLogin() {
      ========================================================= */
 
   const designerAuthRequest = async (action, payload) => {
-    const response = await fetch(`${API_BASE_URL}/designer/${action}/`, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.detail || "Unable to sign in.");
+    let response;
+    try {
+      response = await fetch(`${API_BASE_URL}/designer/${action}/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(payload),
+      });
+    } catch (networkErr) {
+      throw new Error("Unable to connect to server. Please verify the backend is running.");
+    }
+
+    let data = {};
+    const text = await response.text();
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch (err) {
+      data = { detail: text || `Server error (${response.status})` };
+    }
+
+    if (!response.ok) throw new Error(data.detail || data.message || "Unable to sign in.");
     return data;
   };
 
   const handleSendOtp = async (e) => {
     if (e) e.preventDefault();
+    const cleanPhone = phone.trim().replace(/\D/g, "");
+    if (!cleanPhone) {
+      setErrorMsg("Please enter your mobile number first.");
+      return;
+    }
+    if (cleanPhone.length < 10) {
+      setErrorMsg("Please enter a valid 10-digit mobile number.");
+      return;
+    }
     setErrorMsg(""); setSuccessMsg(""); setIsSendingOtp(true);
     try {
-      const data = await designerAuthRequest("send-otp", { phone_number: `${countryCode}${phone}` });
+      const data = await designerAuthRequest("send-otp", { phone_number: `${countryCode}${cleanPhone}` });
       setOtpSent(true); setOtpDigits(["", "", "", "", "", ""]);
-      setCountdown(data.retry_after || 30); setSuccessMsg(data.message);
-      otpInputRefs.current[0]?.focus();
+      setCountdown(data.retry_after || 30); setSuccessMsg(data.message || "OTP sent to your mobile number.");
+      setTimeout(() => otpInputRefs.current[0]?.focus(), 150);
     } catch (err) { setErrorMsg(err.message); }
     finally { setIsSendingOtp(false); }
   };
 
   const handleVerifyOtp = async (e) => {
     if (e) e.preventDefault();
+    const enteredOtp = otpDigits.join("").trim();
+    if (enteredOtp.length < 6) {
+      setErrorMsg("Please enter the complete 6-digit OTP.");
+      return;
+    }
     setErrorMsg(""); setSuccessMsg(""); setIsVerifyingOtp(true);
+    const cleanPhone = phone.trim().replace(/\D/g, "");
     try {
       const data = await designerAuthRequest("verify-otp", {
-        phone_number: `${countryCode}${phone}`, otp: otpDigits.join(""),
+        phone_number: `${countryCode}${cleanPhone}`, otp: enteredOtp,
       });
       localStorage.setItem("access_token", data.access);
       localStorage.setItem("refresh_token", data.refresh);
       completeDesignerLogin(data.designer);
-    } catch (err) { setErrorMsg(err.message); }
+    } catch (err) { setErrorMsg(err.message || "Invalid OTP. Please try again."); }
     finally { setIsVerifyingOtp(false); }
   };
 
@@ -486,7 +515,7 @@ export default function DesignerLogin() {
           {activeTab === "phone" && (
             <div className="designer-form-body">
               {/* Phone Input Row - Single Unified White Box Matching Reference Image */}
-              <div className="designer-phone-row">
+              <div className={`designer-phone-row ${otpSent ? "locked" : ""}`}>
                 <div className="designer-country-pill">
                   <span className="designer-flag-icon">🇮🇳</span>
                   <span className="designer-code-text">{countryCode}</span>
@@ -501,78 +530,117 @@ export default function DesignerLogin() {
                     className="designer-phone-input"
                     placeholder="Enter your mobile number"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={(e) => {
+                      setPhone(e.target.value);
+                      if (otpSent) setOtpSent(false);
+                    }}
                     onKeyDown={(e) => {
-                      if (e.key === "Enter") handleSendOtp(e);
+                      if (e.key === "Enter" && !otpSent) handleSendOtp(e);
                     }}
                     maxLength={14}
+                    disabled={otpSent}
                   />
                 </div>
+                {otpSent && (
+                  <button
+                    type="button"
+                    className="designer-phone-edit-btn"
+                    onClick={() => {
+                      setOtpSent(false);
+                      setOtpDigits(["", "", "", "", "", ""]);
+                      setErrorMsg("");
+                      setSuccessMsg("");
+                    }}
+                    title="Change mobile number"
+                  >
+                    Change
+                  </button>
+                )}
               </div>
 
-              {/* Send OTP Button */}
-              <button
-                type="button"
-                className="btn-designer-gold"
-                onClick={handleSendOtp}
-                disabled={isSendingOtp}
-              >
-                <span>{isSendingOtp ? "Sending OTP..." : "Send OTP"}</span>
-                <ArrowRightIcon />
-              </button>
+              {!otpSent ? (
+                /* Step 1: Send OTP Button (Only visible before OTP is requested) */
+                <button
+                  type="button"
+                  className="btn-designer-gold"
+                  onClick={handleSendOtp}
+                  disabled={isSendingOtp}
+                >
+                  <span>{isSendingOtp ? "Sending OTP..." : "Send OTP"}</span>
+                  <ArrowRightIcon />
+                </button>
+              ) : (
+                /* Step 2: OTP Div (Only shown after mobile number is inserted and Send OTP is clicked) */
+                <div className="designer-otp-section">
+                  <div className="designer-otp-sent-info">
+                    Enter the 6-digit OTP sent to <strong>{countryCode} {phone}</strong>
+                  </div>
 
-              {/* OR Divider */}
-              <div className="designer-divider-or">
-                <span>OR</span>
-              </div>
+                  {/* 6 OTP Boxes */}
+                  <div className="designer-otp-grid" onPaste={handleOtpPaste}>
+                    {otpDigits.map((digit, index) => (
+                      <input
+                        key={index}
+                        ref={(el) => (otpInputRefs.current[index] = el)}
+                        type="text"
+                        inputMode="numeric"
+                        autoComplete="one-time-code"
+                        maxLength={1}
+                        className={`designer-otp-cell ${digit ? "filled" : ""}`}
+                        value={digit}
+                        onChange={(e) => handleOtpChange(index, e.target.value)}
+                        onKeyDown={(e) => {
+                          handleOtpKeyDown(index, e);
+                          if (e.key === "Enter" && otpDigits.every((d) => d !== "")) {
+                            handleVerifyOtp(e);
+                          }
+                        }}
+                      />
+                    ))}
+                  </div>
 
-              {/* 6 OTP Boxes */}
-              <div className="designer-otp-grid" onPaste={handleOtpPaste}>
-                {otpDigits.map((digit, index) => (
-                  <input
-                    key={index}
-                    ref={(el) => (otpInputRefs.current[index] = el)}
-                    type="text"
-                    inputMode="numeric"
-                    autoComplete="one-time-code"
-                    maxLength={1}
-                    className={`designer-otp-cell ${digit ? "filled" : ""}`}
-                    value={digit}
-                    onChange={(e) => handleOtpChange(index, e.target.value)}
-                    onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                  />
-                ))}
-              </div>
+                  {/* OTP Helper / Resend Timer */}
+                  <div className="designer-otp-helper">
+                    <span>
+                      {countdown > 0 ? (
+                        `Resend OTP in ${countdown}s`
+                      ) : (
+                        <button
+                          type="button"
+                          className="btn-resend-otp"
+                          onClick={handleSendOtp}
+                          disabled={isSendingOtp}
+                        >
+                          {isSendingOtp ? "Resending..." : "Resend OTP"}
+                        </button>
+                      )}
+                    </span>
+                    <button
+                      type="button"
+                      className="btn-resend-otp change-link"
+                      onClick={() => {
+                        setOtpSent(false);
+                        setOtpDigits(["", "", "", "", "", ""]);
+                        setErrorMsg("");
+                        setSuccessMsg("");
+                      }}
+                    >
+                      Change Number
+                    </button>
+                  </div>
 
-              {/* OTP Helper / Resend Timer */}
-              {otpSent && (
-                <div className="designer-otp-helper">
-                  <span>
-                    {countdown > 0 ? (
-                      `Resend OTP in ${countdown}s`
-                    ) : (
-                      <button
-                        type="button"
-                        className="btn-resend-otp"
-                        onClick={handleSendOtp}
-                      >
-                        Resend OTP
-                      </button>
-                    )}
-                  </span>
+                  {/* Verify OTP Button */}
+                  <button
+                    type="button"
+                    className="btn-designer-gold"
+                    onClick={handleVerifyOtp}
+                    disabled={isVerifyingOtp}
+                  >
+                    <span>{isVerifyingOtp ? "Verifying..." : "Verify OTP"}</span>
+                    <ArrowRightIcon />
+                  </button>
                 </div>
               )}
-
-              {/* Verify OTP Button */}
-              <button
-                type="button"
-                className="btn-designer-gold"
-                onClick={handleVerifyOtp}
-                disabled={isVerifyingOtp}
-              >
-                <span>{isVerifyingOtp ? "Verifying..." : "Verify OTP"}</span>
-                <ArrowRightIcon />
-              </button>
             </div>
           )}
 

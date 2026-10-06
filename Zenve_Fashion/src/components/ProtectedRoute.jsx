@@ -1,8 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { useAuth, ROLES } from "../context/AuthContext";
+import { Link, Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { layers } from "../data/layers";
-import Header from "./Header";
 import zenveLogo from "../assest/logo/zenve-logo-fashion.png";
 
 function LockIcon() {
@@ -15,7 +14,12 @@ function LockIcon() {
 }
 
 export default function ProtectedRoute({ layer, children }) {
-  const { currentUser, hasAccess } = useAuth();
+  const { currentUser, hasAccess, isLoggedIn } = useAuth();
+
+  // Not logged in at all -> send to login page
+  if (!isLoggedIn) {
+    return <Navigate to="/login" replace />;
+  }
 
   const isAuthorized = hasAccess(layer);
 
@@ -25,9 +29,6 @@ export default function ProtectedRoute({ layer, children }) {
 
   // Find layer info
   const layerInfo = layers.find((l) => l.n === layer) || { n: layer, name: `Layer ${layer}`, group: "Operations" };
-
-  // Find which roles have clearance for this layer
-  const authorizedRoles = ROLES.filter((r) => r.clearance.includes(layer));
 
   return (
     <div style={{
@@ -130,33 +131,6 @@ export default function ProtectedRoute({ layer, children }) {
           }}>
             You are currently signed in as <strong>{currentUser?.user}</strong> (<em>{currentUser?.name}</em>). This operational layer is partitioned and requires clearance.
           </p>
-
-          <div style={{
-            background: "#fbf9f4",
-            border: "1px solid #e8e2d8",
-            borderRadius: "8px",
-            padding: "16px",
-            marginBottom: "28px",
-            textAlign: "left",
-          }}>
-            <span style={{ fontSize: "11px", fontWeight: "600", letterSpacing: "1.2px", textTransform: "uppercase", color: "#7a6f64", display: "block", marginBottom: "8px" }}>
-              Authorized Designations:
-            </span>
-            <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-              {authorizedRoles.map((r) => (
-                <span key={r.id} style={{
-                  padding: "4px 10px",
-                  borderRadius: "20px",
-                  fontSize: "11px",
-                  fontWeight: "600",
-                  background: "#ece5d8",
-                  color: "#3a2d1f",
-                }}>
-                  {r.shortRole}
-                </span>
-              ))}
-            </div>
-          </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             {layer === "02" && (

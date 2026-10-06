@@ -6,7 +6,6 @@ export const layers = [
     blurb: "Lead, qualification, approval, KYC, contract, status",
     path: "/designer-crm",
   },
-
   {
     n: "02",
     group: "Supply",
@@ -14,7 +13,6 @@ export const layers = [
     blurb: "Profile, SKU upload, inventory, orders, settlement view",
     path: "/designer-portal",
   },
-
   {
     n: "03",
     group: "Catalogue",
@@ -22,7 +20,6 @@ export const layers = [
     blurb: "Variants, attributes, media, pricing, policy",
     path: "/catalogue",
   },
-
   {
     n: "04",
     group: "QA",
@@ -30,7 +27,6 @@ export const layers = [
     blurb: "Validation, approval, audit trail",
     path: "/catalogueqa",
   },
-
   {
     n: "05",
     group: "Inventory",
@@ -39,7 +35,6 @@ export const layers = [
       "Physical, reserved, available, damaged, returned, in-transit",
     path: "/inventory",
   },
-
   {
     n: "06",
     group: "Commerce",
@@ -47,7 +42,6 @@ export const layers = [
     blurb: "Search, filters, product page, cart, checkout",
     path: "/storefront",
   },
-
   {
     n: "07",
     group: "Orders",
@@ -55,7 +49,6 @@ export const layers = [
     blurb: "Order lifecycle, split orders, cancellation",
     path: "/orders",
   },
-
   {
     n: "08",
     group: "Logistics",
@@ -63,7 +56,6 @@ export const layers = [
     blurb: "Pincode, ETA, 60-min eligibility, 3-day target",
     path: "/delivery",
   },
-
   {
     n: "09",
     group: "Returns",
@@ -71,7 +63,6 @@ export const layers = [
     blurb: "Request, pickup, inspection, refund / exchange",
     path: "/returns",
   },
-
   {
     n: "10",
     group: "Finance",
@@ -79,7 +70,6 @@ export const layers = [
     blurb: "Take rate, payout, refunds, reconciliation",
     path: "/settlement",
   },
-
   {
     n: "11",
     group: "Analytics",
@@ -87,15 +77,12 @@ export const layers = [
     blurb: "Designer, SKU, inventory, customer, marketing KPIs",
     path: "/analytics",
   },
-
   {
     n: "12",
     group: "Admin",
     name: "Command Centre",
     blurb: "Approvals, controls, exceptions",
     path: "/command-centre",
-
-
   },
   {
     n: "13",
@@ -122,12 +109,13 @@ export const layers = [
 
 ];
 
-/**
- * Find a layer using its route path.
- *
- * Example:
- * getLayerByPath("/designer-crm")
- */
 export const getLayerByPath = (path) => {
   return layers.find((layer) => layer.path === path);
 };
+/**
+ * All roles land directly on the Main Layers Overview page ("/")
+ */
+export const getRoleLandingPath = () => {
+  return "/";
+};
+

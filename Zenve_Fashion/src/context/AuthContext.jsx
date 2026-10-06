@@ -1,4 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { loginRequest, normalizeSession, saveTokens, clearTokens } from "../services/authApi";
+
+const SESSION_KEY = "zenve_session";
+const LEGACY_KEY = "zenve_auth_user";
 
 export const ROLES = [
   {
@@ -74,57 +78,99 @@ export const ROLES = [
     badgeClass: "finance",
     clearance: ["07", "10", "11", "14", "15"],
   },
-  { id: "media", name: "Media Team", shortRole: "Media", user: "Media Team", email: "media@zenve.in", department: "Creative Operations", landingPath: "/media", description: "Product originals, Figma creative work, and designer image delivery.", badgeClass: "qa", clearance: ["13", "14", "15"] },
+  {
+    id: "media",
+    name: "Media Team",
+    shortRole: "Media",
+    user: "Media Team",
+    email: "media@zenve.in",
+    department: "Creative Operations",
+    landingPath: "/media",
+    description: "Product originals, Figma creative work, and designer image delivery.",
+    badgeClass: "qa",
+    clearance: ["13", "14", "15"],
+  },
 ];
+
+const LAYER_PATH_MAP = {
+  "/designer-crm": "01",
+  "/designer-portal": "02",
+  "/catalogue": "03",
+  "/catalogueqa": "04",
+  "/catalogue-qa": "04",
+  "/inventory": "05",
+  "/storefront": "06",
+  "/orders": "07",
+  "/delivery": "08",
+  "/returns": "09",
+  "/settlement": "10",
+  "/analytics": "11",
+  "/command-centre": "12",
+  "/media": "13",
+  "/social-media": "14",
+  "/accounting": "15",
+};
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(() => {
     try {
-      const saved = localStorage.getItem("zenve_auth_user");
+      localStorage.removeItem(LEGACY_KEY); // remove old mock session
+      const saved = sessionStorage.getItem(SESSION_KEY);
       if (saved) {
-        const user = JSON.parse(saved);
-        const role = ROLES.find(r => r.id === user?.id);
-        return role ? { ...user, clearance: role.clearance } : user;
+        const parsed = JSON.parse(saved);
+        if (parsed && Array.isArray(parsed.clearance)) return parsed;
+        const role = ROLES.find((r) => r.id === parsed?.id);
+        return role ? { ...parsed, clearance: role.clearance } : parsed;
       }
     } catch {
-      // Fallback
+      // ignore
     }
-    return ROLES.find(r => r.id === "admin"); // Default to Admin
+    return null; // nobody logged in
   });
 
   useEffect(() => {
     try {
-      localStorage.setItem("zenve_auth_user", JSON.stringify(currentUser));
+      if (currentUser) {
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
+      } else {
+        sessionStorage.removeItem(SESSION_KEY);
+      }
     } catch (e) {
       console.error("Could not persist auth state", e);
     }
   }, [currentUser]);
 
-  const loginWithRole = (roleId, profile = {}) => {
-    const found = ROLES.find((r) => r.id === roleId) || ROLES[0];
-    setCurrentUser({ ...found, ...profile });
-    return found;
+  // Real login: username + password are checked by the backend.
+  // The role and allowed layers come back from the database.
+  const login = async (username, password) => {
+    try {
+      const data = await loginRequest(username.trim(), password);
+      const { user, tokens } = normalizeSession(data);
+
+      if (user.clearance.length === 0) {
+        return { ok: false, error: "No layers are assigned to your role. Please contact the admin." };
+      }
+
+      saveTokens(tokens);
+      setCurrentUser(user);
+      return { ok: true, user };
+    } catch (err) {
+      return { ok: false, error: err.message || "Login failed." };
+    }
   };
 
-  const loginCustom = (email, password, roleId) => {
-    const roleObj = ROLES.find((r) => r.id === roleId) || ROLES[0];
-    const updated = {
-      ...roleObj,
-      email: email || roleObj.email,
-    };
-    setCurrentUser(updated);
-    return updated;
+  const loginWithRole = (roleId, profile = {}) => {
+    const found = ROLES.find((r) => r.id === roleId) || ROLES[0];
+    const user = { ...found, ...profile };
+    setCurrentUser(user);
+    return user;
   };
 
   const logout = () => {
+    clearTokens();
     setCurrentUser(null);
-    try {
-      localStorage.removeItem("zenve_auth_user");
-    } catch {
-      // Ignore
-    }
   };
 
   const hasAccess = (layerNum) => {
@@ -135,24 +181,7 @@ export function AuthProvider({ children }) {
 
   const canAccessPath = (path) => {
     if (!currentUser) return false;
-    const layerPathMap = {
-      "/designer-crm": "01",
-      "/designer-portal": "02",
-      "/catalogue": "03",
-      "/catalogueqa": "04",
-      "/inventory": "05",
-      "/storefront": "06",
-      "/orders": "07",
-      "/delivery": "08",
-      "/returns": "09",
-      "/settlement": "10",
-      "/analytics": "11",
-      "/command-centre": "12",
-      "/media": "13",
-      "/social-media": "14",
-      "/accounting": "15",
-    };
-    const layerNum = layerPathMap[path];
+    const layerNum = LAYER_PATH_MAP[path];
     if (!layerNum) return true; // public / unspecified
     return hasAccess(layerNum);
   };
@@ -160,10 +189,11 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider
       value={{
-        currentUser: currentUser || ROLES[0],
+        currentUser,
+        isLoggedIn: !!currentUser,
         ROLES,
+        login,
         loginWithRole,
-        loginCustom,
         logout,
         hasAccess,
         canAccessPath,

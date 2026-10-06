@@ -1071,8 +1071,9 @@ export default function Analytics() {
             </div>
 
             <div className="ZENVE-header-title-block">
-              <Link to="/command-centre" className="ZENVE-back-link">
-                ← ALL 12 LAYERS
+
+             <Link to="/" className="ZENVE-back-link">
+               ← ALL 12 LAYERS
               </Link>
 
               <h1 className="ZENVE-portal-title">

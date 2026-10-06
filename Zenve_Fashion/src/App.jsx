@@ -1,10 +1,9 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import AppLayout from "./components/AppLayout.jsx";
 
 import Home from "./pages/Home.jsx";
 import MediaStudio from "./pages/MediaStudio.jsx";
-import LayerPage from "./pages/LayerPage.jsx";
 import DesignerCRM from "./pages/DesignerCrm.jsx";
 import DesignerPortal from "./pages/DesignerPortal.jsx";
 import Catalogue from "./pages/Catalogue.jsx";
@@ -22,6 +21,7 @@ import SocialMedia from "./pages/SocialMedia.jsx";
 import Login from "./pages/Login.jsx";
 import DesignerLogin from "./pages/DesignerLogin.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import RequireAuth from "./components/RequireAuth.jsx";
 
 export default function App() {
   return (
@@ -34,8 +34,8 @@ export default function App() {
         <Route path="/designer-login" element={<DesignerLogin />} />
 
         <Route element={<AppLayout />}>
-          {/* Home Page */}
-          <Route path="/" element={<Home />} />
+          {/* Main (layers) page — only after login */}
+          <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
 
           {/* Operational Layers (Role Clearance Protected) */}
           <Route path="/media" element={<ProtectedRoute layer="13"><MediaStudio /></ProtectedRoute>} />
@@ -55,6 +55,9 @@ export default function App() {
           <Route path="/social-media" element={<ProtectedRoute layer="14"><SocialMedia /></ProtectedRoute>} />
           <Route path="/accounting" element={<ProtectedRoute layer="15"><Accounting /></ProtectedRoute>} />
         </Route>
+
+        {/* Any unknown URL -> "/" (which sends to /login if not signed in) */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AuthProvider>
   );
