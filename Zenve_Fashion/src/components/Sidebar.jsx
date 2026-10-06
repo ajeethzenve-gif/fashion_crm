@@ -1,5 +1,6 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { layers } from "../data/layers";
 import "./styles/Sidebar.css";
 import logo from "../assest/logo/zenve-logo-fashion.png";
@@ -128,8 +129,54 @@ const getDisplayName = (layerName) => {
   return layerName;
 };
 
+function UserIcon() {
+  return (
+    <svg
+      className="user-icon"
+      width="21"
+      height="21"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M5 20C5.8 16.5 8.2 14.5 12 14.5C15.8 14.5 18.2 16.5 19 20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function LogoutIcon() {
+  return (
+    <svg
+      className="user-icon"
+      width="21"
+      height="21"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+      <polyline points="16 17 21 12 16 7"></polyline>
+      <line x1="21" y1="12" x2="9" y2="12"></line>
+    </svg>
+  );
+}
+
 export default function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { currentUser, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <aside className="zenve-sidebar">
@@ -148,7 +195,7 @@ export default function Sidebar() {
         </Link>
         
         {layers.map((layer) => {
-          const isActive = location.pathname.startsWith(layer.path);
+          const isActive = location.pathname === layer.path || location.pathname.startsWith(`${layer.path}/`);
           const icon = iconMap[layer.name] || iconMap["Home"];
           const displayName = getDisplayName(layer.name);
           return (
@@ -160,6 +207,33 @@ export default function Sidebar() {
         })}
       </nav>
       
+      <div className="sidebar-bottom">
+        {currentUser ? (
+          <>
+            <div className="sidebar-user-info">
+              <div className="sidebar-user-avatar">
+                <UserIcon />
+              </div>
+              <div className="sidebar-user-details">
+                <span className="sidebar-user-name">
+                  {currentUser.user || "User"}
+                </span>
+                <span className="sidebar-user-role">
+                  {currentUser.shortRole || "Role"}
+                </span>
+              </div>
+            </div>
+            <button onClick={handleLogout} className="sidebar-signout-btn" title="Sign out">
+              Sign out
+            </button>
+          </>
+        ) : (
+          <Link to="/login" className="sidebar-signout-btn" title="Sign in">
+            Sign In
+          </Link>
+        )}
+      </div>
+
       <div className="sidebar-golden-waves"></div>
     </aside>
   );
