@@ -1,3 +1,5 @@
+import { getAccessToken } from "./authApi";
+
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
   "/api";
@@ -7,6 +9,11 @@ export { API_BASE_URL };
 /* =========================================================
    COMMON HELPERS
 ========================================================= */
+
+function authHeaders() {
+  const token = getAccessToken() || localStorage.getItem("access_token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 async function parseResponse(response) {
   return response.json().catch(() => ({}));
@@ -59,6 +66,7 @@ export async function getDesigners() {
       method: "GET",
       headers: {
         Accept: "application/json",
+        ...authHeaders(),
       },
     }
   );
@@ -80,6 +88,7 @@ export async function getDesigner(id) {
       method: "GET",
       headers: {
         Accept: "application/json",
+        ...authHeaders(),
       },
     }
   );
@@ -110,6 +119,7 @@ export async function createDesigner(
     method: "POST",
     headers: {
       Accept: "application/json",
+        ...authHeaders(),
     },
   };
 
@@ -168,6 +178,7 @@ export async function updateDesigner(
     method: "PATCH",
     headers: {
       Accept: "application/json",
+        ...authHeaders(),
     },
   };
 
@@ -261,6 +272,7 @@ export async function getProducts(params = {}) {
       method: "GET",
       headers: {
         Accept: "application/json",
+        ...authHeaders(),
       },
     }
   );
@@ -289,6 +301,7 @@ export async function createProduct(
     method: "POST",
     headers: {
       Accept: "application/json",
+        ...authHeaders(),
     },
   };
 
@@ -352,6 +365,7 @@ export async function updateProduct(
     method: "PATCH",
     headers: {
       Accept: "application/json",
+        ...authHeaders(),
     },
   };
 
@@ -408,6 +422,7 @@ export async function deleteProduct(id) {
       method: "DELETE",
       headers: {
         Accept: "application/json",
+        ...authHeaders(),
       },
     }
   );
@@ -444,6 +459,7 @@ export async function adjustProductStock(
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        ...authHeaders(),
       },
       body: JSON.stringify({
         action,
@@ -1096,6 +1112,7 @@ export async function getDesignerPortalDashboard(
       method: "GET",
       headers: {
         Accept: "application/json",
+        ...authHeaders(),
       },
     }
   );
@@ -1119,6 +1136,7 @@ export async function markDesignerNotificationsRead(
       method: "POST",
       headers: {
         Accept: "application/json",
+        ...authHeaders(),
       },
     }
   );
@@ -1195,7 +1213,7 @@ export async function getOfflineCreditPlans() {
 
 // function getAuthHeaders() {
 //   const token =
-//     localStorage.getItem("access_token") ||
+//     getAccessToken() || localStorage.getItem("access_token") ||
 //     localStorage.getItem("accessToken") ||
 //     localStorage.getItem("token");
 //

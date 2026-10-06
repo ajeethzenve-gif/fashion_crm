@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase, override_settings
 from django.utils import timezone
 from rest_framework.test import APIClient
-from accounts.models import UserRole
+from accounts.models import UserRole, Role, RoleLayerAccess
 from .models import Designer, DesignerLoginOTP
 
 
@@ -22,6 +22,7 @@ class DesignerAuthenticationTests(TestCase):
 
     def approve(self):
         self.designer.stage = "APPROVED"
+        self.designer.kyc_status = "VERIFIED"
         self.designer.save()
 
     def send(self):
@@ -94,3 +95,68 @@ class DesignerAuthenticationTests(TestCase):
     def test_missing_sms_configuration(self):
         self.approve()
         self.assertEqual(self.send()[0].status_code, 503)
+
+    def test_pending_kyc_blocks_sms_but_approval_creates_user(self):
+        self.designer.stage = "APPROVED"
+        self.designer.save()
+        self.assertIsNotNone(self.designer.user_id)
+        with patch("accounts.designer_login.import_string") as sender:
+            response = self.client.post("/api/designer/send-otp/", {"phone_number": "9876543210"})
+        self.assertEqual(response.status_code, 403)
+        sender.assert_not_called()
+
+    def test_kyc_revoked_after_sending_blocks_verification(self):
+        self.approve()
+        _, otp = self.send()
+        self.designer.kyc_status = "REJECTED"
+        self.designer.save()
+        self.assertEqual(self.verify(otp).status_code, 403)
+
+    def test_unregistered_mobile_is_rejected(self):
+        self.approve()
+        with patch("accounts.designer_login.import_string") as sender:
+            response = self.client.post("/api/designer/send-otp/", {"phone_number": "9123456780"})
+        self.assertEqual(response.status_code, 400)
+        sender.assert_not_called()
+
+    def test_dashboard_requires_own_verified_account(self):
+        self.approve()
+        url = f"/api/designers/{self.designer.pk}/portal-dashboard/"
+        self.assertIn(self.client.get(url).status_code, (401, 403))
+        self.client.force_authenticate(user=self.designer.user)
+        self.assertEqual(self.client.get(url).status_code, 200)
+        self.assertEqual(self.client.get(f"/api/designers/{self.designer.pk + 1}/portal-dashboard/").status_code, 403)
+        self.designer.kyc_status = "PENDING"
+        self.designer.save()
+        self.assertEqual(self.client.get(url).status_code, 403)
+
+    def test_onboarding_requires_crm_role(self):
+        url = f"/api/designers/{self.designer.pk}/"
+        self.assertIn(self.client.patch(url, {"stage": "APPROVED"}).status_code, (401, 403))
+        member = User.objects.create_user("crm-member")
+        role = Role.objects.create(name="CRM Member")
+        UserRole.objects.create(user=member, role=role)
+        self.client.force_authenticate(user=member)
+        self.assertEqual(self.client.patch(url, {"stage": "APPROVED"}).status_code, 403)
+        RoleLayerAccess.objects.create(role=role, layer="01")
+        response = self.client.patch(url, {"stage": "APPROVED"})
+        self.assertEqual(response.status_code, 200)
+        self.designer.refresh_from_db()
+        self.assertIsNotNone(self.designer.user_id)
+
+    def test_designer_cannot_verify_own_kyc_and_lists_only_self(self):
+        self.approve()
+        RoleLayerAccess.objects.create(role=self.designer.user.user_role.role, layer="01")
+        self.client.force_authenticate(user=self.designer.user)
+        url = f"/api/designers/{self.designer.pk}/"
+        self.assertEqual(self.client.patch(url, {"kyc_status": "VERIFIED"}).status_code, 403)
+        other = Designer.objects.create(designer_code="UNRELATED", designer_name="Other")
+        response = self.client.get("/api/designers/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual([item["id"] for item in response.data], [self.designer.pk])
+        self.assertEqual(self.client.get(f"/api/designers/{other.pk}/").status_code, 403)
+
+    def test_superuser_can_list_without_role_assignment(self):
+        admin = User.objects.create_superuser("admin-test", "admin@example.com", "test-password")
+        self.client.force_authenticate(user=admin)
+        self.assertEqual(self.client.get("/api/designers/").status_code, 200)

@@ -364,64 +364,47 @@ export default function DesignerCRM() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [showGstModal, newLead.gst, gstModalTarget]);
 
-  // Send WhatsApp portal access notification with direct access link
-  const handleSendWhatsAppPortalLink = (designer) => {
-    if (!designer) return;
-    const phoneRaw = designer.phone || designer.contact || "";
-    let cleanPhone = phoneRaw.replace(/[^0-9]/g, "");
-    if (cleanPhone.length === 10) cleanPhone = `91${cleanPhone}`;
-
-    if (!cleanPhone) {
-      const input = window.prompt(
-        `Enter WhatsApp phone number for ${designer.designer_name || designer.brand_name} (with country code, e.g. 919876543210):`,
-        "91"
-      );
-      if (!input) return;
-      cleanPhone = input.replace(/[^0-9]/g, "");
-    }
-
-    const designerName = designer.designer_name || designer.brand_name || "Designer";
-    const brandName = designer.brand_name || designer.designer_name || "Designer Brand";
-    const gstVal = designer.gst_number || designer.gst || COMPANY_GST_INFO.gstNumber;
-    const portalUrl = `${window.location.origin}/designer-portal?designer=${encodeURIComponent(brandName)}&code=${encodeURIComponent(designer.designer_code || `DSG-${designer.id}`)}`;
-
-    const message = `🌟 *ZENVE FASHION - DESIGNER PORTAL ACCESS* 🌟
-
-Hello *${designerName}*,
-
-Your company details and designer account have been successfully configured on *ZENVE Fashion*!
-
-📋 *Your Company Onboarding Details:*
-• Brand: *${brandName}*
-• Legal Entity: *${COMPANY_GST_INFO.name}*
-• GST Status: *${maskGstNumber(gstVal)}*
-• Operating City: *${designer.city || "All-India Marketplace Hub"}*
-• Designer Code: *${designer.designer_code || `DSG-${designer.id}`}*
-
-🚀 *Direct Access to Your Designer Portal:*
-${portalUrl}
-
-Click the link above to directly access your Designer Portal to manage your catalogue, view orders, track inventory, and view settlements.
-
-Welcome to ZENVE Fashion!
-_Team ZENVE Creator Operations_`;
-
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-    showToast(`WhatsApp portal access link opened for ${brandName}!`);
+  const canShareDesignerLogin = (designer) => {
+    return designer?.is_active !== false &&
+      ["APPROVED", "CONTRACT", "SIGNED", "LIVE", "ACTIVE"].includes(designer?.stage);
   };
 
-  // Copy direct portal access link to clipboard
+  const designerLoginUrl = () => `${window.location.origin}/designer-login`;
+
+  const handleSendWhatsAppPortalLink = (designer) => {
+    if (!canShareDesignerLogin(designer)) {
+      showErrorToast("Approve this designer before sharing the login link.");
+      return;
+    }
+    let phone = String(designer.phone || "").replace(/[^0-9]/g, "");
+    if (phone.length === 10) phone = `91${phone}`;
+    if (phone.length < 10 || phone.length > 15) {
+      showErrorToast("Add a valid registered mobile number before sharing the login link.");
+      return;
+    }
+    const name = designer.owner_name || designer.designer_name || "Designer";
+    const message = `Hello ${name}, your ${designer.brand_name || "designer"} account has been approved on ZENVE Fashion.
+
+Designer login: ${designerLoginUrl()}
+
+Sign in using your registered mobile number and the OTP sent to it. KYC verification is required before dashboard access.
+
+Team ZENVE Fashion`;
+    window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+    showToast("WhatsApp message opened. Send it to share the designer login link.");
+  };
+
   const handleCopyPortalLoginLink = async (designer) => {
-    if (!designer) return;
-    const brandName = designer.brand_name || designer.designer_name || "Designer";
-    const code = designer.designer_code || `DSG-${designer.id}`;
-    const url = `${window.location.origin}/designer-portal?designer=${encodeURIComponent(brandName)}&code=${encodeURIComponent(code)}`;
+    if (!canShareDesignerLogin(designer)) {
+      showErrorToast("Approve this designer before sharing the login link.");
+      return;
+    }
+    const url = designerLoginUrl();
     try {
       await navigator.clipboard.writeText(url);
-      showToast(`Portal access link copied for ${brandName}.`);
+      showToast("Designer login link copied.");
     } catch {
-      window.prompt("Copy designer portal link:", url);
+      window.prompt("Copy designer login link:", url);
     }
   };
 
@@ -1545,10 +1528,10 @@ _Team ZENVE Creator Operations_`;
         <div className="crm-whatsapp-portal-card">
           <div className="whatsapp-card-badge-row">
             <span className="whatsapp-pill">
-              <WhatsAppIcon size={13} /> WHATSAPP DIRECT ACCESS
+              <WhatsAppIcon size={13} /> WHATSAPP LOGIN INVITATION
             </span>
             <span className="whatsapp-status-tag">
-              {designer.phone || designer.contact ? "WhatsApp Ready" : "Contact On File"}
+              {canShareDesignerLogin(designer) ? "Approved · Login link ready" : "Approval required"}
             </span>
           </div>
 
@@ -1569,18 +1552,20 @@ _Team ZENVE Creator Operations_`;
               type="button"
               className="btn-send-whatsapp-portal"
               onClick={() => handleSendWhatsAppPortalLink(designer)}
-              title="Click to send WhatsApp message with direct access to Designer Portal"
+              disabled={!canShareDesignerLogin(designer) || !designer.phone}
+              title="Share the approved designer login link via WhatsApp"
             >
               <WhatsAppIcon size={16} />
-              <span>Send WhatsApp Portal Link</span>
+              <span>Send WhatsApp Login Link</span>
             </button>
             <button
               type="button"
               className="btn-secondary"
               onClick={() => handleCopyPortalLoginLink(designer)}
-              title="Copy direct portal link to clipboard"
+              disabled={!canShareDesignerLogin(designer)}
+              title="Copy the designer login link"
             >
-              Copy Portal Link
+              Copy Login Link
             </button>
           </div>
         </div>

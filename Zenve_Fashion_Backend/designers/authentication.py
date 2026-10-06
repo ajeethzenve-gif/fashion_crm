@@ -1,6 +1,6 @@
 import re
 from django.contrib.auth.models import User
-from accounts.models import Role, UserRole
+from accounts.models import Role, UserRole, RoleLayerAccess
 from .models import Designer
 
 LOGIN_STAGES = ("APPROVED", "CONTRACT", "SIGNED", "LIVE", "ACTIVE")
@@ -28,6 +28,9 @@ def provision_designer_user(designer):
     user.email = designer.email
     user.save()
     role, _ = Role.objects.get_or_create(name="Designer")
+    role.layer_access.exclude(layer__in=("02", "03", "06")).delete()
+    for layer in ("02", "03", "06"):
+        RoleLayerAccess.objects.get_or_create(role=role, layer=layer)
     UserRole.objects.update_or_create(user=user, defaults={"role": role})
     if designer.user_id != user.pk:
         Designer.objects.filter(pk=designer.pk).update(user=user)

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { MediaWorkspace } from "./MediaStudio";
@@ -303,6 +304,7 @@ const getErrorMessage = (error, fallback) => {
 ========================================================= */
 
 export default function DesignerPortal() {
+  const { currentUser } = useAuth();
   /* =======================================================
      DESIGNER SELECTION
   ======================================================= */
@@ -684,7 +686,9 @@ export default function DesignerPortal() {
       setLoadingDesigners(true);
 
       const response = await getDesigners();
-      const list = getListFromResponse(response);
+      const list = getListFromResponse(response).filter((designer) =>
+        currentUser?.id !== "designer" || String(designer.id) === String(currentUser.designerId)
+      );
 
       setDesigners(list);
 

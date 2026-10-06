@@ -15,6 +15,7 @@ from .models import (
     Designer,
     DesignerAccountDetails,
 )
+from .permissions import DesignerDashboardAccess, DesignerManagementAccess
 
 from .serializers import (
     DesignerSerializer,
@@ -27,7 +28,7 @@ from .serializers import (
 
 class DesignerListAPIView(APIView):
 
-    permission_classes = [AllowAny]
+    permission_classes = [DesignerManagementAccess]
 
     parser_classes = [
         JSONParser,
@@ -39,6 +40,9 @@ class DesignerListAPIView(APIView):
         designers = Designer.objects.all().order_by(
             "-created_at"
         )
+        assignment = getattr(request.user, "user_role", None)
+        if assignment and assignment.role.name == "Designer":
+            designers = designers.filter(user=request.user)
 
         serializer = DesignerSerializer(
             designers,
@@ -88,7 +92,7 @@ class DesignerDetailAPIView(APIView):
     DELETE /api/designers/<id>/
     """
 
-    permission_classes = [AllowAny]
+    permission_classes = [DesignerManagementAccess]
 
     parser_classes = [
         JSONParser,
@@ -484,7 +488,7 @@ class DesignerPortalDashboardAPIView(APIView):
     GET  /api/designers/<id>/portal-dashboard/
     POST /api/designers/<id>/portal-dashboard/mark-read/
     """
-    permission_classes = [AllowAny]
+    permission_classes = [DesignerDashboardAccess]
 
     def get(self, request, designer_id):
         from decimal import Decimal

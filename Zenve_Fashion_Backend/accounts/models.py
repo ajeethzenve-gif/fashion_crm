@@ -299,6 +299,9 @@ class RoleLayerAccess(models.Model):
         ("10", "10 - Settlement"),
         ("11", "11 - BI Dashboards"),
         ("12", "12 - Command Centre"),
+        ("13", "13 - Media Studio"),
+        ("14", "14 - Social Media"),
+        ("15", "15 - Accounting"),
     )
 
     role = models.ForeignKey(

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth, ROLES } from "../context/AuthContext";
-import { API_BASE_URL, getDesigners } from "../services/api";
+import { saveTokens } from "../services/authApi";
+import { API_BASE_URL } from "../services/api";
 import "../styles/DesignerLogin.css";
 import designerBg from "../assest/designer-bg.png";
 
@@ -177,33 +178,6 @@ export default function DesignerLogin() {
   // Refs for 6-digit OTP inputs
   const otpInputRefs = useRef([]);
 
-  // Load Designers from Backend or Fallback
-  useEffect(() => {
-    let mounted = true;
-    const fetchDesignersData = async () => {
-      try {
-        const data = await getDesigners();
-        const list = Array.isArray(data) ? data : data?.results || [];
-        if (mounted && list.length > 0) {
-          setRegisteredDesigners(list);
-        }
-      } catch (err) {
-        // Fallback default designers in case backend is offline
-        if (mounted) {
-          setRegisteredDesigners([
-            { id: 19, designer_code: "DSG-0001", designer_name: "Aarav Mehta", brand_name: "Aarav Pet Atelier", email: "aarav@petatelier.in", phone: "9820011223" },
-            { id: 18, designer_code: "DSG-1117", designer_name: "Ashwin", brand_name: "Ashwin Couture", email: "ashwin@gmail.com", phone: "9876545321" },
-            { id: 17, designer_code: "DSG-7003", designer_name: "Shankar", brand_name: "Shankar Pet Style", email: "kokarako@gmail.com", phone: "9876543210" },
-          ]);
-        }
-      }
-    };
-    fetchDesignersData();
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
   // OTP Countdown Timer
   useEffect(() => {
     if (countdown > 0) {
@@ -267,7 +241,7 @@ export default function DesignerLogin() {
       department: "External Supply Partner",
       landingPath: "/designer-portal",
       badgeClass: "designer",
-      clearance: ["02", "03", "06", "14", "15"],
+      clearance: ["02", "03", "06"],
     };
 
     const targetDesignerId = designer?.id || 19;
@@ -285,7 +259,7 @@ export default function DesignerLogin() {
       brand: targetBrand,
       email: targetEmail,
       phone: targetPhone,
-      clearance: ["02", "03", "06", "14", "15"],
+      clearance: ["02", "03", "06"],
     };
 
     // Store in LocalStorage for seamless DesignerPortal loading
@@ -366,6 +340,7 @@ export default function DesignerLogin() {
       const data = await designerAuthRequest("verify-otp", {
         phone_number: `${countryCode}${cleanPhone}`, otp: enteredOtp,
       });
+      saveTokens({ access: data.access, refresh: data.refresh });
       localStorage.setItem("access_token", data.access);
       localStorage.setItem("refresh_token", data.refresh);
       completeDesignerLogin(data.designer);

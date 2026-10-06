@@ -27,6 +27,9 @@ export function clearTokens() {
   try {
     sessionStorage.removeItem(ACCESS_KEY);
     sessionStorage.removeItem(REFRESH_KEY);
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("zenve_selected_designer_id");
   } catch {
     // ignore
   }
@@ -127,6 +130,8 @@ export function normalizeSession(data) {
   if (u.is_superuser === true && clearance.length === 0) {
     clearance = layers.map((l) => l.n);
   }
+
+  if (roleName.toLowerCase() === "designer") clearance = ["02", "03", "06"];
 
   const firstLayer = layers.find((l) => l.n === clearance[0]);
   const fullName =

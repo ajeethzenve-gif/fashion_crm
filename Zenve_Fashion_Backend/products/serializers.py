@@ -669,6 +669,14 @@ class ProductSerializer(serializers.ModelSerializer):
     # =====================================================
 
     def validate(self, attrs):
+        from .access import designer_for_request
+        request = self.context.get("request")
+        designer = designer_for_request(request) if request else None
+        if designer:
+            selected = attrs.get("designer", getattr(self.instance, "designer", designer))
+            if selected.pk != designer.pk:
+                raise serializers.ValidationError({"designer": "You can manage only your own products."})
+            attrs["designer"] = designer
 
         mrp = attrs.get(
             "mrp",

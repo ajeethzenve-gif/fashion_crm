@@ -17,6 +17,7 @@ from .models import (
 )
 
 from .serializers import ProductSerializer
+from .access import scoped_products
 
 
 # =========================================================
@@ -95,6 +96,8 @@ class ProductListCreateAPIView(APIView):
         # -------------------------------------------------
         # DESIGNER FILTER
         # -------------------------------------------------
+
+        products = scoped_products(request, products)
 
         if designer:
 
@@ -482,7 +485,7 @@ class ProductDetailAPIView(APIView):
         try:
 
             return (
-                Product.objects
+                scoped_products(self.request, Product.objects.all())
                 .select_related(
                     "designer"
                 )
@@ -728,7 +731,7 @@ class ProductStockAdjustmentAPIView(APIView):
         try:
 
             product = (
-                Product.objects
+                scoped_products(request, Product.objects.all())
                 .select_related(
                     "designer"
                 )
@@ -1326,4 +1329,4 @@ class SocialMediaDetailAPIView(APIView):
         return Response({
             "message": f"Designer {product.designer.designer_name} ({product.designer.brand_name}) approached successfully!",
             "product": ProductSerializer(product, context={"request": request}).data
-        }, status=status.HTTP_200_OK)
+        }, status=status.HTTP_200_OK)

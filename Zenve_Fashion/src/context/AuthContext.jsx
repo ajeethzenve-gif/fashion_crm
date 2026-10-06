@@ -28,7 +28,7 @@ export const ROLES = [
     landingPath: "/designer-portal",
     description: "Supply layer partner portal, SKU uploads, live inventory, and settlements.",
     badgeClass: "designer",
-    clearance: ["02", "03", "06", "14", "15"],
+    clearance: ["02", "03", "06"],
   },
   {
     id: "merchandiser",
@@ -120,6 +120,7 @@ export function AuthProvider({ children }) {
       const saved = sessionStorage.getItem(SESSION_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
+        if (parsed?.id === "designer") return { ...parsed, clearance: ["02", "03", "06"] };
         if (parsed && Array.isArray(parsed.clearance)) return parsed;
         const role = ROLES.find((r) => r.id === parsed?.id);
         return role ? { ...parsed, clearance: role.clearance } : parsed;
@@ -176,6 +177,7 @@ export function AuthProvider({ children }) {
   const hasAccess = (layerNum) => {
     if (!currentUser) return false;
     const numStr = String(layerNum).padStart(2, "0");
+    if (currentUser.id === "designer") return ["02", "03", "06"].includes(numStr);
     return currentUser.clearance?.includes(numStr) ?? false;
   };
 

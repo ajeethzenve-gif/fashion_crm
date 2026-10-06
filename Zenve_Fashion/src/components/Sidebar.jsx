@@ -171,7 +171,7 @@ function LogoutIcon() {
 export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, hasAccess } = useAuth();
 
   const handleLogout = () => {
     logout();
@@ -194,7 +194,7 @@ export default function Sidebar() {
           <span>Home</span>
         </Link>
         
-        {layers.map((layer) => {
+        {layers.filter((layer) => hasAccess(layer.n)).map((layer) => {
           const isActive = location.pathname === layer.path || location.pathname.startsWith(`${layer.path}/`);
           const icon = iconMap[layer.name] || iconMap["Home"];
           const displayName = getDisplayName(layer.name);

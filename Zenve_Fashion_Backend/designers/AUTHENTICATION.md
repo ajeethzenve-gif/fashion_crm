@@ -26,3 +26,26 @@ and can be used once. Resends require 30 seconds. Ambiguous mobile numbers, inac
 users/designers, and designers outside approved/contract/signed/live/active stages
 cannot log in. SMS credentials and a delivery adapter must be configured before
 mobile login can send messages. No demo OTP or fixed passcode is accepted.
+
+Login requires both approval and VERIFIED KYC. The KYC status is checked before
+sending an OTP, when verifying it, and on each designer dashboard request.
+New vendor records do not receive a login account until approval. Approval creates
+the linked user and Designer role even when KYC is still pending.
+
+Members who have Designer CRM layer 01 in their database role can create vendors,
+approve them, and verify KYC. Django staff and superusers can also manage onboarding.
+Designers cannot approve themselves or change their KYC, and see only their own
+record and dashboard. CRM and dashboard requests require login tokens.
+
+After approval, staff can click Send WhatsApp Login Link in the CRM. This opens a
+WhatsApp draft addressed to the registered mobile number with /designer-login.
+Staff must send the draft in WhatsApp; the application does not claim automatic
+delivery. The link grants no access by itself. The designer must use their registered
+mobile number and OTP after KYC verification. Copy Login Link uses the same page.
+
+Designer access is restricted to Designer Portal (02), Product Catalogue (03),
+and Storefront (06). Migration 0010 sets these permissions for the existing
+Designer role; approval also maintains this exact set for new designer accounts.
+Other roles retain their configured access. Authenticated designer product lists,
+details, changes, and stock requests are scoped to their linked designer account;
+request filters cannot grant access to another designer's products.

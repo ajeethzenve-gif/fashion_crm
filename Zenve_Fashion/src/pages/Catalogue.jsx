@@ -1,3 +1,4 @@
+import { useAuth } from "../context/AuthContext";
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Catalogue.css";
@@ -106,6 +107,7 @@ function formatInr(val) {
 ========================================================= */
 
 export default function Catalogue() {
+  const { currentUser } = useAuth();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -129,7 +131,7 @@ export default function Catalogue() {
     try {
       setLoading(true);
       setError("");
-      const data = await getProducts();
+      const data = await getProducts(currentUser?.id === "designer" ? { designer: currentUser.designerId } : {});
       const list = Array.isArray(data) ? data : data.results || [];
       setProducts(list);
     } catch (err) {

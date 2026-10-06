@@ -29,6 +29,12 @@ def find_designer(phone):
     return matches[0] if len(matches) == 1 else None
 
 
+def kyc_error(designer):
+    if designer.kyc_status != Designer.KYCStatus.VERIFIED:
+        return Response({"detail": "KYC verification is required before designer login. Contact your account manager."}, status=403)
+    return None
+
+
 class DesignerOTPAPIView(APIView):
     authentication_classes = []
     permission_classes = [AllowAny]
@@ -41,14 +47,21 @@ class DesignerOTPAPIView(APIView):
         designer = find_designer(phone)
         if not designer:
             return Response({"detail": "No approved designer account for this mobile number."}, status=400)
+        denied = kyc_error(designer)
+        if denied is not None:
+            return denied
         sender = getattr(settings, "DESIGNER_OTP_SMS_SENDER", "")
         if not sender:
             return Response({"detail": "SMS delivery is not configured. Contact the administrator."}, status=503)
         with transaction.atomic():
             # Lock the account to serialize resend and verification requests.
             Designer.objects.select_for_update().get(pk=designer.pk)
-            if not find_designer(phone):
+            current_designer = find_designer(phone)
+            if not current_designer:
                 return Response({"detail": "Designer account is not eligible for login."}, status=400)
+            denied = kyc_error(current_designer)
+            if denied is not None:
+                return denied
             challenge, _ = DesignerLoginOTP.objects.get_or_create(designer=designer)
             now = timezone.now()
             if challenge.sent_at and now < challenge.sent_at + timedelta(seconds=30):
@@ -87,10 +100,17 @@ class DesignerVerifyOTPAPIView(APIView):
         designer = find_designer(phone)
         if not designer:
             return Response({"detail": "Designer account is not eligible for login."}, status=400)
+        denied = kyc_error(designer)
+        if denied is not None:
+            return denied
         with transaction.atomic():
             Designer.objects.select_for_update().get(pk=designer.pk)
-            if not find_designer(phone):
+            current_designer = find_designer(phone)
+            if not current_designer:
                 return Response({"detail": "Designer account is not eligible for login."}, status=400)
+            denied = kyc_error(current_designer)
+            if denied is not None:
+                return denied
             challenge = DesignerLoginOTP.objects.filter(designer=designer, phone=phone).first()
             if not challenge or not challenge.otp_hash or challenge.expires_at <= timezone.now() or challenge.attempts >= 5:
                 return Response({"detail": "OTP expired or unavailable. Request a new OTP."}, status=400)
@@ -104,7 +124,7 @@ class DesignerVerifyOTPAPIView(APIView):
             refresh = RefreshToken.for_user(designer.user)
         return Response({
             "access": str(refresh.access_token), "refresh": str(refresh),
-            "role": "Designer", "designer": {
+            "role": "Designer", "layers": ["02", "03", "06"], "designer": {
                 "id": designer.pk, "designer_name": designer.designer_name,
                 "brand_name": designer.brand_name, "email": designer.email,
                 "phone": designer.phone,

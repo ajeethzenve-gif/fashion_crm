@@ -1,3 +1,4 @@
+import { useAuth } from "../context/AuthContext";
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import "../styles/StoreFront.css";
@@ -71,6 +72,7 @@ function formatInr(val) {
 ========================================================= */
 
 export default function Storefront() {
+  const { currentUser } = useAuth();
   const [products, setProducts] = useState([]);
   const [designers, setDesigners] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -109,7 +111,7 @@ export default function Storefront() {
       setError(null);
 
       const [prodsData, desData] = await Promise.all([
-        getProducts().catch(() => []),
+        getProducts(currentUser?.id === "designer" ? { designer: currentUser.designerId } : {}).catch(() => []),
         getDesigners().catch(() => []),
       ]);
 
