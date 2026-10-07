@@ -28,13 +28,16 @@ from .serializers import (
 
 class DesignerListAPIView(APIView):
 
-    permission_classes = [DesignerManagementAccess]
-
     parser_classes = [
         JSONParser,
         FormParser,
         MultiPartParser,
     ]
+
+    def get_permissions(self):
+        if self.request.method in ("GET", "HEAD", "OPTIONS"):
+            return [AllowAny()]
+        return [DesignerManagementAccess()]
 
     def get(self, request):
         designers = Designer.objects.all().order_by(

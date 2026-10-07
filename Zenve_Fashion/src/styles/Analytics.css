@@ -1,1243 +1,1137 @@
 /* =========================================================
-   ZENVE FASHION - 11 BI DASHBOARDS & ANALYTICS
-   Exact ZENVE Design Tokens & Even Multi-Screen Layout
-   Directly matching https://zenvefashioncm.ZENVE.app/analytics
+   ZENVE FASHION - BI DASHBOARDS & ANALYTICS LAYER
+   Exact Match to High-End Merchandising UI
 ========================================================= */
 
 :root {
-  --ZENVE-paper: #FFF8E8;
-  --ZENVE-card: #FFFCF5;
-  --ZENVE-ink: #1F2937;
-  --ZENVE-muted: #6B5A45;
-  --ZENVE-border: #E7C77A;
-  --ZENVE-border-light: #F4D58D;
-  --ZENVE-border-hover: #D4A017;
-  --ZENVE-gold: #D4A017;
-  --ZENVE-gold-light: #fdfaf6;
-  --ZENVE-accent: #D4A017;
-  --chart-1: #D4A017;
-  --chart-2: #5b7b99;
-  --chart-3: #8f9e74;
-  --chart-4: #bd5353;
-  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  --font-display: "Outfit", -apple-system, BlinkMacSystemFont, sans-serif;
+  --bi-gold-primary: #965B1C;
+  --bi-gold-hover: #7E4A14;
+  --bi-gold-accent: #C5933C;
+  --bi-gold-light: #FDF9F3;
+  --bi-bg: #FAF8F5;
+  --bi-card-bg: #FFFFFF;
+  --bi-border: #EADBCC;
+  --bi-border-hover: #D5C2A5;
+  --bi-text-main: #1E293B;
+  --bi-text-muted: #64748B;
+  --bi-text-dark: #0F172A;
+  --bi-text-title: #2B180A;
+  --bi-success: #16A34A;
+  --bi-danger: #DC2626;
 }
 
-.analytics-page,
-.analytics-page *,
-.analytics-page *::before,
-.analytics-page *::after {
-  box-sizing: border-box;
-}
-
-.analytics-page {
-  width: 100%;
-  min-height: 100vh;
-  background-color: var(--ZENVE-paper);
-  color: var(--ZENVE-ink);
-  font-family: var(--font-sans);
-  margin: 0;
-  padding: 0;
-  padding-bottom: 60px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* =========================================================
-   HEADER (EXACT ZENVE ALIGNMENT)
-========================================================= */
-
-.ZENVE-header {
-  width: 100%;
-  background-color: var(--ZENVE-card);
-  border-bottom: 1px solid var(--ZENVE-border);
-  position: sticky;
-  top: 0;
-  z-index: 50;
-}
-
-.ZENVE-header-inner {
-  max-width: 1380px;
-  margin: 0 auto;
-  padding: 16px 28px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.ZENVE-header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  min-width: 0;
-  flex-shrink: 0;
-}
-
-.ZENVE-portal-logo {
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
-  flex-shrink: 0;
-}
-
-.ZENVE-portal-logo img {
-  height: 38px;
-  width: auto;
-  display: block;
-}
-
-.ZENVE-header-title-block {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.ZENVE-back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ZENVE-muted);
-  text-decoration: none;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: color 0.15s ease;
-}
-
-.ZENVE-back-link:hover {
-  color: var(--ZENVE-ink);
-}
-
-.ZENVE-portal-title {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 500;
-  font-family: var(--font-serif);
-  color: var(--ZENVE-ink);
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  line-height: 1.2;
-}
-
-.ZENVE-layer-num {
-  font-size: 24px;
-  font-weight: 500;
-  font-family: inherit;
-  color: var(--ZENVE-gold);
-}
-
-.ZENVE-portal-desc {
-  margin: 0;
-  font-size: 13.5px;
-  color: var(--ZENVE-muted);
-  line-height: 1.4;
-}
-
-.ZENVE-header-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-.analytics-refresh-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  background-color: var(--ZENVE-card);
-  border: 1px solid var(--ZENVE-border);
-  border-radius: 6px;
-  color: var(--ZENVE-ink);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-}
-
-.analytics-refresh-btn:hover:not(:disabled) {
-  border-color: var(--ZENVE-gold);
-  background-color: var(--ZENVE-gold-light);
-}
-
-.analytics-refresh-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.refresh-spinner {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* =========================================================
-   CONTAINER & LAYOUT (EXACT max-w-6xl space-y-6 px-5 py-7)
-========================================================= */
-
-.analytics-container {
-  width: 100%;
-  max-width: 1380px;
-  margin: 0 auto;
-  padding: 24px 28px 60px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-/* Error Banner */
-.analytics-error-banner {
-  background-color: #fdf2f2;
-  border: 1px solid #f8b4b4;
-  color: #9b1c1c;
-  padding: 12px 16px;
-  border-radius: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-}
-
-.analytics-error-banner button {
-  background: #9b1c1c;
-  color: white;
-  border: none;
-  padding: 4px 12px;
-  border-radius: 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-/* =========================================================
-   1. TOP 6 KPI METRICS GRID (EXACT EVEN CARD HEIGHTS)
-========================================================= */
-
-.analytics-kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 12px;
-  width: 100%;
-}
-
-.analytics-kpi-card {
-  background-color: var(--ZENVE-card);
-  border: 1px solid var(--ZENVE-border);
-  border-radius: 8px;
-  padding: 12px 16px;
-  min-height: 82px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.analytics-kpi-card:hover {
-  border-color: #d1c8be;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-.label-caps {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ZENVE-muted);
-  margin: 0;
-  line-height: 1;
-}
-
-.analytics-kpi-value {
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--ZENVE-ink);
-  margin: 4px 0 0;
-  line-height: 1.15;
-  font-family: var(--font-display);
-}
-
-.analytics-kpi-hint {
-  font-size: 12px;
-  color: var(--ZENVE-muted);
-  margin: 2px 0 0;
-  line-height: 1;
-}
-
-/* =========================================================
-   PANELS & SECTIONS (panel p-5)
-========================================================= */
-
-.analytics-panel {
-  background-color: var(--ZENVE-card);
-  border: 1px solid var(--ZENVE-border);
-  border-radius: 8px;
-  padding: 20px;
+.bi-dashboard-page {
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-
-.panel-header-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.panel-title-block {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.panel-title {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--ZENVE-ink);
-}
-
-.panel-desc {
-  margin: 2px 0 0;
-  font-size: 14px;
-  color: var(--ZENVE-muted);
-  line-height: 1.4;
-}
-
-.panel-empty {
-  padding: 36px 16px;
-  text-align: center;
-  color: var(--ZENVE-muted);
-  font-size: 13.5px;
-  background-color: var(--ZENVE-paper);
-  border: 1px dashed var(--ZENVE-border);
-  border-radius: 6px;
+  padding: 16px 24px 40px 24px;
+  background-color: var(--bi-bg);
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--bi-text-main);
 }
 
 /* =========================================================
-   2. 2-COLUMN CHARTS GRID (EXACT EQUAL PANEL HEIGHTS)
+   1. LUXURY HERO BANNER WITH MODEL & COUTURE ATELIER
 ========================================================= */
 
-.analytics-charts-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-  width: 100%;
-}
-
-.analytics-panel.chart-panel {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.chart-h-wrap {
-  height: 260px;
-  width: 100%;
+.bi-hero-banner {
   position: relative;
-  min-height: 260px;
-}
-
-/* Recharts container responsiveness */
-.chart-h-wrap .recharts-responsive-container {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-/* Donut container & legend (exact ZENVE layout) */
-.donut-flex-container {
-  width: 100%;
-  height: 100%;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
+  min-height: 130px;
+  padding: 22px 30px;
+  background: linear-gradient(135deg, #FBF8F2 0%, #F5EBDC 45%, #EDE0C7 100%);
+  border: 1px solid #E6D7C3;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px -4px rgba(78, 52, 23, 0.08);
 }
 
-.donut-chart-area {
-  width: 100%;
-  height: 215px;
-  min-height: 0;
+.bi-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 62%;
+}
+
+.bi-breadcrumbs {
   display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.donut-legend {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  font-size: 12px;
-  color: var(--ZENVE-muted);
-  padding: 4px 8px 0;
-  line-height: 1.3;
-}
-
-.legend-item {
-  display: inline-flex;
   align-items: center;
   gap: 6px;
-  white-space: nowrap;
-}
-
-.legend-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  display: inline-block;
-  flex-shrink: 0;
-}
-
-/* =========================================================
-   3. SKU PERFORMANCE TABLE (EXACT ZENVE TABLE)
-========================================================= */
-
-.sku-table-container {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: var(--ZENVE-border) transparent;
-}
-
-.sku-table-container::-webkit-scrollbar {
-  height: 6px;
-  width: 6px;
-}
-
-.sku-table-container::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.sku-table-container::-webkit-scrollbar-thumb {
-  background-color: var(--ZENVE-border);
-  border-radius: 4px;
-}
-
-.sku-table {
-  width: 100%;
-  min-width: 650px;
-  border-collapse: collapse;
-  font-size: 14px;
-  text-align: left;
-}
-
-.sku-table th {
-  padding: 8px 16px 8px 0;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ZENVE-muted);
-  border-bottom: 1px solid var(--ZENVE-border);
-  white-space: nowrap;
-}
-
-.sku-table td {
-  padding: 10px 16px 10px 0;
-  border-bottom: 1px solid var(--ZENVE-border);
-  color: var(--ZENVE-ink);
-  vertical-align: middle;
-}
-
-.sku-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.sku-table tbody tr:hover td {
-  background-color: #FFF8E8;
-}
-
-.sku-meta-cell {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.sku-name-text {
-  font-weight: 500;
-  color: var(--ZENVE-ink);
-}
-
-.sku-code-text {
-  font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--ZENVE-muted);
-}
-
-/* =========================================================
-   4. OPERATIONAL REPORT EXPORT (grid gap-2 sm:grid-cols-2 lg:grid-cols-3)
-========================================================= */
-
-.btn-export-full {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background-color: var(--ZENVE-ink);
-  color: #FFFCF5;
-  border: 1px solid var(--ZENVE-ink);
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-size: 14px;
   font-weight: 500;
-  height: 36px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
+  margin-bottom: 6px;
 }
 
-.btn-export-full:hover {
-  background-color: #2b2520;
-  border-color: #2b2520;
-}
-
-.btn-export-full:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.reports-buttons-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  width: 100%;
-}
-
-.report-download-btn {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 12px;
-  background-color: var(--ZENVE-card);
-  border: 1px solid var(--ZENVE-border);
-  border-radius: 6px;
-  color: var(--ZENVE-ink);
-  font-size: 14px;
-  text-align: left;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.report-download-btn:hover {
-  border-color: var(--ZENVE-gold);
-}
-
-.report-download-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.report-btn-left {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  min-width: 0;
-}
-
-.report-btn-title {
-  font-weight: 400;
-  white-space: nowrap;
-}
-
-.report-btn-rows {
-  font-size: 12px;
-  color: var(--ZENVE-muted);
-  white-space: nowrap;
-}
-
-.report-btn-icon {
-  color: var(--ZENVE-muted);
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
+.bi-breadcrumbs a {
+  color: #8A6D4B;
+  text-decoration: none;
   transition: color 0.15s ease;
 }
 
-.report-download-btn:hover .report-btn-icon {
-  color: var(--ZENVE-gold);
+.bi-breadcrumbs a:hover {
+  color: var(--bi-gold-primary);
+  text-decoration: underline;
 }
 
-/* =========================================================
-   5. TOP MOVERS (space-y-2 text-sm)
-========================================================= */
+.bi-breadcrumb-sep {
+  color: #BCA389;
+  font-size: 11px;
+}
 
-.top-movers-list {
-  list-style: none;
+.bi-breadcrumb-current {
+  color: #8B4513;
+  font-weight: 600;
+}
+
+.bi-hero-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--bi-text-title);
+  letter-spacing: -0.02em;
   margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  line-height: 1.15;
 }
 
-.mover-row-item {
+.bi-hero-subtitle {
+  font-size: 13.5px;
+  color: #6D543B;
+  margin: 6px 0 0 0;
+  font-weight: 500;
+}
+
+.bi-hero-action-area {
+  position: relative;
+  z-index: 5;
+  margin-left: auto;
+  margin-right: 28%;
+}
+
+.bi-date-picker-wrap {
+  position: relative;
+}
+
+.bi-date-btn {
+  background: #FFFFFF;
+  border: 1px solid #DFCEB7;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #3E2723;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  background-color: var(--ZENVE-card);
-  border: 1px solid var(--ZENVE-border);
-  border-radius: 6px;
-  font-size: 14px;
-  transition: border-color 0.15s ease;
-  gap: 12px;
-}
-
-.mover-row-item:hover {
-  border-color: #d1c8be;
-}
-
-.mover-name-rank {
-  font-weight: 400;
-  color: var(--ZENVE-ink);
-}
-
-.mover-stats-subtext {
-  color: var(--ZENVE-muted);
-  font-size: 13px;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.15s ease;
   white-space: nowrap;
 }
 
-/* Toast alert notification */
-.analytics-toast {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background-color: #1F2937;
-  color: #FFFCF5;
-  padding: 12px 20px;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  font-size: 13px;
-  z-index: 1000;
-  animation: fadeIn 0.2s ease;
+.bi-date-btn:hover {
+  border-color: var(--bi-gold-primary);
+  background: #FDFBF8;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+.bi-date-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 210px;
+  background: #FFFFFF;
+  border: 1px solid #E5D7C5;
+  border-radius: 9px;
+  box-shadow: 0 10px 25px -4px rgba(45, 30, 15, 0.14);
+  padding: 6px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bi-date-option {
+  width: 100%;
+  padding: 7px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.bi-date-option:hover,
+.bi-date-option.active {
+  background: #FAF4EB;
+  color: var(--bi-gold-primary);
+  font-weight: 600;
+}
+
+.bi-hero-art-wrap {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 45%;
+  pointer-events: none;
+  overflow: hidden;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+.bi-period-pills-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.bi-pills-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #7A4F1D;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-right: 2px;
+}
+
+.bi-period-pill {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid #DFCEB7;
+  border-radius: 18px;
+  padding: 5px 13px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #4A3319;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  backdrop-filter: blur(4px);
+}
+
+.bi-period-pill:hover {
+  background: #FFFFFF;
+  border-color: var(--bi-gold-primary);
+  color: var(--bi-gold-primary);
+  transform: translateY(-1px);
+}
+
+.bi-period-pill.active {
+  background: var(--bi-gold-primary);
+  border-color: var(--bi-gold-primary);
+  color: #FFFFFF;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(150, 91, 28, 0.28);
+}
+
+.bi-hero-art-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center;
+}
+
+.bi-hero-glow-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    #FBF8F2 0%,
+    rgba(251, 248, 242, 0.94) 15%,
+    rgba(251, 248, 242, 0.3) 55%,
+    transparent 100%
+  );
 }
 
 /* =========================================================
-   COMPREHENSIVE ALL-SCREEN-SIZE RESPONSIVE MEDIA QUERIES
+   DATABASE LIVE STATUS BAR
 ========================================================= */
 
-/* ---------------------------------------------------------
-   1. MOBILE PHONES (320px - 640px)
-   Smartphones like iPhone, Pixel, Galaxy
---------------------------------------------------------- */
+.bi-db-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+  border: 1px solid #E6D8C6;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-size: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
 
-@media (max-width: 640px) {
-  .ZENVE-header-inner {
-    padding: 12px 14px;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
+.bi-db-status-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-  .ZENVE-header-left {
-    gap: 12px;
-    align-items: flex-start;
-    width: 100%;
-  }
+.bi-db-pulse {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #16A34A;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+  display: inline-block;
+  animation: biPulse 2s infinite;
+}
 
-  .ZENVE-portal-logo img {
-    height: 32px;
-    width: auto;
-  }
+@keyframes biPulse {
+  0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5); }
+  70% { box-shadow: 0 0 0 6px rgba(22, 163, 74, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+}
 
-  .ZENVE-header-title-block {
-    flex: 1;
-    min-width: 0;
-  }
+.bi-db-status-text {
+  color: #4A3E31;
+  font-weight: 500;
+}
 
-  .ZENVE-portal-title {
-    font-size: 20px;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
+.bi-db-status-text strong {
+  color: #16A34A;
+  font-weight: 700;
+}
 
-  .ZENVE-layer-num {
-    font-size: 20px;
-  }
+.bi-db-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #FAF5EE;
+  border: 1px solid #D9C3A8;
+  color: #7A4F1D;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
 
-  .ZENVE-portal-desc {
-    font-size: 12px;
-    line-height: 1.4;
-  }
+.bi-db-refresh-btn:hover {
+  background: #F2E7D7;
+  color: #5B3A13;
+}
 
-  .ZENVE-header-right {
-    width: 100%;
-  }
+.bi-db-refresh-btn .spin {
+  animation: biSpin 1s linear infinite;
+}
 
-  .ZENVE-header-right .search-user-wrapper {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
+@keyframes biSpin {
+  100% { transform: rotate(360deg); }
+}
 
-  .ZENVE-header-right .search-bar-wrapper {
-    width: 100%;
-    flex: 1 1 100%;
-    max-width: 100%;
-  }
+/* =========================================================
+   2. TOP 6 FINANCIAL KPI CARDS
+========================================================= */
 
-  .ZENVE-header-right .search-box {
-    width: 100%;
-    box-sizing: border-box;
-  }
 
-  .ZENVE-header-right .home-user {
-    width: 100%;
-    justify-content: center;
-    box-sizing: border-box;
-  }
+.bi-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
 
-  .analytics-container {
-    padding: 14px 12px 48px;
-    gap: 16px;
-  }
+.bi-kpi-card {
+  background: var(--bi-card-bg);
+  border: 1px solid var(--bi-border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  min-width: 0;
+  box-sizing: border-box;
+}
 
-  /* Top 6 KPI Cards: 2x3 grid on mobile */
-  .analytics-kpi-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
+.bi-kpi-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--bi-border-hover);
+  box-shadow: 0 6px 16px -2px rgba(45, 31, 21, 0.08);
+}
 
-  .analytics-kpi-card {
-    padding: 12px 14px;
-    min-height: 72px;
-  }
+.bi-kpi-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 10px;
+}
 
-  .label-caps {
-    font-size: 10px;
-    margin-bottom: 4px;
-  }
+.bi-kpi-icon-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
 
-  .analytics-kpi-value {
-    font-size: 20px;
-  }
+.bi-kpi-icon-badge.gold-bg {
+  background: #FEF3C7;
+  color: #B45309;
+}
 
-  .analytics-kpi-hint {
-    font-size: 11px;
-  }
+.bi-kpi-icon-badge.amber-bg {
+  background: #FFEDD5;
+  color: #C2410C;
+}
 
-  /* Charts: 1 column on mobile */
-  .analytics-charts-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
+.bi-kpi-icon-badge.orange-bg {
+  background: #FDE68A;
+  color: #92400E;
+}
 
-  .analytics-panel {
-    padding: 14px 14px;
-    gap: 14px;
-  }
+.bi-kpi-icon-badge.peach-bg {
+  background: #FEF9C3;
+  color: #A16207;
+}
 
-  .panel-title {
-    font-size: 16px;
-  }
+.bi-kpi-icon-badge.cream-bg {
+  background: #FEE2E2;
+  color: #DC2626;
+}
 
-  .panel-desc {
-    font-size: 12.5px;
-    line-height: 1.4;
-  }
+.bi-icon-sym {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+}
 
-  .chart-h-wrap {
-    height: 250px;
-    min-height: 250px;
-  }
+.bi-kpi-sparkline {
+  margin-left: auto;
+  flex-shrink: 0;
+  overflow: visible;
+}
 
-  .donut-chart-area {
-    height: 200px;
-  }
+.bi-kpi-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  min-width: 0;
+}
 
-  .donut-legend {
-    gap: 10px;
-    font-size: 11.5px;
-    padding-top: 4px;
-    flex-wrap: wrap;
-  }
+.bi-kpi-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--bi-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-  /* Table on mobile */
-  .sku-table-container {
-    margin: 0 -2px;
-  }
+.bi-kpi-val-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+}
 
-  .sku-table {
-    min-width: 580px;
-  }
+.bi-kpi-value {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--bi-text-dark);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  line-height: 1.15;
+}
 
-  .sku-table th {
-    padding: 8px 10px 8px 0;
-    font-size: 10.5px;
-  }
+.bi-trend-pill {
+  font-size: 10.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
 
-  .sku-table td {
-    padding: 10px 10px 10px 0;
-    font-size: 13px;
-  }
+.bi-trend-pill.up {
+  color: var(--bi-success);
+}
 
-  .btn-export-full {
-    width: 100%;
-    justify-content: center;
-    padding: 8px 14px;
-    font-size: 13px;
-    height: 38px;
-  }
+.bi-trend-pill.down {
+  color: var(--bi-danger);
+}
 
-  /* Reports grid: 1 column */
-  .reports-buttons-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
 
-  .report-download-btn {
-    padding: 10px 12px;
-    font-size: 13px;
-  }
+/* =========================================================
+   3. MIDDLE & BOTTOM 3 CARDS TRI-GRIDS
+========================================================= */
 
-  /* Top movers on mobile */
-  .mover-row-item {
-    padding: 10px 12px;
-    font-size: 13px;
-    gap: 8px;
+.bi-cards-tri-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bi-panel-card {
+  background: var(--bi-card-bg);
+  border: 1px solid var(--bi-border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 2px 8px -2px rgba(45, 30, 15, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.bi-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  min-width: 0;
+}
+
+.bi-panel-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--bi-text-title);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.bi-chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bi-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--bi-text-muted);
+}
+
+.bi-legend-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.bi-legend-dot.gold-dot {
+  background-color: #D4A24E;
+}
+
+.bi-legend-dot.brown-dot {
+  background-color: #78350F;
+}
+
+.bi-view-all-btn {
+  background: none;
+  border: none;
+  color: #B45309;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 4px;
+  transition: color 0.15s ease;
+}
+
+.bi-view-all-btn:hover {
+  color: #78350F;
+  text-decoration: underline;
+}
+
+.bi-chart-container {
+  width: 100%;
+}
+
+/* Custom Recharts Tooltip */
+.bi-custom-tooltip {
+  background: #FFFFFF;
+  border: 1px solid #EADBCC;
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  font-size: 11.5px;
+}
+
+.bi-tooltip-title {
+  font-weight: 700;
+  color: #1E293B;
+  margin: 0 0 4px 0;
+}
+
+.bi-tooltip-line {
+  margin: 2px 0;
+  font-size: 11.5px;
+}
+
+.bi-tooltip-line.gold-text {
+  color: #B45309;
+}
+
+.bi-tooltip-line.brown-text {
+  color: #78350F;
+}
+
+.bi-custom-tooltip.multi-line {
+  min-width: 180px;
+}
+
+.bi-multi-tooltip-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 2px 0;
+  font-size: 11px;
+}
+
+.bi-multi-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bi-multi-name {
+  color: #64748B;
+  flex: 1;
+}
+
+.bi-multi-val {
+  color: #0F172A;
+  font-weight: 700;
+}
+
+/* Donut Chart with Breakdown List */
+.bi-donut-with-list {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 220px;
+}
+
+.bi-donut-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bi-donut-center-label {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  text-align: center;
+}
+
+.bi-donut-main-num {
+  font-size: 19px;
+  font-weight: 800;
+  color: #0F172A;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.bi-donut-main-num.small-font {
+  font-size: 15px;
+}
+
+.bi-donut-sub-text {
+  font-size: 10px;
+  font-weight: 600;
+  color: #64748B;
+  margin-top: 2px;
+}
+
+.bi-breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  flex: 1;
+  min-width: 0;
+}
+
+.bi-breakdown-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  gap: 8px;
+}
+
+.bi-breakdown-row.channel-row {
+  padding: 3px 0;
+}
+
+.bi-breakdown-name-wrap {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: 1;
+  min-width: 0;
+}
+
+.bi-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bi-breakdown-name {
+  color: #334155;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bi-breakdown-count {
+  font-weight: 700;
+  color: #1E293B;
+  font-variant-numeric: tabular-nums;
+  margin-right: 4px;
+}
+
+.bi-breakdown-pct {
+  font-size: 11px;
+  color: #64748B;
+  width: 36px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.bi-breakdown-pct-bold {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0F172A;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Top Designers List */
+.bi-designers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bi-designer-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.bi-rank-num {
+  font-size: 12px;
+  font-weight: 700;
+  color: #94A3B8;
+  width: 14px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.bi-designer-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.bi-designer-avatar.small {
+  width: 24px;
+  height: 24px;
+  font-size: 10px;
+}
+
+.bi-designer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.bi-designer-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bi-designer-name {
+  font-weight: 600;
+  color: #1E293B;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bi-progress-track {
+  width: 100%;
+  height: 6px;
+  background-color: #F4EBD9;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.bi-progress-bar {
+  height: 100%;
+  background-color: #C5933C;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+.bi-designer-figures {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.bi-designer-rev {
+  font-weight: 700;
+  color: #1E293B;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.bi-designer-pct {
+  font-size: 11px;
+  color: #64748B;
+  width: 32px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Top Product Categories List */
+.bi-categories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.bi-cat-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.bi-cat-icon-frame {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: #FAF4EB;
+  border: 1px solid #EADBCC;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bi-cat-emoji {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.bi-cat-name {
+  font-weight: 600;
+  color: #1E293B;
+  width: 90px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+}
+
+.bi-cat-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background-color: #F4EBD9;
+  border-radius: 10px;
+  overflow: hidden;
+  min-width: 40px;
+}
+
+.bi-cat-bar-fill {
+  height: 100%;
+  background-color: #C5933C;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+.bi-cat-units {
+  font-weight: 700;
+  color: #1E293B;
+  width: 40px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.bi-cat-pct {
+  font-size: 11px;
+  color: #64748B;
+  width: 30px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Channel Trend Interval Picker */
+.bi-period-picker-wrap {
+  position: relative;
+}
+
+.bi-period-btn {
+  background: #FFFFFF;
+  border: 1px solid #DFCEB7;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #3E2723;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.bi-period-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  width: 100px;
+  background: #FFFFFF;
+  border: 1px solid #EADBCC;
+  border-radius: 6px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  padding: 4px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+}
+
+.bi-period-option {
+  padding: 5px 8px;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  text-align: left;
+  cursor: pointer;
+  color: #334155;
+}
+
+.bi-period-option:hover,
+.bi-period-option.active {
+  background: #FAF4EB;
+  color: var(--bi-gold-primary);
+  font-weight: 600;
+}
+
+.bi-channel-legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.bi-channel-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #64748B;
+}
+
+/* =========================================================
+   4. MODALS (VIEW ALL DESIGNERS / CATEGORIES)
+========================================================= */
+
+.bi-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: biFadeIn 0.15s ease-out;
+}
+
+.bi-modal-card {
+  background: #FFFFFF;
+  border-radius: 14px;
+  width: 90%;
+  max-width: 640px;
+  max-height: 85vh;
+  box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: biScaleUp 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes biFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes biScaleUp {
+  from { transform: scale(0.96); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.bi-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #F1ECE1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bi-modal-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--bi-text-title);
+}
+
+.bi-modal-desc {
+  margin: 2px 0 0 0;
+  font-size: 12px;
+  color: var(--bi-text-muted);
+}
+
+.bi-modal-close {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #94A3B8;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.bi-modal-close:hover {
+  background: #F1F5F9;
+  color: #0F172A;
+}
+
+.bi-modal-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+}
+
+.bi-modal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.bi-modal-table th {
+  text-align: left;
+  padding: 8px 10px;
+  background: #FAF7F2;
+  color: #785A3C;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-bottom: 1px solid #EADBCC;
+}
+
+.bi-modal-table td {
+  padding: 10px;
+  border-bottom: 1px solid #F8F5EE;
+  vertical-align: middle;
+}
+
+.bi-modal-designer-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bi-modal-pill {
+  background: #DCFCE7;
+  color: #15803D;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.gold-cell {
+  color: #965B1C;
+  font-weight: 700;
+}
+
+.bold-cell {
+  font-weight: 700;
+  color: #94A3B8;
+}
+
+/* =========================================================
+   5. RESPONSIVE BREAKPOINTS
+========================================================= */
+
+@media (max-width: 1400px) {
+  .bi-kpi-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-/* Extra small mobile (< 380px) */
-@media (max-width: 380px) {
-  .ZENVE-header-inner {
-    padding: 10px 10px;
-  }
-
-  .analytics-container {
-    padding: 10px 8px 36px;
-    gap: 12px;
-  }
-
-  /* 1 column on extra small phones so currency numbers never truncate */
-  .analytics-kpi-grid {
+@media (max-width: 1180px) {
+  .bi-cards-tri-grid {
     grid-template-columns: 1fr;
-    gap: 6px;
   }
-
-  .analytics-kpi-value {
-    font-size: 20px;
+  .bi-hero-content {
+    max-width: 65%;
   }
-
-  .analytics-panel {
-    padding: 12px 10px;
-    gap: 12px;
-  }
-
-  .mover-row-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 3px;
-  }
-
-  .mover-stats-subtext {
-    font-size: 11.5px;
+  .bi-hero-action-area {
+    margin-right: 0;
   }
 }
 
-/* ---------------------------------------------------------
-   2. TABLETS & MEDIUM SCREENS (641px - 1140px)
-   iPad, iPad Air, iPad Pro, Android Tablets, Surface Pro
---------------------------------------------------------- */
-
-@media (min-width: 641px) and (max-width: 1140px) {
-  .ZENVE-header-inner {
-    padding: 14px 24px;
+@media (max-width: 768px) {
+  .bi-dashboard-page {
+    padding: 12px 14px 30px 14px;
+  }
+  .bi-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .bi-hero-banner {
     flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-
-  .ZENVE-header-left {
-    width: 100%;
-    display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 16px;
-    min-width: 0;
-  }
-
-  .ZENVE-portal-logo img {
-    height: 36px;
-    width: auto;
-  }
-
-  .ZENVE-header-title-block {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .ZENVE-portal-title {
-    font-size: 22px;
-    line-height: 1.25;
-    white-space: nowrap;
-  }
-
-  .ZENVE-portal-desc {
-    font-size: 12.5px;
-    line-height: 1.45;
-    color: var(--ZENVE-muted);
-    white-space: normal;
-    margin-top: 2px;
-  }
-
-  .ZENVE-header-right {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding-top: 12px;
-    border-top: 1px solid var(--ZENVE-border);
-  }
-
-  .ZENVE-header-right .search-user-wrapper {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-    min-width: 0;
-  }
-
-  .ZENVE-header-right .search-bar-wrapper {
-    flex: 1;
-    max-width: 340px;
-    min-width: 180px;
-  }
-
-  .ZENVE-header-right .home-user {
-    flex-shrink: 0;
-  }
-
-  .analytics-container {
-    max-width: 100%;
-    padding: 20px 24px 60px;
-    gap: 20px;
-  }
-
-  /* Top 6 KPIs: 3 columns (2 rows of 3) on tablet */
-  .analytics-kpi-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
-
-  .analytics-kpi-card {
-    padding: 12px 14px;
-    min-height: 78px;
-  }
-
-  .analytics-kpi-value {
-    font-size: 22px;
-  }
-
-  /* Charts: 1 column on tablet portrait, 2 on wide tablet */
-  .analytics-charts-grid {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-
-  .analytics-panel {
     padding: 18px 20px;
   }
-
-  .reports-buttons-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+  .bi-hero-content {
+    max-width: 100%;
   }
-}
-
-/* Tablet portrait & narrow tablets (641px - 840px) */
-@media (min-width: 641px) and (max-width: 840px) {
-  .ZENVE-header-inner {
-    padding: 12px 18px;
-    gap: 10px;
-  }
-
-  .ZENVE-header-right {
-    gap: 12px;
-    padding-top: 10px;
-  }
-
-  .analytics-container {
-    padding: 16px 18px 48px;
-    gap: 16px;
-  }
-
-  .analytics-kpi-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-  }
-}
-
-/* ---------------------------------------------------------
-   3. LAPTOP & STANDARD DESKTOP (1141px - 1440px)
-   MacBook Pro, ThinkPad, Standard 1080p Desktop
---------------------------------------------------------- */
-
-@media (min-width: 1141px) and (max-width: 1440px) {
-  .analytics-container {
-    max-width: 1380px;
-    padding: 24px 28px 60px;
-  }
-
-  .analytics-kpi-grid {
-    grid-template-columns: repeat(6, 1fr);
-    gap: 12px;
-  }
-
-  .analytics-charts-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-
-  .reports-buttons-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
-}
-
-/* ---------------------------------------------------------
-   4. LARGE DESKTOP & WIDE MONITORS (1441px - 1920px)
-   iMac 24", 27" QHD, Studio Display
---------------------------------------------------------- */
-
-@media (min-width: 1441px) and (max-width: 1920px) {
-  .ZENVE-header-inner {
-    max-width: 1640px;
-    padding: 18px 36px;
-  }
-
-  .ZENVE-portal-title,
-  .ZENVE-layer-num {
-    font-size: 28px;
-  }
-
-  .analytics-container {
-    max-width: 1640px;
-    padding: 28px 36px 64px;
-    gap: 26px;
-  }
-
-  .analytics-kpi-grid {
-    grid-template-columns: repeat(6, 1fr);
-    gap: 14px;
-  }
-
-  .analytics-kpi-card {
-    padding: 16px 18px;
-  }
-
-  .label-caps {
-    font-size: 12px;
-  }
-
-  .analytics-kpi-value {
-    font-size: 26px;
-  }
-
-  .analytics-panel {
-    padding: 22px 26px;
-    gap: 18px;
-  }
-
-  .panel-title {
-    font-size: 18.5px;
-  }
-
-  .analytics-charts-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
-  }
-
-  .reports-buttons-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-  }
-}
-
-/* ---------------------------------------------------------
-   5. 4K ULTRA HD SCREENS (1921px - 3840px+)
-   Ultra-high resolution displays, 4K/5K Monitors
---------------------------------------------------------- */
-
-@media (min-width: 1921px) {
-  .ZENVE-header-inner {
-    max-width: 2800px;
-    padding: 24px 64px;
-  }
-
-  .ZENVE-portal-logo img {
-    height: 52px;
-  }
-
-  .ZENVE-back-link {
-    font-size: 13.5px;
-    gap: 8px;
-  }
-
-  .ZENVE-portal-title,
-  .ZENVE-layer-num {
-    font-size: 34px;
-    gap: 12px;
-  }
-
-  .ZENVE-portal-desc {
-    font-size: 16.5px;
-  }
-
-  .analytics-container {
-    max-width: 2800px;
-    padding: 36px 64px 80px;
-    gap: 32px;
-  }
-
-  /* 4K Top 6 KPI Cards */
-  .analytics-kpi-grid {
-    grid-template-columns: repeat(6, 1fr);
-    gap: 18px;
-  }
-
-  .analytics-kpi-card {
-    padding: 20px 22px;
-    border-radius: 10px;
-    gap: 6px;
-  }
-
-  .label-caps {
-    font-size: 13px;
-  }
-
-  .analytics-kpi-value {
-    font-size: 34px;
-  }
-
-  .analytics-kpi-hint {
-    font-size: 14px;
-  }
-
-  /* 4K Panels */
-  .analytics-panel {
-    padding: 28px 32px;
-    border-radius: 10px;
-    gap: 22px;
-  }
-
-  .panel-title {
-    font-size: 22px;
-  }
-
-  .panel-desc {
-    font-size: 15.5px;
-  }
-
-  .analytics-charts-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 28px;
-  }
-
-  .chart-h-wrap {
-    height: 340px;
-    min-height: 340px;
-  }
-
-  .donut-chart-area {
-    height: 280px;
-  }
-
-  .donut-legend {
-    font-size: 14px;
-    gap: 18px;
-  }
-
-  .sku-table th {
-    font-size: 13px;
-    padding: 12px 18px 12px 0;
-  }
-
-  .sku-table td {
-    font-size: 15.5px;
-    padding: 14px 18px 14px 0;
-  }
-
-  .sku-name-text {
-    font-size: 16px;
-  }
-
-  .sku-code-text {
-    font-size: 13.5px;
-  }
-
-  .btn-export-full {
-    padding: 10px 20px;
-    font-size: 15px;
-    height: 42px;
-    border-radius: 8px;
-  }
-
-  .reports-buttons-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-  }
-
-  .report-download-btn {
-    padding: 14px 18px;
-    font-size: 15px;
-    border-radius: 8px;
-  }
-
-  .mover-row-item {
-    padding: 14px 18px;
-    font-size: 15.5px;
-    border-radius: 8px;
-  }
-
-  .mover-stats-subtext {
-    font-size: 14px;
-  }
-}
-
-/* Extreme 4K Resolution (3200px - 3840px Native) */
-@media (min-width: 3200px) {
-  .ZENVE-header-inner {
-    max-width: 3400px;
-  }
-
-  .analytics-container {
-    max-width: 3400px;
-  }
-
-  .ZENVE-portal-title,
-  .ZENVE-layer-num {
-    font-size: 40px;
-  }
-
-  .analytics-kpi-value {
-    font-size: 40px;
+  .bi-hero-art-wrap {
+    display: none;
   }
 }
