@@ -25,6 +25,15 @@ function BackIcon() {
   );
 }
 
+function BellIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+    </svg>
+  );
+}
+
 function RefreshIcon({ spinning }) {
   return (
     <svg
@@ -362,36 +371,31 @@ export default function SocialMedia() {
 
   return (
     <div className="ZENVE-sm-layout">
-      {/* =========================================================
-          TOP NAVIGATION BAR (MATCHING SYSTEM LAYER STYLE)
-      ========================================================= */}
-      <header className="ZENVE-sm-header">
-        <div className="ZENVE-header-left">
-          <Link to="/" className="ZENVE-portal-logo" aria-label="Go to home">
-            <img src={zenveLogo} alt="Zenve Fashion" />
-          </Link>
-
-          <div className="ZENVE-header-title-block">
-            <Link to="/" className="ZENVE-back-link">
-              <BackIcon />
-              <span>ALL 15 LAYERS</span>
-            </Link>
-
-            <h1 className="ZENVE-portal-title">
-              <span className="ZENVE-layer-num">14</span>
-              <span>Social Media</span>
-            </h1>
-
-            <p className="ZENVE-portal-desc">
-              Marketing &amp; Creator Operations · Growth add-ons pipeline, video &amp; photo shoots, creator campaigns, and social promotion
-            </p>
-          </div>
+      {/* =====================================================
+          HERO BANNER CARD (EXACT MEDIA STUDIO STYLE)
+      ===================================================== */}
+      <section className="ZENVE-sm-hero-banner" role="banner">
+        <div className="ZENVE-sm-hero-overlay" />
+        <div className="ZENVE-sm-hero-content">
+          <h1 className="ZENVE-sm-hero-title">Social Media</h1>
+          <p className="ZENVE-sm-hero-subtitle">
+            Manage product images, videos and marketing assets for your fashion business
+          </p>
         </div>
 
-        <div className="ZENVE-sm-header-right">
-          <SearchBar />
+        {/* NOTIFICATION BUTTON IN HERO BANNER */}
+        <div className="ZENVE-sm-hero-actions">
+          <button
+            type="button"
+            className="media-nav-notif-btn"
+            aria-label="Notifications"
+            title="Notifications"
+            onClick={() => showSuccessToast("No new notifications.", "Notifications")}
+          >
+            <BellIcon />
+          </button>
         </div>
-      </header>
+      </section>
 
       {/* =========================================================
           KEY PERFORMANCE METRICS (KPIs)

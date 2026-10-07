@@ -40,185 +40,90 @@
 }
 
 /* =========================================================
-   HEADER SECTION (EXACT LAYER 14 / ACCOUNTING STYLE)
+   HERO BANNER CARD (EXACT MEDIA STUDIO STYLE)
 ========================================================= */
-.ZENVE-sm-header {
-  width: 100%;
-  background-color: var(--ZENVE-panel);
-  border-bottom: 1px solid var(--ZENVE-line);
-  padding: 16px 28px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  box-sizing: border-box;
-  position: sticky;
-  top: 0;
-  z-index: 40;
-}
-
-.ZENVE-header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  min-width: 0;
-  flex: 1 1 auto;
-}
-
-.ZENVE-portal-logo {
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
-  flex-shrink: 0;
-}
-
-.ZENVE-portal-logo img {
-  height: 38px;
-  width: auto;
-  display: block;
-}
-
-.ZENVE-header-title-block {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 0;
-}
-
-.ZENVE-back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ZENVE-muted);
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-
-.ZENVE-back-link:hover {
-  color: var(--ZENVE-ink);
-}
-
-.ZENVE-portal-title {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--ZENVE-ink);
-  font-family: var(--ZENVE-font-serif, "Playfair Display", Georgia, serif);
-}
-
-.ZENVE-layer-num {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: #FFFCF5;
-  background-color: var(--ZENVE-gold);
-  border-radius: 4px;
-  padding: 2px 7px;
-  display: inline-block;
-  line-height: 1.4;
-  font-family: var(--ZENVE-font-sans);
-}
-
-.ZENVE-portal-desc {
-  margin: 0;
-  font-size: 12.5px;
-  color: var(--ZENVE-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 720px;
-}
-
-.ZENVE-sm-header-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-shrink: 0;
-  margin-left: auto;
-}
-
-/* Hero Banner */
 .ZENVE-sm-hero-banner {
-  background: linear-gradient(135deg, #FFF8E8 0%, #FFFCF5 100%);
-  border-bottom: 1px solid var(--ZENVE-line);
-  padding: 24px 32px;
+  position: relative;
+  border-radius: 12px;
+  min-height: 110px;
+  background-image: url('/social-media-banner.jpg');
+  background-size: cover;
+  background-position: center right;
+  overflow: hidden;
+  margin: 18px 28px 8px 28px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(212, 160, 23, 0.3);
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 24px;
-  flex-wrap: wrap;
+}
+
+.ZENVE-sm-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(254, 249, 238, 0.96) 0%,
+    rgba(254, 249, 238, 0.90) 42%,
+    rgba(254, 249, 238, 0.35) 75%,
+    transparent 100%
+  );
+  pointer-events: none;
 }
 
 .ZENVE-sm-hero-content {
-  max-width: 820px;
+  position: relative;
+  z-index: 2;
+  padding: 20px 28px;
+  max-width: 640px;
 }
 
-.ZENVE-sm-hero-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--ZENVE-gold-dark);
-  margin-bottom: 6px;
+.ZENVE-sm-hero-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #2D1F15;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.02em;
+  font-family: var(--ZENVE-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
 }
 
-.ZENVE-sm-hero-content h2 {
-  font-size: 22px;
-  font-weight: 700;
-  margin: 0 0 8px 0;
-  color: var(--ZENVE-ink);
-}
-
-.ZENVE-sm-hero-content p {
+.ZENVE-sm-hero-subtitle {
   font-size: 13.5px;
-  line-height: 1.55;
-  color: #575047;
+  color: #6B5A45;
   margin: 0;
+  line-height: 1.45;
+  font-family: var(--ZENVE-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
 }
 
 .ZENVE-sm-hero-actions {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  z-index: 10;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.ZENVE-sm-hero-link {
-  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: var(--ZENVE-gold);
-  color: #FFFCF5;
-  text-decoration: none;
-  font-size: 12.5px;
-  font-weight: 600;
-  padding: 8px 14px;
-  border-radius: 6px;
-  transition: all 0.2s;
 }
 
-.ZENVE-sm-hero-link:hover {
-  background: var(--ZENVE-gold-dark);
+.ZENVE-sm-hero-actions .media-nav-notif-btn {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid #E5D5C0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(4px);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4B3C2E;
+  transition: all 0.15s ease;
+  position: relative;
 }
 
-.ZENVE-sm-hero-link.secondary {
-  background: var(--ZENVE-panel);
-  color: var(--ZENVE-ink);
-  border: 1px solid var(--ZENVE-line);
-}
-
-.ZENVE-sm-hero-link.secondary:hover {
-  background: #FFF8E8;
+.ZENVE-sm-hero-actions .media-nav-notif-btn:hover {
+  background: #FFFFFF;
+  border-color: #B37326;
+  transform: translateY(-1px);
 }
 
 /* KPI Strip */

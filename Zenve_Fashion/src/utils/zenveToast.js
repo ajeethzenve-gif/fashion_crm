@@ -6,8 +6,27 @@ import Swal from "sweetalert2";
    Replaces all top-of-page alert banners with SweetAlert only.
 ========================================================= */
 
+const dispatchNotificationPopup = (info) => {
+  if (typeof window !== "undefined") {
+    try {
+      window.dispatchEvent(
+        new CustomEvent("zenve:notification-popup", {
+          detail: {
+            id: `toast-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+            timestamp: new Date().toISOString(),
+            ...info,
+          },
+        })
+      );
+    } catch (e) {
+      // ignore
+    }
+  }
+};
+
 export const showSuccessToast = (text, title = "") => {
   const message = typeof text === "string" ? text : (text?.text || text?.message || "Action completed successfully");
+  dispatchNotificationPopup({ type: "success", title: title || "Success", text: message });
   return Swal.fire({
     toast: true,
     position: "bottom-end",
@@ -28,6 +47,11 @@ export const showSuccessToast = (text, title = "") => {
 };
 
 export const showDesignerAcceptedToast = (productName = "", sku = "") => {
+  dispatchNotificationPopup({
+    type: "success",
+    title: "Images Accepted by Designer",
+    text: productName ? `${productName} (${sku}) · Approved for storefront` : "Deliverables approved by designer",
+  });
   return Swal.fire({
     toast: true,
     position: "bottom-end",
@@ -59,6 +83,7 @@ export const showDesignerAcceptedToast = (productName = "", sku = "") => {
 
 export const showErrorToast = (text, title = "") => {
   const message = typeof text === "string" ? text : (text?.text || text?.message || "An unexpected error occurred");
+  dispatchNotificationPopup({ type: "error", title: title || "Error", text: message });
   return Swal.fire({
     toast: true,
     position: "bottom-end",
@@ -80,6 +105,7 @@ export const showErrorToast = (text, title = "") => {
 
 export const showWarningToast = (text, title = "") => {
   const message = typeof text === "string" ? text : (text?.text || text?.message || "Warning");
+  dispatchNotificationPopup({ type: "warning", title: title || "Warning", text: message });
   return Swal.fire({
     toast: true,
     position: "bottom-end",
@@ -101,6 +127,7 @@ export const showWarningToast = (text, title = "") => {
 
 export const showInfoToast = (text, title = "") => {
   const message = typeof text === "string" ? text : (text?.text || text?.message || "Information");
+  dispatchNotificationPopup({ type: "info", title: title || "Notice", text: message });
   return Swal.fire({
     toast: true,
     position: "bottom-end",
