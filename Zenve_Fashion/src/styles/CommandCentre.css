@@ -1097,3 +1097,61 @@
   font-weight: 700;
   color: #B45309;
 }
+
+.kpi-hint-text {
+  font-size: 10px;
+  color: #8C7862;
+  margin-top: 1px;
+}
+
+.live-pulse-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #16A34A;
+  background: #DCFCE7;
+  padding: 2px 7px;
+  border-radius: 12px;
+  letter-spacing: 0.3px;
+}
+
+.cc-empty-state {
+  padding: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: #8C7862;
+  font-style: italic;
+  background: #FFFDF9;
+  border-radius: 6px;
+  border: 1px dashed #E5D5C0;
+}
+
+.cc-empty-state.green {
+  color: #15803D;
+  background: #F0FDF4;
+  border-color: #BBF7D0;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.alert-jump-arrow {
+  margin-left: auto;
+  font-weight: 700;
+  opacity: 0.6;
+}
+
+.ZENVE-modal-box.large {
+  max-width: 600px;
+}
+
+.ZENVE-cc-hero-date-badge {
+  cursor: pointer;
+}
+
+.ZENVE-cc-hero-date-badge:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
