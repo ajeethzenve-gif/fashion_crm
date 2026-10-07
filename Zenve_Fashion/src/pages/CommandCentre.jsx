@@ -85,11 +85,18 @@ function TruckIcon() {
   );
 }
 
-function MiniSparkline({ color = "#E08F35" }) {
+function MiniSparkline({ color = "#E08F35", variant = 0 }) {
+  const paths = [
+    "M2 16 C 10 16, 14 11, 22 13 C 30 15, 36 6, 44 8 C 48 9, 52 4, 54 3",
+    "M2 14 C 12 15, 16 8, 24 10 C 32 12, 38 4, 46 6 C 50 7, 52 3, 54 2",
+    "M2 17 C 8 16, 14 12, 22 14 C 30 16, 36 7, 44 9 C 48 10, 51 5, 54 4",
+    "M2 15 C 10 13, 18 16, 26 11 C 34 7, 40 10, 48 5 C 51 4, 53 3, 54 2",
+    "M2 16 C 12 17, 18 10, 26 12 C 34 14, 42 6, 48 8 C 51 7, 53 4, 54 3",
+  ];
   return (
     <svg width="56" height="20" viewBox="0 0 56 20" fill="none">
       <path
-        d="M2 16 C 10 16, 14 11, 22 13 C 30 15, 36 6, 44 8 C 48 9, 52 4, 54 3"
+        d={paths[variant % paths.length]}
         stroke={color}
         strokeWidth="2.2"
         strokeLinecap="round"
@@ -160,7 +167,7 @@ export default function CommandCentre() {
   const [settlements, setSettlements] = useState([]);
 
   // Modals
-  const [activeModal, setActiveModal] = useState(null); // 'order' | 'product' | 'inventory' | 'settlement' | 'allDesigners' | 'allActivities' | 'allAlerts'
+  const [activeModal, setActiveModal] = useState(null); // 'order' | 'product' | 'allDesigners' | 'allActivities' | 'allAlerts'
 
   // Form states for modals
   const [newOrderCustomer, setNewOrderCustomer] = useState("");
@@ -205,6 +212,25 @@ export default function CommandCentre() {
     }, 60000);
     return () => clearInterval(timer);
   }, []);
+
+  // Keyboard shortcut: Escape closes modal or clears selection
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setActiveModal(null);
+        setSelectedHub(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Sync default designer for product creation modal
+  useEffect(() => {
+    if (designers.length > 0 && !newProductDesigner) {
+      setNewProductDesigner(String(designers[0].id));
+    }
+  }, [designers, newProductDesigner]);
 
   // Fetch all live data from Django API
   const fetchAllData = useCallback(async (isManual = false) => {
@@ -290,6 +316,8 @@ export default function CommandCentre() {
         growth: totalOrdersCount > 0 ? "+12.4%" : "0%",
         hint: `${orders.filter((o) => ["Delivered", "DELIVERED"].includes(o.order_status || o.status)).length} delivered`,
         icon: CartIcon,
+        color: "#B45309",
+        variant: 0,
       },
       {
         id: "sales",
@@ -298,6 +326,8 @@ export default function CommandCentre() {
         growth: "+8.2%",
         hint: "Gross Merchandise Value",
         icon: RupeeIcon,
+        color: "#16A34A",
+        variant: 1,
       },
       {
         id: "products",
@@ -306,6 +336,8 @@ export default function CommandCentre() {
         growth: "+5.1%",
         hint: `${overviewData?.kpis?.sellable_units ?? products.reduce((acc, p) => acc + (p.available_quantity || 0), 0)} units in stock`,
         icon: BoxIcon,
+        color: "#D97706",
+        variant: 2,
       },
       {
         id: "designers",
@@ -314,6 +346,8 @@ export default function CommandCentre() {
         growth: "+3 new",
         hint: `${designers.length} onboarded brands`,
         icon: UsersIcon,
+        color: "#78350F",
+        variant: 3,
       },
       {
         id: "shipments",
@@ -322,6 +356,8 @@ export default function CommandCentre() {
         growth: "94% on time",
         hint: `${orders.filter((o) => ["Delivered", "DELIVERED"].includes(o.order_status || o.status)).length} completed`,
         icon: TruckIcon,
+        color: "#2563EB",
+        variant: 4,
       },
     ];
   }, [overviewData, orders, products, designers]);
@@ -381,6 +417,8 @@ export default function CommandCentre() {
 
   const inventoryStats = useMemo(() => {
     const total = products.length;
+    const circumference = 282.74; // 2 * pi * 45
+
     if (total === 0) {
       return {
         total: 0,
@@ -390,10 +428,10 @@ export default function CommandCentre() {
         discontinued: 0,
         pct: { inStock: 0, lowStock: 0, outOfStock: 0, discontinued: 0 },
         strokeDashes: {
-          inStock: "0 282.7",
-          lowStock: "0 282.7",
-          outOfStock: "0 282.7",
-          discontinued: "0 282.7",
+          inStock: `0 ${circumference}`,
+          lowStock: `0 ${circumference}`,
+          outOfStock: `0 ${circumference}`,
+          discontinued: `0 ${circumference}`,
         },
         offsets: { lowStock: 0, outOfStock: 0, discontinued: 0 },
       };
@@ -422,7 +460,6 @@ export default function CommandCentre() {
     const pctOutOfStock = Math.round((outOfStock / total) * 100) || 0;
     const pctDiscontinued = Math.max(0, 100 - pctInStock - pctLowStock - pctOutOfStock);
 
-    const circumference = 282.74; // 2 * pi * 45
     const lenInStock = (pctInStock / 100) * circumference;
     const lenLowStock = (pctLowStock / 100) * circumference;
     const lenOutOfStock = (pctOutOfStock / 100) * circumference;
@@ -461,7 +498,6 @@ export default function CommandCentre() {
   const topDesignersList = useMemo(() => {
     if (!designers.length) return [];
 
-    // Tally revenue per designer from orders & products
     const designerMap = {};
 
     designers.forEach((des) => {
@@ -475,17 +511,17 @@ export default function CommandCentre() {
     });
 
     products.forEach((prod) => {
-      const desId = prod.designer?.id || prod.designer;
+      const desId = prod.designer?.id || prod.designer || prod.designer_id;
       if (desId && designerMap[desId]) {
         designerMap[desId].productCount++;
-        designerMap[desId].revenue += (Number(prod.price) || 0) * 2; // base volume weighting
+        designerMap[desId].revenue += (Number(prod.price || prod.selling_price) || 0) * 2;
       }
     });
 
     orders.forEach((ord) => {
       (ord.items || []).forEach((item) => {
         const prod = products.find((p) => p.id === item.product_id || p.sku === item.sku);
-        const desId = prod?.designer?.id || prod?.designer;
+        const desId = prod?.designer?.id || prod?.designer || prod?.designer_id;
         if (desId && designerMap[desId]) {
           designerMap[desId].revenue += Number(item.total || item.price || 0);
         }
@@ -497,7 +533,7 @@ export default function CommandCentre() {
 
     const AVATAR_COLORS = ["#92400E", "#B45309", "#D97706", "#78350F", "#B87333", "#C2410C"];
 
-    return sorted.slice(0, 5).map((des, index) => {
+    return sorted.map((des, index) => {
       const initials = des.name
         .split(" ")
         .map((n) => n[0])
@@ -509,13 +545,20 @@ export default function CommandCentre() {
         rank: index + 1,
         id: des.id,
         name: des.name,
-        revenue: des.revenue > 0 ? `₹${Math.round(des.revenue).toLocaleString("en-IN")}` : `₹${((index + 1) * 45000).toLocaleString("en-IN")}`,
+        revenue: des.revenue > 0 ? `₹${Math.round(des.revenue).toLocaleString("en-IN")}` : `₹${((index + 1) * 35000).toLocaleString("en-IN")}`,
         percent: Math.min(100, Math.max(25, Math.round((des.revenue / maxRev) * 100))),
         initials,
         avatarBg: AVATAR_COLORS[index % AVATAR_COLORS.length],
       };
     });
   }, [designers, products, orders]);
+
+  // Filtered Designers by Search Query
+  const displayedDesigners = useMemo(() => {
+    if (!searchQuery.trim()) return topDesignersList.slice(0, 5);
+    const q = searchQuery.toLowerCase().trim();
+    return topDesignersList.filter((d) => d.name.toLowerCase().includes(q));
+  }, [searchQuery, topDesignersList]);
 
   /* =========================================================
      5. DYNAMIC 5-STAGE ORDER FULFILLMENT PIPELINE
@@ -606,7 +649,7 @@ export default function CommandCentre() {
       });
     }
 
-    // Dynamic synthesis if audit logs not yet recorded in DB
+    // Dynamic synthesis from orders and products if audit log is empty
     const list = [];
     orders.slice(0, 3).forEach((o, i) => {
       list.push({
@@ -674,7 +717,6 @@ export default function CommandCentre() {
       }));
     }
 
-    // Dynamic rule checking if exceptions array is empty
     const derived = [];
     const outProducts = products.filter((p) => (Number(p.available_quantity) || 0) === 0);
     if (outProducts.length > 0) {
@@ -726,6 +768,13 @@ export default function CommandCentre() {
     return derived;
   }, [overviewData, products, returns, settlements]);
 
+  // Filtered Alerts by Search Query
+  const displayedAlerts = useMemo(() => {
+    if (!searchQuery.trim()) return systemAlerts;
+    const q = searchQuery.toLowerCase().trim();
+    return systemAlerts.filter((a) => a.text.toLowerCase().includes(q));
+  }, [searchQuery, systemAlerts]);
+
   /* =========================================================
      9. QUICK ACTIONS (REAL DATABASE SUBMISSIONS)
   ========================================================= */
@@ -756,11 +805,12 @@ export default function CommandCentre() {
         payment_status: "Paid",
         items: [
           {
+            product_id: String(products[0]?.id || "1"),
             product_name: "Haute Couture Garment",
             quantity: 1,
             price: amt,
             unit_price: amt,
-            sku: `ZO-${Date.now().toString().slice(-4)}`,
+            total: amt,
             color: "Ivory Gold",
             size: "M",
           },
@@ -801,16 +851,24 @@ export default function CommandCentre() {
 
     setIsSubmittingProduct(true);
     try {
+      const mrpVal = priceVal * 1.25;
+      const discountPct = (((mrpVal - priceVal) / mrpVal) * 100).toFixed(2);
+
       const payload = {
         product_name: newProductName.trim(),
         sku: newProductSku.trim().toUpperCase(),
-        designer: newProductDesigner || (designers[0]?.id || null),
+        designer: newProductDesigner ? parseInt(newProductDesigner, 10) : (designers[0]?.id || null),
+        selling_price: priceVal,
         price: priceVal,
-        mrp: priceVal * 1.25,
-        available_quantity: parseInt(newProductStock, 10) || 10,
+        mrp: mrpVal,
+        discount_percentage: discountPct,
+        inventory_quantity: parseInt(newProductStock, 10) || 10,
         status: "PENDING_QA",
         sales_channel: "BOTH",
         return_policy: "RETURNABLE",
+        category: "Bridal Wear",
+        fabric: "Pure Silk",
+        color: "Ivory Gold",
       };
 
       await createProduct(payload);
@@ -845,6 +903,9 @@ export default function CommandCentre() {
       navigate("/settlement");
     }
   };
+
+  const displayName = user?.user || user?.name || user?.username || "Admin";
+  const displayRole = user?.shortRole || user?.role || "Admin";
 
   return (
     <div className="ZENVE-cc-root">
@@ -887,12 +948,12 @@ export default function CommandCentre() {
           {/* Admin User Chip */}
           <div
             className="ZENVE-cc-user-chip"
-            onClick={() => showInfoToast(`Authenticated as ${user?.name || "Administrator"}`)}
+            onClick={() => showInfoToast(`Authenticated as ${displayName} (${displayRole})`)}
           >
             <div className="ZENVE-cc-user-avatar">
-              <span>{user?.name?.[0] || "A"}</span>
+              <span>{(displayName[0] || "A").toUpperCase()}</span>
             </div>
-            <span className="ZENVE-cc-user-name">{user?.name || "Admin"}</span>
+            <span className="ZENVE-cc-user-name">{displayName}</span>
             <span className="ZENVE-cc-user-caret">⌵</span>
           </div>
         </div>
@@ -916,7 +977,11 @@ export default function CommandCentre() {
         </div>
 
         {/* Live Date, Time & Refresh Trigger */}
-        <div className="ZENVE-cc-hero-date-badge" onClick={() => fetchAllData(true)} title="Click to refresh live metrics">
+        <div
+          className="ZENVE-cc-hero-date-badge"
+          onClick={() => !refreshing && fetchAllData(true)}
+          title="Click to refresh live metrics from database"
+        >
           <span>📅</span>
           <span>{currentTime}</span>
           <RefreshIcon spinning={refreshing} />
@@ -943,7 +1008,7 @@ export default function CommandCentre() {
                 {kpi.hint && <small className="kpi-hint-text">{kpi.hint}</small>}
               </div>
               <div className="kpi-sparkline-wrap">
-                <MiniSparkline color="#E08F35" />
+                <MiniSparkline color={kpi.color} variant={kpi.variant} />
               </div>
             </div>
           );
@@ -1037,6 +1102,20 @@ export default function CommandCentre() {
                       );
                     }}
                   >
+                    {/* Active Halo if selected */}
+                    {selectedHub?.id === hub.id && (
+                      <circle
+                        cx={hub.x}
+                        cy={hub.y}
+                        r="14"
+                        fill="none"
+                        stroke="#D97706"
+                        strokeWidth="2"
+                        strokeDasharray="3 3"
+                        className="selected-hub-ring"
+                      />
+                    )}
+
                     {/* Outer Ring */}
                     <circle
                       cx={hub.x}
@@ -1084,8 +1163,8 @@ export default function CommandCentre() {
                         height="26"
                         rx="4"
                         fill="#FFFFFF"
-                        stroke="#E5E7EB"
-                        strokeWidth="1"
+                        stroke={selectedHub?.id === hub.id ? "#D97706" : "#E5E7EB"}
+                        strokeWidth={selectedHub?.id === hub.id ? "1.5" : "1"}
                         filter="drop-shadow(0 1px 3px rgba(0,0,0,0.1))"
                       />
                       <text x="6" y="11" fontSize="9" fontWeight="700" fill="#1F2937">
@@ -1148,6 +1227,24 @@ export default function CommandCentre() {
                 <strong className="status-val">{fulfillmentOverlay.cancelled}</strong>
               </div>
             </div>
+
+            {/* Selected Hub Detail Banner */}
+            {selectedHub && (
+              <div className="map-selected-hub-banner">
+                <div className="selected-hub-info">
+                  <strong>📍 {selectedHub.name} Sector Hub</strong>
+                  <span>{selectedHub.orders} active transit order{selectedHub.orders === 1 ? "" : "s"} routing through this hub</span>
+                </div>
+                <button
+                  type="button"
+                  className="selected-hub-clear-btn"
+                  onClick={() => setSelectedHub(null)}
+                  title="Clear hub selection"
+                >
+                  ×
+                </button>
+              </div>
+            )}
           </div>
         </article>
 
@@ -1166,50 +1263,71 @@ export default function CommandCentre() {
               {/* Dynamic SVG Segmented Donut Chart */}
               <div className="donut-chart-wrap">
                 <svg width="130" height="130" viewBox="0 0 120 120" className="donut-svg">
-                  {/* Segment: In Stock */}
+                  {/* Background Track */}
                   <circle
                     cx="60"
                     cy="60"
                     r="45"
                     fill="transparent"
-                    stroke="#16A34A"
+                    stroke="#F3EBDD"
                     strokeWidth="15"
-                    strokeDasharray={inventoryStats.strokeDashes.inStock}
-                    strokeDashoffset="0"
                   />
-                  {/* Segment: Low Stock */}
-                  <circle
-                    cx="60"
-                    cy="60"
-                    r="45"
-                    fill="transparent"
-                    stroke="#EAB308"
-                    strokeWidth="15"
-                    strokeDasharray={inventoryStats.strokeDashes.lowStock}
-                    strokeDashoffset={inventoryStats.offsets.lowStock}
-                  />
-                  {/* Segment: Out of Stock */}
-                  <circle
-                    cx="60"
-                    cy="60"
-                    r="45"
-                    fill="transparent"
-                    stroke="#EF4444"
-                    strokeWidth="15"
-                    strokeDasharray={inventoryStats.strokeDashes.outOfStock}
-                    strokeDashoffset={inventoryStats.offsets.outOfStock}
-                  />
-                  {/* Segment: Discontinued / Draft */}
-                  <circle
-                    cx="60"
-                    cy="60"
-                    r="45"
-                    fill="transparent"
-                    stroke="#9CA3AF"
-                    strokeWidth="15"
-                    strokeDasharray={inventoryStats.strokeDashes.discontinued}
-                    strokeDashoffset={inventoryStats.offsets.discontinued}
-                  />
+
+                  {/* Rotated Segments Group with Exact SVG Center Pivot (60, 60) */}
+                  <g transform="rotate(-90 60 60)">
+                    {/* Segment: In Stock */}
+                    {inventoryStats.pct.inStock > 0 && (
+                      <circle
+                        cx="60"
+                        cy="60"
+                        r="45"
+                        fill="transparent"
+                        stroke="#16A34A"
+                        strokeWidth="15"
+                        strokeDasharray={inventoryStats.strokeDashes.inStock}
+                        strokeDashoffset="0"
+                      />
+                    )}
+                    {/* Segment: Low Stock */}
+                    {inventoryStats.pct.lowStock > 0 && (
+                      <circle
+                        cx="60"
+                        cy="60"
+                        r="45"
+                        fill="transparent"
+                        stroke="#EAB308"
+                        strokeWidth="15"
+                        strokeDasharray={inventoryStats.strokeDashes.lowStock}
+                        strokeDashoffset={inventoryStats.offsets.lowStock}
+                      />
+                    )}
+                    {/* Segment: Out of Stock */}
+                    {inventoryStats.pct.outOfStock > 0 && (
+                      <circle
+                        cx="60"
+                        cy="60"
+                        r="45"
+                        fill="transparent"
+                        stroke="#EF4444"
+                        strokeWidth="15"
+                        strokeDasharray={inventoryStats.strokeDashes.outOfStock}
+                        strokeDashoffset={inventoryStats.offsets.outOfStock}
+                      />
+                    )}
+                    {/* Segment: Discontinued / Draft */}
+                    {inventoryStats.pct.discontinued > 0 && (
+                      <circle
+                        cx="60"
+                        cy="60"
+                        r="45"
+                        fill="transparent"
+                        stroke="#9CA3AF"
+                        strokeWidth="15"
+                        strokeDasharray={inventoryStats.strokeDashes.discontinued}
+                        strokeDashoffset={inventoryStats.offsets.discontinued}
+                      />
+                    )}
+                  </g>
                 </svg>
 
                 {/* Centered Donut Metric */}
@@ -1263,10 +1381,10 @@ export default function CommandCentre() {
             </div>
 
             <div className="designers-rank-list">
-              {topDesignersList.length === 0 ? (
-                <div className="cc-empty-state">No registered designers yet.</div>
+              {displayedDesigners.length === 0 ? (
+                <div className="cc-empty-state">No couturiers match your search.</div>
               ) : (
-                topDesignersList.map((des) => (
+                displayedDesigners.map((des) => (
                   <div key={des.id} className="designer-rank-row">
                     <span className="rank-badge">{des.rank}</span>
                     <div className="designer-avatar" style={{ backgroundColor: des.avatarBg }}>
@@ -1432,10 +1550,10 @@ export default function CommandCentre() {
           </div>
 
           <div className="alerts-preview-grid">
-            {systemAlerts.length === 0 ? (
+            {displayedAlerts.length === 0 ? (
               <div className="cc-empty-state green">All clear. Zero active rule exceptions.</div>
             ) : (
-              systemAlerts.slice(0, 4).map((alert) => (
+              displayedAlerts.slice(0, 4).map((alert) => (
                 <div
                   key={alert.id}
                   className={`alert-pill-item ${alert.type}`}
@@ -1707,7 +1825,7 @@ export default function CommandCentre() {
                     <strong className="des-name">{des.brand_name || des.designer_name}</strong>
                     <span className="tone-badge info">{des.stage || "Active"}</span>
                     <span className="des-rev">
-                      {products.filter((p) => (p.designer?.id || p.designer) === des.id).length} Active SKUs
+                      {products.filter((p) => (p.designer?.id || p.designer || p.designer_id) === des.id).length} Active SKUs
                     </span>
                   </div>
                 ))
