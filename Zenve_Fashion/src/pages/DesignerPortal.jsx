@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import { MediaWorkspace } from "./MediaStudio";
 import { showToast, showErrorToast } from "../utils/zenveToast";
@@ -175,6 +175,26 @@ function EyeIcon({ off }) {
   );
 }
 
+function ImageIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+      <circle cx="8.5" cy="8.5" r="1.5" />
+      <polyline points="21 15 16 10 5 21" />
+    </svg>
+  );
+}
+
 /* =========================================================
    BANK IFSC MAP
 ========================================================= */
@@ -332,6 +352,13 @@ export default function DesignerPortal() {
   ======================================================= */
 
   const [notifSidebarOpen, setNotifSidebarOpen] = useState(false);
+  const [showMediaReviews, setShowMediaReviews] = useState(false);
+  
+  const location = useLocation();
+  useEffect(() => {
+    setShowMediaReviews(false);
+    setShowProfileAndAccount(false);
+  }, [location.key]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -2092,7 +2119,15 @@ export default function DesignerPortal() {
               <span>ALL 12 LAYERS</span>
             </Link>
 
-            <h1 className="ZENVE-portal-title">
+            <h1 
+              className="ZENVE-portal-title"
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                setShowMediaReviews(false);
+                setShowProfileAndAccount(false);
+              }}
+              title="Return to Dashboard"
+            >
               <span className="ZENVE-layer-num">
                 02
               </span>
@@ -2107,60 +2142,61 @@ export default function DesignerPortal() {
         </div>
 
         <div className="ZENVE-header-right">
-          <SearchBar />
-
+          {currentUser?.id !== "designer" && <SearchBar />}
           <div className="ZENVE-header-right-controls">
-            <div className="ZENVE-signed-in-box">
-              <span className="ZENVE-signed-in-prefix">
-                AS
-              </span>
-
-              <div className="ZENVE-select-wrap">
-                <select
-                  value={selectedDesignerId}
-                  onChange={(e) => {
-                    const newId = e.target.value;
-                    setSelectedDesignerId(newId);
-                    try {
-                      localStorage.setItem("zenve_selected_designer_id", newId);
-                    } catch {
-                      // ignore
-                    }
-                  }}
-                  disabled={
-                    loadingDesigners ||
-                    designers.length === 0
-                  }
-                  className="ZENVE-designer-select"
-                  title="Switch active signed in designer"
-                >
-                  {designers.length === 0 ? (
-                    <option value="">
-                      {loadingDesigners
-                        ? "Loading..."
-                        : "No designers found"}
-                    </option>
-                  ) : (
-                    designers.map((d) => (
-                      <option
-                        key={d.id}
-                        value={d.id}
-                      >
-                        {d.brand_name ||
-                          d.brand ||
-                          d.designer_name ||
-                          d.name ||
-                          `Designer #${d.id}`}
-                      </option>
-                    ))
-                  )}
-                </select>
-
-                <span className="ZENVE-select-chevron">
-                  <ArrowDownIcon />
+            {currentUser?.id !== "designer" && (
+              <div className="ZENVE-signed-in-box">
+                <span className="ZENVE-signed-in-prefix">
+                  AS
                 </span>
+
+                <div className="ZENVE-select-wrap">
+                  <select
+                    value={selectedDesignerId}
+                    onChange={(e) => {
+                      const newId = e.target.value;
+                      setSelectedDesignerId(newId);
+                      try {
+                        localStorage.setItem("zenve_selected_designer_id", newId);
+                      } catch {
+                        // ignore
+                      }
+                    }}
+                    disabled={
+                      loadingDesigners ||
+                      designers.length === 0
+                    }
+                    className="ZENVE-designer-select"
+                    title="Switch active signed in designer"
+                  >
+                    {designers.length === 0 ? (
+                      <option value="">
+                        {loadingDesigners
+                          ? "Loading..."
+                          : "No designers found"}
+                      </option>
+                    ) : (
+                      designers.map((d) => (
+                        <option
+                          key={d.id}
+                          value={d.id}
+                        >
+                          {d.brand_name ||
+                            d.brand ||
+                            d.designer_name ||
+                            d.name ||
+                            `Designer #${d.id}`}
+                        </option>
+                      ))
+                    )}
+                  </select>
+
+                  <span className="ZENVE-select-chevron">
+                    <ArrowDownIcon />
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="ZENVE-header-actions-group">
               <button
@@ -2211,6 +2247,23 @@ export default function DesignerPortal() {
                   <span className="ZENVE-header-active-dot" />
                 )}
               </button>
+
+              <button
+                type="button"
+                className={`ZENVE-header-profile-btn ${showMediaReviews ? "active" : ""}`}
+                onClick={() => {
+                  setShowMediaReviews(!showMediaReviews);
+                  if (!showMediaReviews) setShowProfileAndAccount(false); // mutually exclusive
+                }}
+                title="Designer Reviews"
+              >
+                <ImageIcon />
+                {showMediaReviews && (
+                  <span className="ZENVE-header-active-dot" />
+                )}
+              </button>
+
+
 
               <button
                 type="button"
@@ -2269,14 +2322,19 @@ export default function DesignerPortal() {
         </div>
       ) : (
         <main className="ZENVE-portal-main">
-          {!showProfileAndAccount && selectedDesignerId && (
-            <MediaWorkspace key={selectedDesignerId} designerId={selectedDesignerId} />
+          {showMediaReviews && selectedDesignerId && (
+            <MediaWorkspace 
+              key={selectedDesignerId} 
+              designerId={selectedDesignerId} 
+              designerReviewOnly={true} 
+              hideHeroBar={true}
+            />
           )}
           {/* ===================================================
               DASHBOARD
           =================================================== */}
 
-          {!showProfileAndAccount && (
+          {!showProfileAndAccount && !showMediaReviews && (
             <section className="ZENVE-portal-card">
               <div className="ZENVE-card-header">
                 <div>
@@ -2510,7 +2568,7 @@ export default function DesignerPortal() {
               CREDIT POINTS SECTION
           =================================================== */}
 
-          {!showProfileAndAccount && (
+          {!showProfileAndAccount && !showMediaReviews && (
             <section
               className="ZENVE-portal-card ZENVE-credits-section-card"
               id="zenve-credits-section"
@@ -3588,7 +3646,7 @@ export default function DesignerPortal() {
               SKU + ORDERS
           =================================================== */}
 
-          {!showProfileAndAccount && (
+          {!showProfileAndAccount && !showMediaReviews && (
             <>
               {/* =================================================
                   UPLOAD SKU

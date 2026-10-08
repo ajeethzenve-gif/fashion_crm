@@ -680,12 +680,13 @@ export function MediaWorkspace({
   designerFilter = "ALL",
   productFilter = "ALL",
   typeFilter = "ALL",
+  designerReviewOnly = false,
 }) {
   const designerMode = designerId !== undefined;
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [activeStatusFilter, setActiveStatusFilter] = useState("ALL");
+  const [activeStatusFilter, setActiveStatusFilter] = useState(designerReviewOnly ? "DESIGNER_VIEW" : "ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [brandFilter, setBrandFilter] = useState("ALL");
   const [sortOrder, setSortOrder] = useState("NEWEST");
@@ -807,7 +808,9 @@ export function MediaWorkspace({
     return items
       .filter((item) => {
         const matchesStatus =
-          activeStatusFilter === "ALL" || item.status === activeStatusFilter;
+          activeStatusFilter === "ALL" || 
+          (activeStatusFilter === "DESIGNER_VIEW" && ["IN_REVIEW", "CHANGES_REQUESTED", "APPROVED"].includes(item.status)) ||
+          item.status === activeStatusFilter;
 
         const matchesBrand =
           brandFilter === "ALL" || item.brand === brandFilter;
@@ -903,6 +906,7 @@ export function MediaWorkspace({
       )}
 
       {/* 2. TOP KPI METRICS TILES */}
+      {!designerReviewOnly && (
       <div className="ZENVE-media-kpi-grid">
         <div
           className={`ZENVE-media-kpi-card ${activeStatusFilter === "ALL" ? "selected" : ""}`}
@@ -958,9 +962,10 @@ export function MediaWorkspace({
           <span className="kpi-hint">Storefront ready</span>
         </div>
       </div>
+      )}
 
       {/* 3. FILTER CONTROLS & TOOLBAR */}
-      {!hideHeroBar && (
+      {!hideHeroBar && !designerReviewOnly && (
         <div className="ZENVE-media-toolbar">
         {/* Search */}
         <div className="toolbar-search">

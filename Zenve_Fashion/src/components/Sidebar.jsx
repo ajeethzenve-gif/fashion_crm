@@ -189,11 +189,13 @@ export default function Sidebar() {
       </div>
 
       <nav className="sidebar-nav">
-        <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
-          <div className="nav-icon-wrap">{iconMap["Home"]}</div>
-          <span>Home</span>
-        </Link>
-        
+        {currentUser?.id !== "designer" && (
+          <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
+            <div className="nav-icon-wrap">{iconMap["Home"]}</div>
+            <span>Home</span>
+          </Link>
+        )}
+
         {layers.filter((layer) => hasAccess(layer.n)).map((layer) => {
           const isActive = location.pathname === layer.path || location.pathname.startsWith(`${layer.path}/`);
           const icon = iconMap[layer.name] || iconMap["Home"];
@@ -206,7 +208,7 @@ export default function Sidebar() {
           );
         })}
       </nav>
-      
+
       <div className="sidebar-bottom">
         {currentUser ? (
           <>
@@ -238,3 +240,4 @@ export default function Sidebar() {
     </aside>
   );
 }
+
