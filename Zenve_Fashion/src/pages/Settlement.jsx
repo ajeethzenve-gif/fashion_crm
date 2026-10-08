@@ -856,17 +856,6 @@ export default function Settlement() {
               <table className="stl-data-table">
                 <thead>
                   <tr>
-                    <th className="stl-th-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={
-                          paginatedSettlements.length > 0 &&
-                          paginatedSettlements.every((s) => selectedIds.has(s.id))
-                        }
-                        onChange={handleSelectAll}
-                        aria-label="Select all settlements"
-                      />
-                    </th>
                     <th className="stl-th-index">Sl.No</th>
                     <th>Settlement ID</th>
                     <th>Designer</th>
@@ -882,13 +871,13 @@ export default function Settlement() {
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan="11" className="stl-empty-cell">
+                      <td colSpan="10" className="stl-empty-cell">
                         Loading live settlements from database...
                       </td>
                     </tr>
                   ) : paginatedSettlements.length === 0 ? (
                     <tr>
-                      <td colSpan="11" className="stl-empty-cell">
+                      <td colSpan="10" className="stl-empty-cell">
                         No settlements found in database matching your filter criteria.
                       </td>
                     </tr>
@@ -897,16 +886,6 @@ export default function Settlement() {
                       const isSelected = selectedIds.has(item.id);
                       return (
                         <tr key={item.id} className={isSelected ? "selected-row" : ""}>
-                          {/* Checkbox */}
-                          <td className="stl-td-checkbox">
-                            <input
-                              type="checkbox"
-                              checked={isSelected}
-                              onChange={() => handleSelectRow(item.id)}
-                              aria-label={`Select ${item.id}`}
-                            />
-                          </td>
-
                           {/* Index */}
                           <td className="stl-td-index">{item.index}</td>
 

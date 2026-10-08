@@ -1,6 +1,6 @@
 from decimal import Decimal
 from rest_framework import serializers
-from .models import Order, OrderItem, ReturnRequest, Settlement
+from .models import Order, OrderItem, ReturnRequest, Settlement, Shipment
 from products.models import Product
 
 
@@ -740,5 +740,46 @@ class SettlementSerializer(serializers.ModelSerializer):
         data["formatted_net"] = f"₹{int(instance.payout_amount):,}" if instance.payout_amount else "₹0"
         data["formatted_commission"] = f"₹{int(instance.commission_amount):,}" if instance.commission_amount else "₹0"
         return data
+
+
+class ShipmentSerializer(serializers.ModelSerializer):
+    trackingNo = serializers.CharField(source="tracking_number", required=False)
+    orderId = serializers.CharField(source="order_number", required=False)
+    customer = serializers.CharField(source="customer_name", required=False)
+    avatar = serializers.CharField(source="customer_avatar", required=False)
+    expectedDelivery = serializers.CharField(source="expected_delivery", required=False)
+    originHub = serializers.CharField(source="origin_hub", required=False)
+    destinationHub = serializers.CharField(source="destination_hub", required=False)
+    destinationAddress = serializers.CharField(source="destination_address", required=False)
+
+    class Meta:
+        model = Shipment
+        fields = [
+            "id",
+            "order",
+            "tracking_number",
+            "trackingNo",
+            "order_number",
+            "orderId",
+            "customer_name",
+            "customer",
+            "customer_phone",
+            "customer_avatar",
+            "avatar",
+            "courier",
+            "status",
+            "expected_delivery",
+            "expectedDelivery",
+            "origin_hub",
+            "originHub",
+            "destination_hub",
+            "destinationHub",
+            "destination_address",
+            "destinationAddress",
+            "timeline",
+            "created_at",
+            "updated_at",
+        ]
+
 
 

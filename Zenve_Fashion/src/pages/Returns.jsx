@@ -731,15 +731,6 @@ export default function Returns() {
               <table className="rtn-data-table">
                 <thead>
                   <tr>
-                    <th style={{ width: "38px" }}>
-                      <input
-                        type="checkbox"
-                        className="rtn-checkbox"
-                        checked={isAllSelected}
-                        onChange={handleToggleSelectAll}
-                        aria-label="Select all returns"
-                      />
-                    </th>
                     <th style={{ width: "56px" }}>Sl.No</th>
                     <th>Return ID</th>
                     <th>Order ID</th>
@@ -754,20 +745,19 @@ export default function Returns() {
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan="10" style={{ textAlign: "center", padding: "40px" }}>
+                      <td colSpan="9" style={{ textAlign: "center", padding: "40px" }}>
                         Loading returns directly from database...
                       </td>
                     </tr>
                   ) : filteredReturns.length === 0 ? (
                     <tr>
-                      <td colSpan="10" style={{ textAlign: "center", padding: "40px", color: "#6B7280" }}>
+                      <td colSpan="9" style={{ textAlign: "center", padding: "40px", color: "#6B7280" }}>
                         No return records in database match the active filters.
                       </td>
                     </tr>
                   ) : (
                     paginatedReturns.map((item, index) => {
                       const isSelected = selectedReturn?.id === item.id;
-                      const isChecked = selectedRowIds.has(item.id);
                       const normStatus = normalizeStatus(item.status);
                       const statusLabel = getStatusBadgeLabel(item.status);
                       const rowNum = String((currentPage - 1) * pageSize + index + 1).padStart(2, "0");
@@ -778,17 +768,6 @@ export default function Returns() {
                           className={isSelected ? "selected" : ""}
                           onClick={() => setSelectedReturnId(item.id)}
                         >
-                          {/* Checkbox */}
-                          <td onClick={(e) => e.stopPropagation()}>
-                            <input
-                              type="checkbox"
-                              className="rtn-checkbox"
-                              checked={isChecked}
-                              onChange={(e) => handleToggleRow(item.id, e)}
-                              aria-label={`Select return ${item.returnId || item.id}`}
-                            />
-                          </td>
-
                           {/* Row Number */}
                           <td>
                             <span className="rtn-row-num">{rowNum}</span>

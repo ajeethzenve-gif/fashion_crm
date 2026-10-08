@@ -1183,15 +1183,6 @@ export default function Accounting() {
             <table className="acc-table">
               <thead>
                 <tr>
-                  <th className="th-checkbox">
-                    <input
-                      type="checkbox"
-                      className="acc-custom-checkbox"
-                      checked={isAllSelected}
-                      onChange={handleSelectAll}
-                      aria-label="Select all rows"
-                    />
-                  </th>
                   <th>SL.No</th>
                   <th>Invoice ID</th>
                   <th>Customer / Designer</th>
@@ -1208,13 +1199,13 @@ export default function Accounting() {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="12" className="acc-empty-cell">
+                    <td colSpan="11" className="acc-empty-cell">
                       Connecting to Live Accounting Gateway...
                     </td>
                   </tr>
                 ) : paginatedInvoices.length === 0 ? (
                   <tr>
-                    <td colSpan="12" className="acc-empty-cell">
+                    <td colSpan="11" className="acc-empty-cell">
                       No invoices found in database matching your filters.
                     </td>
                   </tr>
@@ -1224,15 +1215,6 @@ export default function Accounting() {
                     const isNearBottom = idx >= Math.max(0, paginatedInvoices.length - 2);
                     return (
                       <tr key={inv.id} className={isChecked ? "row-selected" : ""}>
-                        <td className="td-checkbox">
-                          <input
-                            type="checkbox"
-                            className="acc-custom-checkbox"
-                            checked={isChecked}
-                            onChange={() => handleSelectRow(inv.id)}
-                            aria-label={`Select invoice ${inv.invoiceId}`}
-                          />
-                        </td>
                         <td className="td-num">{inv.num}</td>
                         <td className="td-inv-id">
                           <button

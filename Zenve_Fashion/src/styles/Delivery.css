@@ -1,1000 +1,1449 @@
 /* =========================================================
-   DELIVERY ENGINE STYLESHEET (08)
-   Zenve Fashion Operations
-   Exact match to https://zenvefashioncm.ZENVE.app/delivery
-   Fully Responsive: Mobile (320px-640px), Tablet (641px-1024px),
-   Laptop (1025px-1440px), Desktop (1441px-1920px), 4K UHD (1921px-3840px+)
+   ZENVE FASHION - DELIVERY ENGINE STYLESHEET (LAYER 08)
+   Exact match to official Zenve Delivery Engine UI
 ========================================================= */
 
-.ZENVE-delivery-layout {
+.dlv-page-wrapper {
   min-height: 100vh;
+  background-color: #FAF6F0;
+  color: #1F2937;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  background-color: var(--ZENVE-paper, #FFF8E8);
-  color: var(--ZENVE-ink, #1F2937);
-  font-family: var(--ZENVE-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
   box-sizing: border-box;
 }
 
 /* =========================================================
-   HEADER SECTION
+   1. TOP NAVIGATION BAR
 ========================================================= */
 
-.ZENVE-delivery-header {
-  width: 100%;
-  background: var(--ZENVE-panel, #FFFCF5);
-  border-bottom: 1px solid var(--ZENVE-line, #E7C77A);
-  padding: 16px 28px;
+.dlv-top-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 12px 28px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #EFE6D8;
   gap: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
   box-sizing: border-box;
 }
 
-.ZENVE-header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  min-width: 0;
-  flex-shrink: 0;
+.dlv-top-search-wrap {
+  position: relative;
+  width: 480px;
+  max-width: 100%;
 }
 
-.ZENVE-portal-logo {
-  flex-shrink: 0;
+.dlv-top-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9CA3AF;
+  pointer-events: none;
 }
 
-.ZENVE-portal-logo img {
+.dlv-top-search-input {
+  width: 100%;
   height: 38px;
-  width: auto;
-  display: block;
-  object-fit: contain;
+  padding: 0 16px 0 42px;
+  background: #FFFFFF;
+  border: 1px solid #E5DBCD;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #1F2937;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
 }
 
-.ZENVE-header-title-block {
+.dlv-top-search-input:focus {
+  border-color: #965A2C;
+  box-shadow: 0 0 0 3px rgba(150, 90, 44, 0.12);
+}
+
+.dlv-top-search-input::placeholder {
+  color: #9CA3AF;
+}
+
+.dlv-top-actions {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  align-items: center;
+  gap: 18px;
 }
 
-.ZENVE-back-link {
-  display: inline-flex;
+.dlv-bell-btn {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #5C4530;
+  padding: 6px;
+  display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 11px;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.15s ease;
+}
+
+.dlv-bell-btn:hover {
+  background: #F4ECE1;
+}
+
+.dlv-bell-dot {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: #EF4444;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 2px solid #FFFFFF;
+}
+
+.dlv-admin-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.dlv-admin-profile:hover {
+  background: #F4ECE1;
+}
+
+.dlv-admin-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #965A2C;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ZENVE-muted, #6B5A45);
+  font-size: 13px;
+}
+
+.dlv-admin-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.dlv-admin-chevron {
+  color: #6B7280;
+}
+
+/* =========================================================
+   2. MAIN CONTAINER & HERO BANNER
+========================================================= */
+
+.dlv-container {
+  padding: 20px 28px 40px;
+  width: 100%;
+  max-width: 1720px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.dlv-hero-banner {
+  position: relative;
+  width: 100%;
+  height: 136px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 16px rgba(110, 70, 30, 0.08);
+  border: 1px solid #EAE0D0;
+  background: linear-gradient(90deg, #FAF6F0 0%, #F5ECDF 45%, #EFE1CF 100%);
+}
+
+.dlv-hero-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(250, 246, 240, 0.98) 0%,
+    rgba(250, 246, 240, 0.92) 35%,
+    rgba(250, 246, 240, 0.60) 60%,
+    rgba(250, 246, 240, 0.15) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dlv-banner-bg-img {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 65%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center;
+  opacity: 0.85;
+  mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
+  pointer-events: none;
+}
+
+.dlv-banner-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 34px;
+  max-width: 580px;
+}
+
+.dlv-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #7D4C25;
+  margin-bottom: 6px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.7);
+}
+
+.dlv-breadcrumb a {
+  color: #7D4C25;
+  font-weight: 600;
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
-.ZENVE-back-link:hover {
-  color: var(--ZENVE-ink, #1F2937);
+.dlv-breadcrumb a:hover {
+  color: #4A2B13;
+  text-decoration: underline;
 }
 
-.ZENVE-portal-title {
-  margin: 0;
-  font-size: 26px;
-  font-weight: 500;
+.dlv-breadcrumb span {
+  color: #4A2B13;
+  font-weight: 700;
+}
+
+.dlv-hero-title {
   font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  color: var(--ZENVE-ink, #1F2937);
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
+  font-size: 32px;
+  font-weight: 800;
+  color: #381E0D;
+  margin: 0 0 6px 0;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
 }
 
-.ZENVE-layer-num {
-  font-size: 26px;
-  font-weight: 500;
-  font-family: inherit;
-  color: #D4A017;
-}
-
-.ZENVE-portal-desc {
+.dlv-hero-subtitle {
+  font-size: 13.5px;
+  color: #5C3D24;
   margin: 0;
-  font-size: 14px;
-  color: var(--ZENVE-muted, #6B5A45);
-}
-
-.ZENVE-header-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
+  font-weight: 600;
+  line-height: 1.4;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
 }
 
 /* =========================================================
-   MAIN CONTAINER
+   3. 5 KPI METRIC TILES
 ========================================================= */
 
-.ZENVE-delivery-main {
-  max-width: 1480px;
-  margin: 0 auto;
-  padding: 24px 28px 60px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+.dlv-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+  width: 100%;
   box-sizing: border-box;
 }
 
+.dlv-kpi-card {
+  background: #FFFFFF;
+  border: 1px solid #EFE5D5;
+  border-radius: 12px;
+  padding: 12px 14px;
+  min-height: 84px;
+  height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.dlv-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(180, 130, 40, 0.08);
+}
+
+.dlv-kpi-info-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.dlv-kpi-icon-wrap {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dlv-kpi-icon-wrap.shipments {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+.dlv-kpi-icon-wrap.transit {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+.dlv-kpi-icon-wrap.delivered {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+.dlv-kpi-icon-wrap.pending {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+.dlv-kpi-icon-wrap.exceptions {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+.dlv-kpi-text-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  flex: 1;
+}
+
+.dlv-kpi-title {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #6B7280;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.dlv-kpi-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.dlv-kpi-number {
+  font-size: 21px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1;
+}
+
+.dlv-kpi-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 1px 3px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.dlv-kpi-trend.green {
+  color: #16A34A;
+}
+
+.dlv-kpi-trend.red {
+  color: #DC2626;
+}
+
+.dlv-kpi-sparkline {
+  width: 48px;
+  height: 22px;
+  min-width: 48px;
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
 /* =========================================================
-   ALERT / TOAST BANNER
+   4. TABS ROW & CREATE SHIPMENT ACTION
 ========================================================= */
 
-.ZENVE-delivery-alert {
+.dlv-tabs-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.dlv-tabs-pills {
+  display: flex;
+  background: #FFFFFF;
+  border: 1px solid #EFE4D2;
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.dlv-tab-btn {
+  background: transparent;
+  border: none;
+  padding: 7px 18px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #6B7280;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.dlv-tab-btn:hover {
+  color: #965A2C;
+}
+
+.dlv-tab-btn.active {
+  background: #965A2C;
+  color: #FFFFFF;
+  box-shadow: 0 2px 4px rgba(150, 90, 44, 0.2);
+}
+
+.dlv-create-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #965A2C;
+  color: #FFFFFF;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(150, 90, 44, 0.25);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.dlv-create-btn:hover {
+  background: #804B22;
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   5. FILTER & SEARCH TOOLBAR
+========================================================= */
+
+.dlv-filter-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+  border: 1px solid #EFE4D2;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 18px;
+  gap: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+  flex-wrap: wrap;
+}
+
+.dlv-table-search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 280px;
+}
+
+.dlv-table-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9CA3AF;
+  pointer-events: none;
+}
+
+.dlv-table-search-input {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px 0 36px;
+  background: #FFFFFF;
+  border: 1px solid #E5DBCD;
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: #1F2937;
+  outline: none;
+  transition: border-color 0.15s ease;
+  box-sizing: border-box;
+}
+
+.dlv-table-search-input:focus {
+  border-color: #965A2C;
+}
+
+.dlv-table-search-input::placeholder {
+  color: #9CA3AF;
+}
+
+.dlv-filters-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.dlv-filter-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dlv-filter-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6B7280;
+  white-space: nowrap;
+}
+
+.dlv-filter-select {
+  height: 34px;
+  padding: 0 24px 0 10px;
+  background: #FFFFFF;
+  border: 1px solid #E5DBCD;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+
+.dlv-filter-select:focus {
+  border-color: #965A2C;
+}
+
+.dlv-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 34px;
+  padding: 0 12px;
+  background: #FFFFFF;
+  border: 1px solid #D1C5B4;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6B5543;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dlv-reset-btn:hover {
+  background: #F8F3EA;
+  border-color: #965A2C;
+  color: #965A2C;
+}
+
+/* =========================================================
+   6. SPLIT WORKSPACE: TABLE & TRACKING WIDGET
+========================================================= */
+
+.dlv-split-grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 18px;
+  align-items: start;
+}
+
+/* ---------------------------------------------------------
+   6A. SHIPMENTS TABLE
+--------------------------------------------------------- */
+
+.dlv-table-card {
+  background: #FFFFFF;
+  border: 1px solid #EFE4D2;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.dlv-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.dlv-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.dlv-table thead th {
+  background: #FAF6F0;
+  border-bottom: 1px solid #EDE2D2;
+  padding: 10px 12px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #6E5338;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.dlv-table tbody tr {
+  border-bottom: 1px solid #F5ECE0;
+  transition: background 0.15s ease;
+  cursor: pointer;
+}
+
+.dlv-table tbody tr:hover {
+  background: #FAF7F2;
+}
+
+.dlv-table tbody tr.active-row {
+  background: #FBF4E8;
+  box-shadow: inset 3px 0 0 #965A2C;
+}
+
+.dlv-table td {
+  padding: 11px 12px;
+  font-size: 12.5px;
+  color: #374151;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.dlv-checkbox {
+  width: 15px;
+  height: 15px;
+  border-radius: 4px;
+  accent-color: #965A2C;
+  cursor: pointer;
+}
+
+.dlv-index-num {
+  font-size: 12px;
+  font-weight: 600;
+  color: #9CA3AF;
+}
+
+.dlv-tracking-link {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #1F2937;
+  text-decoration: none;
+}
+
+.dlv-order-link {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #2563EB;
+  text-decoration: none;
+}
+
+.dlv-order-link:hover {
+  text-decoration: underline;
+}
+
+.dlv-customer-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dlv-customer-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.dlv-customer-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+/* Courier Badges */
+.dlv-courier-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dlv-courier-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 3px;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.dlv-courier-badge.delhivery {
+  background: #111827;
+  color: #FFFFFF;
+}
+
+.dlv-courier-badge.ekart {
+  background: #0284C7;
+  color: #FFFFFF;
+}
+
+.dlv-courier-badge.bluedart {
+  background: #1D4ED8;
+  color: #FFFFFF;
+  font-style: italic;
+}
+
+.dlv-courier-badge.dtdc {
+  background: #DC2626;
+  color: #FFFFFF;
+}
+
+.dlv-courier-badge.xpressbees {
+  background: #EA580C;
+  color: #FFFFFF;
+}
+
+.dlv-courier-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: #4B5563;
+}
+
+/* Status Pill */
+.dlv-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dlv-status-pill.in-transit {
+  background: #EFF6FF;
+  color: #1D4ED8;
+  border: 1px solid #DBEAFE;
+}
+
+.dlv-status-pill.delivered {
+  background: #ECFDF5;
+  color: #047857;
+  border: 1px solid #D1FAE5;
+}
+
+.dlv-status-pill.pending {
+  background: #FFFBEB;
+  color: #B45309;
+  border: 1px solid #FEF3C7;
+}
+
+.dlv-status-pill.exception {
+  background: #FEF2F2;
+  color: #B91C1C;
+  border: 1px solid #FEE2E2;
+}
+
+.dlv-status-pill.rto {
+  background: #F3E8FF;
+  color: #7E22CE;
+  border: 1px solid #E9D5FF;
+}
+
+.dlv-status-icon {
+  font-size: 11px;
+}
+
+/* Action Icons */
+.dlv-actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dlv-action-btn {
+  background: none;
+  border: none;
+  color: #6B7280;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.dlv-action-btn:hover {
+  background: #F3ECE1;
+  color: #965A2C;
+}
+
+.dlv-action-btn.dlv-delete-action:hover {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+/* Pagination Footer */
+.dlv-pagination-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 12px 18px;
-  border-radius: 6px;
-  font-size: 13.5px;
-  font-weight: 500;
-  animation: fadeIn 0.2s ease-in-out;
+  border-top: 1px solid #EFE4D2;
+  background: #FFFFFF;
 }
 
-.ZENVE-delivery-alert.success {
-  background-color: #ecfdf5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
-}
-
-.ZENVE-delivery-alert.error {
-  background-color: #fff1f2;
-  color: #9f1239;
-  border: 1px solid #fecdd3;
-}
-
-.ZENVE-alert-close {
-  background: none;
-  border: none;
-  font-size: 18px;
-  line-height: 1;
-  color: currentColor;
-  cursor: pointer;
-  padding: 0 4px;
-  opacity: 0.7;
-}
-
-.ZENVE-alert-close:hover {
-  opacity: 1;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* =========================================================
-   TOP 3 KPI CARDS
-========================================================= */
-
-.ZENVE-delivery-kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  width: 100%;
-}
-
-.ZENVE-kpi-card {
-  background: var(--ZENVE-panel, #FFFCF5);
-  border: 1px solid var(--ZENVE-line, #E7C77A);
-  border-radius: 8px;
-  padding: 16px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  transition: box-shadow 0.15s ease, transform 0.15s ease;
-  box-sizing: border-box;
-}
-
-.ZENVE-kpi-card:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-.ZENVE-kpi-label {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--ZENVE-muted, #6B5A45);
-}
-
-.ZENVE-kpi-value {
-  font-size: 26px;
-  font-weight: 700;
-  color: var(--ZENVE-ink, #1F2937);
-  line-height: 1.15;
-  font-family: var(--ZENVE-font-display, "Outfit", sans-serif);
-}
-
-.ZENVE-kpi-hint {
+.dlv-pagination-info {
   font-size: 12px;
-  color: var(--ZENVE-muted, #6B5A45);
+  color: #6B7280;
 }
 
-/* =========================================================
-   PANEL / SECTION CARD
-========================================================= */
-
-.ZENVE-panel-card {
-  background: var(--ZENVE-panel, #FFFCF5);
-  border: 1px solid var(--ZENVE-line, #E7C77A);
-  border-radius: 8px;
-  padding: 20px 22px;
+.dlv-pagination-controls {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-  box-sizing: border-box;
-}
-
-.ZENVE-panel-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.ZENVE-panel-title-block {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1;
-  min-width: 240px;
-}
-
-.ZENVE-panel-title {
-  margin: 0;
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--ZENVE-ink, #1F2937);
-}
-
-.ZENVE-panel-desc {
-  margin: 0;
-  font-size: 13px;
-  color: var(--ZENVE-muted, #6B5A45);
-  line-height: 1.4;
-}
-
-.ZENVE-pincode-control {
-  width: 200px;
-  display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 4px;
-  box-sizing: border-box;
 }
 
-.ZENVE-pincode-label {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--ZENVE-muted, #6B5A45);
-}
-
-.ZENVE-pincode-input {
-  height: 36px;
-  border: 1px solid var(--ZENVE-line, #E7C77A);
+.dlv-page-btn {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  background: #FFFFFF;
+  border: 1px solid #E5DBCD;
   border-radius: 6px;
-  padding: 0 12px;
-  font-size: 13px;
-  background: var(--ZENVE-panel, #FFFCF5);
-  color: var(--ZENVE-ink, #1F2937);
-  outline: none;
-  box-sizing: border-box;
-  transition: border-color 0.15s ease;
-}
-
-.ZENVE-pincode-input:focus {
-  border-color: #92400e;
-}
-
-/* =========================================================
-   SERVICEABILITY TABLE
-========================================================= */
-
-.ZENVE-table-wrap {
-  width: 100%;
-  overflow-x: auto;
-  border-radius: 6px;
-  -webkit-overflow-scrolling: touch;
-}
-
-.ZENVE-delivery-table {
-  width: 100%;
-  min-width: 600px;
-  border-collapse: collapse;
-  text-align: left;
-  font-size: 13.5px;
-}
-
-.ZENVE-delivery-table th {
-  padding: 10px 14px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ZENVE-muted, #6B5A45);
-  border-bottom: 1px solid var(--ZENVE-line, #E7C77A);
-  white-space: nowrap;
-}
-
-.ZENVE-delivery-table td {
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--ZENVE-line, #F4D58D);
-  color: var(--ZENVE-ink, #1F2937);
-  vertical-align: middle;
-}
-
-.ZENVE-delivery-table tr:last-child td {
-  border-bottom: none;
-}
-
-.ZENVE-delivery-table tr:hover td {
-  background-color: #FFF8E8;
-}
-
-.sku-cell {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.sku-cell-name {
-  margin: 0;
-  font-weight: 600;
-  color: var(--ZENVE-ink, #1F2937);
-}
-
-.sku-cell-id {
-  margin: 0;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 11.5px;
-  color: var(--ZENVE-muted, #6B5A45);
-}
-
-/* SWITCH TOGGLE */
-.ZENVE-switch-btn {
-  position: relative;
-  display: inline-flex;
-  height: 20px;
-  width: 36px;
-  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
   cursor: pointer;
-  border-radius: 9999px;
-  border: 2px solid transparent;
-  background-color: #E7C77A;
-  transition: background-color 0.2s ease-in-out;
-  outline: none;
-  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
 }
 
-.ZENVE-switch-btn.checked {
-  background-color: var(--ZENVE-ink, #1F2937);
+.dlv-page-btn:hover:not(:disabled) {
+  border-color: #965A2C;
+  color: #965A2C;
 }
 
-.ZENVE-switch-btn:disabled {
+.dlv-page-btn.active {
+  background: #965A2C;
+  border-color: #965A2C;
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+.dlv-page-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.ZENVE-switch-thumb {
-  pointer-events: none;
-  display: inline-block;
-  height: 16px;
-  width: 16px;
-  border-radius: 9999px;
-  background-color: #FFFCF5;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease-in-out;
-  transform: translateX(0);
+.dlv-page-dots {
+  padding: 0 4px;
+  color: #9CA3AF;
+  font-size: 12px;
 }
 
-.ZENVE-switch-btn.checked .ZENVE-switch-thumb {
-  transform: translateX(16px);
-}
+/* ---------------------------------------------------------
+   6B. RIGHT SHIPMENT TRACKING PANEL
+--------------------------------------------------------- */
 
-/* =========================================================
-   PROMISE POLICY SECTION
-========================================================= */
-
-.ZENVE-policy-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px 24px;
-  padding: 4px 0 0;
-  margin: 0;
-  list-style: none;
-}
-
-.ZENVE-policy-item {
-  font-size: 13.5px;
-  color: var(--ZENVE-muted, #6B5A45);
+.dlv-tracking-panel {
+  background: #FFFFFF;
+  border: 1px solid #EFE4D2;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
   display: flex;
-  align-items: baseline;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dlv-tracking-header {
+  display: flex;
+  align-items: center;
   gap: 8px;
-  line-height: 1.4;
 }
 
-.ZENVE-policy-bullet {
-  color: var(--ZENVE-ink, #1F2937);
-  font-size: 14px;
+.dlv-tracking-box-icon {
+  width: 28px;
+  height: 28px;
+  background: #FEF3C7;
+  color: #965A2C;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* =========================================================
-   BADGES / TONES
-========================================================= */
+.dlv-tracking-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1F2937;
+}
 
-.ZENVE-tone-badge {
+/* Search tracking input inside panel */
+.dlv-panel-search-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dlv-panel-input-wrap {
+  position: relative;
+  flex: 1;
+}
+
+.dlv-panel-input-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9CA3AF;
+}
+
+.dlv-panel-input {
+  width: 100%;
+  height: 34px;
+  padding: 0 10px 0 32px;
+  background: #FFFFFF;
+  border: 1px solid #E5DBCD;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #1F2937;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.dlv-panel-input:focus {
+  border-color: #965A2C;
+}
+
+.dlv-panel-track-btn {
+  height: 34px;
+  padding: 0 14px;
+  background: #965A2C;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.dlv-panel-track-btn:hover {
+  background: #804B22;
+}
+
+/* Section: Live Tracking Map */
+.dlv-map-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dlv-map-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dlv-section-heading {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1F2937;
+  margin: 0;
+}
+
+.dlv-map-telemetry-pill {
   display: inline-flex;
   align-items: center;
-  padding: 3px 8px;
+  gap: 5px;
+  background: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #FDE68A;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.dlv-telemetry-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #16A34A;
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.25);
+  animation: dlvPulse 1.8s infinite;
+}
+
+@keyframes dlvPulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.dlv-map-card {
+  position: relative;
+  height: 160px;
+  background: #E8F3F8;
+  border: 1px solid #D5E7EF;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dlv-map-controls {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  border: 1px solid #D5E7EF;
   border-radius: 4px;
-  font-size: 11.5px;
-  font-weight: 500;
-  line-height: 1.2;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  z-index: 5;
 }
 
-.ZENVE-tone-badge.good {
-  background-color: #ecfdf5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
-}
-
-.ZENVE-tone-badge.warn {
-  background-color: #fffbeb;
-  color: #92400e;
-  border: 1px solid #fde68a;
-}
-
-.ZENVE-tone-badge.bad {
-  background-color: #fff1f2;
-  color: #9f1239;
-  border: 1px solid #fecdd3;
-}
-
-.ZENVE-tone-badge.info,
-.ZENVE-tone-badge.neutral {
-  background-color: #FFF8E8;
-  color: #5c554e;
-  border: 1px solid #E7C77A;
-}
-
-/* =========================================================
-   EMPTY STATE
-========================================================= */
-
-.ZENVE-empty-state {
-  padding: 36px 16px;
-  text-align: center;
-  color: var(--ZENVE-muted, #6B5A45);
+.dlv-map-ctrl-btn {
+  background: none;
+  border: none;
+  width: 24px;
+  height: 24px;
   font-size: 14px;
+  font-weight: 700;
+  color: #4B5563;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+
+.dlv-map-ctrl-btn:first-child {
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.dlv-map-ctrl-btn:hover {
+  background: #F3F4F6;
+}
+
+.dlv-map-scale-wrap {
+  width: 100%;
+  height: 100%;
+}
+
+.dlv-map-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Package Details Summary Card */
+.dlv-pkg-summary-card {
+  background: #FAF6F0;
+  border: 1px solid #EDE2D2;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dlv-pkg-summary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px dashed #E5D7C3;
+  padding-bottom: 8px;
+}
+
+.dlv-pkg-summary-lbl {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #92400E;
+  display: block;
+  text-transform: uppercase;
+}
+
+.dlv-pkg-summary-num-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1px;
+}
+
+.dlv-pkg-summary-num {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1F2937;
+  font-family: monospace;
+}
+
+.dlv-pkg-copy-btn {
+  background: none;
+  border: none;
+  color: #92400E;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+
+.dlv-pkg-copy-btn:hover {
+  background: #EFE4D2;
+}
+
+.dlv-pkg-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+}
+
+.dlv-pkg-grid-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.dlv-pkg-grid-cell.full-width {
+  grid-column: 1 / -1;
+}
+
+.dlv-pkg-cell-k {
+  font-size: 10px;
+  font-weight: 600;
+  color: #6B7280;
+  text-transform: uppercase;
+}
+
+.dlv-pkg-cell-v {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #1F2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Section: Tracking Timeline */
+.dlv-timeline-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dlv-timeline-list {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-left: 20px;
+}
+
+.dlv-timeline-list::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 10px;
+  bottom: 22px;
+  width: 2px;
+  background: #D97706;
+}
+
+.dlv-timeline-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 16px;
+}
+
+.dlv-timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.dlv-timeline-dot {
+  position: absolute;
+  left: -20px;
+  top: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #965A2C;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 0 0 2px #EFE4D2;
+}
+
+.dlv-timeline-dot.completed {
+  background: #059669;
+  box-shadow: 0 0 0 2px #A7F3D0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.dlv-timeline-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.dlv-timeline-status {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #1F2937;
+}
+
+.dlv-timeline-time {
+  font-size: 11px;
+  color: #9CA3AF;
+  white-space: nowrap;
+}
+
+.dlv-timeline-location {
+  font-size: 11.5px;
+  color: #6B7280;
+  margin-top: 2px;
 }
 
 /* =========================================================
-   COMPREHENSIVE ALL-SCREEN-SIZE RESPONSIVE MEDIA QUERIES
+   7. CREATE SHIPMENT MODAL
 ========================================================= */
 
-/* ---------------------------------------------------------
-   1. MOBILE PHONES (320px - 640px)
-   Smartphones like iPhone, Pixel, Galaxy
---------------------------------------------------------- */
+.dlv-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(24, 18, 12, 0.45);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
 
-@media (max-width: 640px) {
-  .ZENVE-delivery-header {
+.dlv-modal-card {
+  background: #FFFFFF;
+  border-radius: 14px;
+  width: 520px;
+  max-width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid #EFE4D2;
+  overflow: hidden;
+  animation: dlvFadeIn 0.2s ease-out;
+}
+
+@keyframes dlvFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dlv-modal-header {
+  padding: 18px 22px;
+  border-bottom: 1px solid #F0E8DC;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FAF6F0;
+}
+
+.dlv-modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2E1A0C;
+  margin: 0;
+}
+
+.dlv-modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #9CA3AF;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  border-radius: 4px;
+}
+
+.dlv-modal-close-btn:hover {
+  color: #1F2937;
+  background: #EFE4D2;
+}
+
+.dlv-modal-body {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.dlv-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dlv-form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4B5563;
+}
+
+.dlv-form-input,
+.dlv-form-select {
+  height: 38px;
+  padding: 0 12px;
+  background: #FFFFFF;
+  border: 1px solid #D1C5B4;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #1F2937;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.dlv-form-input:focus,
+.dlv-form-select:focus {
+  border-color: #965A2C;
+}
+
+.dlv-modal-footer {
+  padding: 16px 22px;
+  border-top: 1px solid #F0E8DC;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  background: #FAF6F0;
+}
+
+.dlv-btn-cancel {
+  padding: 8px 16px;
+  background: #FFFFFF;
+  border: 1px solid #D1C5B4;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4B5563;
+  cursor: pointer;
+}
+
+.dlv-btn-cancel:hover {
+  background: #F3ECE1;
+}
+
+.dlv-btn-submit {
+  padding: 8px 18px;
+  background: #965A2C;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #FFFFFF;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(150, 90, 44, 0.25);
+}
+
+.dlv-btn-submit:hover {
+  background: #804B22;
+}
+
+/* =========================================================
+   8. RESPONSIVE BREAKPOINTS
+========================================================= */
+
+@media (max-width: 1200px) {
+  .dlv-split-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dlv-kpi-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .dlv-container {
+    padding: 14px;
+  }
+
+  .dlv-top-nav {
     flex-direction: column;
     align-items: stretch;
     padding: 12px 14px;
-    gap: 12px;
   }
 
-  .ZENVE-header-left {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
+  .dlv-top-search-wrap {
     width: 100%;
   }
 
-  .ZENVE-portal-logo {
-    flex-shrink: 0;
-  }
-
-  .ZENVE-portal-logo img {
-    height: 32px;
-    width: auto;
-  }
-
-  .ZENVE-header-title-block {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .ZENVE-portal-title {
-    font-size: 20px;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-
-  .ZENVE-layer-num {
-    font-size: 20px;
-  }
-
-  .ZENVE-portal-desc {
-    font-size: 12px;
-    line-height: 1.4;
-  }
-
-  .ZENVE-header-right {
-    width: 100%;
-  }
-
-  .ZENVE-header-right .search-user-wrapper {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
-
-  .ZENVE-header-right .search-bar-wrapper {
-    width: 100%;
-    flex: 1 1 100%;
-    max-width: 100%;
-  }
-
-  .ZENVE-header-right .search-box {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .ZENVE-header-right .home-user {
-    width: 100%;
-    justify-content: center;
-    box-sizing: border-box;
-  }
-
-  .ZENVE-delivery-main {
-    padding: 14px 12px 48px;
-    gap: 16px;
-  }
-
-  /* Top 3 KPI Cards: 1 column stack on mobile */
-  .ZENVE-delivery-kpi-grid {
+  .dlv-kpi-grid {
     grid-template-columns: 1fr;
-    gap: 8px;
   }
 
-  .ZENVE-kpi-card {
-    padding: 12px 14px;
-  }
-
-  .ZENVE-kpi-label {
-    font-size: 10px;
-  }
-
-  .ZENVE-kpi-value {
-    font-size: 22px;
-  }
-
-  .ZENVE-kpi-hint {
-    font-size: 11px;
-  }
-
-  .ZENVE-panel-card {
-    padding: 14px 14px;
-    gap: 14px;
-  }
-
-  .ZENVE-panel-header {
+  .dlv-filter-toolbar {
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
   }
 
-  .ZENVE-pincode-control {
-    width: 100%;
-  }
-
-  .ZENVE-pincode-input {
-    width: 100%;
-    height: 36px;
-  }
-
-  /* Table: compact styling in responsive scrollable wrapper */
-  .ZENVE-delivery-table th,
-  .ZENVE-delivery-table td {
-    padding: 8px 10px;
-    font-size: 12px;
-  }
-
-  /* Promise Policy: 1 column */
-  .ZENVE-policy-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .ZENVE-policy-item {
-    font-size: 12.5px;
-  }
-}
-
-/* Extra small mobile (< 380px) */
-@media (max-width: 380px) {
-  .ZENVE-delivery-header {
-    padding: 10px 10px;
-  }
-
-  .ZENVE-delivery-main {
-    padding: 10px 8px 36px;
-    gap: 12px;
-  }
-
-  .ZENVE-portal-title {
-    font-size: 19px;
-  }
-
-  .ZENVE-layer-num {
-    font-size: 19px;
-  }
-
-  .ZENVE-kpi-value {
-    font-size: 20px;
-  }
-}
-
-/* ---------------------------------------------------------
-   2. TABLETS & MEDIUM SCREENS (641px - 1140px)
-   iPad, iPad Air, iPad Pro, Android Tablets, Surface Pro
---------------------------------------------------------- */
-
-@media (min-width: 641px) and (max-width: 1140px) {
-  .ZENVE-delivery-header {
-    padding: 14px 24px;
+  .dlv-filters-group {
     flex-direction: column;
     align-items: stretch;
-    gap: 12px;
-  }
-
-  .ZENVE-header-left {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    min-width: 0;
-  }
-
-  .ZENVE-portal-logo {
-    flex-shrink: 0;
-  }
-
-  .ZENVE-portal-logo img {
-    height: 36px;
-    width: auto;
-  }
-
-  .ZENVE-header-title-block {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .ZENVE-portal-title {
-    font-size: 22px;
-    line-height: 1.25;
-    white-space: nowrap;
-  }
-
-  .ZENVE-portal-desc {
-    font-size: 12.5px;
-    line-height: 1.45;
-    color: var(--ZENVE-muted, #6B5A45);
-    white-space: normal;
-    margin-top: 2px;
-  }
-
-  .ZENVE-header-right {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding-top: 12px;
-    border-top: 1px solid var(--ZENVE-line, #E7C77A);
-  }
-
-  .ZENVE-header-right .search-user-wrapper {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-    min-width: 0;
-  }
-
-  .ZENVE-header-right .search-bar-wrapper {
-    flex: 1;
-    max-width: 340px;
-    min-width: 180px;
-  }
-
-  .ZENVE-header-right .home-user {
-    flex-shrink: 0;
-  }
-
-  .ZENVE-delivery-main {
-    max-width: 100%;
-    padding: 20px 24px 60px;
-    gap: 20px;
-  }
-
-  /* Top 3 KPIs: 3 columns */
-  .ZENVE-delivery-kpi-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
-
-  .ZENVE-kpi-card {
-    padding: 14px 16px;
-  }
-
-  .ZENVE-kpi-value {
-    font-size: 24px;
-  }
-
-  .ZENVE-delivery-table th,
-  .ZENVE-delivery-table td {
-    padding: 10px 12px;
-    font-size: 12.5px;
-  }
-
-  .ZENVE-policy-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px 20px;
-  }
-}
-
-/* Tablet portrait & narrow tablets (641px - 840px) */
-@media (min-width: 641px) and (max-width: 840px) {
-  .ZENVE-delivery-header {
-    padding: 12px 18px;
-    gap: 10px;
-  }
-
-  .ZENVE-header-right {
-    gap: 12px;
-    padding-top: 10px;
-  }
-
-  .ZENVE-delivery-main {
-    padding: 16px 18px 48px;
-    gap: 16px;
-  }
-
-  .ZENVE-panel-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
-
-  .ZENVE-pincode-control {
-    width: 100%;
-  }
-
-  .ZENVE-policy-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-}
-
-/* ---------------------------------------------------------
-   3. LAPTOP & STANDARD DESKTOP (1141px - 1440px)
-   MacBook Pro, ThinkPad, Standard 1080p Desktop
---------------------------------------------------------- */
-
-@media (min-width: 1141px) and (max-width: 1440px) {
-  .ZENVE-delivery-main {
-    max-width: 1380px;
-  }
-}
-
-/* =========================================================
-   RESPONSIVE BREAKPOINTS: LARGE DESKTOP (1441px - 1920px)
-========================================================= */
-
-@media (min-width: 1441px) and (max-width: 1920px) {
-  .ZENVE-delivery-header {
-    padding: 18px 36px;
-  }
-
-  .ZENVE-portal-title {
-    font-size: 28px;
-  }
-
-  .ZENVE-layer-num {
-    font-size: 28px;
-  }
-
-  .ZENVE-delivery-main {
-    max-width: 1640px;
-    padding: 28px 36px 64px;
-    gap: 26px;
-  }
-
-  .ZENVE-kpi-card {
-    padding: 18px 22px;
-  }
-
-  .ZENVE-kpi-value {
-    font-size: 28px;
-  }
-
-  .ZENVE-panel-card {
-    padding: 22px 26px;
-  }
-}
-
-/* =========================================================
-   RESPONSIVE BREAKPOINTS: 4K ULTRA HD (1921px - 3840px+)
-========================================================= */
-
-@media (min-width: 1921px) {
-  .ZENVE-delivery-header {
-    padding: 24px 64px;
-  }
-
-  .ZENVE-portal-logo img {
-    height: 52px;
-  }
-
-  .ZENVE-back-link {
-    font-size: 13.5px;
-    gap: 8px;
-  }
-
-  .ZENVE-portal-title {
-    font-size: 34px;
-    gap: 12px;
-  }
-
-  .ZENVE-layer-num {
-    font-size: 34px;
-  }
-
-  .ZENVE-portal-desc {
-    font-size: 16.5px;
-  }
-
-  .ZENVE-delivery-main {
-    max-width: 2800px;
-    padding: 36px 64px 80px;
-    gap: 32px;
-  }
-
-  /* 4K Top 3 KPI Cards */
-  .ZENVE-delivery-kpi-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-
-  .ZENVE-kpi-card {
-    padding: 22px 26px;
-    border-radius: 10px;
-    gap: 6px;
-  }
-
-  .ZENVE-kpi-label {
-    font-size: 13px;
-  }
-
-  .ZENVE-kpi-value {
-    font-size: 36px;
-  }
-
-  .ZENVE-kpi-hint {
-    font-size: 14px;
-  }
-
-  /* 4K Panels */
-  .ZENVE-panel-card {
-    padding: 28px 32px;
-    border-radius: 10px;
-    gap: 22px;
-  }
-
-  .ZENVE-panel-title {
-    font-size: 22px;
-  }
-
-  .ZENVE-panel-desc {
-    font-size: 15.5px;
-  }
-
-  .ZENVE-pincode-control {
-    width: 280px;
-    gap: 6px;
-  }
-
-  .ZENVE-pincode-label {
-    font-size: 13px;
-  }
-
-  .ZENVE-pincode-input {
-    height: 44px;
-    font-size: 15px;
-    border-radius: 8px;
-  }
-
-  /* 4K Serviceability Table */
-  .ZENVE-delivery-table {
-    font-size: 15px;
-  }
-
-  .ZENVE-delivery-table th {
-    padding: 14px 18px;
-    font-size: 12.5px;
-  }
-
-  .ZENVE-delivery-table td {
-    padding: 16px 18px;
-  }
-
-  .sku-cell-name {
-    font-size: 16px;
-  }
-
-  .sku-cell-id {
-    font-size: 13px;
-  }
-
-  .ZENVE-tone-badge {
-    font-size: 13px;
-    padding: 4px 10px;
-  }
-
-  .ZENVE-switch-btn {
-    height: 24px;
-    width: 44px;
-  }
-
-  .ZENVE-switch-thumb {
-    height: 20px;
-    width: 20px;
-  }
-
-  .ZENVE-switch-btn.checked .ZENVE-switch-thumb {
-    transform: translateX(20px);
-  }
-
-  /* 4K Promise Policy */
-  .ZENVE-policy-grid {
-    gap: 14px 36px;
-  }
-
-  .ZENVE-policy-item {
-    font-size: 16px;
-  }
-
-  .ZENVE-policy-bullet {
-    font-size: 18px;
-  }
-}
-
-/* Extreme 4K Resolution (3200px - 3840px Native) */
-@media (min-width: 3200px) {
-  .ZENVE-delivery-main {
-    max-width: 3400px;
-  }
-
-  .ZENVE-portal-title {
-    font-size: 40px;
-  }
-
-  .ZENVE-layer-num {
-    font-size: 40px;
-  }
-
-  .ZENVE-kpi-value {
-    font-size: 42px;
   }
 }

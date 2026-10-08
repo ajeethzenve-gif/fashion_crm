@@ -7,8 +7,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 
-from .models import Order, ReturnRequest, Settlement
-from .serializers import OrderSerializer, ReturnRequestSerializer, SettlementSerializer
+from .models import Order, ReturnRequest, Settlement, Shipment
+from .serializers import OrderSerializer, ReturnRequestSerializer, SettlementSerializer, ShipmentSerializer
 
 
 class OrderListCreateAPIView(APIView):
@@ -17,6 +17,7 @@ class OrderListCreateAPIView(APIView):
     POST /api/orders/
     """
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     def get(self, request):
         status_filter = request.query_params.get("status")
@@ -75,6 +76,7 @@ class OrderDetailAPIView(APIView):
     DELETE /api/orders/<id>/
     """
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     def get_object(self, pk):
         try:
@@ -112,6 +114,7 @@ class OrderStatsAPIView(APIView):
     GET /api/orders/stats/
     """
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     def get(self, request):
         total_orders = Order.objects.count()
@@ -142,6 +145,7 @@ class OrderTransitionAPIView(APIView):
     Or no body to advance to the next step.
     """
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     LIFECYCLE_SEQUENCE = [
         "Pending",
@@ -206,6 +210,7 @@ class ReturnListCreateAPIView(APIView):
     POST /api/orders/returns/
     """
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     def get(self, request):
         status_filter = request.query_params.get("status")
@@ -251,6 +256,7 @@ class ReturnDetailAPIView(APIView):
     DELETE /api/orders/returns/<id>/
     """
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     def get_object(self, pk):
         try:
@@ -288,6 +294,7 @@ class ReturnStatsAPIView(APIView):
     GET /api/orders/returns/stats/
     """
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     def get(self, request):
         total_returns = ReturnRequest.objects.count()
@@ -352,6 +359,7 @@ class ReturnTransitionAPIView(APIView):
     Body: {"status": "PICKUP_SCHEDULED"|"RECEIVED"|"INSPECTED_PASSED"|"INSPECTED_FAILED"|"REFUNDED"|"REJECTED", "inspection_notes": "..."}
     """
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     DEFAULT_SEQUENCE = [
         ReturnRequest.ReturnStatus.REQUESTED,
@@ -411,6 +419,7 @@ class SettlementListCreateAPIView(APIView):
     POST /api/settlements/
     """
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     def get(self, request):
         status_filter = request.query_params.get("status")
@@ -463,6 +472,7 @@ class SettlementDetailAPIView(APIView):
     DELETE /api/settlements/<id>/
     """
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     def get_object(self, pk):
         try:
@@ -500,6 +510,7 @@ class SettlementStatsAPIView(APIView):
     GET /api/settlements/stats/
     """
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     def get(self, request):
         regular_settlements = Settlement.objects.filter(is_reversal=False)
@@ -547,6 +558,7 @@ class SettlementTransitionAPIView(APIView):
     Body: {"status": "APPROVED" | "PAID" | "RECONCILED", "payout_reference": "UTR-12345", "notes": "..."}
     """
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     def post(self, request, pk):
         try:
@@ -609,6 +621,7 @@ class SettlementGenerateAPIView(APIView):
     Syncs delivered orders and refunded returns to ensure complete ledger entries.
     """
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     def post(self, request):
         from designers.models import Designer
@@ -669,4 +682,160 @@ class SettlementGenerateAPIView(APIView):
             "created_reversals": created_reversals,
             "message": f"Settlement ledger synchronized: {created_settlements} settlements and {created_reversals} reversals generated."
         }, status=status.HTTP_200_OK)
+
+
+class ShipmentListCreateAPIView(APIView):
+    """
+    GET  /api/orders/shipments/ (supports ?status=STATUS, ?courier=COURIER, ?search=QUERY)
+    POST /api/orders/shipments/
+    """
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def get(self, request):
+        status_filter = request.query_params.get("status")
+        courier_filter = request.query_params.get("courier")
+        search = request.query_params.get("search")
+
+        if Shipment.objects.count() == 0:
+            seed_shipments_from_orders()
+
+        qs = Shipment.objects.all().order_by("-created_at")
+
+        if status_filter and status_filter.upper() != "ALL":
+            qs = qs.filter(status__iexact=status_filter.strip())
+
+        if courier_filter and courier_filter.upper() != "ALL":
+            qs = qs.filter(courier__iexact=courier_filter.strip())
+
+        if search:
+            q = search.strip()
+            qs = qs.filter(
+                Q(tracking_number__icontains=q) |
+                Q(order_number__icontains=q) |
+                Q(customer_name__icontains=q) |
+                Q(courier__icontains=q) |
+                Q(destination_city__icontains=q)
+            )
+
+        serializer = ShipmentSerializer(qs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        data = request.data.copy()
+        if not data.get("tracking_number"):
+            data["tracking_number"] = f"BLR{uuid.uuid4().hex[:9].upper()}"
+        if not data.get("timeline"):
+            data["timeline"] = [
+                {"status": "Order Picked Up", "location": data.get("origin_hub", "Bangalore Hub"), "time": timezone.now().strftime("%d %b %Y, %I:%M %p"), "completed": True},
+                {"status": "In Transit", "location": "Regional Sorting Facility", "time": "In Progress", "completed": True},
+                {"status": "Out for Delivery", "location": data.get("destination_hub", "Destination Center"), "time": "Scheduled", "completed": False},
+                {"status": "Delivered", "location": data.get("destination_address", "Customer Address"), "time": f"Expected {data.get('expected_delivery', 'Soon')}", "completed": False},
+            ]
+        serializer = ShipmentSerializer(data=data)
+        if serializer.is_valid():
+            shipment = serializer.save()
+            return Response(ShipmentSerializer(shipment).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ShipmentDetailAPIView(APIView):
+    """
+    GET    /api/orders/shipments/<id>/
+    PATCH  /api/orders/shipments/<id>/
+    DELETE /api/orders/shipments/<id>/
+    """
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def get(self, request, pk):
+        try:
+            shipment = Shipment.objects.get(pk=pk)
+            return Response(ShipmentSerializer(shipment).data, status=status.HTTP_200_OK)
+        except Shipment.DoesNotExist:
+            return Response({"detail": "Shipment not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    def patch(self, request, pk):
+        try:
+            shipment = Shipment.objects.get(pk=pk)
+        except Shipment.DoesNotExist:
+            return Response({"detail": "Shipment not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ShipmentSerializer(shipment, data=request.data, partial=True)
+        if serializer.is_valid():
+            updated = serializer.save()
+            return Response(ShipmentSerializer(updated).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        try:
+            shipment = Shipment.objects.get(pk=pk)
+            shipment.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Shipment.DoesNotExist:
+            return Response({"detail": "Shipment not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ShipmentStatsAPIView(APIView):
+    """
+    GET /api/orders/shipments/stats/
+    """
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def get(self, request):
+        if Shipment.objects.count() == 0:
+            seed_shipments_from_orders()
+
+        total = Shipment.objects.count()
+        in_transit = Shipment.objects.filter(status__iexact="In Transit").count()
+        delivered = Shipment.objects.filter(status__iexact="Delivered").count()
+        pending = Shipment.objects.filter(status__iexact="Pending").count()
+        exceptions = Shipment.objects.filter(status__iexact="Exception").count()
+        rto = Shipment.objects.filter(status__iexact="RTO").count()
+
+        return Response({
+            "total_shipments": total,
+            "in_transit": in_transit,
+            "delivered": delivered,
+            "pending": pending,
+            "exceptions": exceptions,
+            "rto": rto,
+        }, status=status.HTTP_200_OK)
+
+
+def seed_shipments_from_orders():
+    """Seeds shipments from real database orders."""
+    couriers = ["Delhivery", "Ekart", "Blue Dart", "DTDC", "XpressBees"]
+    statuses = ["In Transit", "Delivered", "Delivered", "In Transit", "Pending", "Delivered", "Exception", "RTO"]
+
+    orders = Order.objects.all().order_by("-created_at")
+    for idx, order in enumerate(orders):
+        courier = couriers[idx % len(couriers)]
+        status = "Delivered" if order.order_status in ["Delivered", "DELIVERED"] else statuses[idx % len(statuses)]
+        tracking_no = f"BLR{123456789 + order.id * 104729 % 876543210}"
+        cust_name = order.shipping_full_name or "Guest Customer"
+        city = order.shipping_city or "Bengaluru"
+
+        Shipment.objects.create(
+            order=order,
+            tracking_number=tracking_no,
+            order_number=order.order_number or f"ORD{1000 + order.id}",
+            customer_name=cust_name,
+            customer_phone=order.shipping_phone or "",
+            customer_avatar=f"https://ui-avatars.com/api/?name={cust_name.replace(' ', '+')}&background=F5E6D3&color=5C3A21&bold=true&rounded=true&size=80",
+            courier=courier,
+            status=status,
+            expected_delivery=order.estimated_delivery or "10 Oct 2026",
+            origin_hub="Bangalore Hub",
+            destination_hub=f"{city} Delivery Centre",
+            destination_address=order.delivery_address or f"{city}, India",
+            timeline=[
+                {"status": "Order Picked Up", "location": "Bangalore Hub", "time": order.created_at.strftime("%d %b %Y, %I:%M %p"), "completed": True},
+                {"status": "In Transit", "location": f"{city} Transit Hub", "time": "In Transit", "completed": status in ["In Transit", "Delivered"]},
+                {"status": "Out for Delivery", "location": f"{city} Delivery Centre", "time": "Pending", "completed": status == "Delivered"},
+                {"status": "Delivered", "location": order.delivery_address or "Customer Address", "time": "Completed" if status == "Delivered" else "Expected Soon", "completed": status == "Delivered"},
+            ]
+        )
+
 

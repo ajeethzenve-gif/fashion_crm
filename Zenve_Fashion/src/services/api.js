@@ -586,6 +586,151 @@ export async function getOrderStats() {
 }
 
 
+export async function getShipments(params = {}) {
+  const query = new URLSearchParams();
+  if (params.status && params.status !== "All") query.set("status", params.status);
+  if (params.courier && params.courier !== "All") query.set("courier", params.courier);
+  if (params.search) query.set("search", params.search);
+
+  const queryString = query.toString();
+  const url = `${API_BASE_URL}/orders/shipments/` + (queryString ? `?${queryString}` : "");
+
+  let response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      ...authHeaders(),
+    },
+  });
+
+  if (response.status === 401) {
+    response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+  }
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch shipments: ${response.status}`);
+  }
+  return response.json();
+}
+
+
+export async function getShipmentStats() {
+  const url = `${API_BASE_URL}/orders/shipments/stats/`;
+  let response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      ...authHeaders(),
+    },
+  });
+
+  if (response.status === 401) {
+    response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+  }
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch shipment stats: ${response.status}`);
+  }
+  return response.json();
+}
+
+
+export async function createShipment(shipmentData) {
+  let response = await fetch(`${API_BASE_URL}/orders/shipments/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      ...authHeaders(),
+    },
+    body: JSON.stringify(shipmentData),
+  });
+
+  if (response.status === 401) {
+    response = await fetch(`${API_BASE_URL}/orders/shipments/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(shipmentData),
+    });
+  }
+
+  const data = await parseResponse(response);
+  if (!response.ok) {
+    throw new Error(formatApiError(data, "Failed to create shipment"));
+  }
+  return data;
+}
+
+
+export async function updateShipment(id, shipmentData) {
+  let response = await fetch(`${API_BASE_URL}/orders/shipments/${id}/`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      ...authHeaders(),
+    },
+    body: JSON.stringify(shipmentData),
+  });
+
+  if (response.status === 401) {
+    response = await fetch(`${API_BASE_URL}/orders/shipments/${id}/`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(shipmentData),
+    });
+  }
+
+  const data = await parseResponse(response);
+  if (!response.ok) {
+    throw new Error(formatApiError(data, "Failed to update shipment"));
+  }
+  return data;
+}
+
+
+export async function deleteShipment(id) {
+  let response = await fetch(`${API_BASE_URL}/orders/shipments/${id}/`, {
+    method: "DELETE",
+    headers: {
+      Accept: "application/json",
+      ...authHeaders(),
+    },
+  });
+
+  if (response.status === 401) {
+    response = await fetch(`${API_BASE_URL}/orders/shipments/${id}/`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+  }
+
+  if (!response.ok && response.status !== 204) {
+    const data = await parseResponse(response);
+    throw new Error(formatApiError(data, "Failed to delete shipment"));
+  }
+  return true;
+}
+
+
 export async function createOrder(
   orderData
 ) {
