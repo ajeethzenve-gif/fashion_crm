@@ -531,8 +531,14 @@ class SettlementTransitionAPIView(APIView):
             return Response({"detail": "Settlement not found."}, status=status.HTTP_404_NOT_FOUND)
 
         target_status = request.data.get("status")
+        if isinstance(target_status, dict):
+            target_status = target_status.get("status")
+        if isinstance(target_status, str):
+            target_status = target_status.strip().upper()
+
         payout_ref = request.data.get("payout_reference")
         notes = request.data.get("notes")
+        payout_method = request.data.get("payout_method") or request.data.get("payout_channel")
 
         if not target_status:
             seq = [
@@ -555,6 +561,8 @@ class SettlementTransitionAPIView(APIView):
             update_data["payout_reference"] = payout_ref
         if notes:
             update_data["notes"] = notes
+        if payout_method:
+            update_data["payout_method"] = payout_method
 
         if target_status == Settlement.SettlementStatus.PAID and not settlement.paid_at:
             update_data["paid_at"] = timezone.now()

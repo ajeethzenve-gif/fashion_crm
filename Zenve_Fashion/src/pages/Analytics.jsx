@@ -249,34 +249,43 @@ export default function Analytics() {
       Number(o.total || o.order_total || o.amount || 0)
     );
 
+    const sortedSettlements = [...liveSettlements].sort(
+      (a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0)
+    );
+    const settlementsSparklinePoints = sortedSettlements.map((s) =>
+      Number(s.payout_amount || s.gmv || 0)
+    );
+
+    const activeDesignersCount = liveDesigners.filter((d) => d.is_active || Number(d.lifetime_gmv) > 0).length;
+
     const totalInventoryUnits = liveProducts.reduce((sum, p) => {
-      return sum + Number(p.inventory_quantity || p.available_quantity || p.total_size_quantity || 0);
+      return sum + Number(p.available_quantity || p.inventory_quantity || p.total_size_quantity || 0);
     }, 0);
 
     return {
       sales: `₹${Number(totalOrderSales).toLocaleString("en-IN")}`,
       salesTrend: totalOrderSales > 0 ? "↗ Live DB" : "0%",
-      salesSparkline: createSparkline(salesSparklinePoints.length >= 2 ? salesSparklinePoints : [2800, 4320, 26944, 4000, 14399], true),
+      salesSparkline: createSparkline(salesSparklinePoints, true),
 
       orders: Number(totalOrdersCount).toLocaleString("en-IN"),
       ordersTrend: `${totalOrdersCount} Total`,
-      ordersSparkline: createSparkline([1, 2, 9, 1, 3], true),
+      ordersSparkline: createSparkline(sortedOrders.map((_, i) => i + 1), true),
 
       designers: Number(totalDesignersCount).toLocaleString("en-IN"),
-      designersTrend: `${liveDesigners.filter((d) => Number(d.lifetime_gmv) > 0).length || 5} Active`,
-      designersSparkline: createSparkline([2, 5, 8, 12, 16], true),
+      designersTrend: `${activeDesignersCount} Active`,
+      designersSparkline: createSparkline(liveDesigners.map((_, i) => i + 1), true),
 
       products: Number(totalProductsCount).toLocaleString("en-IN"),
-      productsTrend: `${totalInventoryUnits || 588} Units`,
-      productsSparkline: createSparkline([5, 8, 12, 16, 19], true),
+      productsTrend: `${totalInventoryUnits} Units`,
+      productsSparkline: createSparkline(liveProducts.map((p) => Number(p.available_quantity || p.inventory_quantity || 1)), true),
 
       returnRate: `${retRate}%`,
       returnRateTrend: `${totalReturnsCount} Request`,
-      returnRateSparkline: createSparkline([0, 1, 1, 1, 1], false),
+      returnRateSparkline: createSparkline(liveReturns.map((_, i) => i + 1), false),
 
       settlements: `₹${Math.round(Number(stlPayouts)).toLocaleString("en-IN")}`,
       settlementsTrend: `${liveSettlements.length} Ledger`,
-      settlementsSparkline: createSparkline([1000, 2244, 4000, 8200, 4000], true),
+      settlementsSparkline: createSparkline(settlementsSparklinePoints, true),
     };
   }, [filteredOrders, liveDesigners, liveProducts, liveReturns, liveSettlements, accountingStats]);
 

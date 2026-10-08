@@ -980,16 +980,24 @@ export async function transitionSettlement(
   status = null,
   payload = {}
 ) {
-  const body = {
-    ...payload,
-  };
-
-  if (status) {
-    body.status = status;
+  let body = {};
+  if (typeof status === "object" && status !== null) {
+    body = { ...status };
+  } else {
+    body = { ...payload };
+    if (status) {
+      body.status = status;
+    }
   }
 
+  // Ensure uppercase status if string
+  if (typeof body.status === "string") {
+    body.status = body.status.toUpperCase();
+  }
+
+  const cleanId = typeof id === "object" && id !== null ? (id.rawId || id.id) : id;
   const response = await fetch(
-    `${API_BASE_URL}/settlements/${id}/transition/`,
+    `${API_BASE_URL}/settlements/${cleanId}/transition/`,
     {
       method: "POST",
       headers: {

@@ -7,7 +7,18 @@ import {
   getOrders,
   createOrder,
   disburseSettlementPayment,
+  transitionSettlement,
+  getDesigners,
 } from "../services/api";
+import { showSuccessToast, showErrorToast, showInfoToast } from "../utils/zenveToast";
+
+function getDesignerAvatarUrl(designerName, avatarField) {
+  if (avatarField && typeof avatarField === "string" && avatarField.startsWith("http")) {
+    return avatarField;
+  }
+  const clean = encodeURIComponent((designerName || "Designer").trim());
+  return `https://ui-avatars.com/api/?name=${clean}&background=EADBCC&color=5C3A1E&bold=true&rounded=true&size=100`;
+}
 
 function getInitials(name) {
   if (!name) return "Z";
@@ -38,6 +49,7 @@ export default function Accounting() {
   // Real Backend Data State
   const [settlements, setSettlements] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [designers, setDesigners] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -62,6 +74,16 @@ export default function Accounting() {
   const [activeMenuId, setActiveMenuId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Designer Payout / Settle Modal
+  const [disburseModalItem, setDisburseModalItem] = useState(null);
+  const [payoutChannel, setPayoutChannel] = useState("UPI Commercial VPA");
+  const [payoutRefInput, setPayoutRefInput] = useState("");
+  const [payoutNotes, setPayoutNotes] = useState("");
+  const [isSubmittingDisburse, setIsSubmittingDisburse] = useState(false);
+
+  // All Recent Transactions Modal
+  const [isViewAllTxModalOpen, setIsViewAllTxModalOpen] = useState(false);
+
   // New Invoice Form
   const [newInvoiceForm, setNewInvoiceForm] = useState({
     name: "",
@@ -81,7 +103,7 @@ export default function Accounting() {
       setLoading(true);
       setError(null);
 
-      const [settlementsData, statsData, ordersData] = await Promise.all([
+      const [settlementsData, statsData, ordersData, designersData] = await Promise.all([
         getAccountingSettlements().catch((err) => {
           console.error("Failed to load settlements:", err);
           return [];
@@ -94,6 +116,10 @@ export default function Accounting() {
           console.error("Failed to load orders:", err);
           return [];
         }),
+        getDesigners().catch((err) => {
+          console.error("Failed to load designers:", err);
+          return [];
+        }),
       ]);
 
       setSettlements(Array.isArray(settlementsData) ? settlementsData : []);
@@ -104,6 +130,13 @@ export default function Accounting() {
         ? ordersData.results
         : [];
       setOrders(ordersList);
+
+      const designersList = Array.isArray(designersData)
+        ? designersData
+        : Array.isArray(designersData?.results)
+        ? designersData.results
+        : [];
+      setDesigners(designersList);
     } catch (err) {
       console.error("Accounting load error:", err);
       setError("Failed to connect to Accounting engine. Please check backend connection.");
@@ -116,19 +149,14 @@ export default function Accounting() {
     fetchData();
   }, []);
 
-  // Close row action dropdown when clicking outside
-  useEffect(() => {
-    if (!activeMenuId) return;
-    const handleOutsideClick = (e) => {
-      if (!e.target.closest('.acc-more-wrap')) {
-        setActiveMenuId(null);
-      }
-    };
-    document.addEventListener('click', handleOutsideClick);
-    return () => {
-      document.removeEventListener('click', handleOutsideClick);
-    };
-  }, [activeMenuId]);
+  // Designer Map Lookup
+  const designerMap = useMemo(() => {
+    const map = {};
+    designers.forEach((d) => {
+      map[d.id] = d;
+    });
+    return map;
+  }, [designers]);
 
   /* ---------------------------------------------------------
      SYNTHESIZE REAL INVOICES LIST FROM LIVE DB
@@ -138,9 +166,28 @@ export default function Accounting() {
 
     // 1. Invoices from Settlements (Designer payouts & receivables)
     settlements.forEach((s, idx) => {
-      const gmv = parseFloat(s.gmv) || 0;
-      const tax = parseFloat(s.tax_amount) || Math.round(gmv * 0.12);
-      const total = gmv + tax;
+      const dObj = designerMap[s.designer];
+      const designerName =
+        s.brand_name ||
+        s.designer_name ||
+        dObj?.brand_name ||
+        dObj?.designer_name ||
+        (typeof s.designer === "string" ? s.designer : `Designer #${s.designer || idx + 1}`);
+
+      const gmv = Math.abs(Number(s.gmv) || 0);
+      const takeRate = Number(s.take_rate) || 10;
+      const commissionAmount = Math.abs(
+        Number(s.commission_amount) > 0
+          ? Number(s.commission_amount)
+          : Math.round(gmv * (takeRate / 100))
+      );
+      const payoutAmount = Math.abs(
+        Number(s.payout_amount) > 0
+          ? Number(s.payout_amount)
+          : Math.max(0, gmv - commissionAmount)
+      );
+      const totalSales = gmv > 0 ? gmv : (payoutAmount + commissionAmount);
+      const tax = parseFloat(s.tax_amount) || 0;
 
       let status = "Pending";
       const sStatus = String(s.status || "").toUpperCase();
@@ -174,21 +221,30 @@ export default function Accounting() {
           })
         : "—";
 
+      const settlementNumber = s.settlement_number || `ZNV-STL-${(s.id || idx + 1).toString().padStart(6, "0")}`;
+
       list.push({
         id: `stl-${s.id}`,
         rawId: s.id,
         isSettlement: true,
         num: String(idx + 1).padStart(2, "0"),
-        invoiceId: s.settlement_number || `INV${s.id}`,
-        name: s.brand_name || s.designer_code || `Couturier #${s.designer || s.id}`,
+        invoiceId: settlementNumber,
+        settlementId: settlementNumber,
+        name: designerName,
+        designer: designerName,
+        avatar: getDesignerAvatarUrl(designerName, dObj?.avatar || dObj?.logo),
         orderId: s.order_number || `ORD${s.order || s.id}`,
-        amount: Math.round(gmv),
+        amount: Math.round(totalSales),
+        totalSales: Math.round(totalSales),
+        commissionAmount: Math.round(commissionAmount),
+        payoutAmount: Math.round(payoutAmount),
         tax: Math.round(tax),
-        total: Math.round(total),
+        total: Math.round(payoutAmount),
         status,
         invoiceDate: invDate,
         dueDate: dueDate,
         type: s.is_reversal ? "Reversal" : s.payout_method || "Designer Payout",
+        payoutMethod: s.payout_method || "UPI Commercial VPA",
         rawTimestamp: s.created_at,
       });
     });
@@ -198,6 +254,8 @@ export default function Accounting() {
       const tot = parseFloat(o.total) || 0;
       const sub = parseFloat(o.subtotal) || Math.round(tot / 1.12);
       const tax = tot - sub;
+      const orderCommission = Math.round(tot * 0.15);
+      const orderPayout = Math.max(0, Math.round(tot - orderCommission));
 
       let status = "Pending";
       const pStatus = String(o.payment_status || "").toLowerCase();
@@ -218,58 +276,122 @@ export default function Accounting() {
           })
         : "—";
 
+      const clientName = o.shipping_full_name || o.customer_name || `Customer #${o.id}`;
+      const ordInvoiceId = `INV-${o.order_number || o.id}`;
+
       list.push({
         id: `ord-${o.id}`,
         rawId: o.id,
         isOrder: true,
         num: String(list.length + 1).padStart(2, "0"),
-        invoiceId: `INV-${o.order_number || o.id}`,
-        name: o.shipping_full_name || o.customer_name || `Customer #${o.id}`,
+        invoiceId: ordInvoiceId,
+        settlementId: `ZNV-ORD-${o.order_number || o.id}`,
+        name: clientName,
+        designer: clientName,
+        avatar: getDesignerAvatarUrl(clientName),
         orderId: o.order_number || `#${o.id}`,
         amount: Math.round(sub),
+        totalSales: Math.round(tot),
+        commissionAmount: orderCommission,
+        payoutAmount: orderPayout,
         tax: Math.round(tax),
         total: Math.round(tot),
         status,
         invoiceDate: invDate,
         dueDate: invDate,
         type: tot > 200000 ? "B2B" : "B2C",
+        payoutMethod: "UPI Commercial VPA",
         rawTimestamp: o.created_at,
       });
     });
 
     return list;
-  }, [settlements, orders]);
+  }, [settlements, orders, designerMap]);
 
   /* ---------------------------------------------------------
-     FILTERING LOGIC ON LIVE DATA
+     COUNTS FOR TOP NAVIGATION TABS
+  --------------------------------------------------------- */
+  const tabCounts = useMemo(() => {
+    const invCount = liveInvoices.filter((i) => i.isOrder || (!i.isSettlement && i.type !== "Reversal")).length;
+    const expCount = liveInvoices.filter((i) => i.isSettlement || ["Designer Payout", "Reversal", "Expense"].includes(i.type)).length;
+    const payCount = liveInvoices.filter((i) => i.status === "Paid").length;
+    const taxCount = liveInvoices.filter((i) => Number(i.tax) > 0).length;
+    const repCount = liveInvoices.length;
+    return {
+      Invoices: invCount,
+      Expenses: expCount,
+      Payments: payCount,
+      "Tax & Compliance": taxCount,
+      "Financial Reports": repCount,
+    };
+  }, [liveInvoices]);
+
+  /* ---------------------------------------------------------
+     FILTERING LOGIC ON LIVE DATA (WIRED TO TABS & TOOLBAR)
   --------------------------------------------------------- */
   const filteredInvoices = useMemo(() => {
     return liveInvoices.filter((item) => {
-      // Local table search
+      // 1. Tab-level filter
+      if (activeTab === "Invoices") {
+        if (!item.isOrder && item.isSettlement) return false;
+      } else if (activeTab === "Expenses") {
+        if (!item.isSettlement && !["Designer Payout", "Reversal", "Expense"].includes(item.type)) {
+          return false;
+        }
+      } else if (activeTab === "Payments") {
+        if (item.status !== "Paid") {
+          return false;
+        }
+      } else if (activeTab === "Tax & Compliance") {
+        if (Number(item.tax) <= 0) {
+          return false;
+        }
+      }
+      // "Financial Reports" includes all transactions in the ledger
+
+      // 2. Local table search
       const q = searchFilter.toLowerCase().trim();
       if (q) {
         const matchQ =
           (item.invoiceId || "").toLowerCase().includes(q) ||
           (item.name || "").toLowerCase().includes(q) ||
+          (item.designer || "").toLowerCase().includes(q) ||
           (item.orderId || "").toLowerCase().includes(q) ||
           (item.status || "").toLowerCase().includes(q) ||
-          String(item.total).includes(q);
+          (item.type || "").toLowerCase().includes(q) ||
+          String(item.total).includes(q) ||
+          String(item.amount).includes(q);
         if (!matchQ) return false;
       }
 
-      // Type filter
+      // 3. Type filter
       if (typeFilter !== "All" && item.type !== typeFilter) {
         return false;
       }
 
-      // Status filter
+      // 4. Status filter
       if (statusFilter !== "All" && item.status !== statusFilter) {
         return false;
       }
 
+      // 5. Date Range filter
+      if (dateRangeFilter !== "All" && item.rawTimestamp) {
+        const itemDate = new Date(item.rawTimestamp).getTime();
+        const now = Date.now();
+        if (dateRangeFilter === "Today") {
+          if (now - itemDate > 86400000) return false;
+        } else if (dateRangeFilter === "This Week") {
+          if (now - itemDate > 7 * 86400000) return false;
+        } else if (dateRangeFilter === "This Month") {
+          if (now - itemDate > 30 * 86400000) return false;
+        } else if (dateRangeFilter === "This Quarter") {
+          if (now - itemDate > 90 * 86400000) return false;
+        }
+      }
+
       return true;
     });
-  }, [liveInvoices, searchFilter, typeFilter, statusFilter]);
+  }, [liveInvoices, activeTab, searchFilter, typeFilter, statusFilter, dateRangeFilter]);
 
   // Paginated records
   const paginatedInvoices = useMemo(() => {
@@ -388,15 +510,16 @@ export default function Accounting() {
   const recentTransactions = useMemo(() => {
     const txs = [];
 
-    // Payments from real orders
+    // 1. Order Revenue Payments Received (Client Inflows)
     orders.forEach((o) => {
-      if (o.total) {
+      const tot = parseFloat(o.total) || 0;
+      if (tot > 0) {
         txs.push({
           id: `tx-ord-${o.id}`,
           type: "income",
-          title: `Payment from ${o.shipping_full_name || o.customer_name || "Client"}`,
-          ref: o.order_number || `ORD${o.id}`,
-          amount: `+ ₹${Math.round(parseFloat(o.total) || 0).toLocaleString("en-IN")}`,
+          title: `Order Payment (${o.shipping_full_name || o.customer_name || "Client"})`,
+          ref: o.order_number || `ORD#${o.id}`,
+          amount: `+ ₹${Math.round(tot).toLocaleString("en-IN")}`,
           date: o.created_at
             ? new Date(o.created_at).toLocaleDateString("en-IN", {
                 day: "2-digit",
@@ -409,23 +532,21 @@ export default function Accounting() {
       }
     });
 
-    // Real payouts / expenses from settlements
+    // 2. Verified Payouts and Return Deductions from Settlements
     settlements.forEach((s) => {
-      const amt = parseFloat(s.payout_amount || s.gmv) || 0;
-      if (amt > 0) {
+      const amt = Math.abs(parseFloat(s.payout_amount || s.gmv) || 0);
+      const isReversal = Boolean(s.is_reversal || String(s.status).toUpperCase() === "REVERSED");
+      const isPaid = ["PAID", "RECONCILED", "Paid"].includes(String(s.status));
+      const brand = s.brand_name || s.designer_code || `Designer #${s.designer || s.id}`;
+
+      if (isReversal && amt > 0) {
         txs.push({
-          id: `tx-stl-${s.id}`,
-          type: "expense",
-          title: `Disbursement - ${s.brand_name || "Couturier"}`,
-          ref: s.settlement_number || `STL${s.id}`,
+          id: `tx-rev-${s.id}`,
+          type: "reversal",
+          title: `Return Reversal (${brand})`,
+          ref: s.settlement_number || `REV#${s.id}`,
           amount: `- ₹${Math.round(amt).toLocaleString("en-IN")}`,
-          date: s.paid_at
-            ? new Date(s.paid_at).toLocaleDateString("en-IN", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })
-            : s.created_at
+          date: s.created_at
             ? new Date(s.created_at).toLocaleDateString("en-IN", {
                 day: "2-digit",
                 month: "short",
@@ -434,11 +555,27 @@ export default function Accounting() {
             : "—",
           timestamp: s.created_at ? new Date(s.created_at).getTime() : 0,
         });
+      } else if (isPaid && amt > 0) {
+        txs.push({
+          id: `tx-stl-${s.id}`,
+          type: "payout",
+          title: `Payout Disbursed (${brand})`,
+          ref: s.payout_reference || s.settlement_number || `UTR#${s.id}`,
+          amount: `- ₹${Math.round(amt).toLocaleString("en-IN")}`,
+          date: (s.paid_at || s.created_at)
+            ? new Date(s.paid_at || s.created_at).toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })
+            : "—",
+          timestamp: new Date(s.paid_at || s.created_at || 0).getTime(),
+        });
       }
     });
 
     txs.sort((a, b) => b.timestamp - a.timestamp);
-    return txs.slice(0, 5);
+    return txs;
   }, [orders, settlements]);
 
   /* ---------------------------------------------------------
@@ -542,6 +679,75 @@ export default function Accounting() {
   /* ---------------------------------------------------------
      ACTION HANDLERS (DISBURSE / DOWNLOAD RECEIPT)
   --------------------------------------------------------- */
+  const handleOpenDisburseModal = (inv) => {
+    setDisburseModalItem(inv);
+    setPayoutChannel(inv.payoutMethod || "UPI Commercial VPA");
+    setPayoutRefInput(`UTR-${Date.now().toString().slice(-8)}`);
+    setPayoutNotes(
+      `Disbursement for ${inv.designer || inv.name} (${inv.settlementId || inv.invoiceId || inv.orderId}) confirmed by Finance Admin`
+    );
+  };
+
+  const handleConfirmDisbursement = async () => {
+    if (!disburseModalItem) return;
+    setIsSubmittingDisburse(true);
+    try {
+      const targetId =
+        Number(disburseModalItem.rawId) ||
+        Number(disburseModalItem.id) ||
+        disburseModalItem.rawId ||
+        disburseModalItem.id;
+
+      try {
+        await transitionSettlement(targetId, {
+          status: "PAID",
+          payout_method: payoutChannel,
+          payout_reference: payoutRefInput || `UTR-${Date.now().toString().slice(-8)}`,
+          admin_notes: payoutNotes,
+        });
+      } catch (transErr) {
+        console.warn("Direct transition fallback to disburseSettlementPayment:", transErr);
+        await disburseSettlementPayment({
+          settlement_ids: [targetId],
+          status: "PAID",
+          payout_method: payoutChannel,
+          payout_reference: payoutRefInput || `UTR-${Date.now().toString().slice(-8)}`,
+          admin_notes: payoutNotes,
+          notes: payoutNotes,
+        });
+      }
+
+      const grossGmv = Math.round(
+        disburseModalItem.totalSales ??
+        (disburseModalItem.isSettlement
+          ? (disburseModalItem.gmv || disburseModalItem.amount || disburseModalItem.total)
+          : disburseModalItem.total)
+      );
+      const commAmt = Math.round(
+        disburseModalItem.commissionAmount ??
+        (disburseModalItem.isSettlement
+          ? (Number(disburseModalItem.commission) || Math.round(grossGmv * 0.15))
+          : Math.round(grossGmv * 0.15))
+      );
+      const finalAmt = Math.round(
+        disburseModalItem.payoutAmount ??
+        Math.max(0, grossGmv - commAmt)
+      );
+
+      showSuccessToast(
+        `Disbursed ₹${finalAmt.toLocaleString("en-IN")} to ${disburseModalItem.designer || disburseModalItem.name} via ${payoutChannel}!`,
+        "Payment Settled"
+      );
+      setDisburseModalItem(null);
+      await fetchData();
+    } catch (err) {
+      console.error("Disburse error:", err);
+      showErrorToast(err.message || "Failed to disburse payment.");
+    } finally {
+      setIsSubmittingDisburse(false);
+    }
+  };
+
   const handleMarkPaid = async (inv) => {
     if (inv.isSettlement && inv.rawId) {
       try {
@@ -580,6 +786,44 @@ export default function Accounting() {
     a.download = `${inv.invoiceId}_receipt.txt`;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const handleExportFinancialStatement = () => {
+    const rawRev = stats?.gross_gmv || stats?.total_settled_gmv || 0;
+    const rawExp = (stats?.total_disbursed || 0) + (stats?.total_gateway_fees || 0);
+    const rawProfit = stats?.zenve_commission || Math.max(0, rawRev - rawExp);
+    const text =
+      `===================================================\n` +
+      `ZENVE FASHION MERCHANDISING - FINANCIAL STATEMENT\n` +
+      `Date Generated: ${new Date().toLocaleDateString("en-IN")}\n` +
+      `===================================================\n\n` +
+      `EXECUTIVE FINANCIAL SUMMARY:\n` +
+      `---------------------------------------------------\n` +
+      `Gross Sales GMV:             ₹${Math.round(rawRev).toLocaleString("en-IN")}\n` +
+      `Disbursed Designer Payouts:  ₹${Math.round(stats?.total_disbursed || 0).toLocaleString("en-IN")}\n` +
+      `Total Operating Outflows:    ₹${Math.round(rawExp).toLocaleString("en-IN")}\n` +
+      `Zenve Net Commission Margin: ₹${Math.round(rawProfit).toLocaleString("en-IN")}\n` +
+      `Pending Payables:            ₹${Math.round(stats?.pending_payable || 0).toLocaleString("en-IN")}\n` +
+      `Tax (GST) Liability:         ₹${Math.round(stats?.total_tax || 0).toLocaleString("en-IN")}\n` +
+      `Gateway Fees Paid:           ₹${Math.round(stats?.total_gateway_fees || 0).toLocaleString("en-IN")}\n\n` +
+      `VERIFIED AUDIT ENTRIES (${liveInvoices.length} Total):\n` +
+      `---------------------------------------------------\n` +
+      liveInvoices
+        .map(
+          (inv, idx) =>
+            `${idx + 1}. [${inv.invoiceId}] ${inv.name} | ${inv.type} | Total: ₹${inv.total.toLocaleString("en-IN")} | Status: ${inv.status} | Date: ${inv.invoiceDate}`
+        )
+        .join("\n") +
+      `\n\nVerified by Zenve Live Database Accounting Gateway`;
+
+    const blob = new Blob([text], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Zenve_Financial_Statement_${Date.now()}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showSuccessToast("Financial Statement exported successfully.", "Report Downloaded");
   };
 
   return (
@@ -742,27 +986,64 @@ export default function Accounting() {
       <section className="acc-tabs-action-bar">
         <div className="acc-tabs-list">
           {["Invoices", "Expenses", "Payments", "Tax & Compliance", "Financial Reports"].map(
-            (tab) => (
-              <button
-                key={tab}
-                type="button"
-                className={`acc-tab-btn ${activeTab === tab ? "active" : ""}`}
-                onClick={() => setActiveTab(tab)}
-              >
-                {tab}
-              </button>
-            )
+            (tab) => {
+              const count = tabCounts[tab] !== undefined ? tabCounts[tab] : 0;
+              return (
+                <button
+                  key={tab}
+                  type="button"
+                  className={`acc-tab-btn ${activeTab === tab ? "active" : ""}`}
+                  onClick={() => {
+                    setActiveTab(tab);
+                    setCurrentPage(1);
+                    setTypeFilter("All");
+                    setStatusFilter("All");
+                  }}
+                  title={`View ${tab} (${count} items)`}
+                >
+                  <span className="acc-tab-title">{tab}</span>
+                  <span className="acc-tab-count">{count}</span>
+                </button>
+              );
+            }
           )}
         </div>
 
-        <button
-          type="button"
-          className="acc-create-invoice-btn"
-          onClick={() => setIsCreateModalOpen(true)}
-        >
-          <span className="acc-plus-icon">+</span>
-          <span>Create Invoice</span>
-        </button>
+        <div className="acc-tabs-right-actions">
+          {activeTab === "Financial Reports" && (
+            <button
+              type="button"
+              className="acc-export-statement-btn"
+              onClick={handleExportFinancialStatement}
+              title="Download full audited financial statement"
+            >
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              <span>Export Audit Statement</span>
+            </button>
+          )}
+
+          <button
+            type="button"
+            className="acc-create-invoice-btn"
+            onClick={() => setIsCreateModalOpen(true)}
+          >
+            <span className="acc-plus-icon">+</span>
+            <span>Create Invoice</span>
+          </button>
+        </div>
       </section>
 
       {/* =====================================================
@@ -773,6 +1054,36 @@ export default function Accounting() {
             LEFT COLUMN: INVOICES DATA TABLE & FILTERS
         --------------------------------------------------- */}
         <div className="acc-table-card">
+          {/* Active Tab Context Header Banner */}
+          <div className="acc-tab-context-banner">
+            <div className="acc-tab-context-info">
+              <div className="acc-tab-context-title-row">
+                <h2 className="acc-tab-context-title">
+                  {activeTab === "Invoices" && "Invoices & Client Billing"}
+                  {activeTab === "Expenses" && "Operating Expenses & Designer Payouts"}
+                  {activeTab === "Payments" && "Cleared Payments & Settlement Receipts"}
+                  {activeTab === "Tax & Compliance" && "Tax, GST Filings & Statutory Compliance"}
+                  {activeTab === "Financial Reports" && "General Ledger & Financial Audit Trail"}
+                </h2>
+                <span className="acc-tab-context-count-tag">
+                  {filteredInvoices.length} {filteredInvoices.length === 1 ? "Record" : "Records"}
+                </span>
+              </div>
+              <p className="acc-tab-context-desc">
+                {activeTab === "Invoices" &&
+                  "Client billing and verified order invoices generated from live store transactions."}
+                {activeTab === "Expenses" &&
+                  "Designer settlement payouts, platform commission cuts, and operational disbursements."}
+                {activeTab === "Payments" &&
+                  "Verified settled orders and paid designer disbursements with reconciliation references."}
+                {activeTab === "Tax & Compliance" &&
+                  "Real-time GST records, taxable sub-totals, and statutory tax liability ledger."}
+                {activeTab === "Financial Reports" &&
+                  "Double-entry general ledger encompassing all inflows, payouts, gross GMV, and net margins."}
+              </p>
+            </div>
+          </div>
+
           {/* Filter Toolbar */}
           <div className="acc-filter-toolbar">
             <div className="acc-table-search-wrap">
@@ -980,6 +1291,28 @@ export default function Accounting() {
                         </td>
                         <td className="td-actions">
                           <div className="acc-action-buttons">
+                            {/* Direct Settle / Payment Button for Every Designer */}
+                            {inv.status === "Paid" ? (
+                              <span className="acc-settled-pill" title="Payment already settled & ledger recorded">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                  <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                <span>Settled</span>
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                className="acc-settle-btn"
+                                title={`Settle ₹${inv.total.toLocaleString("en-IN")} to ${inv.name}`}
+                                onClick={() => handleOpenDisburseModal(inv)}
+                              >
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                                </svg>
+                                <span>Settle ₹{inv.total.toLocaleString("en-IN")}</span>
+                              </button>
+                            )}
+
                             {/* View Eye */}
                             <button
                               type="button"
@@ -1320,7 +1653,7 @@ export default function Accounting() {
               <button
                 type="button"
                 className="acc-view-all-link"
-                onClick={() => setActiveTab("Payments")}
+                onClick={() => setIsViewAllTxModalOpen(true)}
               >
                 View All
               </button>
@@ -1339,35 +1672,21 @@ export default function Accounting() {
                   No transactions recorded in database yet.
                 </div>
               ) : (
-                recentTransactions.map((tx) => (
+                recentTransactions.slice(0, 5).map((tx) => (
                   <div key={tx.id} className="acc-tx-row">
-                    <div
-                      className={`acc-tx-symbol ${
-                        tx.type === "income" ? "income" : "expense"
-                      }`}
-                    >
+                    <div className={`acc-tx-symbol ${tx.type}`}>
                       {tx.type === "income" ? (
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="#16A34A"
-                          strokeWidth="2.5"
-                        >
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
+                      ) : tx.type === "reversal" ? (
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="1 4 1 10 7 10" />
+                          <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+                        </svg>
                       ) : (
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="#DC2626"
-                          strokeWidth="2.5"
-                        >
-                          <line x1="18" y1="6" x2="6" y2="18" />
-                          <line x1="6" y1="6" x2="18" y2="18" />
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                          <polygon points="5 3 19 12 5 21 5 3" />
                         </svg>
                       )}
                     </div>
@@ -1378,7 +1697,11 @@ export default function Accounting() {
                     <div className="acc-tx-amount-wrap">
                       <strong
                         className={`acc-tx-amount ${
-                          tx.type === "income" ? "text-income" : "text-expense"
+                          tx.type === "income"
+                            ? "text-income"
+                            : tx.type === "reversal"
+                            ? "text-reversal"
+                            : "text-expense"
                         }`}
                       >
                         {tx.amount}
@@ -1672,6 +1995,238 @@ export default function Accounting() {
                 onClick={() => setViewInvoiceItem(null)}
               >
                 Close Voucher
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =====================================================
+          DISBURSEMENT / SETTLE PAYMENT MODAL (MATCHING IMAGE 2)
+      ===================================================== */}
+      {disburseModalItem && (() => {
+        const grossSalesGmv = Math.round(
+          disburseModalItem.totalSales ??
+          (disburseModalItem.isSettlement
+            ? (disburseModalItem.gmv || disburseModalItem.amount || disburseModalItem.total)
+            : disburseModalItem.total)
+        );
+        const platformCommission = Math.round(
+          disburseModalItem.commissionAmount ??
+          (disburseModalItem.isSettlement
+            ? (Number(disburseModalItem.commission) || Math.round(grossSalesGmv * 0.15))
+            : Math.round(grossSalesGmv * 0.15))
+        );
+        const netDisbursal = Math.round(
+          disburseModalItem.payoutAmount ??
+          Math.max(0, grossSalesGmv - platformCommission)
+        );
+        const designerName = disburseModalItem.designer || disburseModalItem.name || "Designer";
+        const settlementIdStr = disburseModalItem.settlementId || disburseModalItem.invoiceId || disburseModalItem.orderId;
+        const avatarUrl = disburseModalItem.avatar || getDesignerAvatarUrl(designerName);
+
+        return (
+          <div className="acc-modal-overlay" onClick={() => setDisburseModalItem(null)}>
+            <div className="acc-modal-card disburse-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="stl-modal-header">
+                <div className="stl-modal-title-wrap">
+                  <span className="stl-modal-badge">Direct Settlement</span>
+                  <h3>Disburse Designer Payout</h3>
+                </div>
+                <button
+                  type="button"
+                  className="stl-modal-close-btn"
+                  onClick={() => setDisburseModalItem(null)}
+                  title="Close"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="stl-modal-body">
+                <div className="stl-payout-designer-card">
+                  <div className="stl-payout-designer-info">
+                    <img
+                      src={avatarUrl}
+                      alt={designerName}
+                      className="stl-payout-avatar"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = getDesignerAvatarUrl(designerName);
+                      }}
+                    />
+                    <div>
+                      <strong className="stl-payout-designer-name">{designerName}</strong>
+                      <span className="stl-payout-code">Settlement ID: {settlementIdStr}</span>
+                    </div>
+                  </div>
+                  <div className="stl-payout-amount-box">
+                    <span className="stl-payout-label">Net Payable Amount</span>
+                    <strong className="stl-payout-val">₹{netDisbursal.toLocaleString("en-IN")}</strong>
+                  </div>
+                </div>
+
+                <div className="stl-modal-field" style={{ marginTop: "14px" }}>
+                  <label>Disbursement Channel / Gateway</label>
+                  <select
+                    value={payoutChannel}
+                    onChange={(e) => setPayoutChannel(e.target.value)}
+                    className="stl-modal-select"
+                  >
+                    <option value="UPI Commercial VPA">UPI Commercial VPA</option>
+                    <option value="NEFT">NEFT (National Electronic Funds Transfer)</option>
+                    <option value="RTGS">RTGS (Real Time Gross Settlement)</option>
+                    <option value="IMPS">IMPS (Immediate Payment Service - Instant)</option>
+                    <option value="RazorpayX">RazorpayX Commercial Instant Payout</option>
+                    <option value="Bank Transfer">Direct Corporate Bank Transfer</option>
+                  </select>
+                </div>
+
+                <div className="stl-modal-field">
+                  <label>Bank Reference / UTR Number</label>
+                  <input
+                    type="text"
+                    value={payoutRefInput}
+                    onChange={(e) => setPayoutRefInput(e.target.value)}
+                    placeholder="e.g. UTR-2026100800123"
+                    className="stl-modal-input"
+                  />
+                </div>
+
+                <div className="stl-modal-field">
+                  <label>Narration / Ledger Notes</label>
+                  <textarea
+                    rows="2"
+                    value={payoutNotes}
+                    onChange={(e) => setPayoutNotes(e.target.value)}
+                    placeholder="Disbursement confirmed by Finance Admin..."
+                    className="stl-modal-textarea"
+                  />
+                </div>
+
+                {/* THE EXACT PAYING AMOUNT DIV MATCHING IMAGE 2 */}
+                <div className="stl-payout-breakdown-mini">
+                  <div className="stl-mini-row">
+                    <span>Gross Sales GMV:</span>
+                    <strong>₹{grossSalesGmv.toLocaleString("en-IN")}</strong>
+                  </div>
+                  <div className="stl-mini-row">
+                    <span>Zenve Platform Commission:</span>
+                    <span style={{ color: "#DC2626" }}>- ₹{platformCommission.toLocaleString("en-IN")}</span>
+                  </div>
+                  <div className="stl-mini-row total">
+                    <span>Authorized Net Disbursal:</span>
+                    <strong style={{ color: "#16A34A" }}>₹{netDisbursal.toLocaleString("en-IN")}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div className="stl-modal-footer">
+                <button
+                  type="button"
+                  className="stl-btn-cancel"
+                  onClick={() => setDisburseModalItem(null)}
+                  disabled={isSubmittingDisburse}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="stl-btn-confirm"
+                  onClick={handleConfirmDisbursement}
+                  disabled={isSubmittingDisburse}
+                  style={{ background: "#5C3A21", color: "#FFFFFF" }}
+                >
+                  {isSubmittingDisburse
+                    ? "Processing Settlement..."
+                    : `Authorize & Settle ₹${netDisbursal.toLocaleString("en-IN")}`}
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* =====================================================
+          MODAL: ALL RECENT TRANSACTIONS (ACCOUNTING JOURNAL)
+      ===================================================== */}
+      {isViewAllTxModalOpen && (
+        <div className="acc-modal-overlay" onClick={() => setIsViewAllTxModalOpen(false)}>
+          <div className="acc-modal-card details-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="acc-modal-header">
+              <div className="acc-modal-title-stack">
+                <span className="acc-modal-badge">Live Financial Journal</span>
+                <h3>All Financial Ledger Transactions</h3>
+                <span style={{ fontSize: "11.5px", color: "#8C7862" }}>
+                  Showing {recentTransactions.length} verified income and payout movements from live database
+                </span>
+              </div>
+              <button
+                type="button"
+                className="acc-modal-close"
+                onClick={() => setIsViewAllTxModalOpen(false)}
+                title="Close"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="acc-modal-body" style={{ maxHeight: "65vh", overflowY: "auto" }}>
+              <div className="acc-transactions-list full-ledger">
+                {recentTransactions.length === 0 ? (
+                  <div style={{ padding: "30px", textAlign: "center", color: "#8C7862" }}>
+                    No ledger transactions recorded yet in database.
+                  </div>
+                ) : (
+                  recentTransactions.map((tx) => (
+                    <div key={tx.id} className="acc-tx-row full-ledger-row">
+                      <div className={`acc-tx-symbol ${tx.type}`}>
+                        {tx.type === "income" ? (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        ) : tx.type === "reversal" ? (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="1 4 1 10 7 10" />
+                            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+                          </svg>
+                        ) : (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5 3 19 12 5 21 5 3" />
+                          </svg>
+                        )}
+                      </div>
+                      <div className="acc-tx-info">
+                        <strong className="acc-tx-title">{tx.title}</strong>
+                        <span className="acc-tx-ref">{tx.ref}</span>
+                      </div>
+                      <div className="acc-tx-amount-wrap">
+                        <strong
+                          className={`acc-tx-amount ${
+                            tx.type === "income"
+                              ? "text-income"
+                              : tx.type === "reversal"
+                              ? "text-reversal"
+                              : "text-expense"
+                          }`}
+                        >
+                          {tx.amount}
+                        </strong>
+                        <span className="acc-tx-date">{tx.date}</span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            <div className="acc-modal-footer">
+              <button
+                type="button"
+                className="acc-btn-secondary"
+                onClick={() => setIsViewAllTxModalOpen(false)}
+              >
+                Close Ledger
               </button>
             </div>
           </div>

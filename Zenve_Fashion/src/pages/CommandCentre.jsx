@@ -347,7 +347,7 @@ export default function CommandCentre() {
         label: "Active Products",
         value: activeProductsCount.toLocaleString("en-IN"),
         growth: "+5.1%",
-        hint: `${overviewData?.kpis?.sellable_units ?? overviewData?.inventory_status?.sellable_units ?? 428} in stock`,
+        hint: `${overviewData?.kpis?.sellable_units ?? overviewData?.inventory_status?.sellable_units ?? products.reduce((acc, p) => acc + (Number(p.available_quantity) || 0), 0)} in stock`,
         icon: BoxIcon,
         color: "#D97706",
         variant: 2,
@@ -384,11 +384,11 @@ export default function CommandCentre() {
     
     // Status counts from overview API or orders tally
     let statusCounts = {
-      delivered: 9,
+      delivered: 0,
       shipped: 0,
-      processing: 3,
-      pending: 3,
-      cancelled: 1,
+      processing: 0,
+      pending: 0,
+      cancelled: 0,
     };
 
     if (overviewData?.fulfillment_summary) {
@@ -466,15 +466,15 @@ export default function CommandCentre() {
         (p) => p.status === "DRAFT" || p.status === "CORRECTION" || p.status === "INACTIVE"
       ).length;
     } else if (inv) {
-      total = inv.total || 18;
-      inStock = inv.in_stock || 17;
-      lowStock = inv.low_stock || 1;
+      total = inv.total || 0;
+      inStock = inv.in_stock || 0;
+      lowStock = inv.low_stock || 0;
       outOfStock = inv.out_of_stock || 0;
       discontinued = inv.draft || 0;
     } else {
-      total = 18;
-      inStock = 17;
-      lowStock = 1;
+      total = 0;
+      inStock = 0;
+      lowStock = 0;
       outOfStock = 0;
       discontinued = 0;
     }
