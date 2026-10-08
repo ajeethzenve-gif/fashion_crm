@@ -495,6 +495,29 @@
   border-color: #B8997A;
 }
 
+.rtn-btn-create {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 16px;
+  background: #6E4720;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.rtn-btn-create:hover {
+  background: #573616;
+  box-shadow: 0 2px 8px rgba(110, 71, 32, 0.25);
+}
+
 /* =========================================================
    SPLIT GRID LAYOUT (TABLE + DETAILS PANEL)
 ========================================================= */

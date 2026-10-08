@@ -440,23 +440,28 @@ class ReturnRequestSerializer(serializers.ModelSerializer):
         data["skuId"] = instance.order_item.sku if instance.order_item else ""
         data["sku"] = instance.order_item.sku if instance.order_item else ""
         data["skuName"] = instance.order_item.product_name if instance.order_item else ""
-        data["productName"] = instance.order_item.product_name if instance.order_item else "Luxury Fashion Item"
+        data["productName"] = instance.order_item.product_name if instance.order_item else "Product"
         data["price"] = float(instance.order_item.price) if instance.order_item else 0.0
         data["formattedPrice"] = f"₹{int(instance.order_item.price):,}" if instance.order_item and instance.order_item.price else "₹0"
-        data["size"] = instance.order_item.size if instance.order_item and instance.order_item.size else "M"
-        data["color"] = instance.order_item.color if instance.order_item and instance.order_item.color else "Pink"
+        data["size"] = instance.order_item.size if (instance.order_item and instance.order_item.size) else ""
+        data["color"] = instance.order_item.color if (instance.order_item and instance.order_item.color) else ""
         data["refund"] = float(instance.refund_amount) if instance.refund_amount else 0.0
         data["formatted_refund"] = f"₹{int(instance.refund_amount):,}" if instance.refund_amount else "₹0"
 
-        # Image URLs
+        # Image URLs from real Product in database
         img_url = ""
         if instance.order_item and instance.order_item.product:
             p = instance.order_item.product
-            if hasattr(p, "images") and p.images.exists():
-                first_img = p.images.first()
-                img_url = first_img.image.url if hasattr(first_img, "image") and first_img.image else ""
-            elif hasattr(p, "hero_image") and p.hero_image:
-                img_url = p.hero_image.url if hasattr(p.hero_image, "url") else str(p.hero_image)
+            if hasattr(p, "primary_image") and p.primary_image:
+                try:
+                    img_url = p.primary_image.url
+                except Exception:
+                    img_url = str(p.primary_image)
+            elif hasattr(p, "image") and p.image:
+                try:
+                    img_url = p.image.url
+                except Exception:
+                    img_url = str(p.image)
         data["productImage"] = img_url
 
         st = instance.status
@@ -470,17 +475,17 @@ class ReturnRequestSerializer(serializers.ModelSerializer):
         data["reasonDisplay"] = instance.get_reason_display() if hasattr(instance, "get_reason_display") else instance.reason
         data["statusDisplay"] = instance.get_status_display() if hasattr(instance, "get_status_display") else instance.status
 
-        # Date formatting
+        # Date formatting from real instance timestamp
         if instance.created_at:
             data["requestDate"] = instance.created_at.strftime("%d %b %Y")
             from datetime import timedelta
             exp = instance.created_at + timedelta(days=4)
             data["expectedResolution"] = exp.strftime("%d %b %Y")
         else:
-            data["requestDate"] = "06 Oct 2026"
-            data["expectedResolution"] = "10 Oct 2026"
+            data["requestDate"] = "—"
+            data["expectedResolution"] = "—"
 
-        data["customerNote"] = instance.notes if instance.notes else "The dress size is smaller than expected. Requesting a size exchange."
+        data["customerNote"] = instance.notes or ""
         return data
 
     def to_internal_value(self, data):

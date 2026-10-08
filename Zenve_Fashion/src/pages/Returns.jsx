@@ -5,13 +5,15 @@ import bannerImg from "../assest/accounting-banner.jpg";
 import {
   getReturns,
   getReturnStats,
+  createReturn,
   transitionReturn,
+  getOrders,
 } from "../services/api";
 import { showSuccessToast, showErrorToast } from "../utils/zenveToast";
 import { useAuth } from "../context/AuthContext";
 
 /* =========================================================
-   AVATAR HELPER (DYNAMIC UI AVATAR FROM CUSTOMER NAME)
+   DYNAMIC AVATAR GENERATOR (BASED ON REAL CUSTOMER NAME)
 ========================================================= */
 
 function getCustomerAvatar(name) {
@@ -73,9 +75,10 @@ function getStatusBadgeLabel(st) {
 export default function Returns() {
   const { user } = useAuth();
 
-  // Database State
+  // Database States
   const [returnsList, setReturnsList] = useState([]);
   const [stats, setStats] = useState(null);
+  const [deliveredOrders, setDeliveredOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Filters & Search
@@ -92,7 +95,7 @@ export default function Returns() {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
-  // Actions & Popups
+  // Action & Modal States
   const [isProcessingAction, setIsProcessingAction] = useState(false);
   const [openKebabId, setOpenKebabId] = useState(null);
   const kebabRef = useRef(null);
@@ -102,6 +105,14 @@ export default function Returns() {
   const [editStatus, setEditStatus] = useState("PENDING");
   const [editNotes, setEditNotes] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
+
+  // Create Return Modal State
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [createOrderId, setCreateOrderId] = useState("");
+  const [createItemSku, setCreateItemSku] = useState("");
+  const [createReason, setCreateReason] = useState("SIZE_FIT");
+  const [createNotes, setCreateNotes] = useState("");
+  const [creatingReturn, setCreatingReturn] = useState(false);
 
   // Close kebab on click outside
   useEffect(() => {
@@ -120,7 +131,7 @@ export default function Returns() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [fetchedReturns, fetchedStats] = await Promise.all([
+      const [fetchedReturns, fetchedStats, fetchedOrders] = await Promise.all([
         getReturns().catch((err) => {
           console.error("Failed to fetch returns from backend:", err);
           return [];
@@ -129,11 +140,21 @@ export default function Returns() {
           console.error("Failed to fetch return stats from backend:", err);
           return null;
         }),
+        getOrders().catch((err) => {
+          console.error("Failed to fetch orders from backend:", err);
+          return [];
+        }),
       ]);
 
       const list = Array.isArray(fetchedReturns) ? fetchedReturns : [];
       setReturnsList(list);
       setStats(fetchedStats);
+
+      // Filter real delivered orders for creating new returns
+      const delivered = (Array.isArray(fetchedOrders) ? fetchedOrders : []).filter(
+        (o) => String(o.order_status || o.status).toUpperCase() === "DELIVERED"
+      );
+      setDeliveredOrders(delivered);
 
       // Select first return if none currently selected
       if (list.length > 0) {
@@ -296,7 +317,7 @@ export default function Returns() {
       setIsProcessingAction(true);
       const updated = await transitionReturn(id, targetStatus);
       showSuccessToast(
-        `Return ${updated.returnId || updated.return_number || id} transitioned to ${targetStatus}`
+        `Return ${updated.returnId || updated.return_number || id} updated to ${targetStatus}`
       );
       await loadData();
     } catch (err) {
@@ -331,6 +352,43 @@ export default function Returns() {
       showErrorToast(err.message || "Failed to update return");
     } finally {
       setSavingEdit(false);
+    }
+  };
+
+  /* =========================================================
+     RAISE NEW RETURN ON REAL DELIVERED ORDER
+  ========================================================= */
+  const activeCreateOrder = useMemo(() => {
+    if (!createOrderId) return null;
+    return deliveredOrders.find((o) => String(o.id) === String(createOrderId)) || null;
+  }, [deliveredOrders, createOrderId]);
+
+  const handleCreateReturnSubmit = async (e) => {
+    e.preventDefault();
+    if (!createOrderId || !createItemSku) {
+      showErrorToast("Please select a delivered order and an item");
+      return;
+    }
+    try {
+      setCreatingReturn(true);
+      const payload = {
+        orderId: activeCreateOrder.order_number,
+        skuId: createItemSku,
+        reason: createReason,
+        notes: createNotes,
+      };
+      const created = await createReturn(payload);
+      showSuccessToast(`Return ${created.return_number || created.id} raised successfully in database`);
+      setIsCreateModalOpen(false);
+      setCreateOrderId("");
+      setCreateItemSku("");
+      setCreateNotes("");
+      await loadData();
+    } catch (err) {
+      console.error("Failed to raise return:", err);
+      showErrorToast(err.message || "Failed to raise return request");
+    } finally {
+      setCreatingReturn(false);
     }
   };
 
@@ -628,7 +686,7 @@ export default function Returns() {
           ))}
         </section>
 
-        {/* FILTER TOOLBAR */}
+        {/* FILTER TOOLBAR WITH RAISE RETURN BUTTON */}
         <section className="rtn-filter-toolbar">
           <div className="rtn-filter-search-box">
             <svg
@@ -731,6 +789,28 @@ export default function Returns() {
             </svg>
             <span>Reset</span>
           </button>
+
+          {/* RAISE RETURN ON DELIVERED ORDER */}
+          <button
+            type="button"
+            className="rtn-btn-create"
+            onClick={() => setIsCreateModalOpen(true)}
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            <span>+ Raise Return</span>
+          </button>
         </section>
 
         {/* =====================================================
@@ -767,13 +847,13 @@ export default function Returns() {
                   {loading ? (
                     <tr>
                       <td colSpan="10" style={{ textAlign: "center", padding: "40px" }}>
-                        Loading real database returns...
+                        Loading returns directly from database...
                       </td>
                     </tr>
                   ) : filteredReturns.length === 0 ? (
                     <tr>
                       <td colSpan="10" style={{ textAlign: "center", padding: "40px", color: "#6B7280" }}>
-                        No return requests match the selected filters.
+                        No return records in database match the active filters.
                       </td>
                     </tr>
                   ) : (
@@ -834,7 +914,7 @@ export default function Returns() {
                             </div>
                           </td>
 
-                          {/* Product Garment Thumbnails */}
+                          {/* Product Garment Thumbnail from DB */}
                           <td>
                             <div className="rtn-products-cell">
                               {item.productImage ? (
@@ -851,11 +931,12 @@ export default function Returns() {
                                     alignItems: "center",
                                     justifyContent: "center",
                                     fontSize: "10px",
-                                    fontWeight: "600",
-                                    color: "#8C6A48",
+                                    fontWeight: "700",
+                                    color: "#6E4720",
+                                    background: "#F5ECE1",
                                   }}
                                 >
-                                  {(item.sku || "ZN").slice(0, 3)}
+                                  {(item.sku || item.productName || "ZN").slice(0, 3).toUpperCase()}
                                 </div>
                               )}
                             </div>
@@ -912,7 +993,7 @@ export default function Returns() {
                               <button
                                 type="button"
                                 className="rtn-icon-btn"
-                                title="Edit return"
+                                title="Edit return in DB"
                                 onClick={(e) => handleOpenEditModal(item, e)}
                               >
                                 <svg
@@ -1138,11 +1219,12 @@ export default function Returns() {
                         alignItems: "center",
                         justifyContent: "center",
                         fontSize: "12px",
-                        fontWeight: "600",
-                        color: "#8C6A48",
+                        fontWeight: "700",
+                        color: "#6E4720",
+                        background: "#F5ECE1",
                       }}
                     >
-                      {selectedReturn.sku || "Garment"}
+                      {selectedReturn.sku ? selectedReturn.sku.slice(0, 8) : "GARMENT"}
                     </div>
                   )}
                   <div className="rtn-product-preview-meta">
@@ -1222,7 +1304,7 @@ export default function Returns() {
                 <div className="rtn-customer-note-section">
                   <label className="rtn-customer-note-label">Customer Note</label>
                   <div className="rtn-customer-note-box">
-                    "{selectedReturn.customerNote || selectedReturn.notes || "No notes provided."}"
+                    "{selectedReturn.customerNote || selectedReturn.notes || "No remarks provided."}"
                   </div>
                 </div>
 
@@ -1280,6 +1362,115 @@ export default function Returns() {
           </aside>
         </section>
       </main>
+
+      {/* =====================================================
+          RAISE NEW RETURN MODAL (DELIVERED ORDERS IN DB)
+      ===================================================== */}
+      {isCreateModalOpen && (
+        <div className="rtn-modal-overlay" onClick={() => setIsCreateModalOpen(false)}>
+          <div className="rtn-modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="rtn-modal-header">
+              <h3 className="rtn-modal-title">Raise a Return on Delivered Order</h3>
+              <button
+                type="button"
+                className="rtn-modal-close"
+                onClick={() => setIsCreateModalOpen(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateReturnSubmit}>
+              <div className="rtn-modal-body">
+                <div className="rtn-modal-field">
+                  <label htmlFor="modal-create-order-select">Delivered Order</label>
+                  <select
+                    id="modal-create-order-select"
+                    value={createOrderId}
+                    onChange={(e) => {
+                      setCreateOrderId(e.target.value);
+                      setCreateItemSku("");
+                    }}
+                    required
+                  >
+                    <option value="">Select a delivered order...</option>
+                    {deliveredOrders.map((o) => (
+                      <option key={o.id} value={o.id}>
+                        {o.order_number} · {o.customer_name} ({o.items?.length || 1} items)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="rtn-modal-field">
+                  <label htmlFor="modal-create-item-select">Item to Return</label>
+                  <select
+                    id="modal-create-item-select"
+                    value={createItemSku}
+                    onChange={(e) => setCreateItemSku(e.target.value)}
+                    disabled={!activeCreateOrder}
+                    required
+                  >
+                    <option value="">Select order item...</option>
+                    {activeCreateOrder &&
+                      (activeCreateOrder.items || []).map((it) => (
+                        <option key={it.id || it.sku} value={it.sku || it.skuId}>
+                          {it.product_name || it.name} ({it.sku}) · ₹{it.price}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+
+                <div className="rtn-modal-field">
+                  <label htmlFor="modal-create-reason-select">Return Reason</label>
+                  <select
+                    id="modal-create-reason-select"
+                    value={createReason}
+                    onChange={(e) => setCreateReason(e.target.value)}
+                  >
+                    <option value="SIZE_FIT">Size / Fit Issue</option>
+                    <option value="COLOR_MISMATCH">Color Mismatch</option>
+                    <option value="DEFECTIVE">Defective Product</option>
+                    <option value="NOT_EXPECTED">Quality Not as Expected</option>
+                    <option value="DAMAGE_DELIVERY">Damage during Delivery</option>
+                    <option value="WRONG_ITEM">Wrong Item Delivered</option>
+                    <option value="OTHER">Other Reason</option>
+                  </select>
+                </div>
+
+                <div className="rtn-modal-field">
+                  <label htmlFor="modal-create-notes-input">Customer Remarks / Note</label>
+                  <textarea
+                    id="modal-create-notes-input"
+                    rows="3"
+                    value={createNotes}
+                    onChange={(e) => setCreateNotes(e.target.value)}
+                    placeholder="Enter customer feedback or reason remarks..."
+                  />
+                </div>
+              </div>
+
+              <div className="rtn-modal-footer">
+                <button
+                  type="button"
+                  className="rtn-modal-cancel"
+                  onClick={() => setIsCreateModalOpen(false)}
+                  disabled={creatingReturn}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="rtn-modal-save"
+                  disabled={creatingReturn || !createOrderId || !createItemSku}
+                >
+                  {creatingReturn ? "Raising Return..." : "Submit Return Request"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* =====================================================
           EDIT RETURN MODAL POPUP (SAVES DIRECTLY TO DATABASE)
