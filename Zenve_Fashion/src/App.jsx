@@ -22,13 +22,15 @@ import Login from "./pages/Login.jsx";
 import DesignerLogin from "./pages/DesignerLogin.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import RequireAuth from "./components/RequireAuth.jsx";
+import ErrorBoundary from "./components/ErrorBoundary.jsx";
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Routes>
-        {/* Role-Based Staff Login */}
-        <Route path="/login" element={<Login />} />
+    <ErrorBoundary>
+      <AuthProvider>
+        <Routes>
+          {/* Role-Based Staff Login */}
+          <Route path="/login" element={<Login />} />
 
         {/* Exclusive Brand Designer Login */}
         <Route path="/designer-login" element={<DesignerLogin />} />
@@ -60,5 +62,6 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AuthProvider>
+  </ErrorBoundary>
   );
 }
