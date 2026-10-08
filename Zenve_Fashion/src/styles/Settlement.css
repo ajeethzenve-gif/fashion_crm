@@ -269,20 +269,24 @@
 
 .stl-kpi-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 14px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .stl-kpi-card {
   background: #FFFFFF;
   border: 1px solid var(--stl-border);
   border-radius: 12px;
-  padding: 16px 18px;
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-height: 84px;
+  box-sizing: border-box;
 }
 
 .stl-kpi-card:hover {
@@ -295,12 +299,15 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
+  min-width: 0;
 }
 
 .stl-kpi-title-block {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
+  flex: 1;
 }
 
 .stl-kpi-icon-badge {
@@ -326,6 +333,10 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--stl-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .stl-kpi-body {
@@ -340,12 +351,15 @@
   font-weight: 800;
   color: #241A12;
   letter-spacing: -0.01em;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .stl-kpi-trend-spark {
   display: flex;
   align-items: center;
   gap: 6px;
+  white-space: nowrap;
 }
 
 .stl-trend-pill {
@@ -354,6 +368,8 @@
   padding: 2px 6px;
   border-radius: 10px;
   line-height: 1.2;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .stl-trend-pill.up {
@@ -619,7 +635,7 @@
 
 .stl-th-index,
 .stl-td-index {
-  width: 38px;
+  width: 56px;
   color: #8C7864;
   font-weight: 600;
 }

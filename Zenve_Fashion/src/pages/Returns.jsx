@@ -417,11 +417,6 @@ export default function Returns() {
             className="rtn-banner-bg-img"
           />
           <div className="rtn-banner-content">
-            <div className="rtn-breadcrumb">
-              <Link to="/">Home</Link>
-              <span>&gt;</span>
-              <span>Returns Engine</span>
-            </div>
             <h1 className="rtn-hero-title">Returns Engine</h1>
             <p className="rtn-hero-subtitle">
               Handle returns, refunds and exchanges with ease
@@ -436,8 +431,8 @@ export default function Returns() {
             <div className="rtn-kpi-info-group">
               <div className="rtn-kpi-icon-wrap total">
                 <svg
-                  width="22"
-                  height="22"
+                  width="18"
+                  height="18"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -465,8 +460,8 @@ export default function Returns() {
             <div className="rtn-kpi-info-group">
               <div className="rtn-kpi-icon-wrap pending">
                 <svg
-                  width="22"
-                  height="22"
+                  width="18"
+                  height="18"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -494,8 +489,8 @@ export default function Returns() {
             <div className="rtn-kpi-info-group">
               <div className="rtn-kpi-icon-wrap approved">
                 <svg
-                  width="22"
-                  height="22"
+                  width="18"
+                  height="18"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -523,8 +518,8 @@ export default function Returns() {
             <div className="rtn-kpi-info-group">
               <div className="rtn-kpi-icon-wrap rejected">
                 <svg
-                  width="22"
-                  height="22"
+                  width="18"
+                  height="18"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -553,8 +548,8 @@ export default function Returns() {
             <div className="rtn-kpi-info-group">
               <div className="rtn-kpi-icon-wrap refunded">
                 <svg
-                  width="22"
-                  height="22"
+                  width="18"
+                  height="18"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -745,7 +740,7 @@ export default function Returns() {
                         aria-label="Select all returns"
                       />
                     </th>
-                    <th style={{ width: "40px" }}>#</th>
+                    <th style={{ width: "56px" }}>Sl.No</th>
                     <th>Return ID</th>
                     <th>Order ID</th>
                     <th>Customer</th>

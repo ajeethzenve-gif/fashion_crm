@@ -562,12 +562,6 @@ export default function Settlement() {
       ===================================================== */}
       <section className="stl-hero-banner">
         <div className="stl-hero-content">
-          <nav className="stl-breadcrumbs" aria-label="Breadcrumb">
-            <Link to="/">Home</Link>
-            <span className="stl-breadcrumb-sep">&gt;</span>
-            <span className="stl-breadcrumb-current">Settlement</span>
-          </nav>
-
           <h1 className="stl-hero-title">Settlement</h1>
           <p className="stl-hero-subtitle">
             Manage payments, commissions and designer settlements seamlessly
@@ -873,7 +867,7 @@ export default function Settlement() {
                         aria-label="Select all settlements"
                       />
                     </th>
-                    <th className="stl-th-index">#</th>
+                    <th className="stl-th-index">Sl.No</th>
                     <th>Settlement ID</th>
                     <th>Designer</th>
                     <th className="stl-text-center">Orders</th>

@@ -1192,7 +1192,7 @@ export default function Accounting() {
                       aria-label="Select all rows"
                     />
                   </th>
-                  <th>#</th>
+                  <th>SL.No</th>
                   <th>Invoice ID</th>
                   <th>Customer / Designer</th>
                   <th>Order ID</th>
