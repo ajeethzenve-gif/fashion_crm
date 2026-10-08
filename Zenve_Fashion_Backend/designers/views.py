@@ -585,8 +585,18 @@ class DesignerPortalDashboardAPIView(APIView):
                     "read": task.get("completed", False)
                 })
 
+        # Add media review notifications
+        for p in skus.filter(media_job__status="IN_REVIEW").select_related("media_job"):
+            notifications.append({
+                "id": f"media-review-{p.id}",
+                "kind": "QA_IMAGE_APPROVAL",
+                "message": f"Product {p.product_name} is pending your design review.",
+                "at": p.media_job.updated_at.isoformat(),
+                "read": False
+            })
+
         # Add recent settlement / order notifications if empty
-        if not notifications:
+        if not [n for n in notifications if n.get("kind") != "QA_IMAGE_APPROVAL"]:
             for s in settlements[:2]:
                 notifications.append({
                     "id": f"stl-{s.id}",

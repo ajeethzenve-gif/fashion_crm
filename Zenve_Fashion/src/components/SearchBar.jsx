@@ -108,7 +108,7 @@ function UserIcon() {
 function SearchBar() {
   /* =======================================================
      STATES
-  ======================================================= */
+  ======================================================= */c
 
   // Layer 01 active by default
   const [activeIndex, setActiveIndex] = useState(0);
@@ -452,11 +452,10 @@ function SearchBar() {
                         <Link
                           key={layer.n}
                           to={layer.path}
-                          className={`search-result-item ${
-                            isActive
+                          className={`search-result-item ${isActive
                               ? "active"
                               : ""
-                          }`}
+                            }`}
                           onMouseEnter={() => {
                             setActiveIndex(index);
                           }}

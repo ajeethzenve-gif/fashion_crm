@@ -1,4 +1,6 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import "../styles/Header.css";
 
 /* =========================================================
@@ -70,10 +72,38 @@ function UserIcon() {
 
 
 /* =========================================================
+   IMAGE ICON (For Designer Reviews)
+========================================================= */
+
+function ImageIcon() {
+  return (
+    <svg
+      className="image-icon-svg"
+      width="21"
+      height="21"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      style={{ marginLeft: '16px', cursor: 'pointer' }}
+    >
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+      <circle cx="8.5" cy="8.5" r="1.5"></circle>
+      <polyline points="21 15 16 10 5 21"></polyline>
+    </svg>
+  );
+}
+
+/* =========================================================
    HEADER COMPONENT
 ========================================================= */
 
 function Header() {
+  const { currentUser } = useAuth();
   return (
     <header className="dashboard-header">
 
@@ -132,6 +162,15 @@ function Header() {
 
           </div>
 
+          {currentUser?.id === "designer" && (
+            <Link to="/designer-reviews" title="Designer Reviews" style={{ display: 'flex', alignItems: 'center', color: 'inherit', textDecoration: 'none' }}>
+              <ImageIcon />
+            </Link>
+          )}
+
+          <div style={{ marginLeft: '16px', display: 'flex', alignItems: 'center' }}>
+            <UserIcon />
+          </div>
 
         </div>
 
