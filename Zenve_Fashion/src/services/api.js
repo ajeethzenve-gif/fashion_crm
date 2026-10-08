@@ -60,7 +60,7 @@ function formatApiError(data, fallbackMessage) {
 ========================================================= */
 
 export async function getDesigners() {
-  const response = await fetch(
+  let response = await fetch(
     `${API_BASE_URL}/designers/`,
     {
       method: "GET",
@@ -70,6 +70,19 @@ export async function getDesigners() {
       },
     }
   );
+
+  if (response.status === 401 || response.status === 403) {
+    // Retry without stale token
+    response = await fetch(
+      `${API_BASE_URL}/designers/`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+  }
 
   if (!response.ok) {
     throw new Error(
@@ -266,7 +279,7 @@ export async function getProducts(params = {}) {
         : ""
     );
 
-  const response = await fetch(
+  let response = await fetch(
     url,
     {
       method: "GET",
@@ -276,6 +289,19 @@ export async function getProducts(params = {}) {
       },
     }
   );
+
+  if (response.status === 401 && authHeaders().Authorization) {
+    // Stale or expired token in localStorage - retry anonymously
+    response = await fetch(
+      url,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+  }
 
   if (!response.ok) {
     throw new Error(

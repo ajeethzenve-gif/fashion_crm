@@ -209,6 +209,7 @@
 
 .zenve-main-content {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -216,6 +217,9 @@
 
 .zenve-page-scroll {
   flex: 1;
+  min-width: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
 }
+

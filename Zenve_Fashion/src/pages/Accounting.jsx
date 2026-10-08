@@ -1,1070 +1,1566 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
 import "../styles/Accounting.css";
-import SearchBar from "../components/SearchBar";
-import zenveLogo from "../assest/logo/zenve-logo-fashion.png";
+import bannerImg from "../assest/accounting-banner.jpg";
 import {
   getAccountingSettlements,
   getAccountingStats,
+  getOrders,
+  createOrder,
   disburseSettlementPayment,
-  batchDisbursePayments,
-  reconcileAccountingSettlements,
-  getAccountingExportUrl,
-  getDesigners,
 } from "../services/api";
-import { showToast } from "../utils/zenveToast";
 
-/* =========================================================
-   ICONS
-========================================================= */
-
-function BackIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path d="M19 12H5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M10 7L5 12L10 17" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
+function getInitials(name) {
+  if (!name) return "Z";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-function CheckIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function DownloadIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M7 10L12 15L17 10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M12 15V3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function RefreshIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M23 4V10H17" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M1 20V14H7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M3.51 9A9 9 0 0120.49 15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function ReceiptIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4 2V22L7 20L10 22L13 20L16 22L19 20L22 22V2L19 4L16 2L13 4L10 2L7 4L4 2Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M8 8H16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M8 12H16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M8 16H12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-/* =========================================================
-   HELPERS & FORMATTERS
-========================================================= */
-
-function formatInr(val) {
-  const num = Number(val) || 0;
-  return `₹${Math.round(num).toLocaleString("en-IN")}`;
-}
-
-function getPaymentBadgeClass(method) {
-  const m = String(method || "").toUpperCase();
-  if (m.includes("RAZORPAY")) return "pm-razorpay";
-  if (m.includes("UPI")) return "pm-upi";
-  if (m.includes("CARD")) return "pm-card";
-  if (m.includes("NET") || m.includes("BANK")) return "pm-netbanking";
-  if (m.includes("COD") || m.includes("CASH")) return "pm-cod";
-  if (m.includes("WALLET")) return "pm-wallet";
-  return "pm-default";
-}
-
-function getStatusTone(status) {
-  const s = String(status || "").toUpperCase();
-  if (["APPROVED", "DELIVERED", "PASSED", "PAID", "RECONCILED", "ACTIVE", "LIVE"].includes(s)) {
-    return "good";
+function getAvatarColor(name) {
+  const palette = [
+    "#965B1C",
+    "#B45309",
+    "#0284C7",
+    "#16A34A",
+    "#9333EA",
+    "#D97706",
+    "#4F46E5",
+    "#BE185D",
+  ];
+  let hash = 0;
+  for (let i = 0; i < (name || "").length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
   }
-  if (["REJECTED", "CANCELLED", "FAILED", "REVERSED"].includes(s)) {
-    return "bad";
-  }
-  if (["PENDING_QA", "CORRECTION", "PENDING", "REQUESTED", "RECEIVED"].includes(s)) {
-    return "warn";
-  }
-  return "info";
+  return palette[Math.abs(hash) % palette.length];
 }
-
-const PAYMENT_METHODS = [
-  { id: "ALL", label: "All Payments", countKey: "all" },
-  { id: "Razorpay", label: "Razorpay", countKey: "Razorpay" },
-  { id: "UPI", label: "UPI", countKey: "UPI" },
-  { id: "Card", label: "Card", countKey: "Card" },
-  { id: "Net Banking", label: "Net Banking", countKey: "Net Banking" },
-  { id: "COD", label: "Cash on Delivery", countKey: "COD" },
-  { id: "Wallet", label: "Wallet", countKey: "Wallet" },
-];
-
-const PAYOUT_CHANNELS = [
-  "Bank Transfer",
-  "UPI",
-  "RazorpayX",
-  "Escrow Release",
-  "COD Courier Offset",
-  "Cheque",
-];
-
-const DEBIT_ACCOUNTS = [
-  "HDFC Corporate Primary A/C (ending in 8912)",
-  "RazorpayX Smart Payout Virtual A/C",
-  "ICICI Platform Escrow A/C (ending in 4401)",
-  "Delhivery Logistics Remittance Clearing A/C",
-];
-
-/* =========================================================
-   ACCOUNTING LAYER (LAYER 14)
-   Handles all settlements across all customer payment methods
-========================================================= */
 
 export default function Accounting() {
+  // Real Backend Data State
   const [settlements, setSettlements] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [stats, setStats] = useState(null);
-  const [designers, setDesigners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [alert, setAlert] = useState(null);
 
-  // Filters & Search
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("ALL");
-  const [selectedStatus, setSelectedStatus] = useState("ALL");
-  const [selectedPayoutMethod, setSelectedPayoutMethod] = useState("ALL");
-  const [searchQuery, setSearchQuery] = useState("");
+  // Navigation
+  const [activeTab, setActiveTab] = useState("Invoices");
 
-  // Bulk selection
+  // Selection & Pagination
   const [selectedIds, setSelectedIds] = useState(new Set());
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
-  // Modals state
-  const [disburseModalItem, setDisburseModalItem] = useState(null);
-  const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
-  const [voucherModalItem, setVoucherModalItem] = useState(null);
-  const [actionLoading, setActionLoading] = useState(false);
+  // Filters
+  const [searchFilter, setSearchFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [dateRangeFilter, setDateRangeFilter] = useState("All");
 
-  // Single disburse form state
-  const [disburseForm, setDisburseForm] = useState({
-    payout_method: "Bank Transfer",
-    payout_channel: DEBIT_ACCOUNTS[0],
-    payout_reference: "",
-    payment_gateway_fee: "0.00",
-    notes: "Platform settlement disbursement",
+  // Modals
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [viewInvoiceItem, setViewInvoiceItem] = useState(null);
+  const [activeMenuId, setActiveMenuId] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // New Invoice Form
+  const [newInvoiceForm, setNewInvoiceForm] = useState({
+    name: "",
+    orderId: "ORD" + Math.floor(1000 + Math.random() * 9000),
+    amount: "",
+    taxRate: "12",
+    status: "Pending",
+    dueDate: new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10),
+    type: "B2C",
   });
 
-  // Batch payout form state
-  const [batchForm, setBatchForm] = useState({
-    batch_id: "",
-    payout_method: "RazorpayX",
-    payout_channel: DEBIT_ACCOUNTS[1],
-    fee_per_tx: "5.00",
-    notes: "Batch designer settlement cycle",
-  });
-
-  useEffect(() => {
-    if (alert) {
-      showToast(alert);
-      const timer = setTimeout(() => setAlert(null), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [alert]);
-
-  /* -------------------------------------------------------
-     FETCH ACCOUNTING DATA
-  ------------------------------------------------------- */
-  const loadData = async () => {
+  /* ---------------------------------------------------------
+     FETCH REAL DATA FROM DJANGO BACKEND
+  --------------------------------------------------------- */
+  const fetchData = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const params = {};
-      if (selectedPaymentMethod !== "ALL") params.payment_method = selectedPaymentMethod;
-      if (selectedStatus !== "ALL") params.status = selectedStatus;
-      if (selectedPayoutMethod !== "ALL") params.payout_method = selectedPayoutMethod;
-      if (searchQuery.trim()) params.search = searchQuery.trim();
-
-      const [settlementsData, statsData, designersData] = await Promise.all([
-        getAccountingSettlements(params).catch((err) => {
+      const [settlementsData, statsData, ordersData] = await Promise.all([
+        getAccountingSettlements().catch((err) => {
           console.error("Failed to load settlements:", err);
           return [];
         }),
         getAccountingStats().catch((err) => {
-          console.error("Failed to load stats:", err);
+          console.error("Failed to load accounting stats:", err);
           return null;
         }),
-        getDesigners().catch(() => []),
+        getOrders().catch((err) => {
+          console.error("Failed to load orders:", err);
+          return [];
+        }),
       ]);
 
       setSettlements(Array.isArray(settlementsData) ? settlementsData : []);
       setStats(statsData);
-      setDesigners(Array.isArray(designersData) ? designersData : []);
-      setSelectedIds(new Set());
+      const ordersList = Array.isArray(ordersData)
+        ? ordersData
+        : Array.isArray(ordersData?.results)
+        ? ordersData.results
+        : [];
+      setOrders(ordersList);
     } catch (err) {
       console.error("Accounting load error:", err);
-      setError("Failed to connect to Accounting engine. Please retry.");
+      setError("Failed to connect to Accounting engine. Please check backend connection.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadData();
-  }, [selectedPaymentMethod, selectedStatus, selectedPayoutMethod]);
+    fetchData();
+  }, []);
 
-  /* -------------------------------------------------------
-     SEARCH FILTERING (CLIENT-SIDE BACKUP / IMMEDIATE RESPONSIVENESS)
-  ------------------------------------------------------- */
-  const filteredSettlements = useMemo(() => {
-    if (!searchQuery.trim()) return settlements;
-    const q = searchQuery.toLowerCase().trim();
-    return settlements.filter((s) => {
-      const num = (s.settlement_number || "").toLowerCase();
-      const order = (s.order_number || s.orderId || "").toLowerCase();
-      const brand = (s.brand_name || s.designer || "").toLowerCase();
-      const sku = (s.sku || "").toLowerCase();
-      const utr = (s.payout_reference || "").toLowerCase();
-      const pm = (s.order_payment_method || s.payment_method || "").toLowerCase();
-      return (
-        num.includes(q) ||
-        order.includes(q) ||
-        brand.includes(q) ||
-        sku.includes(q) ||
-        utr.includes(q) ||
-        pm.includes(q)
-      );
+  // Close row action dropdown when clicking outside
+  useEffect(() => {
+    if (!activeMenuId) return;
+    const handleOutsideClick = (e) => {
+      if (!e.target.closest('.acc-more-wrap')) {
+        setActiveMenuId(null);
+      }
+    };
+    document.addEventListener('click', handleOutsideClick);
+    return () => {
+      document.removeEventListener('click', handleOutsideClick);
+    };
+  }, [activeMenuId]);
+
+  /* ---------------------------------------------------------
+     SYNTHESIZE REAL INVOICES LIST FROM LIVE DB
+  --------------------------------------------------------- */
+  const liveInvoices = useMemo(() => {
+    const list = [];
+
+    // 1. Invoices from Settlements (Designer payouts & receivables)
+    settlements.forEach((s, idx) => {
+      const gmv = parseFloat(s.gmv) || 0;
+      const tax = parseFloat(s.tax_amount) || Math.round(gmv * 0.12);
+      const total = gmv + tax;
+
+      let status = "Pending";
+      const sStatus = String(s.status || "").toUpperCase();
+      if (sStatus === "PAID" || sStatus === "RECONCILED") {
+        status = "Paid";
+      } else if (sStatus === "REVERSED" || s.is_reversal) {
+        status = "Overdue";
+      } else if (sStatus === "PENDING" || sStatus === "APPROVED") {
+        status = "Pending";
+      }
+
+      const invDate = s.created_at
+        ? new Date(s.created_at).toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          })
+        : "—";
+
+      const dueDate = s.paid_at
+        ? new Date(s.paid_at).toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          })
+        : s.created_at
+        ? new Date(new Date(s.created_at).getTime() + 7 * 86400000).toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          })
+        : "—";
+
+      list.push({
+        id: `stl-${s.id}`,
+        rawId: s.id,
+        isSettlement: true,
+        num: String(idx + 1).padStart(2, "0"),
+        invoiceId: s.settlement_number || `INV${s.id}`,
+        name: s.brand_name || s.designer_code || `Couturier #${s.designer || s.id}`,
+        orderId: s.order_number || `ORD${s.order || s.id}`,
+        amount: Math.round(gmv),
+        tax: Math.round(tax),
+        total: Math.round(total),
+        status,
+        invoiceDate: invDate,
+        dueDate: dueDate,
+        type: s.is_reversal ? "Reversal" : s.payout_method || "Designer Payout",
+        rawTimestamp: s.created_at,
+      });
     });
-  }, [settlements, searchQuery]);
 
-  /* -------------------------------------------------------
+    // 2. Invoices from Orders (Client purchases / B2C / B2B)
+    orders.forEach((o, idx) => {
+      const tot = parseFloat(o.total) || 0;
+      const sub = parseFloat(o.subtotal) || Math.round(tot / 1.12);
+      const tax = tot - sub;
+
+      let status = "Pending";
+      const pStatus = String(o.payment_status || "").toLowerCase();
+      const oStatus = String(o.order_status || "").toLowerCase();
+      if (pStatus === "paid" || oStatus === "delivered") {
+        status = "Paid";
+      } else if (oStatus === "cancelled" || oStatus === "failed") {
+        status = "Overdue";
+      } else {
+        status = "Pending";
+      }
+
+      const invDate = o.created_at
+        ? new Date(o.created_at).toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          })
+        : "—";
+
+      list.push({
+        id: `ord-${o.id}`,
+        rawId: o.id,
+        isOrder: true,
+        num: String(list.length + 1).padStart(2, "0"),
+        invoiceId: `INV-${o.order_number || o.id}`,
+        name: o.shipping_full_name || o.customer_name || `Customer #${o.id}`,
+        orderId: o.order_number || `#${o.id}`,
+        amount: Math.round(sub),
+        tax: Math.round(tax),
+        total: Math.round(tot),
+        status,
+        invoiceDate: invDate,
+        dueDate: invDate,
+        type: tot > 200000 ? "B2B" : "B2C",
+        rawTimestamp: o.created_at,
+      });
+    });
+
+    return list;
+  }, [settlements, orders]);
+
+  /* ---------------------------------------------------------
+     FILTERING LOGIC ON LIVE DATA
+  --------------------------------------------------------- */
+  const filteredInvoices = useMemo(() => {
+    return liveInvoices.filter((item) => {
+      // Local table search
+      const q = searchFilter.toLowerCase().trim();
+      if (q) {
+        const matchQ =
+          (item.invoiceId || "").toLowerCase().includes(q) ||
+          (item.name || "").toLowerCase().includes(q) ||
+          (item.orderId || "").toLowerCase().includes(q) ||
+          (item.status || "").toLowerCase().includes(q) ||
+          String(item.total).includes(q);
+        if (!matchQ) return false;
+      }
+
+      // Type filter
+      if (typeFilter !== "All" && item.type !== typeFilter) {
+        return false;
+      }
+
+      // Status filter
+      if (statusFilter !== "All" && item.status !== statusFilter) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [liveInvoices, searchFilter, typeFilter, statusFilter]);
+
+  // Paginated records
+  const paginatedInvoices = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredInvoices.slice(start, start + pageSize);
+  }, [filteredInvoices, currentPage]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredInvoices.length / pageSize));
+
+  /* ---------------------------------------------------------
      SELECTION HANDLERS
-  ------------------------------------------------------- */
-  const toggleSelectAll = () => {
-    if (selectedIds.size === filteredSettlements.length && filteredSettlements.length > 0) {
+  --------------------------------------------------------- */
+  const isAllSelected =
+    paginatedInvoices.length > 0 && selectedIds.size === paginatedInvoices.length;
+
+  const handleSelectAll = () => {
+    if (isAllSelected) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(filteredSettlements.map((s) => s.id)));
+      setSelectedIds(new Set(paginatedInvoices.map((inv) => inv.id)));
     }
   };
 
-  const toggleSelectOne = (id) => {
+  const handleSelectRow = (id) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   };
 
-  const selectedTotalAmount = useMemo(() => {
-    return filteredSettlements
-      .filter((s) => selectedIds.has(s.id))
-      .reduce((sum, s) => sum + (Number(s.payout_amount || s.net) || 0), 0);
-  }, [filteredSettlements, selectedIds]);
+  const handleResetFilters = () => {
+    setSearchFilter("");
+    setTypeFilter("All");
+    setStatusFilter("All");
+    setDateRangeFilter("All");
+    setCurrentPage(1);
+  };
 
-  /* -------------------------------------------------------
-     OPEN DISBURSE MODAL
-  ------------------------------------------------------- */
-  const handleOpenDisburse = (item) => {
-    const autoUtr = `UTR-${Date.now().toString().slice(-6)}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-    const prefMethod = item.payout_method || "Bank Transfer";
-    setDisburseForm({
-      payout_method: prefMethod,
-      payout_channel: DEBIT_ACCOUNTS[0],
-      payout_reference: autoUtr,
-      payment_gateway_fee: prefMethod === "RazorpayX" ? "5.00" : "0.00",
-      notes: `Disbursement for ${item.settlement_number} (Order ${item.order_number || item.orderId})`,
+  /* ---------------------------------------------------------
+     REAL KPI VALUES DERIVED FROM BACKEND STATS
+  --------------------------------------------------------- */
+  const kpis = useMemo(() => {
+    const rawRev = stats?.gross_gmv || stats?.total_settled_gmv || 0;
+    const rawExp = (stats?.total_disbursed || 0) + (stats?.total_gateway_fees || 0);
+    const rawProfit = stats?.zenve_commission || Math.max(0, rawRev - rawExp);
+    const rawPending = stats?.pending_payable || 0;
+    const rawOverdue = stats?.reversal_deductions || 0;
+
+    const profitPct = rawRev > 0 ? ((rawProfit / rawRev) * 100).toFixed(0) : "0";
+    const expPct = rawRev > 0 ? ((rawExp / rawRev) * 100).toFixed(0) : "0";
+    const pendingPct = rawRev > 0 ? ((rawPending / rawRev) * 100).toFixed(0) : "0";
+
+    return {
+      revenue: `₹${Math.round(rawRev).toLocaleString("en-IN")}`,
+      revenueTrend: `${settlements.length} settlements`,
+      expenses: `₹${Math.round(rawExp).toLocaleString("en-IN")}`,
+      expensesTrend: `${expPct}% of GMV`,
+      profit: `₹${Math.round(rawProfit).toLocaleString("en-IN")}`,
+      profitTrend: `${profitPct}% margin`,
+      pending: `₹${Math.round(rawPending).toLocaleString("en-IN")}`,
+      pendingTrend: `${pendingPct}% payable`,
+      overdue: `₹${Math.round(rawOverdue).toLocaleString("en-IN")}`,
+      overdueTrend: `${stats?.status_counts?.reversed || 0} reversed`,
+    };
+  }, [stats, settlements]);
+
+  /* ---------------------------------------------------------
+     EXPENSE BREAKDOWN DERIVED DYNAMICALLY FROM REAL DB STATS
+  --------------------------------------------------------- */
+  const expenseBreakdown = useMemo(() => {
+    const rawExp = (stats?.total_disbursed || 0) + (stats?.total_gateway_fees || 0);
+    const payoutMap = stats?.payout_breakdown || {};
+    const categories = [];
+    const colors = ["#5C3A21", "#D97706", "#F59E0B", "#FCD34D", "#C084FC", "#9333EA"];
+    let colorIdx = 0;
+
+    Object.entries(payoutMap).forEach(([channel, info]) => {
+      const amt = parseFloat(info?.amount || 0);
+      if (amt > 0) {
+        categories.push({
+          name: channel,
+          amount: amt,
+          percentage: rawExp > 0 ? ((amt / rawExp) * 100).toFixed(1) : "0.0",
+          color: colors[colorIdx % colors.length],
+        });
+        colorIdx++;
+      }
     });
-    setDisburseModalItem(item);
-  };
 
-  /* -------------------------------------------------------
-     EXECUTE SINGLE DISBURSEMENT
-  ------------------------------------------------------- */
-  const handleExecuteDisburse = async (e) => {
-    e.preventDefault();
-    if (!disburseModalItem) return;
-
-    try {
-      setActionLoading(true);
-      await disburseSettlementPayment({
-        settlement_ids: [disburseModalItem.id],
-        payout_method: disburseForm.payout_method,
-        payout_channel: disburseForm.payout_channel,
-        payout_reference: disburseForm.payout_reference,
-        payment_gateway_fee: disburseForm.payment_gateway_fee,
-        status: "PAID",
-        notes: disburseForm.notes,
+    if (stats?.total_gateway_fees > 0) {
+      categories.push({
+        name: "Gateway Fees",
+        amount: parseFloat(stats.total_gateway_fees),
+        percentage: rawExp > 0 ? ((stats.total_gateway_fees / rawExp) * 100).toFixed(1) : "0.0",
+        color: "#9333EA",
       });
-
-      setAlert({
-        type: "success",
-        text: `Payout disbursed for ${disburseModalItem.settlement_number} via ${disburseForm.payout_method} (Ref: ${disburseForm.payout_reference})`,
-      });
-      setDisburseModalItem(null);
-      loadData();
-    } catch (err) {
-      console.error("Disburse error:", err);
-      setAlert({ type: "error", text: err.message || "Failed to disburse payment" });
-    } finally {
-      setActionLoading(false);
     }
-  };
 
-  /* -------------------------------------------------------
-     OPEN BATCH MODAL
-  ------------------------------------------------------- */
-  const handleOpenBatch = () => {
-    const batchId = `BATCH-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
-    setBatchForm({
-      batch_id: batchId,
-      payout_method: "RazorpayX",
-      payout_channel: DEBIT_ACCOUNTS[1],
-      fee_per_tx: "5.00",
-      notes: `Batch payout run for ${selectedIds.size} designer settlements`,
+    if (categories.length === 0) {
+      categories.push({
+        name: "Disbursements",
+        amount: rawExp || 0,
+        percentage: "100.0",
+        color: "#5C3A21",
+      });
+    }
+
+    return categories;
+  }, [stats]);
+
+  /* ---------------------------------------------------------
+     REAL RECENT TRANSACTIONS FEED DERIVED FROM DB
+  --------------------------------------------------------- */
+  const recentTransactions = useMemo(() => {
+    const txs = [];
+
+    // Payments from real orders
+    orders.forEach((o) => {
+      if (o.total) {
+        txs.push({
+          id: `tx-ord-${o.id}`,
+          type: "income",
+          title: `Payment from ${o.shipping_full_name || o.customer_name || "Client"}`,
+          ref: o.order_number || `ORD${o.id}`,
+          amount: `+ ₹${Math.round(parseFloat(o.total) || 0).toLocaleString("en-IN")}`,
+          date: o.created_at
+            ? new Date(o.created_at).toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })
+            : "—",
+          timestamp: o.created_at ? new Date(o.created_at).getTime() : 0,
+        });
+      }
     });
-    setIsBatchModalOpen(true);
-  };
 
-  /* -------------------------------------------------------
-     EXECUTE BATCH PAYOUT
-  ------------------------------------------------------- */
-  const handleExecuteBatch = async (e) => {
+    // Real payouts / expenses from settlements
+    settlements.forEach((s) => {
+      const amt = parseFloat(s.payout_amount || s.gmv) || 0;
+      if (amt > 0) {
+        txs.push({
+          id: `tx-stl-${s.id}`,
+          type: "expense",
+          title: `Disbursement - ${s.brand_name || "Couturier"}`,
+          ref: s.settlement_number || `STL${s.id}`,
+          amount: `- ₹${Math.round(amt).toLocaleString("en-IN")}`,
+          date: s.paid_at
+            ? new Date(s.paid_at).toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })
+            : s.created_at
+            ? new Date(s.created_at).toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })
+            : "—",
+          timestamp: s.created_at ? new Date(s.created_at).getTime() : 0,
+        });
+      }
+    });
+
+    txs.sort((a, b) => b.timestamp - a.timestamp);
+    return txs.slice(0, 5);
+  }, [orders, settlements]);
+
+  /* ---------------------------------------------------------
+     MONTHLY CHART DATA DERIVED DYNAMICALLY FROM DB
+  --------------------------------------------------------- */
+  const monthlyChartData = useMemo(() => {
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"];
+    const monthRev = Array(10).fill(0);
+    const monthExp = Array(10).fill(0);
+
+    orders.forEach((o) => {
+      if (o.created_at) {
+        const d = new Date(o.created_at);
+        const m = d.getMonth();
+        if (m < 10) {
+          monthRev[m] += (parseFloat(o.total) || 0) / 100000;
+        }
+      }
+    });
+
+    settlements.forEach((s) => {
+      if (s.created_at) {
+        const d = new Date(s.created_at);
+        const m = d.getMonth();
+        if (m < 10) {
+          monthExp[m] += (parseFloat(s.payout_amount || s.gmv) || 0) / 100000;
+        }
+      }
+    });
+
+    return monthNames.map((m, idx) => ({
+      month: m,
+      revenue: parseFloat((monthRev[idx] || 0).toFixed(2)),
+      expenses: parseFloat((monthExp[idx] || 0).toFixed(2)),
+    }));
+  }, [orders, settlements]);
+
+  const maxChartVal = useMemo(() => {
+    let m = 0;
+    monthlyChartData.forEach((d) => {
+      if (d.revenue > m) m = d.revenue;
+      if (d.expenses > m) m = d.expenses;
+    });
+    return Math.max(1, Math.ceil(m));
+  }, [monthlyChartData]);
+
+  /* ---------------------------------------------------------
+     CREATE REAL INVOICE / ORDER IN BACKEND
+  --------------------------------------------------------- */
+  const handleCreateInvoiceSubmit = async (e) => {
     e.preventDefault();
-    const ids = Array.from(selectedIds);
-    if (ids.length === 0) return;
+    if (!newInvoiceForm.name || !newInvoiceForm.amount) return;
 
+    setIsSubmitting(true);
     try {
-      setActionLoading(true);
-      const res = await batchDisbursePayments({
-        settlement_ids: ids,
-        batch_id: batchForm.batch_id,
-        payout_method: batchForm.payout_method,
-        payout_channel: batchForm.payout_channel,
-        fee_per_tx: batchForm.fee_per_tx,
-        notes: batchForm.notes,
-      });
+      const amt = parseFloat(newInvoiceForm.amount) || 0;
+      const payload = {
+        customer_name: newInvoiceForm.name.trim(),
+        shipping_full_name: newInvoiceForm.name.trim(),
+        shipping_phone: "9876543210",
+        shipping_city: "Mumbai",
+        shipping_address_line1: "Luxury Residence",
+        total: amt,
+        order_status: "Pending",
+        payment_method: "Razorpay",
+        payment_status: newInvoiceForm.status === "Paid" ? "Paid" : "Pending",
+        items: [
+          {
+            product_name: "Haute Couture Garment Deliverable",
+            quantity: 1,
+            price: amt,
+            unit_price: amt,
+            total: amt,
+            color: "Ivory Gold",
+            size: "M",
+          },
+        ],
+      };
 
-      setAlert({
-        type: "success",
-        text: `Batch ${batchForm.batch_id} processed! Disbursed ₹${res.total_payout_disbursed.toLocaleString("en-IN")} across ${res.settlements_count} settlements.`,
+      await createOrder(payload);
+      setIsCreateModalOpen(false);
+      setNewInvoiceForm({
+        name: "",
+        orderId: "ORD" + Math.floor(1000 + Math.random() * 9000),
+        amount: "",
+        taxRate: "12",
+        status: "Pending",
+        dueDate: new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10),
+        type: "B2C",
       });
-      setIsBatchModalOpen(false);
-      setSelectedIds(new Set());
-      loadData();
+      // Refresh live database
+      await fetchData();
     } catch (err) {
-      console.error("Batch payout error:", err);
-      setAlert({ type: "error", text: err.message || "Failed to process batch payout" });
+      console.error("Failed to create invoice:", err);
+      alert(err.message || "Failed to create invoice in backend");
     } finally {
-      setActionLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  /* -------------------------------------------------------
-     RECONCILE SELECTED OR ALL
-  ------------------------------------------------------- */
-  const handleReconcileSelected = async () => {
-    const ids = Array.from(selectedIds);
-    if (ids.length === 0) return;
-
-    try {
-      setActionLoading(true);
-      await reconcileAccountingSettlements({ settlement_ids: ids });
-      setAlert({
-        type: "success",
-        text: `Successfully reconciled ${ids.length} settlement(s) against payment gateway statement.`,
-      });
-      setSelectedIds(new Set());
-      loadData();
-    } catch (err) {
-      console.error("Reconcile error:", err);
-      setAlert({ type: "error", text: err.message || "Failed to reconcile settlements" });
-    } finally {
-      setActionLoading(false);
+  /* ---------------------------------------------------------
+     ACTION HANDLERS (DISBURSE / DOWNLOAD RECEIPT)
+  --------------------------------------------------------- */
+  const handleMarkPaid = async (inv) => {
+    if (inv.isSettlement && inv.rawId) {
+      try {
+        await disburseSettlementPayment({
+          settlement_ids: [inv.rawId],
+          status: "PAID",
+          notes: `Disbursed for ${inv.invoiceId}`,
+        });
+        await fetchData();
+      } catch (err) {
+        console.error("Disburse error:", err);
+      }
     }
+    setActiveMenuId(null);
   };
 
-  const handleReconcileAllPaid = async () => {
-    try {
-      setActionLoading(true);
-      const res = await reconcileAccountingSettlements({ reconcile_all_paid: true });
-      setAlert({
-        type: "success",
-        text: `Reconciliation complete: ${res.reconciled_count} settlements matched and reconciled.`,
-      });
-      loadData();
-    } catch (err) {
-      console.error("Reconcile all error:", err);
-      setAlert({ type: "error", text: err.message || "Reconciliation failed" });
-    } finally {
-      setActionLoading(false);
-    }
+  const handleDownloadInvoice = (inv) => {
+    const content = `ZENVE FASHION MERCHANDISING - INVOICE VOUCHER\n` +
+      `--------------------------------------------------\n` +
+      `Invoice ID: ${inv.invoiceId}\n` +
+      `Order ID:   ${inv.orderId}\n` +
+      `Recipient:  ${inv.name}\n` +
+      `Amount:     ₹${inv.amount.toLocaleString("en-IN")}\n` +
+      `Tax (GST):  ₹${inv.tax.toLocaleString("en-IN")}\n` +
+      `Total:      ₹${inv.total.toLocaleString("en-IN")}\n` +
+      `Status:     ${inv.status}\n` +
+      `Date:       ${inv.invoiceDate}\n` +
+      `Due Date:   ${inv.dueDate}\n` +
+      `--------------------------------------------------\n` +
+      `Verified by Zenve Fashion Live Accounting Gateway`;
+
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${inv.invoiceId}_receipt.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
-    <div className="ZENVE-accounting-layout">
+    <div className="acc-page-container">
       {/* =====================================================
-          HEADER SECTION
+          LUXURY HERO BANNER
       ===================================================== */}
-      <header className="ZENVE-accounting-header">
-        <div className="ZENVE-header-left">
-          <Link to="/" className="ZENVE-portal-logo" aria-label="Go to home">
-            <img src={zenveLogo} alt="Zenve Fashion" />
-          </Link>
+      <section className="acc-hero-banner">
+        <div className="acc-hero-content">
+          <h1 className="acc-hero-title">Accounting</h1>
+          <p className="acc-hero-subtitle">
+            Manage your finances, invoices, expenses and financial reports
+          </p>
+        </div>
 
-          <div className="ZENVE-header-title-block">
-            <Link to="/" className="ZENVE-back-link">
-              <BackIcon />
-              <span>ALL 15 LAYERS</span>
-            </Link>
+        {/* Fashion Showroom Background Artwork */}
+        <div className="acc-hero-art-wrap">
+          <img
+            src={bannerImg}
+            alt="Haute Couture Fashion Showroom"
+            className="acc-hero-art-img"
+          />
+          <div className="acc-hero-glow-overlay" />
+        </div>
+      </section>
 
-            <h1 className="ZENVE-portal-title">
-              <span className="ZENVE-layer-num">15</span>
-              <span>Accounting</span>
-            </h1>
-
-            <p className="ZENVE-portal-desc">
-              Finance & Payment Operations · Multi-payment settlement ledger, disbursement batches, and gateway reconciliation
-            </p>
+      {/* =====================================================
+          TOP FINANCIAL KPI CARDS (5 LIVE METRICS)
+      ===================================================== */}
+      <section className="acc-kpi-grid">
+        {/* Card 1: Total Revenue */}
+        <div className="acc-kpi-card">
+          <div className="acc-kpi-card-header">
+            <div className="acc-kpi-title-group">
+              <div className="acc-kpi-icon-badge gold-bg">
+                <span className="acc-icon-sym">₹</span>
+              </div>
+              <span className="acc-kpi-label">Total Revenue</span>
+            </div>
+            <span className="acc-trend-pill up">{kpis.revenueTrend}</span>
+          </div>
+          <div className="acc-kpi-card-body">
+            <strong className="acc-kpi-value">{kpis.revenue}</strong>
+            <svg className="acc-sparkline" width="38" height="18" viewBox="0 0 38 18">
+              <path
+                d="M1 15 L9 11 L18 13 L27 5 L37 2"
+                fill="none"
+                stroke="#16A34A"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
           </div>
         </div>
 
-        <div className="ZENVE-header-right">
-          <SearchBar />
+        {/* Card 2: Total Expenses */}
+        <div className="acc-kpi-card">
+          <div className="acc-kpi-card-header">
+            <div className="acc-kpi-title-group">
+              <div className="acc-kpi-icon-badge amber-bg">
+                <span className="acc-icon-sym">🪙</span>
+              </div>
+              <span className="acc-kpi-label">Total Expenses</span>
+            </div>
+            <span className="acc-trend-pill red">{kpis.expensesTrend}</span>
+          </div>
+          <div className="acc-kpi-card-body">
+            <strong className="acc-kpi-value">{kpis.expenses}</strong>
+            <svg className="acc-sparkline" width="38" height="18" viewBox="0 0 38 18">
+              <path
+                d="M1 14 L9 12 L18 8 L27 10 L37 4"
+                fill="none"
+                stroke="#DC2626"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
         </div>
-      </header>
+
+        {/* Card 3: Net Profit */}
+        <div className="acc-kpi-card">
+          <div className="acc-kpi-card-header">
+            <div className="acc-kpi-title-group">
+              <div className="acc-kpi-icon-badge orange-bg">
+                <span className="acc-icon-sym">📊</span>
+              </div>
+              <span className="acc-kpi-label">Net Profit</span>
+            </div>
+            <span className="acc-trend-pill up">{kpis.profitTrend}</span>
+          </div>
+          <div className="acc-kpi-card-body">
+            <strong className="acc-kpi-value">{kpis.profit}</strong>
+            <svg className="acc-sparkline" width="38" height="18" viewBox="0 0 38 18">
+              <path
+                d="M1 16 L9 13 L18 10 L27 8 L37 2"
+                fill="none"
+                stroke="#16A34A"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+        </div>
+
+        {/* Card 4: Pending Invoices */}
+        <div className="acc-kpi-card">
+          <div className="acc-kpi-card-header">
+            <div className="acc-kpi-title-group">
+              <div className="acc-kpi-icon-badge tan-bg">
+                <span className="acc-icon-sym">📄</span>
+              </div>
+              <span className="acc-kpi-label">Pending Invoices</span>
+            </div>
+            <span className="acc-trend-pill orange">{kpis.pendingTrend}</span>
+          </div>
+          <div className="acc-kpi-card-body">
+            <strong className="acc-kpi-value">{kpis.pending}</strong>
+            <svg className="acc-sparkline" width="38" height="18" viewBox="0 0 38 18">
+              <path
+                d="M1 13 L9 15 L18 11 L27 6 L37 3"
+                fill="none"
+                stroke="#EA580C"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+        </div>
+
+        {/* Card 5: Overdue Payments */}
+        <div className="acc-kpi-card">
+          <div className="acc-kpi-card-header">
+            <div className="acc-kpi-title-group">
+              <div className="acc-kpi-icon-badge cream-bg">
+                <span className="acc-icon-sym">⏱️</span>
+              </div>
+              <span className="acc-kpi-label">Overdue Payments</span>
+            </div>
+            <span className="acc-trend-pill red">{kpis.overdueTrend}</span>
+          </div>
+          <div className="acc-kpi-card-body">
+            <strong className="acc-kpi-value">{kpis.overdue}</strong>
+            <svg className="acc-sparkline" width="38" height="18" viewBox="0 0 38 18">
+              <path
+                d="M1 4 L10 7 L19 9 L28 12 L37 15"
+                fill="none"
+                stroke="#DC2626"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+        </div>
+      </section>
 
       {/* =====================================================
-          MAIN CONTENT AREA
+          NAVIGATION TABS & PRIMARY ACTION ROW
       ===================================================== */}
-      <main className="ZENVE-accounting-main">
-        {/* TOAST / ALERT BANNER */}
-        {alert && alert.type !== "success" && (
-          <div className={`ZENVE-accounting-alert ${alert.type}`}>
-            <span>{alert.text}</span>
+      <section className="acc-tabs-action-bar">
+        <div className="acc-tabs-list">
+          {["Invoices", "Expenses", "Payments", "Tax & Compliance", "Financial Reports"].map(
+            (tab) => (
+              <button
+                key={tab}
+                type="button"
+                className={`acc-tab-btn ${activeTab === tab ? "active" : ""}`}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab}
+              </button>
+            )
+          )}
+        </div>
+
+        <button
+          type="button"
+          className="acc-create-invoice-btn"
+          onClick={() => setIsCreateModalOpen(true)}
+        >
+          <span className="acc-plus-icon">+</span>
+          <span>Create Invoice</span>
+        </button>
+      </section>
+
+      {/* =====================================================
+          MAIN CONTENT AREA (SPLIT GRID)
+      ===================================================== */}
+      <main className="acc-split-grid">
+        {/* ---------------------------------------------------
+            LEFT COLUMN: INVOICES DATA TABLE & FILTERS
+        --------------------------------------------------- */}
+        <div className="acc-table-card">
+          {/* Filter Toolbar */}
+          <div className="acc-filter-toolbar">
+            <div className="acc-table-search-wrap">
+              <svg
+                className="acc-table-search-icon"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#8C7862"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input
+                type="text"
+                className="acc-table-search-input"
+                placeholder="Search by invoice ID, customer, designer, or order ID..."
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+              />
+            </div>
+
+            <div className="acc-filter-group">
+              <label className="acc-filter-label">Type</label>
+              <select
+                className="acc-filter-select"
+                value={typeFilter}
+                onChange={(e) => setTypeFilter(e.target.value)}
+              >
+                <option value="All">All</option>
+                <option value="B2C">B2C</option>
+                <option value="B2B">B2B</option>
+                <option value="Designer Payout">Designer Payout</option>
+                <option value="Wholesale">Wholesale</option>
+              </select>
+            </div>
+
+            <div className="acc-filter-group">
+              <label className="acc-filter-label">Status</label>
+              <select
+                className="acc-filter-select"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="All">All</option>
+                <option value="Paid">Paid</option>
+                <option value="Pending">Pending</option>
+                <option value="Overdue">Overdue</option>
+              </select>
+            </div>
+
+            <div className="acc-filter-group">
+              <label className="acc-filter-label">Date Range</label>
+              <select
+                className="acc-filter-select"
+                value={dateRangeFilter}
+                onChange={(e) => setDateRangeFilter(e.target.value)}
+              >
+                <option value="All">All</option>
+                <option value="Today">Today</option>
+                <option value="This Week">This Week</option>
+                <option value="This Month">This Month</option>
+                <option value="This Quarter">This Quarter</option>
+              </select>
+            </div>
+
             <button
               type="button"
-              className="ZENVE-alert-close"
-              onClick={() => setAlert(null)}
-              aria-label="Close alert"
+              className="acc-reset-btn"
+              onClick={handleResetFilters}
+              title="Reset all filters"
             >
-              ×
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M23 4v6h-6" />
+                <path d="M1 20v-6h6" />
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+              </svg>
+              <span>Reset</span>
             </button>
           </div>
-        )}
 
-        {/* ERROR BANNER */}
-        {error && (
-          <div className="ZENVE-accounting-alert error">
-            <span>{error}</span>
-            <button type="button" className="ZENVE-alert-close" onClick={loadData}>
-              Retry
-            </button>
-          </div>
-        )}
-
-        {/* ===================================================
-            TOP 5 KPI METRIC CARDS
-        =================================================== */}
-        <section className="ZENVE-accounting-kpi-grid">
-          {/* TOTAL SETTLED GMV */}
-          <div className="ZENVE-kpi-card">
-            <span className="ZENVE-kpi-label">Settled Inflows</span>
-            <strong className="ZENVE-kpi-value">
-              {formatInr(stats?.total_settled_gmv || 0)}
-            </strong>
-            <span className="ZENVE-kpi-hint">
-              Gross: {formatInr(stats?.gross_gmv || 0)} · Reversals: -{formatInr(stats?.reversal_deductions || 0)}
-            </span>
-          </div>
-
-          {/* TOTAL DISBURSED */}
-          <div className="ZENVE-kpi-card accent-green">
-            <span className="ZENVE-kpi-label">Disbursed to Brands</span>
-            <strong className="ZENVE-kpi-value">
-              {formatInr(stats?.total_disbursed || 0)}
-            </strong>
-            <span className="ZENVE-kpi-hint">
-              Paid via Bank, UPI & RazorpayX
-            </span>
-          </div>
-
-          {/* PENDING PAYABLE */}
-          <div className="ZENVE-kpi-card accent-amber">
-            <span className="ZENVE-kpi-label">Pending Payout Queue</span>
-            <strong className="ZENVE-kpi-value">
-              {formatInr(stats?.pending_payable || 0)}
-            </strong>
-            <span className="ZENVE-kpi-hint">
-              {(stats?.status_counts?.pending || 0) + (stats?.status_counts?.approved || 0)} settlements ready for release
-            </span>
-          </div>
-
-          {/* ZENVE COMMISSION */}
-          <div className="ZENVE-kpi-card accent-gold">
-            <span className="ZENVE-kpi-label">Platform Take Rate</span>
-            <strong className="ZENVE-kpi-value">
-              {formatInr(stats?.zenve_commission || 0)}
-            </strong>
-            <span className="ZENVE-kpi-hint">Net retained commission</span>
-          </div>
-
-          {/* GATEWAY FEES */}
-          <div className="ZENVE-kpi-card">
-            <span className="ZENVE-kpi-label">Gateway & MDR Fees</span>
-            <strong className="ZENVE-kpi-value">
-              {formatInr(stats?.total_gateway_fees || 0)}
-            </strong>
-            <span className="ZENVE-kpi-hint">Transfer & payment charges</span>
-          </div>
-        </section>
-
-        {/* ===================================================
-            PAYMENT METHOD DISTRIBUTION BREAKDOWN
-        =================================================== */}
-        <section className="ZENVE-payment-methods-strip">
-          <div className="ZENVE-strip-title">
-            <span>Settlement Handling by Customer Payment Gateways</span>
-            <span className="ZENVE-strip-subtitle">Real-time settlement volume and counts across payment rails</span>
-          </div>
-
-          <div className="ZENVE-payment-tiles">
-            {PAYMENT_METHODS.filter((m) => m.id !== "ALL").map((pm) => {
-              const methodStats = stats?.payment_breakdown?.[pm.id] || { count: 0, gmv: 0, paid_count: 0 };
-              const isSelected = selectedPaymentMethod === pm.id;
-
-              return (
-                <button
-                  key={pm.id}
-                  type="button"
-                  className={`ZENVE-pm-tile ${getPaymentBadgeClass(pm.id)} ${isSelected ? "selected" : ""}`}
-                  onClick={() => setSelectedPaymentMethod(isSelected ? "ALL" : pm.id)}
-                >
-                  <div className="pm-tile-top">
-                    <span className="pm-tile-name">{pm.label}</span>
-                    <span className="pm-tile-count">{methodStats.count} orders</span>
-                  </div>
-                  <div className="pm-tile-amount">{formatInr(methodStats.gmv)}</div>
-                  <div className="pm-tile-bottom">
-                    <span>{methodStats.paid_count} settled</span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* ===================================================
-            ACCOUNTING SETTLEMENT LEDGER PANEL
-        =================================================== */}
-        <section className="ZENVE-panel-card">
-          <div className="ZENVE-panel-header">
-            <div className="ZENVE-panel-title-block">
-              <h2 className="ZENVE-panel-title">Accounting & Settlement Ledger</h2>
-              <p className="ZENVE-panel-desc">
-                Complete multi-payment financial journal. Handle disbursements, generate UTR numbers, reconcile gateway receipts, and audit payouts.
-              </p>
-            </div>
-
-            <div className="ZENVE-panel-actions">
-              <a
-                href={getAccountingExportUrl()}
-                download
-                className="ZENVE-btn ZENVE-btn-secondary"
-                title="Download CSV Ledger"
-              >
-                <DownloadIcon />
-                <span>Export Ledger CSV</span>
-              </a>
-
-              <button
-                type="button"
-                className="ZENVE-btn ZENVE-btn-secondary"
-                onClick={handleReconcileAllPaid}
-                disabled={actionLoading}
-                title="Auto-reconcile all paid settlements against statements"
-              >
-                <CheckIcon />
-                <span>Reconcile All Paid</span>
-              </button>
-
-              <button
-                type="button"
-                className="ZENVE-btn ZENVE-btn-secondary"
-                onClick={loadData}
-                disabled={loading}
-                title="Refresh ledger"
-              >
-                <RefreshIcon />
-                <span>Sync Ledger</span>
-              </button>
-            </div>
-          </div>
-
-          {/* CONTROLS & FILTER BAR */}
-          <div className="ZENVE-accounting-controls-bar">
-            {/* PAYMENT METHOD TABS */}
-            <div className="ZENVE-tabs-scroll">
-              <div className="ZENVE-payment-tabs">
-                {PAYMENT_METHODS.map((tab) => (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    className={`ZENVE-tab-btn ${selectedPaymentMethod === tab.id ? "active" : ""}`}
-                    onClick={() => setSelectedPaymentMethod(tab.id)}
-                  >
-                    <span>{tab.label}</span>
-                    {stats?.payment_breakdown?.[tab.id] && (
-                      <span className="tab-pill">
-                        {stats.payment_breakdown[tab.id].count}
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* SECONDARY FILTERS & SEARCH */}
-            <div className="ZENVE-secondary-filters">
-              <div className="ZENVE-filter-group">
-                <label htmlFor="accounting-search">Search:</label>
-                <input
-                  id="accounting-search"
-                  type="text"
-                  placeholder="Filter by Settlement, Order, UTR, Brand..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="ZENVE-input-text"
-                />
-              </div>
-
-              <div className="ZENVE-filter-group">
-                <label htmlFor="accounting-status-select">Status:</label>
-                <select
-                  id="accounting-status-select"
-                  value={selectedStatus}
-                  onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="ZENVE-select"
-                >
-                  <option value="ALL">All Statuses</option>
-                  <option value="PENDING">Pending Approval</option>
-                  <option value="APPROVED">Approved (Ready for Payout)</option>
-                  <option value="PAID">Paid (Disbursed)</option>
-                  <option value="RECONCILED">Reconciled</option>
-                  <option value="REVERSED">Reversed (Returns)</option>
-                </select>
-              </div>
-
-              <div className="ZENVE-filter-group">
-                <label htmlFor="accounting-payout-select">Payout Rail:</label>
-                <select
-                  id="accounting-payout-select"
-                  value={selectedPayoutMethod}
-                  onChange={(e) => setSelectedPayoutMethod(e.target.value)}
-                  className="ZENVE-select"
-                >
-                  <option value="ALL">All Payout Rails</option>
-                  {PAYOUT_CHANNELS.map((p) => (
-                    <option key={p} value={p}>
-                      {p}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* FLOATING / INLINE BATCH ACTION BAR */}
-          {selectedIds.size > 0 && (
-            <div className="ZENVE-batch-action-bar">
-              <div className="batch-info">
-                <strong>{selectedIds.size} settlements selected</strong>
-                <span>Total Payout: {formatInr(selectedTotalAmount)}</span>
-              </div>
-
-              <div className="batch-buttons">
-                <button
-                  type="button"
-                  className="ZENVE-btn ZENVE-btn-primary"
-                  onClick={handleOpenBatch}
-                >
-                  Disburse Batch Payout via Payment
-                </button>
-
-                <button
-                  type="button"
-                  className="ZENVE-btn ZENVE-btn-secondary"
-                  onClick={handleReconcileSelected}
-                  disabled={actionLoading}
-                >
-                  Mark Selected Reconciled
-                </button>
-
-                <button
-                  type="button"
-                  className="ZENVE-btn-text"
-                  onClick={() => setSelectedIds(new Set())}
-                >
-                  Clear Selection
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* SETTLEMENTS TABLE */}
-          {loading ? (
-            <div className="ZENVE-empty-box">
-              Loading multi-payment settlement records...
-            </div>
-          ) : filteredSettlements.length === 0 ? (
-            <div className="ZENVE-empty-box">
-              No settlements found matching the selected payment method or filters.
-            </div>
-          ) : (
-            <div className="ZENVE-table-wrap">
-              <table className="ZENVE-accounting-table">
-                <thead>
+          {/* Interactive Invoices Table */}
+          <div className="acc-table-wrapper">
+            <table className="acc-table">
+              <thead>
+                <tr>
+                  <th className="th-checkbox">
+                    <input
+                      type="checkbox"
+                      className="acc-custom-checkbox"
+                      checked={isAllSelected}
+                      onChange={handleSelectAll}
+                      aria-label="Select all rows"
+                    />
+                  </th>
+                  <th>#</th>
+                  <th>Invoice ID</th>
+                  <th>Customer / Designer</th>
+                  <th>Order ID</th>
+                  <th>Amount</th>
+                  <th>Tax (GST)</th>
+                  <th>Total Amount</th>
+                  <th>Status</th>
+                  <th>Invoice Date</th>
+                  <th>Due Date</th>
+                  <th className="th-actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
                   <tr>
-                    <th style={{ width: 40 }}>
-                      <input
-                        type="checkbox"
-                        aria-label="Select all settlements"
-                        checked={
-                          selectedIds.size === filteredSettlements.length &&
-                          filteredSettlements.length > 0
-                        }
-                        onChange={toggleSelectAll}
-                      />
-                    </th>
-                    <th>Settlement & Order</th>
-                    <th>Customer Payment</th>
-                    <th>Brand / Designer</th>
-                    <th>Product & SKU</th>
-                    <th>GMV (INR)</th>
-                    <th>Take Rate</th>
-                    <th>Net Payout</th>
-                    <th>Payout Channel & UTR</th>
-                    <th>Status</th>
-                    <th style={{ textAlign: "right" }}>Payment Actions</th>
+                    <td colSpan="12" className="acc-empty-cell">
+                      Connecting to Live Accounting Gateway...
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {filteredSettlements.map((item) => {
-                    const isSelected = selectedIds.has(item.id);
-                    const isReversed = item.status === "REVERSED" || item.is_reversal;
-                    const isPaid = item.status === "PAID";
-                    const isReconciled = item.status === "RECONCILED";
-                    const isApproved = item.status === "APPROVED";
-                    const isPending = item.status === "PENDING";
-
-                    const paymentMethodName = item.order_payment_method || item.payment_method || "COD";
-                    const payoutMethodName = item.payout_method || "Bank Transfer";
-                    const netPayout = item.payout_amount ?? item.net ?? 0;
-
+                ) : paginatedInvoices.length === 0 ? (
+                  <tr>
+                    <td colSpan="12" className="acc-empty-cell">
+                      No invoices found in database matching your filters.
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedInvoices.map((inv, idx) => {
+                    const isChecked = selectedIds.has(inv.id);
+                    const isNearBottom = idx >= Math.max(0, paginatedInvoices.length - 2);
                     return (
-                      <tr key={item.id} className={isSelected ? "row-selected" : ""}>
-                        <td>
+                      <tr key={inv.id} className={isChecked ? "row-selected" : ""}>
+                        <td className="td-checkbox">
                           <input
                             type="checkbox"
-                            aria-label={`Select settlement ${item.settlement_number}`}
-                            checked={isSelected}
-                            onChange={() => toggleSelectOne(item.id)}
+                            className="acc-custom-checkbox"
+                            checked={isChecked}
+                            onChange={() => handleSelectRow(inv.id)}
+                            aria-label={`Select invoice ${inv.invoiceId}`}
                           />
                         </td>
-
-                        {/* Settlement & Order IDs */}
-                        <td>
-                          <div className="cell-id-block">
-                            <span className="cell-settlement-num">{item.settlement_number}</span>
-                            <span className="cell-order-num">
-                              Order #{item.order_number || item.orderId || "—"}
-                            </span>
-                            {item.batch_id && (
-                              <span className="cell-batch-tag">{item.batch_id}</span>
-                            )}
+                        <td className="td-num">{inv.num}</td>
+                        <td className="td-inv-id">
+                          <button
+                            type="button"
+                            className="acc-id-link"
+                            onClick={() => setViewInvoiceItem(inv)}
+                          >
+                            {inv.invoiceId}
+                          </button>
+                        </td>
+                        <td className="td-client">
+                          <div className="acc-client-profile">
+                            <div
+                              className="acc-client-initial-badge"
+                              style={{ background: getAvatarColor(inv.name) }}
+                              title={inv.name}
+                            >
+                              {getInitials(inv.name)}
+                            </div>
+                            <span className="acc-client-name">{inv.name}</span>
                           </div>
                         </td>
-
-                        {/* Customer Payment Inflow Method */}
-                        <td>
-                          <div className="cell-payment-block">
-                            <span className={`ZENVE-pm-badge ${getPaymentBadgeClass(paymentMethodName)}`}>
-                              {paymentMethodName}
-                            </span>
-                            <span className="cell-payment-status">
-                              {item.order_payment_status || item.payment_status || "Completed"}
-                            </span>
-                          </div>
+                        <td className="td-order-id">
+                          <span className="acc-order-link">{inv.orderId}</span>
                         </td>
-
-                        {/* Brand / Designer */}
-                        <td>
-                          <div className="cell-designer-block">
-                            <strong>{item.brand_name || item.designer || "Brand Partner"}</strong>
-                            {item.designer_code && (
-                              <span className="cell-sub">{item.designer_code}</span>
-                            )}
-                          </div>
+                        <td className="td-amount">
+                          ₹{inv.amount.toLocaleString("en-IN")}
                         </td>
-
-                        {/* Product SKU */}
-                        <td>
-                          <div className="cell-sku-block">
-                            <span className="sku-title">{item.product_name || "Fashion Apparel"}</span>
-                            <span className="sku-code">{item.sku || "SKU-GEN"}</span>
-                          </div>
+                        <td className="td-tax">
+                          ₹{inv.tax.toLocaleString("en-IN")}
                         </td>
-
-                        {/* GMV */}
-                        <td>
-                          <strong className={isReversed ? "amount-negative" : ""}>
-                            {formatInr(item.gmv)}
-                          </strong>
+                        <td className="td-total">
+                          <strong>₹{inv.total.toLocaleString("en-IN")}</strong>
                         </td>
-
-                        {/* Take Rate & Commission */}
-                        <td>
-                          <div className="cell-rate-block">
-                            <span>{item.takeRate ?? item.take_rate ?? 15}%</span>
-                            <span className="cell-sub">
-                              {formatInr(item.commission_amount ?? item.commission ?? 0)}
-                            </span>
-                          </div>
-                        </td>
-
-                        {/* Net Designer Payout */}
-                        <td>
-                          <div className="cell-payout-block">
-                            <strong className={`net-val ${isReversed ? "amount-negative" : ""}`}>
-                              {formatInr(netPayout)}
-                            </strong>
-                            {item.payment_gateway_fee > 0 && (
-                              <span className="fee-hint">Fee: ₹{item.payment_gateway_fee}</span>
-                            )}
-                          </div>
-                        </td>
-
-                        {/* Payout Channel & UTR */}
-                        <td>
-                          <div className="cell-utr-block">
-                            <span className="payout-method-tag">{payoutMethodName}</span>
-                            {item.payout_reference ? (
-                              <code className="utr-code" title={item.payout_reference}>
-                                {item.payout_reference}
-                              </code>
-                            ) : (
-                              <span className="utr-pending">UTR Pending</span>
-                            )}
-                          </div>
-                        </td>
-
-                        {/* Status */}
-                        <td>
-                          <span className={`ZENVE-status-pill ${getStatusTone(item.status)}`}>
-                            {item.status}
+                        <td className="td-status">
+                          <span
+                            className={`acc-status-pill ${
+                              inv.status === "Paid"
+                                ? "paid"
+                                : inv.status === "Pending"
+                                ? "pending"
+                                : "overdue"
+                            }`}
+                          >
+                            <span className="acc-status-dot" />
+                            {inv.status}
                           </span>
                         </td>
-
-                        {/* Payment Actions */}
-                        <td>
-                          <div className="cell-actions-block">
-                            {/* Disburse Single */}
-                            {!isReversed && !isPaid && !isReconciled && (
-                              <button
-                                type="button"
-                                className="ZENVE-action-btn primary"
-                                onClick={() => handleOpenDisburse(item)}
-                              >
-                                Disburse
-                              </button>
-                            )}
-
-                            {/* Mark Reconciled */}
-                            {isPaid && (
-                              <button
-                                type="button"
-                                className="ZENVE-action-btn secondary"
-                                onClick={async () => {
-                                  try {
-                                    setActionLoading(true);
-                                    await reconcileAccountingSettlements({ settlement_ids: [item.id] });
-                                    setAlert({ type: "success", text: `${item.settlement_number} reconciled!` });
-                                    loadData();
-                                  } catch (err) {
-                                    setAlert({ type: "error", text: err.message });
-                                  } finally {
-                                    setActionLoading(false);
-                                  }
-                                }}
-                              >
-                                Reconcile
-                              </button>
-                            )}
-
-                            {/* View Payment Voucher */}
+                        <td className="td-date">{inv.invoiceDate}</td>
+                        <td
+                          className={`td-due-date ${
+                            inv.status === "Overdue" ? "text-overdue" : ""
+                          }`}
+                        >
+                          {inv.dueDate}
+                        </td>
+                        <td className="td-actions">
+                          <div className="acc-action-buttons">
+                            {/* View Eye */}
                             <button
                               type="button"
-                              className="ZENVE-icon-action-btn"
-                              title="View Payment Voucher"
-                              onClick={() => setVoucherModalItem(item)}
+                              className="acc-icon-btn"
+                              title="View Invoice Statement"
+                              onClick={() => setViewInvoiceItem(inv)}
                             >
-                              <ReceiptIcon />
+                              <svg
+                                width="15"
+                                height="15"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                <circle cx="12" cy="12" r="3" />
+                              </svg>
                             </button>
+
+                            {/* Download */}
+                            <button
+                              type="button"
+                              className="acc-icon-btn"
+                              title="Download Statement"
+                              onClick={() => handleDownloadInvoice(inv)}
+                            >
+                              <svg
+                                width="15"
+                                height="15"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                              </svg>
+                            </button>
+
+                            {/* More ⋮ */}
+                            <div className="acc-more-wrap">
+                              <button
+                                type="button"
+                                className={`acc-icon-btn ${activeMenuId === inv.id ? "active" : ""}`}
+                                title="More options"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setActiveMenuId(
+                                    activeMenuId === inv.id ? null : inv.id
+                                  );
+                                }}
+                              >
+                                <svg
+                                  width="15"
+                                  height="15"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <circle cx="12" cy="5" r="1.5" />
+                                  <circle cx="12" cy="12" r="1.5" />
+                                  <circle cx="12" cy="19" r="1.5" />
+                                </svg>
+                              </button>
+
+                              {activeMenuId === inv.id && (
+                                <div
+                                  className={`acc-row-menu ${
+                                    isNearBottom ? "menu-upward" : ""
+                                  }`}
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      handleMarkPaid(inv);
+                                      setActiveMenuId(null);
+                                    }}
+                                  >
+                                    <svg
+                                      width="14"
+                                      height="14"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2.2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    >
+                                      <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                    <span>Mark Disbursed / Paid</span>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      alert(
+                                        `Payment notification sent for ${inv.invoiceId}!`
+                                      );
+                                      setActiveMenuId(null);
+                                    }}
+                                  >
+                                    <svg
+                                      width="14"
+                                      height="14"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2.2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    >
+                                      <line x1="22" y1="2" x2="11" y2="13" />
+                                      <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                                    </svg>
+                                    <span>Send Notice</span>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setViewInvoiceItem(inv);
+                                      setActiveMenuId(null);
+                                    }}
+                                  >
+                                    <svg
+                                      width="14"
+                                      height="14"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2.2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    >
+                                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                      <polyline points="14 2 14 8 20 8" />
+                                      <line x1="16" y1="13" x2="8" y2="13" />
+                                      <line x1="16" y1="17" x2="8" y2="17" />
+                                      <polyline points="10 9 9 9 8 9" />
+                                    </svg>
+                                    <span>Inspect Voucher</span>
+                                  </button>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </td>
                       </tr>
                     );
-                  })}
-                </tbody>
-              </table>
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination Bar */}
+          <div className="acc-pagination-bar">
+            <span className="acc-pagination-info">
+              Showing {paginatedInvoices.length > 0 ? (currentPage - 1) * pageSize + 1 : 0} to{" "}
+              {Math.min(currentPage * pageSize, filteredInvoices.length)} of {filteredInvoices.length} live records
+            </span>
+
+            <div className="acc-pagination-controls">
+              <button
+                type="button"
+                className="acc-page-nav-btn"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              >
+                &lt;
+              </button>
+              {Array.from({ length: totalPages }).map((_, i) => (
+                <button
+                  key={i + 1}
+                  type="button"
+                  className={`acc-page-num ${currentPage === i + 1 ? "active" : ""}`}
+                  onClick={() => setCurrentPage(i + 1)}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                type="button"
+                className="acc-page-nav-btn"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              >
+                &gt;
+              </button>
             </div>
-          )}
-        </section>
+          </div>
+        </div>
+
+        {/* ---------------------------------------------------
+            RIGHT COLUMN: FINANCIAL CHARTS & WIDGETS
+        --------------------------------------------------- */}
+        <aside className="acc-widgets-column">
+          {/* Widget 1: Revenue vs Expenses Bar Chart */}
+          <div className="acc-widget-card">
+            <div className="acc-widget-header">
+              <h3 className="acc-widget-title">Revenue vs Expenses</h3>
+              <select className="acc-widget-select" defaultValue="Monthly">
+                <option value="Weekly">Weekly</option>
+                <option value="Monthly">Monthly</option>
+                <option value="Quarterly">Quarterly</option>
+              </select>
+            </div>
+
+            <div className="acc-chart-legend">
+              <span className="legend-item">
+                <span className="legend-dot revenue" />
+                Revenue
+              </span>
+              <span className="legend-item">
+                <span className="legend-dot expenses" />
+                Expenses
+              </span>
+            </div>
+
+            {/* SVG Grouped Bar Chart */}
+            <div className="acc-bar-chart-container">
+              <div className="acc-y-axis">
+                <span>₹{maxChartVal}L</span>
+                <span>₹{(maxChartVal * 0.66).toFixed(1)}L</span>
+                <span>₹{(maxChartVal * 0.33).toFixed(1)}L</span>
+                <span>0</span>
+              </div>
+              <div className="acc-chart-bars-wrap">
+                <div className="acc-grid-line y-6" />
+                <div className="acc-grid-line y-4" />
+                <div className="acc-grid-line y-2" />
+                <div className="acc-grid-line y-0" />
+
+                <div className="acc-bars-track">
+                  {monthlyChartData.map((item) => (
+                    <div key={item.month} className="acc-bar-group">
+                      <div className="acc-bars-pair">
+                        <div
+                          className="acc-bar rev-bar"
+                          style={{
+                            height: `${
+                              maxChartVal > 0
+                                ? Math.min(100, (item.revenue / maxChartVal) * 100)
+                                : 0
+                            }%`,
+                          }}
+                          title={`${item.month} Revenue: ₹${Math.round(
+                            item.revenue * 100000
+                          ).toLocaleString("en-IN")}`}
+                        />
+                        <div
+                          className="acc-bar exp-bar"
+                          style={{
+                            height: `${
+                              maxChartVal > 0
+                                ? Math.min(100, (item.expenses / maxChartVal) * 100)
+                                : 0
+                            }%`,
+                          }}
+                          title={`${item.month} Expenses: ₹${Math.round(
+                            item.expenses * 100000
+                          ).toLocaleString("en-IN")}`}
+                        />
+                      </div>
+                      <span className="acc-bar-label">{item.month}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Widget 2: Expense Breakdown Donut Chart */}
+          <div className="acc-widget-card">
+            <h3 className="acc-widget-title">Expense Breakdown</h3>
+
+            <div className="acc-donut-widget-layout">
+              {/* SVG Donut Chart with Center Text */}
+              <div className="acc-donut-svg-wrap">
+                <svg width="150" height="150" viewBox="0 0 100 100">
+                  {expenseBreakdown.map((cat, idx) => {
+                    const pct = parseFloat(cat.percentage) || 0;
+                    const strokeLen = (pct / 100) * 238.76;
+                    // Compute offset
+                    let prevPct = 0;
+                    for (let j = 0; j < idx; j++) {
+                      prevPct += parseFloat(expenseBreakdown[j].percentage) || 0;
+                    }
+                    const offset = -(prevPct / 100) * 238.76;
+
+                    return (
+                      <circle
+                        key={cat.name}
+                        cx="50"
+                        cy="50"
+                        r="38"
+                        fill="transparent"
+                        stroke={cat.color}
+                        strokeWidth="15"
+                        strokeDasharray={`${strokeLen.toFixed(1)} 250`}
+                        strokeDashoffset={offset.toFixed(1)}
+                      />
+                    );
+                  })}
+                </svg>
+                <div className="acc-donut-center-info">
+                  <strong className="center-amount">{kpis.expenses}</strong>
+                  <span className="center-caption">Total Expenses</span>
+                </div>
+              </div>
+
+              {/* Expense Category List */}
+              <div className="acc-expense-legend-list">
+                {expenseBreakdown.map((cat) => (
+                  <div key={cat.name} className="acc-exp-legend-row">
+                    <span className="exp-dot" style={{ background: cat.color }} />
+                    <span className="exp-name">{cat.name}</span>
+                    <strong className="exp-pct">{cat.percentage}%</strong>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Widget 3: Live Recent Transactions */}
+          <div className="acc-widget-card">
+            <div className="acc-widget-header">
+              <h3 className="acc-widget-title">Recent Transactions</h3>
+              <button
+                type="button"
+                className="acc-view-all-link"
+                onClick={() => setActiveTab("Payments")}
+              >
+                View All
+              </button>
+            </div>
+
+            <div className="acc-transactions-list">
+              {recentTransactions.length === 0 ? (
+                <div
+                  style={{
+                    padding: "16px 0",
+                    fontSize: "12px",
+                    color: "#8C7862",
+                    textAlign: "center",
+                  }}
+                >
+                  No transactions recorded in database yet.
+                </div>
+              ) : (
+                recentTransactions.map((tx) => (
+                  <div key={tx.id} className="acc-tx-row">
+                    <div
+                      className={`acc-tx-symbol ${
+                        tx.type === "income" ? "income" : "expense"
+                      }`}
+                    >
+                      {tx.type === "income" ? (
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#16A34A"
+                          strokeWidth="2.5"
+                        >
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      ) : (
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#DC2626"
+                          strokeWidth="2.5"
+                        >
+                          <line x1="18" y1="6" x2="6" y2="18" />
+                          <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      )}
+                    </div>
+                    <div className="acc-tx-info">
+                      <strong className="acc-tx-title">{tx.title}</strong>
+                      <span className="acc-tx-ref">{tx.ref}</span>
+                    </div>
+                    <div className="acc-tx-amount-wrap">
+                      <strong
+                        className={`acc-tx-amount ${
+                          tx.type === "income" ? "text-income" : "text-expense"
+                        }`}
+                      >
+                        {tx.amount}
+                      </strong>
+                      <span className="acc-tx-date">{tx.date}</span>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </aside>
       </main>
 
       {/* =====================================================
-          MODAL 1: DISBURSE SINGLE SETTLEMENT PAYMENT
+          MODALS
       ===================================================== */}
-      {disburseModalItem && (
-        <div className="ZENVE-modal-backdrop" onClick={() => setDisburseModalItem(null)}>
-          <div className="ZENVE-modal-card" onClick={(e) => e.stopPropagation()}>
-            <div className="ZENVE-modal-header">
-              <div>
-                <h3>Disburse Settlement Payment</h3>
-                <p>Process designer payout for {disburseModalItem.settlement_number}</p>
-              </div>
+
+      {/* Modal: Create Invoice (Real API Submission) */}
+      {isCreateModalOpen && (
+        <div
+          className="acc-modal-backdrop"
+          onClick={() => setIsCreateModalOpen(false)}
+        >
+          <div
+            className="acc-modal-card"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="acc-modal-header">
+              <h3>Create New Invoice</h3>
               <button
                 type="button"
-                className="ZENVE-modal-close"
-                onClick={() => setDisburseModalItem(null)}
+                className="acc-modal-close"
+                onClick={() => setIsCreateModalOpen(false)}
               >
                 ×
               </button>
             </div>
 
-            <form onSubmit={handleExecuteDisburse}>
-              <div className="ZENVE-modal-body">
-                {/* Financial Summary Card */}
-                <div className="modal-finance-summary">
-                  <div className="summary-col">
-                    <span>Gross GMV</span>
-                    <strong>{formatInr(disburseModalItem.gmv)}</strong>
+            <form onSubmit={handleCreateInvoiceSubmit} className="acc-modal-form">
+              <div className="acc-form-field">
+                <label>Customer / Designer Name *</label>
+                <input
+                  type="text"
+                  placeholder="Enter recipient or brand name"
+                  value={newInvoiceForm.name}
+                  onChange={(e) =>
+                    setNewInvoiceForm({ ...newInvoiceForm, name: e.target.value })
+                  }
+                  required
+                />
+              </div>
+
+              <div className="acc-form-row">
+                <div className="acc-form-field">
+                  <label>Order ID *</label>
+                  <input
+                    type="text"
+                    value={newInvoiceForm.orderId}
+                    onChange={(e) =>
+                      setNewInvoiceForm({ ...newInvoiceForm, orderId: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+                <div className="acc-form-field">
+                  <label>Invoice Type</label>
+                  <select
+                    value={newInvoiceForm.type}
+                    onChange={(e) =>
+                      setNewInvoiceForm({ ...newInvoiceForm, type: e.target.value })
+                    }
+                  >
+                    <option value="B2C">B2C</option>
+                    <option value="B2B">B2B</option>
+                    <option value="Designer Payout">Designer Payout</option>
+                    <option value="Wholesale">Wholesale</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="acc-form-row">
+                <div className="acc-form-field">
+                  <label>Subtotal Amount (₹) *</label>
+                  <input
+                    type="number"
+                    placeholder="Enter amount"
+                    value={newInvoiceForm.amount}
+                    onChange={(e) =>
+                      setNewInvoiceForm({ ...newInvoiceForm, amount: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+                <div className="acc-form-field">
+                  <label>GST Rate (%)</label>
+                  <select
+                    value={newInvoiceForm.taxRate}
+                    onChange={(e) =>
+                      setNewInvoiceForm({ ...newInvoiceForm, taxRate: e.target.value })
+                    }
+                  >
+                    <option value="5">5% (Fabrics & Sarees)</option>
+                    <option value="12">12% (Apparel standard)</option>
+                    <option value="18">18% (Luxury Bridal Couture)</option>
+                    <option value="28">28% (Special Haute Joaillerie)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="acc-form-row">
+                <div className="acc-form-field">
+                  <label>Initial Status</label>
+                  <select
+                    value={newInvoiceForm.status}
+                    onChange={(e) =>
+                      setNewInvoiceForm({ ...newInvoiceForm, status: e.target.value })
+                    }
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Overdue">Overdue</option>
+                  </select>
+                </div>
+                <div className="acc-form-field">
+                  <label>Due Date</label>
+                  <input
+                    type="date"
+                    value={newInvoiceForm.dueDate}
+                    onChange={(e) =>
+                      setNewInvoiceForm({ ...newInvoiceForm, dueDate: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              {newInvoiceForm.amount && (
+                <div className="acc-tax-summary-box">
+                  <div className="tax-summary-line">
+                    <span>Base Amount:</span>
+                    <span>₹{Number(newInvoiceForm.amount).toLocaleString("en-IN")}</span>
                   </div>
-                  <div className="summary-col">
-                    <span>Zenve Commission ({disburseModalItem.takeRate ?? 15}%)</span>
-                    <strong>{formatInr(disburseModalItem.commission_amount ?? disburseModalItem.commission ?? 0)}</strong>
+                  <div className="tax-summary-line">
+                    <span>GST ({newInvoiceForm.taxRate}%):</span>
+                    <span>
+                      ₹
+                      {Math.round(
+                        Number(newInvoiceForm.amount) *
+                          (Number(newInvoiceForm.taxRate) / 100)
+                      ).toLocaleString("en-IN")}
+                    </span>
                   </div>
-                  <div className="summary-col highlight">
-                    <span>Net Payable to Brand</span>
-                    <strong className="text-gold">
-                      {formatInr(disburseModalItem.payout_amount ?? disburseModalItem.net ?? 0)}
+                  <div className="tax-summary-line total-line">
+                    <strong>Total Payable:</strong>
+                    <strong>
+                      ₹
+                      {(
+                        Number(newInvoiceForm.amount) +
+                        Math.round(
+                          Number(newInvoiceForm.amount) *
+                            (Number(newInvoiceForm.taxRate) / 100)
+                        )
+                      ).toLocaleString("en-IN")}
                     </strong>
                   </div>
                 </div>
+              )}
 
-                {/* Form Fields */}
-                <div className="modal-form-grid">
-                  <div className="form-group">
-                    <label>Payout Payment Method *</label>
-                    <select
-                      value={disburseForm.payout_method}
-                      onChange={(e) =>
-                        setDisburseForm((prev) => ({
-                          ...prev,
-                          payout_method: e.target.value,
-                          payment_gateway_fee: e.target.value === "RazorpayX" ? "5.00" : (e.target.value === "Bank Transfer" ? "0.00" : "0.00"),
-                        }))
-                      }
-                      className="ZENVE-select"
-                      required
-                    >
-                      {PAYOUT_CHANNELS.map((m) => (
-                        <option key={m} value={m}>
-                          {m}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Debit Payout Channel / Account *</label>
-                    <select
-                      value={disburseForm.payout_channel}
-                      onChange={(e) => setDisburseForm((prev) => ({ ...prev, payout_channel: e.target.value }))}
-                      className="ZENVE-select"
-                      required
-                    >
-                      {DEBIT_ACCOUNTS.map((acc) => (
-                        <option key={acc} value={acc}>
-                          {acc}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Payment Reference / UTR Number *</label>
-                    <input
-                      type="text"
-                      value={disburseForm.payout_reference}
-                      onChange={(e) => setDisburseForm((prev) => ({ ...prev, payout_reference: e.target.value }))}
-                      placeholder="e.g. UTR-2026-981240"
-                      className="ZENVE-input-text"
-                      required
-                    />
-                    <small className="field-hint">Auto-generated or match bank confirmation slip</small>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Gateway / Transfer Fee (INR)</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={disburseForm.payment_gateway_fee}
-                      onChange={(e) => setDisburseForm((prev) => ({ ...prev, payment_gateway_fee: e.target.value }))}
-                      className="ZENVE-input-text"
-                    />
-                  </div>
-
-                  <div className="form-group full-width">
-                    <label>Accounting Audit Notes</label>
-                    <textarea
-                      rows={2}
-                      value={disburseForm.notes}
-                      onChange={(e) => setDisburseForm((prev) => ({ ...prev, notes: e.target.value }))}
-                      className="ZENVE-textarea"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="ZENVE-modal-footer">
+              <div className="acc-modal-actions">
                 <button
                   type="button"
-                  className="ZENVE-btn ZENVE-btn-secondary"
-                  onClick={() => setDisburseModalItem(null)}
+                  className="acc-btn-secondary"
+                  onClick={() => setIsCreateModalOpen(false)}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="ZENVE-btn ZENVE-btn-primary"
-                  disabled={actionLoading}
+                  className="acc-btn-primary"
+                  disabled={isSubmitting}
                 >
-                  {actionLoading ? "Executing Disbursement..." : "Confirm & Disburse Payment"}
+                  {isSubmitting ? "Generating..." : "Generate Invoice"}
                 </button>
               </div>
             </form>
@@ -1072,259 +1568,110 @@ export default function Accounting() {
         </div>
       )}
 
-      {/* =====================================================
-          MODAL 2: BATCH PAYOUT DISBURSEMENT
-      ===================================================== */}
-      {isBatchModalOpen && (
-        <div className="ZENVE-modal-backdrop" onClick={() => setIsBatchModalOpen(false)}>
-          <div className="ZENVE-modal-card" onClick={(e) => e.stopPropagation()}>
-            <div className="ZENVE-modal-header">
-              <div>
-                <h3>Bulk Batch Payout Run</h3>
-                <p>Disburse {selectedIds.size} settlements simultaneously</p>
-              </div>
+      {/* Modal: View Invoice Details Voucher */}
+      {viewInvoiceItem && (
+        <div
+          className="acc-modal-backdrop"
+          onClick={() => setViewInvoiceItem(null)}
+        >
+          <div
+            className="acc-modal-card invoice-voucher-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="acc-modal-header">
+              <h3>Invoice Statement · {viewInvoiceItem.invoiceId}</h3>
               <button
                 type="button"
-                className="ZENVE-modal-close"
-                onClick={() => setIsBatchModalOpen(false)}
+                className="acc-modal-close"
+                onClick={() => setViewInvoiceItem(null)}
               >
                 ×
               </button>
             </div>
 
-            <form onSubmit={handleExecuteBatch}>
-              <div className="ZENVE-modal-body">
-                <div className="modal-finance-summary">
-                  <div className="summary-col">
-                    <span>Total Settlements</span>
-                    <strong>{selectedIds.size} orders</strong>
-                  </div>
-                  <div className="summary-col highlight">
-                    <span>Total Payout to Release</span>
-                    <strong className="text-gold">{formatInr(selectedTotalAmount)}</strong>
-                  </div>
+            <div className="acc-voucher-body">
+              <div className="acc-voucher-top-brand">
+                <div>
+                  <h2 className="voucher-brand-title">ZENVE FASHION</h2>
+                  <p className="voucher-brand-sub">Haute Couture &amp; Merchandising CRM</p>
                 </div>
-
-                <div className="modal-form-grid">
-                  <div className="form-group">
-                    <label>Batch Reference ID *</label>
-                    <input
-                      type="text"
-                      value={batchForm.batch_id}
-                      onChange={(e) => setBatchForm((prev) => ({ ...prev, batch_id: e.target.value }))}
-                      className="ZENVE-input-text"
-                      required
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label>Batch Payment Rail *</label>
-                    <select
-                      value={batchForm.payout_method}
-                      onChange={(e) => setBatchForm((prev) => ({ ...prev, payout_method: e.target.value }))}
-                      className="ZENVE-select"
-                      required
-                    >
-                      <option value="RazorpayX">RazorpayX Smart Batch API</option>
-                      <option value="Bank Transfer">NEFT / RTGS Bulk File</option>
-                      <option value="UPI">UPI Multi-Payout</option>
-                      <option value="Escrow Release">Escrow Batch Release</option>
-                    </select>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Funding Account *</label>
-                    <select
-                      value={batchForm.payout_channel}
-                      onChange={(e) => setBatchForm((prev) => ({ ...prev, payout_channel: e.target.value }))}
-                      className="ZENVE-select"
-                      required
-                    >
-                      {DEBIT_ACCOUNTS.map((acc) => (
-                        <option key={acc} value={acc}>
-                          {acc}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Est. Fee Per Transaction (INR)</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={batchForm.fee_per_tx}
-                      onChange={(e) => setBatchForm((prev) => ({ ...prev, fee_per_tx: e.target.value }))}
-                      className="ZENVE-input-text"
-                    />
-                  </div>
-
-                  <div className="form-group full-width">
-                    <label>Batch Notes</label>
-                    <input
-                      type="text"
-                      value={batchForm.notes}
-                      onChange={(e) => setBatchForm((prev) => ({ ...prev, notes: e.target.value }))}
-                      className="ZENVE-input-text"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="ZENVE-modal-footer">
-                <button
-                  type="button"
-                  className="ZENVE-btn ZENVE-btn-secondary"
-                  onClick={() => setIsBatchModalOpen(false)}
+                <span
+                  className={`acc-status-pill ${
+                    viewInvoiceItem.status === "Paid"
+                      ? "paid"
+                      : viewInvoiceItem.status === "Pending"
+                      ? "pending"
+                      : "overdue"
+                  }`}
                 >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="ZENVE-btn ZENVE-btn-primary"
-                  disabled={actionLoading}
-                >
-                  {actionLoading ? "Processing Batch..." : `Execute Batch (${formatInr(selectedTotalAmount)})`}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* =====================================================
-          MODAL 3: PAYMENT VOUCHER / AUDIT RECEIPT
-      ===================================================== */}
-      {voucherModalItem && (
-        <div className="ZENVE-modal-backdrop" onClick={() => setVoucherModalItem(null)}>
-          <div className="ZENVE-modal-card voucher-card" onClick={(e) => e.stopPropagation()}>
-            <div className="voucher-header">
-              <div className="voucher-brand">
-                <img src={zenveLogo} alt="Zenve Fashion" height={32} />
-                <span className="voucher-tag">OFFICIAL SETTLEMENT PAYMENT VOUCHER</span>
-              </div>
-              <button
-                type="button"
-                className="ZENVE-modal-close"
-                onClick={() => setVoucherModalItem(null)}
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="voucher-body">
-              <div className="voucher-meta-row">
-                <div>
-                  <span className="meta-label">Settlement #</span>
-                  <span className="meta-val">{voucherModalItem.settlement_number}</span>
-                </div>
-                <div>
-                  <span className="meta-label">Order #</span>
-                  <span className="meta-val">{voucherModalItem.order_number || voucherModalItem.orderId}</span>
-                </div>
-                <div>
-                  <span className="meta-label">Date Generated</span>
-                  <span className="meta-val">
-                    {voucherModalItem.created_at
-                      ? new Date(voucherModalItem.created_at).toLocaleDateString("en-IN")
-                      : "Current"}
-                  </span>
-                </div>
-                <div>
-                  <span className="meta-label">Status</span>
-                  <span className={`ZENVE-status-pill ${getStatusTone(voucherModalItem.status)}`}>
-                    {voucherModalItem.status}
-                  </span>
-                </div>
+                  <span className="acc-status-dot" />
+                  {viewInvoiceItem.status}
+                </span>
               </div>
 
-              {/* Inflow vs Outflow Section */}
-              <div className="voucher-section-title">1. Customer Inflow Payment</div>
-              <div className="voucher-detail-grid">
+              <div className="voucher-details-grid">
                 <div>
-                  <span className="detail-lbl">Customer Payment Method:</span>
-                  <span className={`ZENVE-pm-badge ${getPaymentBadgeClass(voucherModalItem.order_payment_method || voucherModalItem.payment_method)}`}>
-                    {voucherModalItem.order_payment_method || voucherModalItem.payment_method || "COD"}
-                  </span>
+                  <small>Billed To:</small>
+                  <strong>{viewInvoiceItem.name}</strong>
+                  <span>Account Ref #{viewInvoiceItem.id}</span>
                 </div>
                 <div>
-                  <span className="detail-lbl">Payment Status:</span>
-                  <span className="detail-val">{voucherModalItem.order_payment_status || "Paid"}</span>
+                  <small>Associated Order:</small>
+                  <strong>{viewInvoiceItem.orderId}</strong>
+                  <span>Category: {viewInvoiceItem.type}</span>
                 </div>
                 <div>
-                  <span className="detail-lbl">Customer Name:</span>
-                  <span className="detail-val">{voucherModalItem.customer_name || "Valued Client"}</span>
+                  <small>Invoice Date:</small>
+                  <strong>{viewInvoiceItem.invoiceDate}</strong>
                 </div>
                 <div>
-                  <span className="detail-lbl">Realised GMV:</span>
-                  <strong className="detail-val">{formatInr(voucherModalItem.gmv)}</strong>
-                </div>
-              </div>
-
-              <div className="voucher-section-title">2. Platform Commission & Deductions</div>
-              <div className="voucher-detail-grid">
-                <div>
-                  <span className="detail-lbl">Zenve Take Rate:</span>
-                  <span className="detail-val">{voucherModalItem.takeRate ?? 15}%</span>
-                </div>
-                <div>
-                  <span className="detail-lbl">Commission Retained:</span>
-                  <span className="detail-val">{formatInr(voucherModalItem.commission_amount ?? voucherModalItem.commission ?? 0)}</span>
-                </div>
-                <div>
-                  <span className="detail-lbl">Tax / GST:</span>
-                  <span className="detail-val">{formatInr(voucherModalItem.tax_amount || 0)}</span>
-                </div>
-                <div>
-                  <span className="detail-lbl">Gateway Fee:</span>
-                  <span className="detail-val">₹{voucherModalItem.payment_gateway_fee || 0}</span>
-                </div>
-              </div>
-
-              <div className="voucher-section-title">3. Designer Outflow Disbursement</div>
-              <div className="voucher-detail-grid">
-                <div>
-                  <span className="detail-lbl">Beneficiary Brand:</span>
-                  <strong className="detail-val">{voucherModalItem.brand_name || voucherModalItem.designer}</strong>
-                </div>
-                <div>
-                  <span className="detail-lbl">Net Disbursed Amount:</span>
-                  <strong className="detail-val text-gold">
-                    {formatInr(voucherModalItem.payout_amount ?? voucherModalItem.net ?? 0)}
+                  <small>Due Date:</small>
+                  <strong
+                    className={
+                      viewInvoiceItem.status === "Overdue" ? "text-overdue" : ""
+                    }
+                  >
+                    {viewInvoiceItem.dueDate}
                   </strong>
                 </div>
-                <div>
-                  <span className="detail-lbl">Payout Channel Rail:</span>
-                  <span className="detail-val">{voucherModalItem.payout_method || "Bank Transfer"}</span>
-                </div>
-                <div>
-                  <span className="detail-lbl">Payment Reference / UTR:</span>
-                  <code className="utr-code">{voucherModalItem.payout_reference || "Pending Disbursement"}</code>
-                </div>
               </div>
 
-              {voucherModalItem.notes && (
-                <div className="voucher-notes">
-                  <span className="detail-lbl">Audit Trail & Notes:</span>
-                  <p>{voucherModalItem.notes}</p>
-                </div>
-              )}
+              <table className="voucher-calc-table">
+                <thead>
+                  <tr>
+                    <th>Description</th>
+                    <th className="text-right">Rate</th>
+                    <th className="text-right">Tax (GST)</th>
+                    <th className="text-right">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Deliverables ({viewInvoiceItem.orderId})</td>
+                    <td className="text-right">₹{viewInvoiceItem.amount.toLocaleString("en-IN")}</td>
+                    <td className="text-right">₹{viewInvoiceItem.tax.toLocaleString("en-IN")}</td>
+                    <td className="text-right">
+                      <strong>₹{viewInvoiceItem.total.toLocaleString("en-IN")}</strong>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
 
-            <div className="ZENVE-modal-footer">
+            <div className="acc-modal-actions">
               <button
                 type="button"
-                className="ZENVE-btn ZENVE-btn-secondary"
-                onClick={() => window.print()}
+                className="acc-btn-secondary"
+                onClick={() => handleDownloadInvoice(viewInvoiceItem)}
               >
-                Print Voucher
+                Download Statement PDF
               </button>
               <button
                 type="button"
-                className="ZENVE-btn ZENVE-btn-primary"
-                onClick={() => setVoucherModalItem(null)}
+                className="acc-btn-primary"
+                onClick={() => setViewInvoiceItem(null)}
               >
-                Done
+                Close Voucher
               </button>
             </div>
           </div>
