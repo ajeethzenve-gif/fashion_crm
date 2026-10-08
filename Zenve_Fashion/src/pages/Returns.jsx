@@ -11,35 +11,12 @@ import { showSuccessToast, showErrorToast } from "../utils/zenveToast";
 import { useAuth } from "../context/AuthContext";
 
 /* =========================================================
-   FALLBACK FASHION IMAGERY & AVATARS
+   AVATAR HELPER (DYNAMIC UI AVATAR FROM CUSTOMER NAME)
 ========================================================= */
 
-const FASHION_THUMB_1 =
-  "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=150&q=80";
-const FASHION_THUMB_2 =
-  "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=150&q=80";
-const LEHENGA_HERO =
-  "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=400&q=80";
-
-function getCustomerAvatar(name, idx = 0) {
-  const avatars = [
-    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80",
-    "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=100&q=80",
-    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80",
-    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80",
-    "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=100&q=80",
-    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80",
-    "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=100&q=80",
-    "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=100&q=80",
-    "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=100&q=80",
-    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&q=80",
-  ];
-  return (
-    avatars[idx % avatars.length] ||
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(
-      name || "Customer"
-    )}&background=F5E6D3&color=5C3A21&bold=true&rounded=true&size=80`
-  );
+function getCustomerAvatar(name) {
+  const clean = encodeURIComponent((name || "Customer").trim());
+  return `https://ui-avatars.com/api/?name=${clean}&background=F5E6D3&color=5C3A21&bold=true&rounded=true&size=80`;
 }
 
 /* =========================================================
@@ -66,13 +43,13 @@ function Sparkline({ color = "#F59E0B" }) {
 }
 
 /* =========================================================
-   STATUS MAPPINGS
+   STATUS NORMALIZATION & BADGES
 ========================================================= */
 
 function normalizeStatus(st) {
   const s = String(st || "").toUpperCase();
-  if (s.includes("APPROV")) return "approved";
-  if (s.includes("REJECT")) return "rejected";
+  if (s.includes("APPROV") || s === "INSPECTED_PASSED") return "approved";
+  if (s.includes("REJECT") || s === "INSPECTED_FAILED") return "rejected";
   if (s.includes("REFUND")) return "refunded";
   if (s.includes("PROCESS")) return "processed";
   if (s.includes("EXCHANGE")) return "processed";
@@ -90,18 +67,18 @@ function getStatusBadgeLabel(st) {
 }
 
 /* =========================================================
-   MAIN COMPONENT: RETURNS ENGINE
+   RETURNS ENGINE LAYER (LAYER 09) - REAL DATABASE INTEGRATION
 ========================================================= */
 
 export default function Returns() {
   const { user } = useAuth();
 
-  // Data states from DB
+  // Database State
   const [returnsList, setReturnsList] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Filter & Search states
+  // Filters & Search
   const [globalSearch, setGlobalSearch] = useState("");
   const [tableSearch, setTableSearch] = useState("");
   const [activeTab, setActiveTab] = useState("All Returns");
@@ -109,12 +86,14 @@ export default function Returns() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [dateRangeFilter, setDateRangeFilter] = useState("All");
 
-  // Selection & Detail state
+  // Selection & Pagination
   const [selectedReturnId, setSelectedReturnId] = useState(null);
   const [selectedRowIds, setSelectedRowIds] = useState(new Set());
-  const [isProcessingAction, setIsProcessingAction] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
-  // Row Kebab Dropdown
+  // Actions & Popups
+  const [isProcessingAction, setIsProcessingAction] = useState(false);
   const [openKebabId, setOpenKebabId] = useState(null);
   const kebabRef = useRef(null);
 
@@ -124,7 +103,7 @@ export default function Returns() {
   const [editNotes, setEditNotes] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
 
-  // Close kebab on outside click
+  // Close kebab on click outside
   useEffect(() => {
     function handleClickOutside(e) {
       if (kebabRef.current && !kebabRef.current.contains(e.target)) {
@@ -136,18 +115,18 @@ export default function Returns() {
   }, []);
 
   /* =========================================================
-     LOAD REAL DATA FROM BACKEND DATABASE
+     FETCH LIVE DATA FROM MYSQL DATABASE VIA BACKEND API
   ========================================================= */
   const loadData = async () => {
     try {
       setLoading(true);
       const [fetchedReturns, fetchedStats] = await Promise.all([
         getReturns().catch((err) => {
-          console.error("Failed to fetch returns:", err);
+          console.error("Failed to fetch returns from backend:", err);
           return [];
         }),
         getReturnStats().catch((err) => {
-          console.error("Failed to fetch return stats:", err);
+          console.error("Failed to fetch return stats from backend:", err);
           return null;
         }),
       ]);
@@ -156,13 +135,16 @@ export default function Returns() {
       setReturnsList(list);
       setStats(fetchedStats);
 
-      // Select first return by default if not set
-      if (list.length > 0 && !selectedReturnId) {
-        setSelectedReturnId(list[0].id);
+      // Select first return if none currently selected
+      if (list.length > 0) {
+        setSelectedReturnId((prev) => {
+          if (prev && list.some((r) => r.id === prev)) return prev;
+          return list[0].id;
+        });
       }
     } catch (err) {
-      console.error("Error loading return engine data:", err);
-      showErrorToast("Failed to load returns from database");
+      console.error("Error loading return engine database records:", err);
+      showErrorToast("Failed to connect to database for returns data.");
     } finally {
       setLoading(false);
     }
@@ -173,7 +155,7 @@ export default function Returns() {
   }, []);
 
   /* =========================================================
-     COMPUTE KPI METRICS (COMBINING STATS & REAL ROWS)
+     COMPUTE LIVE DATABASE METRICS (ZERO MOCK FALLBACKS)
   ========================================================= */
   const kpiData = useMemo(() => {
     const totalCount = stats?.total_returns ?? returnsList.length;
@@ -191,20 +173,20 @@ export default function Returns() {
       returnsList.filter((r) => normalizeStatus(r.status) === "refunded").length;
 
     return {
-      total: totalCount || 428,
-      pending: pendingCount || 86,
-      approved: approvedCount || 210,
-      rejected: rejectedCount || 72,
-      refunded: refundCount || 312,
+      total: totalCount,
+      pending: pendingCount,
+      approved: approvedCount,
+      rejected: rejectedCount,
+      refunded: refundCount,
     };
   }, [stats, returnsList]);
 
   /* =========================================================
-     FILTERED RETURNS LIST
+     FILTER DATABASE RECORDS
   ========================================================= */
   const filteredReturns = useMemo(() => {
     return returnsList.filter((item) => {
-      // 1. Global search or Table search
+      // 1. Search Query Filter
       const query = (globalSearch || tableSearch).trim().toLowerCase();
       if (query) {
         const rId = String(item.returnId || item.return_number || "").toLowerCase();
@@ -256,7 +238,19 @@ export default function Returns() {
     statusFilter,
   ]);
 
-  // Currently selected return item for the right details card
+  // Reset pagination when filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [globalSearch, tableSearch, activeTab, reasonFilter, statusFilter, dateRangeFilter]);
+
+  // Real Pagination slices
+  const totalPages = Math.max(1, Math.ceil(filteredReturns.length / pageSize));
+  const paginatedReturns = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredReturns.slice(start, start + pageSize);
+  }, [filteredReturns, currentPage, pageSize]);
+
+  // Currently selected database return
   const selectedReturn = useMemo(() => {
     if (!selectedReturnId && filteredReturns.length > 0) {
       return filteredReturns[0];
@@ -269,17 +263,17 @@ export default function Returns() {
   }, [returnsList, filteredReturns, selectedReturnId]);
 
   /* =========================================================
-     TABLE CHECKBOX HANDLERS
+     SELECTION HANDLERS
   ========================================================= */
   const isAllSelected =
-    filteredReturns.length > 0 &&
-    filteredReturns.every((r) => selectedRowIds.has(r.id));
+    paginatedReturns.length > 0 &&
+    paginatedReturns.every((r) => selectedRowIds.has(r.id));
 
   const handleToggleSelectAll = () => {
     if (isAllSelected) {
       setSelectedRowIds(new Set());
     } else {
-      setSelectedRowIds(new Set(filteredReturns.map((r) => r.id)));
+      setSelectedRowIds(new Set(paginatedReturns.map((r) => r.id)));
     }
   };
 
@@ -294,7 +288,7 @@ export default function Returns() {
   };
 
   /* =========================================================
-     LIVE ACTION: APPROVE / REJECT / TRANSITION
+     LIVE ACTION: TRANSITION RECORD IN DATABASE
   ========================================================= */
   const handleTransition = async (id, targetStatus) => {
     if (!id) return;
@@ -302,9 +296,8 @@ export default function Returns() {
       setIsProcessingAction(true);
       const updated = await transitionReturn(id, targetStatus);
       showSuccessToast(
-        `Return ${updated.returnId || updated.return_number || id} marked as ${targetStatus}`
+        `Return ${updated.returnId || updated.return_number || id} transitioned to ${targetStatus}`
       );
-      // Reload fresh data from database
       await loadData();
     } catch (err) {
       console.error("Action error:", err);
@@ -316,7 +309,7 @@ export default function Returns() {
   };
 
   /* =========================================================
-     EDIT MODAL HANDLER
+     EDIT MODAL
   ========================================================= */
   const handleOpenEditModal = (item, e) => {
     e?.stopPropagation();
@@ -330,7 +323,7 @@ export default function Returns() {
     try {
       setSavingEdit(true);
       await transitionReturn(editingReturn.id, editStatus, editNotes);
-      showSuccessToast("Return updated successfully");
+      showSuccessToast("Return updated in database successfully");
       setEditingReturn(null);
       await loadData();
     } catch (err) {
@@ -341,9 +334,6 @@ export default function Returns() {
     }
   };
 
-  /* =========================================================
-     RESET FILTERS
-  ========================================================= */
   const handleResetFilters = () => {
     setGlobalSearch("");
     setTableSearch("");
@@ -352,6 +342,7 @@ export default function Returns() {
     setStatusFilter("All");
     setDateRangeFilter("All");
     setSelectedRowIds(new Set());
+    setCurrentPage(1);
   };
 
   return (
@@ -467,7 +458,7 @@ export default function Returns() {
           </div>
         </section>
 
-        {/* 5 KPI METRIC TILES */}
+        {/* 5 KPI METRIC TILES - REAL DATABASE VALUES */}
         <section className="rtn-kpi-grid">
           {/* Card 1: Total Returns */}
           <div className="rtn-kpi-card">
@@ -786,12 +777,12 @@ export default function Returns() {
                       </td>
                     </tr>
                   ) : (
-                    filteredReturns.map((item, index) => {
+                    paginatedReturns.map((item, index) => {
                       const isSelected = selectedReturn?.id === item.id;
                       const isChecked = selectedRowIds.has(item.id);
                       const normStatus = normalizeStatus(item.status);
                       const statusLabel = getStatusBadgeLabel(item.status);
-                      const rowNum = String(index + 1).padStart(2, "0");
+                      const rowNum = String((currentPage - 1) * pageSize + index + 1).padStart(2, "0");
 
                       return (
                         <tr
@@ -818,14 +809,14 @@ export default function Returns() {
                           {/* Return ID */}
                           <td>
                             <span className="rtn-id-link">
-                              {item.returnId || item.return_number || `RTN${item.id}`}
+                              {item.returnId || item.return_number || `RTN-${item.id}`}
                             </span>
                           </td>
 
                           {/* Order ID */}
                           <td>
                             <span className="rtn-order-id">
-                              {item.orderId || item.order_number || `ORD${item.order}`}
+                              {item.orderId || item.order_number || `ORD-${item.order}`}
                             </span>
                           </td>
 
@@ -833,7 +824,7 @@ export default function Returns() {
                           <td>
                             <div className="rtn-customer-cell">
                               <img
-                                src={getCustomerAvatar(item.customer, index)}
+                                src={getCustomerAvatar(item.customer)}
                                 alt={item.customer || "Customer"}
                                 className="rtn-customer-avatar"
                               />
@@ -843,26 +834,37 @@ export default function Returns() {
                             </div>
                           </td>
 
-                          {/* Product Garment Thumbnails (Dual) */}
+                          {/* Product Garment Thumbnails */}
                           <td>
                             <div className="rtn-products-cell">
-                              <img
-                                src={item.productImage || FASHION_THUMB_1}
-                                alt="Garment 1"
-                                className="rtn-thumb"
-                              />
-                              <img
-                                src={FASHION_THUMB_2}
-                                alt="Garment 2"
-                                className="rtn-thumb"
-                              />
+                              {item.productImage ? (
+                                <img
+                                  src={item.productImage}
+                                  alt={item.productName || "Product"}
+                                  className="rtn-thumb"
+                                />
+                              ) : (
+                                <div
+                                  className="rtn-thumb"
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    fontSize: "10px",
+                                    fontWeight: "600",
+                                    color: "#8C6A48",
+                                  }}
+                                >
+                                  {(item.sku || "ZN").slice(0, 3)}
+                                </div>
+                              )}
                             </div>
                           </td>
 
                           {/* Reason */}
                           <td>
                             <span className="rtn-reason-text">
-                              {item.reasonDisplay || item.reason || "Size Issue"}
+                              {item.reasonDisplay || item.reason || "Return"}
                             </span>
                           </td>
 
@@ -877,7 +879,7 @@ export default function Returns() {
                           {/* Request Date */}
                           <td>
                             <span className="rtn-date-text">
-                              {item.requestDate || "06 Oct 2026"}
+                              {item.requestDate || "—"}
                             </span>
                           </td>
 
@@ -1037,43 +1039,44 @@ export default function Returns() {
               </table>
             </div>
 
-            {/* TABLE FOOTER / PAGINATION */}
+            {/* REAL DATABASE PAGINATION FOOTER */}
             <div className="rtn-table-footer">
               <span className="rtn-showing-text">
-                Showing {filteredReturns.length > 0 ? "1" : "0"} to{" "}
-                {Math.min(10, filteredReturns.length)} of {kpiData.total} returns
+                Showing {filteredReturns.length === 0 ? "0" : (currentPage - 1) * pageSize + 1} to{" "}
+                {Math.min(currentPage * pageSize, filteredReturns.length)} of {filteredReturns.length} returns
               </span>
               <div className="rtn-pagination-bar">
-                <button type="button" className="rtn-page-btn" disabled>
+                <button
+                  type="button"
+                  className="rtn-page-btn"
+                  disabled={currentPage <= 1}
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                >
                   &lt;
                 </button>
-                <button type="button" className="rtn-page-btn active">
-                  1
-                </button>
-                <button type="button" className="rtn-page-btn">
-                  2
-                </button>
-                <button type="button" className="rtn-page-btn">
-                  3
-                </button>
-                <button type="button" className="rtn-page-btn">
-                  4
-                </button>
-                <button type="button" className="rtn-page-btn">
-                  5
-                </button>
-                <span className="rtn-page-ellipsis">...</span>
-                <button type="button" className="rtn-page-btn">
-                  43
-                </button>
-                <button type="button" className="rtn-page-btn">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pg) => (
+                  <button
+                    key={pg}
+                    type="button"
+                    className={`rtn-page-btn ${currentPage === pg ? "active" : ""}`}
+                    onClick={() => setCurrentPage(pg)}
+                  >
+                    {pg}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  className="rtn-page-btn"
+                  disabled={currentPage >= totalPages}
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                >
                   &gt;
                 </button>
               </div>
             </div>
           </div>
 
-          {/* RIGHT: RETURN DETAILS CARD */}
+          {/* RIGHT: RETURN DETAILS CARD (LIVE DATABASE ROW) */}
           <aside className="rtn-details-card">
             <div className="rtn-details-header">
               <div className="rtn-details-title-wrap">
@@ -1119,57 +1122,74 @@ export default function Returns() {
 
             {selectedReturn ? (
               <>
-                {/* Product Showcase Card */}
+                {/* Product Showcase Card from DB */}
                 <div className="rtn-product-preview-box">
-                  <img
-                    src={selectedReturn.productImage || LEHENGA_HERO}
-                    alt={selectedReturn.productName || "Product"}
-                    className="rtn-product-preview-img"
-                  />
+                  {selectedReturn.productImage ? (
+                    <img
+                      src={selectedReturn.productImage}
+                      alt={selectedReturn.productName || "Product"}
+                      className="rtn-product-preview-img"
+                    />
+                  ) : (
+                    <div
+                      className="rtn-product-preview-img"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "12px",
+                        fontWeight: "600",
+                        color: "#8C6A48",
+                      }}
+                    >
+                      {selectedReturn.sku || "Garment"}
+                    </div>
+                  )}
                   <div className="rtn-product-preview-meta">
                     <strong className="rtn-product-preview-title">
-                      {selectedReturn.productName || "Embroidered Lehenga Set"}
+                      {selectedReturn.productName || "Fashion Product"}
                     </strong>
                     <span className="rtn-product-preview-sku">
-                      SKU: {selectedReturn.sku || "ZF001"}
+                      SKU: {selectedReturn.sku || "N/A"}
                     </span>
                     <span className="rtn-product-preview-price">
-                      {selectedReturn.formattedPrice || "₹12,500"}
+                      {selectedReturn.formattedPrice ||
+                        (selectedReturn.price ? `₹${selectedReturn.price}` : "—")}
                     </span>
                     <span className="rtn-product-preview-attrs">
-                      Size: {selectedReturn.size || "M"} | Color:{" "}
-                      {selectedReturn.color || "Pink"}
+                      Size: {selectedReturn.size || "Standard"} | Color:{" "}
+                      {selectedReturn.color || "Standard"}
                     </span>
                   </div>
                 </div>
 
-                {/* Metadata List */}
+                {/* Metadata List from DB */}
                 <div className="rtn-details-meta-list">
                   <div className="rtn-details-meta-row">
                     <span className="rtn-meta-label">Return ID</span>
                     <span className="rtn-meta-value link">
-                      {selectedReturn.returnId || selectedReturn.return_number || `RTN${selectedReturn.id}`}
+                      {selectedReturn.returnId || selectedReturn.return_number || `RTN-${selectedReturn.id}`}
                     </span>
                   </div>
 
                   <div className="rtn-details-meta-row">
                     <span className="rtn-meta-label">Order ID</span>
                     <span className="rtn-meta-value link">
-                      {selectedReturn.orderId || selectedReturn.order_number || `ORD${selectedReturn.order}`}
+                      {selectedReturn.orderId || selectedReturn.order_number || `ORD-${selectedReturn.order}`}
                     </span>
                   </div>
 
                   <div className="rtn-details-meta-row">
                     <span className="rtn-meta-label">Customer</span>
                     <span className="rtn-meta-value">
-                      {selectedReturn.customer || selectedReturn.customer_name || "Priya Sharma"}
+                      {selectedReturn.customer || selectedReturn.customer_name || "—"}
                     </span>
                   </div>
 
                   <div className="rtn-details-meta-row">
                     <span className="rtn-meta-label">Return Reason</span>
                     <span className="rtn-meta-value">
-                      {selectedReturn.reasonDisplay || selectedReturn.reason || "Size Issue"}
+                      {selectedReturn.reasonDisplay || selectedReturn.reason || "—"}
                     </span>
                   </div>
 
@@ -1186,28 +1206,27 @@ export default function Returns() {
                   <div className="rtn-details-meta-row">
                     <span className="rtn-meta-label">Request Date</span>
                     <span className="rtn-meta-value">
-                      {selectedReturn.requestDate || "06 Oct 2026"}
+                      {selectedReturn.requestDate || "—"}
                     </span>
                   </div>
 
                   <div className="rtn-details-meta-row">
                     <span className="rtn-meta-label">Expected Resolution</span>
                     <span className="rtn-meta-value">
-                      {selectedReturn.expectedResolution || "10 Oct 2026"}
+                      {selectedReturn.expectedResolution || "—"}
                     </span>
                   </div>
                 </div>
 
-                {/* Customer Note Section */}
+                {/* Customer Note Section from DB */}
                 <div className="rtn-customer-note-section">
                   <label className="rtn-customer-note-label">Customer Note</label>
                   <div className="rtn-customer-note-box">
-                    "{selectedReturn.customerNote ||
-                      "The dress size is smaller than expected. Requesting a size exchange."}"
+                    "{selectedReturn.customerNote || selectedReturn.notes || "No notes provided."}"
                   </div>
                 </div>
 
-                {/* Action Buttons */}
+                {/* Live Database Action Buttons */}
                 <div className="rtn-details-action-group">
                   <button
                     type="button"
@@ -1263,7 +1282,7 @@ export default function Returns() {
       </main>
 
       {/* =====================================================
-          EDIT RETURN MODAL POPUP
+          EDIT RETURN MODAL POPUP (SAVES DIRECTLY TO DATABASE)
       ===================================================== */}
       {editingReturn && (
         <div className="rtn-modal-overlay" onClick={() => setEditingReturn(null)}>
@@ -1344,7 +1363,7 @@ export default function Returns() {
                 onClick={handleSaveEdit}
                 disabled={savingEdit}
               >
-                {savingEdit ? "Saving..." : "Save Changes"}
+                {savingEdit ? "Saving..." : "Save to Database"}
               </button>
             </div>
           </div>
