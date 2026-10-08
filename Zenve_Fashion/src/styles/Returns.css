@@ -1,1113 +1,1205 @@
 /* =========================================================
-   REVERSE LOGISTICS / RETURNS STYLESHEET (09)
-   Zenve Fashion Operations
-   Exact match to https://zenvefashioncm.ZENVE.app/returns
-   Fully Responsive: Mobile (320px-640px), Tablet (641px-1024px),
-   Laptop (1025px-1440px), Desktop (1441px-1920px), 4K UHD (1921px-3840px+)
+   ZENVE FASHION - RETURNS ENGINE STYLESHEET (LAYER 09)
+   Exact match to Zenve Fashion Returns Management UI
+   Luxury Gold & Amber Palette (#6E4720, #FAF6F0, #D4A017)
 ========================================================= */
 
-.ZENVE-returns-layout {
+.rtn-page-wrapper {
   min-height: 100vh;
   width: 100%;
-  background-color: var(--ZENVE-paper, #FFF8E8);
-  color: var(--ZENVE-ink, #1F2937);
-  font-family: var(--ZENVE-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  background-color: #FAF7F2;
+  color: #1F2937;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  box-sizing: border-box;
+  padding-bottom: 60px;
+}
+
+/* =========================================================
+   TOP NAV / SEARCH & PROFILE BAR
+========================================================= */
+
+.rtn-top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #EFE6D8;
+  gap: 20px;
+}
+
+.rtn-top-search-wrap {
+  position: relative;
+  width: 520px;
+  max-width: 100%;
+}
+
+.rtn-top-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9CA3AF;
+  pointer-events: none;
+}
+
+.rtn-top-search-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 16px 0 42px;
+  background: #FFFFFF;
+  border: 1px solid #E2D7C8;
+  border-radius: 8px;
+  font-size: 13.5px;
+  color: #1F2937;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+.rtn-top-search-input:focus {
+  border-color: #A36B32;
+  box-shadow: 0 0 0 3px rgba(163, 107, 50, 0.12);
+}
+
+.rtn-top-search-input::placeholder {
+  color: #9CA3AF;
+}
+
+.rtn-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.rtn-bell-btn {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #5C4530;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.15s ease;
+}
+
+.rtn-bell-btn:hover {
+  background: #F4ECE1;
+}
+
+.rtn-bell-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #DC2626;
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: 700;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #FFFFFF;
+}
+
+.rtn-admin-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.rtn-admin-profile:hover {
+  background: #F4ECE1;
+}
+
+.rtn-admin-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #B45309;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.rtn-admin-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.rtn-admin-chevron {
+  color: #6B7280;
+}
+
+/* =========================================================
+   CONTAINER
+========================================================= */
+
+.rtn-container {
+  padding: 24px 28px;
+  max-width: 1720px;
+  margin: 0 auto;
   box-sizing: border-box;
 }
 
 /* =========================================================
-   HEADER SECTION
+   HERO BANNER
 ========================================================= */
 
-.ZENVE-returns-header {
+.rtn-hero-banner {
+  position: relative;
   width: 100%;
-  background: var(--ZENVE-panel, #FFFCF5);
-  border-bottom: 1px solid var(--ZENVE-line, #E7C77A);
-  padding: 16px 28px;
+  min-height: 130px;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 22px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  background: linear-gradient(105deg, #FDF9EE 0%, #F5E8C9 40%, #E2BE76 75%, #D4A347 100%);
+  border: 1px solid #E8D39E;
+  box-shadow: 0 4px 16px rgba(180, 130, 40, 0.08);
+}
+
+.rtn-banner-bg-img {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 58%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center;
+  opacity: 0.88;
+  mask-image: linear-gradient(to left, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+  pointer-events: none;
+}
+
+.rtn-banner-content {
+  position: relative;
+  z-index: 2;
+  padding: 24px 34px;
+  max-width: 550px;
+}
+
+.rtn-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #8C6A48;
+  margin-bottom: 6px;
+}
+
+.rtn-breadcrumb a {
+  color: #8C6A48;
+  text-decoration: none;
+}
+
+.rtn-breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.rtn-hero-title {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  color: #38210A;
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  letter-spacing: -0.02em;
+}
+
+.rtn-hero-subtitle {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #6D5134;
+  font-weight: 400;
+}
+
+/* =========================================================
+   5 KPI METRIC CARDS
+========================================================= */
+
+.rtn-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.rtn-kpi-card {
+  background: #FFFFFF;
+  border: 1px solid #EFE5D5;
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.rtn-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(180, 130, 40, 0.08);
+}
+
+.rtn-kpi-info-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rtn-kpi-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rtn-kpi-icon-wrap.total {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+.rtn-kpi-icon-wrap.pending {
+  background: #FFF7ED;
+  color: #EA580C;
+}
+
+.rtn-kpi-icon-wrap.approved {
+  background: #DCFCE7;
+  color: #16A34A;
+}
+
+.rtn-kpi-icon-wrap.rejected {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+.rtn-kpi-icon-wrap.refunded {
+  background: #FEF9C3;
+  color: #CA8A04;
+}
+
+.rtn-kpi-text-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.rtn-kpi-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6B7280;
+  margin-bottom: 2px;
+}
+
+.rtn-kpi-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.rtn-kpi-number {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.1;
+}
+
+.rtn-kpi-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+.rtn-kpi-trend.green {
+  color: #16A34A;
+}
+
+.rtn-kpi-trend.orange {
+  color: #EA580C;
+}
+
+.rtn-kpi-trend.red {
+  color: #DC2626;
+}
+
+.rtn-kpi-sparkline {
+  width: 70px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   FILTER TABS (PILLS)
+========================================================= */
+
+.rtn-tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.rtn-tab-btn {
+  background: #FFFFFF;
+  border: 1px solid #E5D7C5;
+  color: #5C4530;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.rtn-tab-btn:hover {
+  background: #F9F3EA;
+  border-color: #D6BEA3;
+}
+
+.rtn-tab-btn.active {
+  background: #6E4720;
+  color: #FFFFFF;
+  border-color: #6E4720;
+  box-shadow: 0 2px 6px rgba(110, 71, 32, 0.25);
+}
+
+/* =========================================================
+   FILTER TOOLBAR
+========================================================= */
+
+.rtn-filter-toolbar {
+  background: #FFFFFF;
+  border: 1px solid #EFE5D5;
+  border-radius: 10px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.rtn-filter-search-box {
+  position: relative;
+  flex: 1;
+  min-width: 260px;
+}
+
+.rtn-filter-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9CA3AF;
+  pointer-events: none;
+}
+
+.rtn-filter-search-input {
+  width: 100%;
+  height: 38px;
+  padding: 0 14px 0 38px;
+  background: #FAF8F5;
+  border: 1px solid #E2D7C8;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #1F2937;
+  outline: none;
   box-sizing: border-box;
 }
 
-.ZENVE-header-left {
+.rtn-filter-search-input:focus {
+  border-color: #A36B32;
+  background: #FFFFFF;
+}
+
+.rtn-filter-select-group {
   display: flex;
   align-items: center;
-  gap: 20px;
-  min-width: 0;
-  flex-shrink: 0;
+  gap: 8px;
 }
 
-.ZENVE-portal-logo {
-  flex-shrink: 0;
+.rtn-filter-label {
+  font-size: 13px;
+  color: #4B5563;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
-.ZENVE-portal-logo img {
+.rtn-filter-select {
   height: 38px;
-  width: auto;
-  display: block;
-  object-fit: contain;
+  padding: 0 28px 0 12px;
+  background: #FAF8F5;
+  border: 1px solid #E2D7C8;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #1F2937;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
 }
 
-.ZENVE-header-title-block {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
+.rtn-filter-select:focus {
+  border-color: #A36B32;
+  background-color: #FFFFFF;
 }
 
-.ZENVE-back-link {
+.rtn-reset-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
+  height: 38px;
+  padding: 0 16px;
+  background: #FFFFFF;
+  border: 1px solid #D6C2AC;
+  color: #6E4720;
+  border-radius: 6px;
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ZENVE-muted, #6B5A45);
-  text-decoration: none;
-  transition: color 0.15s ease;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
-.ZENVE-back-link:hover {
-  color: var(--ZENVE-ink, #1F2937);
+.rtn-reset-btn:hover {
+  background: #F9F3EA;
+  border-color: #B8997A;
 }
 
-.ZENVE-portal-title {
+/* =========================================================
+   SPLIT GRID LAYOUT (TABLE + DETAILS PANEL)
+========================================================= */
+
+.rtn-split-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* =========================================================
+   RETURNS DATA TABLE CARD
+========================================================= */
+
+.rtn-table-card {
+  background: #FFFFFF;
+  border: 1px solid #EFE5D5;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.rtn-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.rtn-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.rtn-data-table thead th {
+  background: #FAF5EB;
+  border-bottom: 1px solid #EEDFCE;
+  padding: 12px 14px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #6E5338;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.rtn-data-table tbody tr {
+  border-bottom: 1px solid #F3ECE1;
+  transition: background 0.15s ease;
+  cursor: pointer;
+}
+
+.rtn-data-table tbody tr:hover {
+  background: #FAF7F2;
+}
+
+.rtn-data-table tbody tr.selected {
+  background: #F8F3EA;
+  box-shadow: inset 3px 0 0 #6E4720;
+}
+
+.rtn-data-table td {
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #374151;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* Table Elements */
+.rtn-checkbox {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  accent-color: #6E4720;
+  cursor: pointer;
   margin: 0;
-  font-size: 26px;
+  display: block;
+}
+
+.rtn-row-num {
+  font-size: 12.5px;
+  color: #6B7280;
   font-weight: 500;
-  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  color: var(--ZENVE-ink, #1F2937);
+}
+
+.rtn-id-link {
+  color: #2563EB;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.rtn-id-link:hover {
+  text-decoration: underline;
+}
+
+.rtn-order-id {
+  color: #2563EB;
+  font-weight: 500;
+}
+
+.rtn-customer-cell {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 10px;
 }
 
-.ZENVE-layer-num {
-  font-size: 26px;
-  font-weight: 500;
-  font-family: inherit;
-  color: #D4A017;
-}
-
-.ZENVE-portal-desc {
-  margin: 0;
-  font-size: 14px;
-  color: var(--ZENVE-muted, #6B5A45);
-}
-
-.ZENVE-header-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.rtn-customer-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #F3E8FF;
+  border: 1px solid #E9D5FF;
   flex-shrink: 0;
 }
 
-/* =========================================================
-   MAIN CONTAINER
-========================================================= */
-
-.ZENVE-returns-main {
-  max-width: 1480px;
-  margin: 0 auto;
-  padding: 24px 28px 60px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  box-sizing: border-box;
+.rtn-customer-name {
+  font-weight: 600;
+  color: #1F2937;
 }
 
-/* =========================================================
-   ALERT / TOAST BANNER
-========================================================= */
-
-.ZENVE-returns-alert {
+.rtn-products-cell {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 12px 18px;
-  border-radius: 6px;
-  font-size: 13.5px;
-  font-weight: 500;
-  animation: fadeIn 0.2s ease-in-out;
+  gap: 6px;
 }
 
-.ZENVE-returns-alert.success {
-  background-color: #ecfdf5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
+.rtn-thumb {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid #E5D7C5;
+  background: #F9F6F0;
+  flex-shrink: 0;
 }
 
-.ZENVE-returns-alert.error {
-  background-color: #fff1f2;
-  color: #9f1239;
-  border: 1px solid #fecdd3;
+.rtn-reason-text {
+  color: #4B5563;
+  font-size: 12.5px;
 }
 
-.ZENVE-alert-close {
+/* Status Pills */
+.rtn-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.rtn-status-pill .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.rtn-status-pill.pending {
+  background: #FEF3C7;
+  color: #B45309;
+}
+.rtn-status-pill.pending .dot {
+  background: #F59E0B;
+}
+
+.rtn-status-pill.approved {
+  background: #DCFCE7;
+  color: #15803D;
+}
+.rtn-status-pill.approved .dot {
+  background: #22C55E;
+}
+
+.rtn-status-pill.rejected {
+  background: #FEE2E2;
+  color: #B91C1C;
+}
+.rtn-status-pill.rejected .dot {
+  background: #EF4444;
+}
+
+.rtn-status-pill.refunded {
+  background: #F3E8FF;
+  color: #7E22CE;
+}
+.rtn-status-pill.refunded .dot {
+  background: #A855F7;
+}
+
+.rtn-status-pill.processed {
+  background: #E0F2FE;
+  color: #0369A1;
+}
+.rtn-status-pill.processed .dot {
+  background: #0EA5E9;
+}
+
+.rtn-date-text {
+  color: #4B5563;
+  font-size: 12.5px;
+}
+
+/* Row Action Buttons */
+.rtn-actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rtn-icon-btn {
   background: none;
   border: none;
-  font-size: 18px;
-  line-height: 1;
-  color: currentColor;
   cursor: pointer;
-  padding: 0 4px;
-  opacity: 0.7;
-}
-
-.ZENVE-alert-close:hover {
-  opacity: 1;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* =========================================================
-   TOP 4 KPI CARDS
-========================================================= */
-
-.ZENVE-returns-kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  width: 100%;
-}
-
-.ZENVE-kpi-card {
-  background: var(--ZENVE-panel, #FFFCF5);
-  border: 1px solid var(--ZENVE-line, #E7C77A);
-  border-radius: 8px;
-  padding: 16px 18px;
+  color: #6B7280;
+  padding: 4px;
+  border-radius: 4px;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  transition: box-shadow 0.15s ease, transform 0.15s ease;
-  box-sizing: border-box;
-}
-
-.ZENVE-kpi-card:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-.ZENVE-kpi-label {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--ZENVE-muted, #6B5A45);
-}
-
-.ZENVE-kpi-value {
-  font-size: 26px;
-  font-weight: 700;
-  color: var(--ZENVE-ink, #1F2937);
-  line-height: 1.15;
-  font-family: var(--ZENVE-font-display, "Outfit", sans-serif);
-}
-
-.ZENVE-kpi-hint {
-  font-size: 12px;
-  color: var(--ZENVE-muted, #6B5A45);
-}
-
-/* =========================================================
-   PANEL / SECTION CARD
-========================================================= */
-
-.ZENVE-panel-card {
-  background: var(--ZENVE-panel, #FFFCF5);
-  border: 1px solid var(--ZENVE-line, #E7C77A);
-  border-radius: 8px;
-  padding: 20px 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  box-sizing: border-box;
-}
-
-.ZENVE-panel-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.ZENVE-panel-title-block {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.ZENVE-panel-title {
-  margin: 0;
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--ZENVE-ink, #1F2937);
-}
-
-.ZENVE-panel-desc {
-  margin: 0;
-  font-size: 13px;
-  color: var(--ZENVE-muted, #6B5A45);
-  line-height: 1.4;
-}
-
-/* =========================================================
-   RAISE A RETURN FORM
-========================================================= */
-
-.ZENVE-raise-return-form {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end !important;
-  gap: 12px;
-  padding-top: 4px;
-  width: 100%;
-}
-
-.ZENVE-form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin: 0;
-  padding: 0;
-}
-
-.ZENVE-form-field label {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ZENVE-muted, #6B5A45);
-  line-height: 1.2;
-  margin: 0;
-  padding: 0;
-}
-
-.ZENVE-select,
-.ZENVE-input {
-  height: 38px !important;
-  border: 1px solid var(--ZENVE-line, #E7C77A);
-  border-radius: 6px;
-  padding: 0 12px;
-  font-size: 13.5px;
-  background-color: var(--ZENVE-panel, #FFFCF5);
-  color: var(--ZENVE-ink, #1F2937);
-  outline: none;
-  box-sizing: border-box;
-  margin: 0 !important;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.ZENVE-select:focus,
-.ZENVE-input:focus {
-  border-color: #92400e;
-  box-shadow: 0 0 0 2px rgba(146, 64, 14, 0.1);
-}
-
-.ZENVE-select:disabled,
-.ZENVE-input:disabled {
-  background-color: #FFF8E8;
-  color: #a8a29e;
-  cursor: not-allowed;
-}
-
-.ZENVE-btn-primary {
-  height: 38px !important;
-  padding: 0 18px;
-  font-size: 13.5px;
-  font-weight: 600;
-  border-radius: 6px;
-  border: 1px solid var(--ZENVE-ink, #1F2937);
-  background-color: var(--ZENVE-ink, #1F2937) !important;
-  color: #FFFCF5 !important;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  align-self: flex-end !important;
-  margin: 0 !important;
-  opacity: 1 !important;
-  white-space: nowrap;
-  transition: background-color 0.15s ease, opacity 0.15s ease;
-}
-
-.ZENVE-btn-primary:hover:not(:disabled) {
-  background-color: #4A2C0A !important;
-  border-color: #4A2C0A !important;
-}
-
-.ZENVE-btn-primary:disabled {
-  opacity: 0.85;
-  cursor: not-allowed;
-}
-
-.ZENVE-btn-sm {
-  height: 32px;
-  padding: 0 14px;
-  font-size: 12.5px;
-  font-weight: 600;
-  border-radius: 5px;
-  cursor: pointer;
-  display: inline-flex;
   align-items: center;
   justify-content: center;
   transition: all 0.15s ease;
-  border: 1px solid transparent;
-  box-sizing: border-box;
 }
 
-.ZENVE-btn-sm.primary {
-  background-color: var(--ZENVE-ink, #1F2937);
-  color: #FFFCF5;
+.rtn-icon-btn:hover {
+  color: #6E4720;
+  background: #F5EEE4;
 }
 
-.ZENVE-btn-sm.primary:hover:not(:disabled) {
-  background-color: #4A2C0A;
+/* Pagination Footer */
+.rtn-table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: #FFFFFF;
+  border-top: 1px solid #EFE5D5;
 }
 
-.ZENVE-btn-sm.outline {
-  background-color: transparent;
-  border-color: var(--ZENVE-line, #E7C77A);
-  color: var(--ZENVE-ink, #1F2937);
+.rtn-showing-text {
+  font-size: 13px;
+  color: #6B7280;
 }
 
-.ZENVE-btn-sm.outline:hover:not(:disabled) {
-  background-color: #FFF8E8;
-  border-color: #E7C77A;
+.rtn-pagination-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.ZENVE-btn-sm.danger-outline {
-  background-color: transparent;
-  border-color: #fecdd3;
-  color: #be123c;
+.rtn-page-btn {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 6px;
+  border: 1px solid #E5D7C5;
+  background: #FFFFFF;
+  color: #4B5563;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
 }
 
-.ZENVE-btn-sm.danger-outline:hover:not(:disabled) {
-  background-color: #fff1f2;
+.rtn-page-btn:hover:not(:disabled) {
+  background: #FAF5EB;
+  border-color: #D6BEA3;
 }
 
-.ZENVE-btn-sm:disabled {
-  opacity: 0.5;
+.rtn-page-btn.active {
+  background: #6E4720;
+  color: #FFFFFF;
+  border-color: #6E4720;
+  font-weight: 700;
+}
+
+.rtn-page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.rtn-page-ellipsis {
+  padding: 0 4px;
+  color: #9CA3AF;
+  font-size: 13px;
+}
+
+/* =========================================================
+   RIGHT PANEL: RETURN DETAILS CARD
+========================================================= */
+
+.rtn-details-card {
+  background: #FFFFFF;
+  border: 1px solid #EFE5D5;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  position: sticky;
+  top: 20px;
+}
+
+.rtn-details-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #EFE5D5;
+}
+
+.rtn-details-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rtn-details-shield-icon {
+  color: #B45309;
+}
+
+.rtn-details-heading {
+  font-size: 15px;
+  font-weight: 700;
+  color: #38210A;
+}
+
+.rtn-view-order-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #D6C2AC;
+  background: #FFFFFF;
+  color: #6E4720;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.rtn-view-order-link:hover {
+  background: #FAF5EB;
+  border-color: #A36B32;
+}
+
+/* Product Preview Showcase */
+.rtn-product-preview-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 16px 0;
+  padding: 12px;
+  background: #FAF7F2;
+  border: 1px solid #EFE6D8;
+  border-radius: 8px;
+}
+
+.rtn-product-preview-img {
+  width: 68px;
+  height: 82px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #E5D7C5;
+  background: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.rtn-product-preview-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.rtn-product-preview-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rtn-product-preview-sku {
+  font-size: 11.5px;
+  color: #6B7280;
+}
+
+.rtn-product-preview-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  margin: 2px 0;
+}
+
+.rtn-product-preview-attrs {
+  font-size: 11.5px;
+  color: #6B7280;
+}
+
+/* Meta Key-Value Rows */
+.rtn-details-meta-list {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.rtn-details-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 12.5px;
+  border-bottom: 1px solid #F5EFE6;
+}
+
+.rtn-details-meta-row:last-child {
+  border-bottom: none;
+}
+
+.rtn-meta-label {
+  color: #6B7280;
+}
+
+.rtn-meta-value {
+  font-weight: 600;
+  color: #1F2937;
+  text-align: right;
+}
+
+.rtn-meta-value.link {
+  color: #2563EB;
+}
+
+/* Customer Note Box */
+.rtn-customer-note-section {
+  margin-bottom: 20px;
+}
+
+.rtn-customer-note-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.rtn-customer-note-box {
+  background: #FAF7F2;
+  border: 1px solid #EFE6D8;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 12.5px;
+  color: #4B5563;
+  line-height: 1.45;
+  font-style: italic;
+}
+
+/* Live Action Buttons */
+.rtn-details-action-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rtn-btn-approve {
+  flex: 1;
+  height: 40px;
+  background: #6E4720;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.rtn-btn-approve:hover:not(:disabled) {
+  background: #573616;
+  box-shadow: 0 2px 8px rgba(110, 71, 32, 0.3);
+}
+
+.rtn-btn-approve:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.rtn-btn-reject {
+  flex: 1;
+  height: 40px;
+  background: #FFFFFF;
+  color: #B91C1C;
+  border: 1px solid #FCA5A5;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.rtn-btn-reject:hover:not(:disabled) {
+  background: #FEF2F2;
+  border-color: #EF4444;
+}
+
+.rtn-btn-reject:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
 /* =========================================================
-   RETURN WORKFLOW LIST
+   POPUP MODAL / EDIT DIALOG
 ========================================================= */
 
-.ZENVE-returns-list {
+.rtn-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(20, 15, 10, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 
-.ZENVE-return-card {
-  border: 1px solid var(--ZENVE-line, #E7C77A);
-  border-radius: 6px;
-  padding: 16px 18px;
-  background: #FFFCF5;
+.rtn-modal-card {
+  background: #FFFFFF;
+  border-radius: 12px;
+  border: 1px solid #EFE5D5;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: rtnModalIn 0.2s ease-out;
+}
+
+@keyframes rtnModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.rtn-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #EFE5D5;
+  background: #FAF7F2;
+}
+
+.rtn-modal-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #38210A;
+}
+
+.rtn-modal-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #6B7280;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.rtn-modal-close:hover {
+  background: #E5D7C5;
+}
+
+.rtn-modal-body {
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  transition: border-color 0.15s ease;
+  gap: 14px;
+}
+
+.rtn-modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rtn-modal-field label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.rtn-modal-field select,
+.rtn-modal-field input,
+.rtn-modal-field textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #D6C2AC;
+  border-radius: 6px;
+  font-size: 13.5px;
+  color: #1F2937;
+  outline: none;
   box-sizing: border-box;
 }
 
-.ZENVE-return-card:hover {
-  border-color: #E7C77A;
+.rtn-modal-field select:focus,
+.rtn-modal-field input:focus,
+.rtn-modal-field textarea:focus {
+  border-color: #6E4720;
 }
 
-.ZENVE-return-top {
+.rtn-modal-footer {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px;
+  background: #FAF7F2;
+  border-top: 1px solid #EFE5D5;
 }
 
-.ZENVE-return-id {
-  margin: 0;
-  font-size: 15px;
+.rtn-modal-cancel {
+  padding: 8px 16px;
+  background: #FFFFFF;
+  border: 1px solid #D6C2AC;
+  color: #5C4530;
+  font-size: 13px;
   font-weight: 600;
-  color: var(--ZENVE-ink, #1F2937);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-}
-
-.ZENVE-return-details {
-  margin: 0;
-  font-size: 13.5px;
-  color: var(--ZENVE-muted, #6B5A45);
-  line-height: 1.4;
-}
-
-.ZENVE-return-actions {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding-top: 4px;
-}
-
-/* =========================================================
-   TONE BADGES
-========================================================= */
-
-.ZENVE-tone-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 2.5px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  line-height: 1.2;
-}
-
-.ZENVE-tone-badge.good {
-  background-color: #ecfdf5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
-}
-
-.ZENVE-tone-badge.warn {
-  background-color: #fffbeb;
-  color: #92400e;
-  border: 1px solid #fde68a;
-}
-
-.ZENVE-tone-badge.bad {
-  background-color: #fff1f2;
-  color: #9f1239;
-  border: 1px solid #fecdd3;
-}
-
-.ZENVE-tone-badge.info {
-  background-color: #eff6ff;
-  color: #1e40af;
-  border: 1px solid #bfdbfe;
-}
-
-.ZENVE-tone-badge.neutral {
-  background-color: #FFF8E8;
-  color: #5c554e;
-  border: 1px solid #E7C77A;
-}
-
-/* =========================================================
-   EMPTY STATE BOX
-========================================================= */
-
-.ZENVE-empty-box {
-  padding: 32px 16px;
-  text-align: center;
-  border: 1px dashed var(--ZENVE-line, #E7C77A);
   border-radius: 6px;
-  color: var(--ZENVE-muted, #6B5A45);
-  font-size: 13.5px;
-  background-color: #FFF8E8;
+  cursor: pointer;
+}
+
+.rtn-modal-save {
+  padding: 8px 18px;
+  background: #6E4720;
+  border: none;
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 /* =========================================================
-   COMPREHENSIVE ALL-SCREEN-SIZE RESPONSIVE MEDIA QUERIES
+   RESPONSIVE DESIGN
 ========================================================= */
 
-/* ---------------------------------------------------------
-   1. MOBILE PHONES (320px - 640px)
-   Smartphones like iPhone, Pixel, Galaxy
---------------------------------------------------------- */
-
-@media (max-width: 640px) {
-  .ZENVE-returns-header {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 12px 14px;
-    gap: 12px;
-  }
-
-  .ZENVE-header-left {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    width: 100%;
-  }
-
-  .ZENVE-portal-logo {
-    flex-shrink: 0;
-  }
-
-  .ZENVE-portal-logo img {
-    height: 32px;
-    width: auto;
-  }
-
-  .ZENVE-header-title-block {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .ZENVE-portal-title {
-    font-size: 20px;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-
-  .ZENVE-layer-num {
-    font-size: 20px;
-  }
-
-  .ZENVE-portal-desc {
-    font-size: 12px;
-    line-height: 1.4;
-  }
-
-  .ZENVE-header-right {
-    width: 100%;
-  }
-
-  .ZENVE-header-right .search-user-wrapper {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
-
-  .ZENVE-header-right .search-bar-wrapper {
-    width: 100%;
-    flex: 1 1 100%;
-    max-width: 100%;
-  }
-
-  .ZENVE-header-right .search-box {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .ZENVE-header-right .home-user {
-    width: 100%;
-    justify-content: center;
-    box-sizing: border-box;
-  }
-
-  .ZENVE-returns-main {
-    padding: 14px 12px 48px;
-    gap: 16px;
-  }
-
-  /* Top 4 KPI Cards: 2x2 grid */
-  .ZENVE-returns-kpi-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-
-  .ZENVE-kpi-card {
-    padding: 12px 14px;
-  }
-
-  .ZENVE-kpi-label {
-    font-size: 10px;
-  }
-
-  .ZENVE-kpi-value {
-    font-size: 22px;
-  }
-
-  .ZENVE-panel-card {
-    padding: 14px 14px;
-    gap: 14px;
-  }
-
-  .ZENVE-panel-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 6px;
-  }
-
-  .ZENVE-panel-title {
-    font-size: 16px;
-  }
-
-  .ZENVE-panel-desc {
-    font-size: 12.5px;
-    line-height: 1.4;
-  }
-
-  /* Raise Return Form on Mobile */
-  .ZENVE-raise-return-form {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-    width: 100%;
-  }
-
-  .ZENVE-form-field {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .ZENVE-select,
-  .ZENVE-input {
-    width: 100% !important;
-    min-width: 0 !important;
-    box-sizing: border-box;
-    height: 38px;
-    font-size: 13.5px;
-  }
-
-  .ZENVE-btn-primary {
-    width: 100%;
-    height: 38px;
-    font-size: 13px;
-    justify-content: center;
-  }
-
-  /* Return Card on Mobile */
-  .ZENVE-returns-list {
-    gap: 10px;
-  }
-
-  .ZENVE-return-card {
-    padding: 14px 12px;
-    gap: 10px;
-  }
-
-  .ZENVE-return-top {
-    flex-wrap: wrap;
-    gap: 6px;
-    align-items: center;
-  }
-
-  .ZENVE-return-id {
-    font-size: 14px;
-  }
-
-  .ZENVE-return-details {
-    font-size: 12.5px;
-    line-height: 1.45;
-    word-break: break-word;
-  }
-
-  .ZENVE-return-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    width: 100%;
-  }
-
-  .ZENVE-return-actions .ZENVE-btn-sm {
-    width: 100%;
-    height: 36px;
-    font-size: 12px;
-    justify-content: center;
-  }
-
-  .ZENVE-return-actions > button:only-child {
-    grid-column: 1 / -1;
-  }
-}
-
-/* Extra small mobile (< 380px) */
-@media (max-width: 380px) {
-  .ZENVE-returns-header {
-    padding: 10px 10px;
-  }
-
-  .ZENVE-returns-main {
-    padding: 10px 8px 36px;
-    gap: 12px;
-  }
-
-  .ZENVE-returns-kpi-grid {
-    grid-template-columns: 1fr;
-    gap: 6px;
-  }
-
-  .ZENVE-kpi-value {
-    font-size: 20px;
-  }
-
-  .ZENVE-return-actions {
+@media (max-width: 1280px) {
+  .rtn-split-layout {
     grid-template-columns: 1fr;
   }
+
+  .rtn-details-card {
+    position: static;
+  }
 }
 
-/* ---------------------------------------------------------
-   2. TABLETS & MEDIUM SCREENS (641px - 1140px)
-   iPad, iPad Air, iPad Pro, Android Tablets, Surface Pro
---------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .rtn-kpi-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
 
-@media (min-width: 641px) and (max-width: 1140px) {
-  .ZENVE-returns-header {
-    padding: 14px 24px;
+@media (max-width: 768px) {
+  .rtn-container {
+    padding: 16px;
+  }
+
+  .rtn-top-nav {
     flex-direction: column;
     align-items: stretch;
-    gap: 12px;
+    padding: 12px 16px;
   }
 
-  .ZENVE-header-left {
+  .rtn-top-search-wrap {
     width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    min-width: 0;
   }
 
-  .ZENVE-portal-logo {
-    flex-shrink: 0;
+  .rtn-kpi-grid {
+    grid-template-columns: 1fr;
   }
 
-  .ZENVE-portal-logo img {
-    height: 36px;
-    width: auto;
-  }
-
-  .ZENVE-header-title-block {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .ZENVE-portal-title {
-    font-size: 22px;
-    line-height: 1.25;
-    white-space: nowrap;
-  }
-
-  .ZENVE-portal-desc {
-    font-size: 12.5px;
-    line-height: 1.45;
-    color: var(--ZENVE-muted, #6B5A45);
-    white-space: normal;
-    margin-top: 2px;
-  }
-
-  .ZENVE-header-right {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding-top: 12px;
-    border-top: 1px solid var(--ZENVE-line, #E7C77A);
-  }
-
-  .ZENVE-header-right .search-user-wrapper {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-    min-width: 0;
-  }
-
-  .ZENVE-header-right .search-bar-wrapper {
-    flex: 1;
-    max-width: 340px;
-    min-width: 180px;
-  }
-
-  .ZENVE-header-right .home-user {
-    flex-shrink: 0;
-  }
-
-  .ZENVE-returns-main {
-    max-width: 100%;
-    padding: 20px 24px 60px;
-    gap: 20px;
-  }
-
-  /* Top 4 KPIs: 4 columns on landscape tablet */
-  .ZENVE-returns-kpi-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-  }
-
-  .ZENVE-kpi-card {
-    padding: 14px 16px;
-  }
-
-  .ZENVE-kpi-value {
-    font-size: 24px;
-  }
-
-  /* Raise return form flex */
-  .ZENVE-raise-return-form {
-    flex-wrap: wrap;
-    gap: 12px;
-    align-items: flex-end;
-  }
-
-  .ZENVE-select,
-  .ZENVE-input {
-    min-width: 160px !important;
-  }
-
-  .ZENVE-return-card {
-    padding: 16px 18px;
-  }
-}
-
-/* Tablet portrait & narrow tablets (641px - 840px) */
-@media (min-width: 641px) and (max-width: 840px) {
-  .ZENVE-returns-header {
-    padding: 12px 18px;
-    gap: 10px;
-  }
-
-  .ZENVE-header-right {
-    gap: 12px;
-    padding-top: 10px;
-  }
-
-  .ZENVE-returns-main {
-    padding: 16px 18px 48px;
-    gap: 16px;
-  }
-
-  /* Top 4 KPIs: 2x2 grid on portrait tablet */
-  .ZENVE-returns-kpi-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-
-  /* Stack form elements vertically */
-  .ZENVE-raise-return-form {
+  .rtn-filter-toolbar {
     flex-direction: column;
     align-items: stretch;
-    gap: 12px;
-    width: 100%;
-  }
-
-  .ZENVE-form-field {
-    width: 100%;
-  }
-
-  .ZENVE-select,
-  .ZENVE-input {
-    width: 100% !important;
-    min-width: 0 !important;
-  }
-
-  .ZENVE-btn-primary {
-    width: 100%;
-  }
-}
-
-/* ---------------------------------------------------------
-   3. LAPTOP & STANDARD DESKTOP (1141px - 1440px)
-   MacBook Pro, ThinkPad, Standard 1080p Desktop
---------------------------------------------------------- */
-
-@media (min-width: 1141px) and (max-width: 1440px) {
-  .ZENVE-returns-main {
-    max-width: 1380px;
-  }
-
-  .ZENVE-returns-kpi-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-  }
-}
-
-/* ---------------------------------------------------------
-   4. LARGE DESKTOP & WIDE MONITORS (1441px - 1920px)
-   iMac 24", 27" QHD, Studio Display
---------------------------------------------------------- */
-
-@media (min-width: 1441px) and (max-width: 1920px) {
-  .ZENVE-returns-header {
-    padding: 18px 36px;
-  }
-
-  .ZENVE-portal-title {
-    font-size: 28px;
-  }
-
-  .ZENVE-layer-num {
-    font-size: 28px;
-  }
-
-  .ZENVE-returns-main {
-    max-width: 1640px;
-    padding: 28px 36px 64px;
-    gap: 26px;
-  }
-
-  .ZENVE-returns-kpi-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-  }
-
-  .ZENVE-kpi-card {
-    padding: 18px 22px;
-    gap: 8px;
-  }
-
-  .ZENVE-kpi-label {
-    font-size: 12px;
-  }
-
-  .ZENVE-kpi-value {
-    font-size: 28px;
-  }
-
-  .ZENVE-panel-card {
-    padding: 22px 26px;
-    gap: 18px;
-  }
-}
-
-/* ---------------------------------------------------------
-   5. 4K ULTRA HD SCREENS (1921px - 3840px+)
-   Ultra-high resolution displays, 4K/5K Monitors
---------------------------------------------------------- */
-
-@media (min-width: 1921px) {
-  .ZENVE-returns-header {
-    padding: 24px 64px;
-  }
-
-  .ZENVE-portal-logo img {
-    height: 52px;
-  }
-
-  .ZENVE-back-link {
-    font-size: 13.5px;
-    gap: 8px;
-  }
-
-  .ZENVE-portal-title {
-    font-size: 34px;
-    gap: 12px;
-  }
-
-  .ZENVE-layer-num {
-    font-size: 34px;
-  }
-
-  .ZENVE-portal-desc {
-    font-size: 16.5px;
-  }
-
-  .ZENVE-returns-main {
-    max-width: 2800px;
-    padding: 36px 64px 80px;
-    gap: 32px;
-  }
-
-  /* 4K Top 4 KPI Cards */
-  .ZENVE-returns-kpi-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-  }
-
-  .ZENVE-kpi-card {
-    padding: 22px 26px;
-    border-radius: 10px;
-    gap: 8px;
-  }
-
-  .ZENVE-kpi-label {
-    font-size: 13px;
-  }
-
-  .ZENVE-kpi-value {
-    font-size: 36px;
-  }
-
-  /* 4K Panels */
-  .ZENVE-panel-card {
-    padding: 28px 32px;
-    border-radius: 10px;
-    gap: 22px;
-  }
-
-  .ZENVE-panel-title {
-    font-size: 22px;
-  }
-
-  .ZENVE-panel-desc {
-    font-size: 15.5px;
-  }
-
-  /* 4K Form */
-  .ZENVE-form-field label {
-    font-size: 13px;
-  }
-
-  .ZENVE-select,
-  .ZENVE-input {
-    height: 44px;
-    font-size: 15px;
-    border-radius: 8px;
-  }
-
-  .ZENVE-btn-primary {
-    height: 44px;
-    padding: 0 24px;
-    font-size: 15px;
-    border-radius: 8px;
-  }
-
-  /* 4K Return Card */
-  .ZENVE-returns-list {
-    gap: 16px;
-  }
-
-  .ZENVE-return-card {
-    padding: 22px 26px;
-    border-radius: 10px;
-    gap: 14px;
-  }
-
-  .ZENVE-return-id {
-    font-size: 18px;
-  }
-
-  .ZENVE-return-details {
-    font-size: 15.5px;
-  }
-
-  .ZENVE-tone-badge {
-    font-size: 13px;
-    padding: 4px 10px;
-  }
-
-  .ZENVE-btn-sm {
-    height: 38px;
-    padding: 0 18px;
-    font-size: 14px;
-    border-radius: 6px;
-  }
-}
-
-/* Extreme 4K Resolution (3200px - 3840px Native) */
-@media (min-width: 3200px) {
-  .ZENVE-returns-main {
-    max-width: 3400px;
-  }
-
-  .ZENVE-portal-title {
-    font-size: 40px;
-  }
-
-  .ZENVE-layer-num {
-    font-size: 40px;
-  }
-
-  .ZENVE-kpi-value {
-    font-size: 42px;
-  }
-
-  .ZENVE-return-id {
-    font-size: 20px;
   }
 }

@@ -292,12 +292,32 @@ class ReturnStatsAPIView(APIView):
     def get(self, request):
         total_returns = ReturnRequest.objects.count()
 
-        open_returns = ReturnRequest.objects.filter(
+        pending_approval = ReturnRequest.objects.filter(
             status__in=[
                 ReturnRequest.ReturnStatus.REQUESTED,
+                ReturnRequest.ReturnStatus.PENDING,
                 ReturnRequest.ReturnStatus.PICKUP_SCHEDULED,
                 ReturnRequest.ReturnStatus.RECEIVED,
             ]
+        ).count()
+
+        approved = ReturnRequest.objects.filter(
+            status__in=[
+                ReturnRequest.ReturnStatus.APPROVED,
+                ReturnRequest.ReturnStatus.INSPECTED_PASSED,
+                ReturnRequest.ReturnStatus.PROCESSED,
+            ]
+        ).count()
+
+        rejected = ReturnRequest.objects.filter(
+            status__in=[
+                ReturnRequest.ReturnStatus.REJECTED,
+                ReturnRequest.ReturnStatus.INSPECTED_FAILED,
+            ]
+        ).count()
+
+        refund_processed = ReturnRequest.objects.filter(
+            status=ReturnRequest.ReturnStatus.REFUNDED
         ).count()
 
         awaiting_inspection = ReturnRequest.objects.filter(
@@ -315,7 +335,11 @@ class ReturnStatsAPIView(APIView):
 
         return Response({
             "total_returns": total_returns,
-            "open_returns": open_returns,
+            "pending_approval": pending_approval,
+            "approved": approved,
+            "rejected": rejected,
+            "refund_processed": refund_processed,
+            "open_returns": pending_approval,
             "awaiting_inspection": awaiting_inspection,
             "failed_qc": failed_qc,
             "refund_values": float(refund_values),

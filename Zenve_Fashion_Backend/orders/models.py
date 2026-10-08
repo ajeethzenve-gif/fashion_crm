@@ -451,17 +451,24 @@ class OrderItem(models.Model):
 class ReturnRequest(models.Model):
     class ReturnStatus(models.TextChoices):
         REQUESTED = "REQUESTED", "Requested"
+        PENDING = "PENDING", "Pending"
+        APPROVED = "APPROVED", "Approved"
         PICKUP_SCHEDULED = "PICKUP_SCHEDULED", "Pickup Scheduled"
         RECEIVED = "RECEIVED", "Received at Warehouse"
         INSPECTED_PASSED = "INSPECTED_PASSED", "Inspected - Passed"
         INSPECTED_FAILED = "INSPECTED_FAILED", "Inspected - Failed QC"
         REFUNDED = "REFUNDED", "Refunded"
         REJECTED = "REJECTED", "Rejected"
+        EXCHANGE = "EXCHANGE", "Exchange"
+        PROCESSED = "PROCESSED", "Processed"
 
     class ReturnReason(models.TextChoices):
-        SIZE_FIT = "SIZE_FIT", "Size / Fit Issue"
-        DEFECTIVE = "DEFECTIVE", "Defective / Damaged Item"
-        WRONG_ITEM = "WRONG_ITEM", "Wrong Item Delivered"
+        SIZE_FIT = "SIZE_FIT", "Size Issue"
+        COLOR_MISMATCH = "COLOR_MISMATCH", "Color Mismatch"
+        DEFECTIVE = "DEFECTIVE", "Defective Product"
+        NOT_EXPECTED = "NOT_EXPECTED", "Not as Expected"
+        DAMAGE_DELIVERY = "DAMAGE_DELIVERY", "Damage during Delivery"
+        WRONG_ITEM = "WRONG_ITEM", "Wrong Product"
         QUALITY_ISSUE = "QUALITY_ISSUE", "Quality Not as Expected"
         NOT_NEEDED = "NOT_NEEDED", "No Longer Needed"
         OTHER = "OTHER", "Other"
