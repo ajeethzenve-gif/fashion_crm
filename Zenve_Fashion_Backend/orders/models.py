@@ -451,17 +451,24 @@ class OrderItem(models.Model):
 class ReturnRequest(models.Model):
     class ReturnStatus(models.TextChoices):
         REQUESTED = "REQUESTED", "Requested"
+        PENDING = "PENDING", "Pending"
+        APPROVED = "APPROVED", "Approved"
         PICKUP_SCHEDULED = "PICKUP_SCHEDULED", "Pickup Scheduled"
         RECEIVED = "RECEIVED", "Received at Warehouse"
         INSPECTED_PASSED = "INSPECTED_PASSED", "Inspected - Passed"
         INSPECTED_FAILED = "INSPECTED_FAILED", "Inspected - Failed QC"
         REFUNDED = "REFUNDED", "Refunded"
         REJECTED = "REJECTED", "Rejected"
+        EXCHANGE = "EXCHANGE", "Exchange"
+        PROCESSED = "PROCESSED", "Processed"
 
     class ReturnReason(models.TextChoices):
-        SIZE_FIT = "SIZE_FIT", "Size / Fit Issue"
-        DEFECTIVE = "DEFECTIVE", "Defective / Damaged Item"
-        WRONG_ITEM = "WRONG_ITEM", "Wrong Item Delivered"
+        SIZE_FIT = "SIZE_FIT", "Size Issue"
+        COLOR_MISMATCH = "COLOR_MISMATCH", "Color Mismatch"
+        DEFECTIVE = "DEFECTIVE", "Defective Product"
+        NOT_EXPECTED = "NOT_EXPECTED", "Not as Expected"
+        DAMAGE_DELIVERY = "DAMAGE_DELIVERY", "Damage during Delivery"
+        WRONG_ITEM = "WRONG_ITEM", "Wrong Product"
         QUALITY_ISSUE = "QUALITY_ISSUE", "Quality Not as Expected"
         NOT_NEEDED = "NOT_NEEDED", "No Longer Needed"
         OTHER = "OTHER", "Other"
@@ -775,3 +782,132 @@ class Settlement(models.Model):
             self.payout_amount = self.gmv - self.commission_amount - self.tax_amount
 
         super().save(*args, **kwargs)
+
+
+# ============================================================
+# SHIPMENT (DELIVERY ENGINE LAYER 08)
+# ============================================================
+
+class Shipment(models.Model):
+
+    COURIER_CHOICES = (
+        ("Delhivery", "Delhivery"),
+        ("Ekart", "Ekart"),
+        ("Blue Dart", "Blue Dart"),
+        ("DTDC", "DTDC"),
+        ("XpressBees", "XpressBees"),
+    )
+
+    STATUS_CHOICES = (
+        ("In Transit", "In Transit"),
+        ("Delivered", "Delivered"),
+        ("Pending", "Pending"),
+        ("Exception", "Exception"),
+        ("RTO", "RTO"),
+    )
+
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="shipments",
+    )
+
+    tracking_number = models.CharField(
+        max_length=60,
+        unique=True,
+        verbose_name="Tracking Number",
+    )
+
+    order_number = models.CharField(
+        max_length=60,
+        blank=True,
+        default="",
+        verbose_name="Order Number",
+    )
+
+    customer_name = models.CharField(
+        max_length=150,
+        default="Guest Customer",
+        verbose_name="Customer Name",
+    )
+
+    customer_phone = models.CharField(
+        max_length=40,
+        blank=True,
+        default="",
+        verbose_name="Customer Phone",
+    )
+
+    customer_avatar = models.CharField(
+        max_length=350,
+        blank=True,
+        default="",
+        verbose_name="Customer Avatar URL",
+    )
+
+    courier = models.CharField(
+        max_length=50,
+        choices=COURIER_CHOICES,
+        default="Delhivery",
+        verbose_name="Courier Partner",
+    )
+
+    status = models.CharField(
+        max_length=50,
+        choices=STATUS_CHOICES,
+        default="In Transit",
+        verbose_name="Shipment Status",
+    )
+
+    expected_delivery = models.CharField(
+        max_length=60,
+        blank=True,
+        default="",
+        verbose_name="Expected Delivery Date",
+    )
+
+    origin_hub = models.CharField(
+        max_length=100,
+        default="Bangalore Hub",
+        verbose_name="Origin Hub",
+    )
+
+    destination_hub = models.CharField(
+        max_length=100,
+        default="Regional Delivery Centre",
+        verbose_name="Destination Hub",
+    )
+
+    destination_address = models.TextField(
+        blank=True,
+        default="",
+        verbose_name="Destination Address",
+    )
+
+    timeline = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name="Tracking Timeline Events",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Created At",
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Updated At",
+    )
+
+    class Meta:
+        db_table = "orders_shipment"
+        ordering = ["-created_at"]
+        verbose_name = "Shipment"
+        verbose_name_plural = "Shipments"
+
+    def __str__(self):
+        return f"{self.tracking_number} - {self.customer_name} ({self.status})"
+

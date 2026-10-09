@@ -13,9 +13,15 @@ from .views import (
     SettlementStatsAPIView,
     SettlementTransitionAPIView,
     SettlementGenerateAPIView,
+    ShipmentListCreateAPIView,
+    ShipmentDetailAPIView,
+    ShipmentStatsAPIView,
 )
 
 urlpatterns = [
+    path("shipments/", ShipmentListCreateAPIView.as_view(), name="order-shipment-list-create"),
+    path("shipments/stats/", ShipmentStatsAPIView.as_view(), name="order-shipment-stats"),
+    path("shipments/<int:pk>/", ShipmentDetailAPIView.as_view(), name="order-shipment-detail"),
     path("returns/", ReturnListCreateAPIView.as_view(), name="return-list-create"),
     path("returns/stats/", ReturnStatsAPIView.as_view(), name="return-stats"),
     path("returns/<int:pk>/", ReturnDetailAPIView.as_view(), name="return-detail"),

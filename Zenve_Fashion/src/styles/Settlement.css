@@ -1,1058 +1,1668 @@
 /* =========================================================
-   SETTLEMENT & PAYOUTS STYLESHEET (10)
-   Zenve Fashion Operations
-   Exact match to https://zenvefashioncm.ZENVE.app/settlement
-   Full Responsive Support for All Screen Sizes:
-   - Mobile XS & Compact (320px - 420px)
-   - Mobile / Phablet (421px - 640px)
-   - Tablet Portrait & Small Tablet (641px - 768px)
-   - Tablet Landscape (769px - 1024px)
-   - Laptop / Standard Desktop (1025px - 1440px)
-   - Large Desktop (1441px - 1920px)
-   - 4K Ultra HD & Ultrawide (1921px - 3840px+)
+   ZENVE FASHION MERCHANDISING - SETTLEMENT LAYER STYLES
+   Exact Match to High-End Merchandising UI
 ========================================================= */
 
 :root {
-  --ZENVE-paper: #FFF8E8;
-  --ZENVE-panel: #FFFCF5;
-  --ZENVE-line: #E7C77A;
-  --ZENVE-line-light: #F4D58D;
-  --ZENVE-ink: #1F2937;
-  --ZENVE-muted: #6B5A45;
-  --ZENVE-gold: #D4A017;
-  --ZENVE-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --ZENVE-font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --ZENVE-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  --ZENVE-font-display: "Outfit", -apple-system, BlinkMacSystemFont, sans-serif;
+  --stl-bg: #FAF7F2;
+  --stl-card-bg: #FFFFFF;
+  --stl-bronze: #A86915;
+  --stl-bronze-dark: #8F540E;
+  --stl-bronze-light: #FDF4E7;
+  --stl-gold-accent: #D4A017;
+  --stl-gold-border: #EADBCC;
+  --stl-border: #ECE4D6;
+  --stl-border-light: #F4EFE6;
+  --stl-text-main: #2A1D13;
+  --stl-text-dark: #1E293B;
+  --stl-text-muted: #7E7062;
+  --stl-text-light: #9B8D7E;
+  --stl-success: #16A34A;
+  --stl-success-bg: #EAF7ED;
+  --stl-warning: #B45309;
+  --stl-warning-bg: #FEF6E7;
+  --stl-info: #1D4ED8;
+  --stl-info-bg: #EFF6FF;
+  --stl-danger: #DC2626;
+  --stl-danger-bg: #FEF2F2;
 }
 
-/* =========================================================
-   BASE LAYOUT
-========================================================= */
-
-.ZENVE-settlement-layout {
+.zenve-settlement-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px 24px 40px 24px;
+  background-color: var(--stl-bg);
   min-height: 100vh;
-  width: 100%;
-  background-color: var(--ZENVE-paper);
-  color: var(--ZENVE-ink);
-  font-family: var(--ZENVE-font-sans);
   box-sizing: border-box;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--stl-text-main);
 }
 
 /* =========================================================
-   HEADER SECTION
+   1. TOP APP BAR (GLOBAL SEARCH, NOTIFICATIONS, ADMIN)
 ========================================================= */
 
-.ZENVE-settlement-header {
-  width: 100%;
-  background: var(--ZENVE-panel);
-  border-bottom: 1px solid var(--ZENVE-line);
-  padding: 16px 28px;
+.zenve-top-navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
+  width: 100%;
   box-sizing: border-box;
-  position: sticky;
-  top: 0;
-  z-index: 40;
 }
 
-.ZENVE-header-left {
+.zenve-top-search-wrap {
+  position: relative;
+  flex: 1;
+  max-width: 620px;
   display: flex;
   align-items: center;
-  gap: 20px;
-  min-width: 0;
+}
+
+.zenve-search-icon {
+  position: absolute;
+  left: 14px;
+  color: #9C856C;
+  pointer-events: none;
+}
+
+.zenve-top-search-input {
+  width: 100%;
+  height: 42px;
+  padding: 0 16px 0 42px;
+  background: #FFFFFF;
+  border: 1px solid #E5D9C8;
+  border-radius: 22px;
+  font-size: 13.5px;
+  color: var(--stl-text-dark);
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.zenve-top-search-input:focus {
+  border-color: var(--stl-bronze);
+  box-shadow: 0 0 0 3px rgba(168, 105, 21, 0.12);
+}
+
+.zenve-top-search-input::placeholder {
+  color: #A39382;
+}
+
+.zenve-top-right-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
   flex-shrink: 0;
 }
 
-.ZENVE-portal-logo {
+.zenve-icon-btn.notification-btn {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFFFFF;
+  border: 1px solid #E5D9C8;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.zenve-icon-btn.notification-btn:hover {
+  background: #FDF9F3;
+  border-color: var(--stl-bronze);
+}
+
+.zenve-notification-dot {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: 7px;
+  height: 7px;
+  background-color: #EF4444;
+  border-radius: 50%;
+  border: 1.5px solid #FFFFFF;
+}
+
+.zenve-profile-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 14px 4px 4px;
+  background: #FFFFFF;
+  border: 1px solid #E5D9C8;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.zenve-profile-chip:hover {
+  border-color: var(--stl-bronze);
+}
+
+.zenve-profile-avatar {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #B5741E, #8C530E);
+  color: #FFFFFF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zenve-profile-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--stl-text-dark);
+}
+
+.zenve-profile-chevron {
+  color: #7E7062;
+}
+
+/* =========================================================
+   2. LUXURY HERO BANNER WITH FASHION COUTURE ATELIER
+========================================================= */
+
+.stl-hero-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 142px;
+  background: linear-gradient(135deg, #FDF9F1 0%, #F8EEDC 45%, #EFE1C9 100%);
+  border: 1px solid #E5D5BD;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px -4px rgba(78, 52, 28, 0.06);
+}
+
+.stl-hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 24px 34px;
+  max-width: 580px;
+}
+
+.stl-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #8C6A48;
+  margin-bottom: 8px;
+}
+
+.stl-breadcrumbs a {
+  color: #8C6A48;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.stl-breadcrumbs a:hover {
+  color: #5C3A1E;
+}
+
+.stl-breadcrumb-sep {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.stl-breadcrumb-current {
+  font-weight: 600;
+  color: #5C3A1E;
+}
+
+.stl-hero-title {
+  font-size: 30px;
+  font-weight: 800;
+  color: #43260D;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.02em;
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+.stl-hero-subtitle {
+  font-size: 13.5px;
+  color: #785A3C;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.stl-hero-art-wrap {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 58%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.stl-hero-art-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center right;
+}
+
+.stl-hero-glow-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    #FDF9F1 0%,
+    rgba(253, 249, 241, 0.95) 25%,
+    rgba(253, 249, 241, 0.35) 65%,
+    transparent 100%
+  );
+}
+
+/* =========================================================
+   3. TOP 5 KPI METRIC CARDS
+========================================================= */
+
+.stl-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.stl-kpi-card {
+  background: #FFFFFF;
+  border: 1px solid var(--stl-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-height: 84px;
+  box-sizing: border-box;
+}
+
+.stl-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(78, 52, 28, 0.05);
+}
+
+.stl-kpi-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  min-width: 0;
+}
+
+.stl-kpi-title-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.stl-kpi-icon-badge {
+  width: 34px;
+  height: 34px;
+  background: #FDF5E6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--stl-bronze);
+  flex-shrink: 0;
+}
+
+.stl-icon-symbol {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--stl-bronze);
+  line-height: 1;
+}
+
+.stl-kpi-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--stl-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.stl-kpi-body {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.stl-kpi-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: #241A12;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.stl-kpi-trend-spark {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.stl-trend-pill {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  line-height: 1.2;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.stl-trend-pill.up {
+  color: #16A34A;
+  background: #EAF7ED;
+}
+
+.stl-trend-pill.down {
+  color: #DC2626;
+  background: #FEF2F2;
+}
+
+.stl-sparkline {
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   4. MAIN WORKSPACE (SPLIT GRID: 73% TABLE, 27% WIDGETS)
+========================================================= */
+
+.stl-main-split-grid {
+  display: grid;
+  grid-template-columns: 1fr 310px;
+  gap: 18px;
+  align-items: start;
+}
+
+.stl-left-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* Actions Row: Tabs (Left) & Generate Settlement Button (Right) */
+.stl-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.stl-tabs-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stl-tab-btn {
+  padding: 8px 18px;
+  background: #FFFFFF;
+  border: 1px solid #E5D9C8;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6C5B49;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.stl-tab-btn:hover {
+  background: #FDF9F2;
+  border-color: #D2BEA3;
+}
+
+.stl-tab-btn.active {
+  background: #A86915;
+  border-color: #A86915;
+  color: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(168, 105, 21, 0.25);
+}
+
+.stl-primary-generate-btn {
   display: inline-flex;
   align-items: center;
+  gap: 8px;
+  padding: 9px 20px;
+  background: #A86915;
+  border: none;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #FFFFFF;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(168, 105, 21, 0.28);
+  transition: all 0.2s ease;
+}
+
+.stl-primary-generate-btn:hover {
+  background: #90550E;
+  transform: translateY(-1px);
+}
+
+/* Filter Toolbar Card */
+.stl-filters-toolbar-card {
+  background: #FFFFFF;
+  border: 1px solid var(--stl-border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+}
+
+.stl-filter-search-box {
+  position: relative;
+  flex: 1;
+  max-width: 360px;
+  display: flex;
+  align-items: center;
+}
+
+.stl-filter-search-box svg {
+  position: absolute;
+  left: 10px;
+  pointer-events: none;
+}
+
+.stl-filter-search-input {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px 0 34px;
+  background: #FAF7F2;
+  border: 1px solid #E5D9C8;
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: var(--stl-text-dark);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.stl-filter-search-input:focus {
+  background: #FFFFFF;
+  border-color: var(--stl-bronze);
+}
+
+.stl-filter-search-input::placeholder {
+  color: #9C8974;
+}
+
+.stl-filter-dropdown-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stl-filter-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stl-filter-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #7E7062;
+}
+
+.stl-filter-select {
+  height: 34px;
+  padding: 0 24px 0 10px;
+  background: #FAF7F2;
+  border: 1px solid #E5D9C8;
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: var(--stl-text-main);
+  outline: none;
+  cursor: pointer;
+  appearance: auto;
+}
+
+.stl-filter-select:focus {
+  border-color: var(--stl-bronze);
+}
+
+.stl-filter-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  background: #FFFFFF;
+  border: 1px solid #E5D9C8;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6C5B49;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.stl-filter-reset-btn:hover {
+  background: #FDF9F2;
+  border-color: var(--stl-bronze);
+  color: var(--stl-bronze);
+}
+
+/* =========================================================
+   5. SETTLEMENTS DATA TABLE CARD
+========================================================= */
+
+.stl-table-container-card {
+  background: #FFFFFF;
+  border: 1px solid var(--stl-border);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+}
+
+.stl-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.stl-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  text-align: left;
+}
+
+.stl-data-table th {
+  background: #FBF8F2;
+  color: #7A6956;
+  font-weight: 700;
+  padding: 12px 14px;
+  border-bottom: 1px solid #EADBCC;
+  white-space: nowrap;
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+}
+
+.stl-data-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #F2ECE0;
+  color: #372A1F;
+  vertical-align: middle;
+}
+
+.stl-data-table tr:hover td {
+  background-color: #FDFAF5;
+}
+
+.stl-data-table tr.selected-row td {
+  background-color: #FFF9ED;
+}
+
+.stl-th-checkbox,
+.stl-td-checkbox {
+  width: 36px;
+  text-align: center;
+}
+
+.stl-th-checkbox input,
+.stl-td-checkbox input {
+  accent-color: var(--stl-bronze);
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+.stl-th-index,
+.stl-td-index {
+  width: 56px;
+  color: #8C7864;
+  font-weight: 600;
+}
+
+.stl-id-link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #1D4ED8;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12.5px;
   text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.stl-id-link-btn:hover {
+  text-decoration: underline;
+  color: #1E40AF;
+}
+
+.stl-designer-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.stl-designer-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid #E5D5BD;
   flex-shrink: 0;
 }
 
-.ZENVE-portal-logo img {
-  height: 38px;
-  width: auto;
-  display: block;
+.stl-designer-name {
+  font-weight: 600;
+  color: #261B12;
 }
 
-.ZENVE-header-title-block {
+.stl-orders-cell {
+  color: #554433;
+  font-weight: 600;
+}
+
+.stl-amount-cell {
+  font-weight: 600;
+  color: #4D3C2E;
+  white-space: nowrap;
+}
+
+.stl-payout-amount-cell {
+  font-weight: 700;
+  color: #1F150D;
+  white-space: nowrap;
+}
+
+.stl-text-center {
+  text-align: center;
+}
+
+.stl-text-right {
+  text-align: right;
+}
+
+/* Status Badges */
+.stl-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.stl-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.stl-status-pill.paid {
+  background: #EAF7ED;
+  color: #15803D;
+}
+.stl-status-pill.paid .stl-status-dot {
+  background: #15803D;
+}
+
+.stl-status-pill.pending {
+  background: #FEF6E7;
+  color: #B45309;
+}
+.stl-status-pill.pending .stl-status-dot {
+  background: #B45309;
+}
+
+.stl-status-pill.processing {
+  background: #EFF6FF;
+  color: #1D4ED8;
+}
+.stl-status-pill.processing .stl-status-dot {
+  background: #1D4ED8;
+}
+
+.stl-status-pill.failed {
+  background: #FEF2F2;
+  color: #B91C1C;
+}
+.stl-status-pill.failed .stl-status-dot {
+  background: #B91C1C;
+}
+
+.stl-date-cell {
+  color: #726150;
+  white-space: nowrap;
+}
+
+/* Actions in Cell */
+.stl-actions-cell-group {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.stl-row-action-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #8C7864;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.stl-row-action-btn:hover {
+  background: #F4EBE0;
+  color: #4A3522;
+}
+
+.stl-dropdown-container {
+  position: relative;
+}
+
+.stl-action-dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 4px;
+  background: #FFFFFF;
+  border: 1px solid #EADBCC;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  min-width: 160px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+}
+
+.stl-dropdown-item {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 12px;
+  color: #38291C;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.stl-dropdown-item:hover {
+  background: #FDF6EB;
+  color: var(--stl-bronze);
+}
+
+/* Direct Settle / Payment Button for Every Designer */
+.stl-settle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(135deg, #A86915 0%, #8A520E 100%);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(168, 105, 21, 0.25);
+  transition: all 0.15s ease;
+}
+
+.stl-settle-btn:hover {
+  background: linear-gradient(135deg, #BD7819 0%, #9E5E10 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(168, 105, 21, 0.35);
+}
+
+.stl-settled-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #EAF7ED;
+  color: #15803D;
+  border: 1px solid #BBF7D0;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.stl-empty-cell {
+  text-align: center;
+  padding: 36px !important;
+  color: #8C7864;
+  font-style: italic;
+}
+
+/* Pagination Footer */
+.stl-table-pagination-footer {
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #EADBCC;
+  background: #FFFFFF;
+}
+
+.stl-pagination-counter {
+  font-size: 12px;
+  color: #7E6C58;
+}
+
+.stl-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stl-pagination-btn {
+  height: 28px;
+  min-width: 28px;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFFFFF;
+  border: 1px solid #E5D9C8;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6C5B49;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.stl-pagination-btn:hover:not(:disabled) {
+  background: #FDF9F2;
+  border-color: var(--stl-bronze);
+}
+
+.stl-pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.stl-pagination-btn.page-num.active {
+  background: #A86915;
+  border-color: #A86915;
+  color: #FFFFFF;
+}
+
+.stl-pagination-ellipsis {
+  padding: 0 4px;
+  color: #9C8974;
+  font-size: 12px;
+}
+
+/* =========================================================
+   6. RIGHT ANALYTICS WIDGETS
+========================================================= */
+
+.stl-right-widgets {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.stl-widget-card {
+  background: #FFFFFF;
+  border: 1px solid var(--stl-border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.stl-widget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.stl-widget-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stl-widget-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #382617;
+  margin: 0;
+}
+
+.stl-widget-viewall-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8C6A48;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.stl-widget-viewall-link:hover {
+  color: var(--stl-bronze);
+  text-decoration: underline;
+}
+
+/* Donut Chart Widget */
+.stl-breakdown-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.stl-donut-wrapper {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stl-donut-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.stl-donut-center-text {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.stl-donut-center-val {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #241A12;
+  letter-spacing: -0.01em;
+}
+
+.stl-donut-center-lbl {
+  font-size: 10px;
+  font-weight: 600;
+  color: #8C7864;
+}
+
+.stl-breakdown-legend {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stl-legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.stl-legend-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stl-legend-color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.stl-legend-name {
+  color: #554433;
+  font-weight: 500;
+}
+
+.stl-legend-pct {
+  font-weight: 700;
+  color: #241A12;
+}
+
+/* Recent Transactions List */
+.stl-transactions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stl-transaction-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #F4EDE1;
+}
+
+.stl-transaction-item:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.stl-tx-icon-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stl-tx-icon-badge.income {
+  background: #EAF7ED;
+  color: #15803D;
+}
+
+.stl-tx-icon-badge.payout {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+.stl-tx-icon-badge.reversal,
+.stl-tx-icon-badge.tax {
+  background: #FEF2F2;
+  color: #DC2626;
+}
+
+.stl-tx-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.stl-tx-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.stl-tx-title {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #2C1E14;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stl-tx-amount {
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.stl-tx-amount.positive {
+  color: #15803D;
+}
+
+.stl-tx-amount.negative {
+  color: #B45309;
+}
+
+.stl-tx-amount.reversal {
+  color: #DC2626;
+}
+
+.stl-tx-amount.neutral {
+  color: #2C1E14;
+}
+
+.stl-tx-sub-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 10.5px;
+  color: #8C7864;
+}
+
+.stl-tx-ref {
+  font-weight: 500;
+}
+
+.stl-tx-date {
+  font-weight: 400;
+}
+
+/* =========================================================
+   7. MODALS
+========================================================= */
+
+.stl-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(25, 16, 9, 0.58);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 24px 16px;
+  box-sizing: border-box;
+}
+
+.stl-modal-card {
+  background: #FFFFFF;
+  border: 1px solid #EADBCC;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: stlModalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.stl-modal-card.details-modal {
+  max-width: 620px;
+  max-height: 85vh;
+}
+
+@keyframes stlModalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.stl-modal-header {
+  padding: 16px 22px;
+  background: #FBF8F2;
+  border-bottom: 1px solid #EADBCC;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.stl-modal-title-wrap {
   display: flex;
   flex-direction: column;
   gap: 3px;
   min-width: 0;
 }
 
-.ZENVE-back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ZENVE-muted);
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-
-.ZENVE-back-link:hover {
-  color: var(--ZENVE-ink);
-}
-
-.ZENVE-back-link svg {
-  flex-shrink: 0;
-}
-
-.ZENVE-portal-title {
+.stl-modal-header h3 {
   margin: 0;
-  font-size: 26px;
-  font-weight: 500;
-  font-family: var(--ZENVE-font-serif);
-  color: var(--ZENVE-ink);
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  line-height: 1.15;
-}
-
-.ZENVE-layer-num {
-  font-size: 26px;
-  font-weight: 500;
-  font-family: inherit;
-  color: var(--ZENVE-gold);
-}
-
-.ZENVE-portal-desc {
-  margin: 0;
-  font-size: 14px;
-  color: var(--ZENVE-muted);
-  line-height: 1.4;
-}
-
-.ZENVE-header-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-/* =========================================================
-   MAIN CONTAINER
-========================================================= */
-
-.ZENVE-settlement-main {
-  width: 100%;
-  max-width: 1380px;
-  margin: 0 auto;
-  padding: 24px 28px 60px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  box-sizing: border-box;
-}
-
-/* =========================================================
-   ALERT / TOAST BANNER
-========================================================= */
-
-.ZENVE-settlement-alert {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 18px;
-  border-radius: 6px;
-  font-size: 13.5px;
-  font-weight: 500;
-  animation: fadeIn 0.2s ease-in-out;
-  box-sizing: border-box;
-}
-
-.ZENVE-settlement-alert.success {
-  background-color: #ecfdf5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
-}
-
-.ZENVE-settlement-alert.error {
-  background-color: #fff1f2;
-  color: #9f1239;
-  border: 1px solid #fecdd3;
-}
-
-.ZENVE-alert-close {
-  background: none;
-  border: none;
-  font-size: 18px;
-  line-height: 1;
-  color: currentColor;
-  cursor: pointer;
-  padding: 0 4px;
-  opacity: 0.7;
-  transition: opacity 0.15s ease;
-}
-
-.ZENVE-alert-close:hover {
-  opacity: 1;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* =========================================================
-   TOP 4 KPI CARDS
-========================================================= */
-
-.ZENVE-settlement-kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.ZENVE-kpi-card {
-  background: var(--ZENVE-panel);
-  border: 1px solid var(--ZENVE-line);
-  border-radius: 8px;
-  padding: 16px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  transition: box-shadow 0.15s ease, transform 0.15s ease;
-  box-sizing: border-box;
-}
-
-.ZENVE-kpi-card:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-.ZENVE-kpi-label {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--ZENVE-muted);
-}
-
-.ZENVE-kpi-value {
-  font-size: 26px;
+  font-size: 16px;
   font-weight: 700;
-  color: var(--ZENVE-ink);
-  line-height: 1.15;
-  font-family: var(--ZENVE-font-display);
+  color: #382617;
 }
 
-.ZENVE-kpi-hint {
-  font-size: 12px;
-  color: var(--ZENVE-muted);
-}
-
-/* =========================================================
-   PANEL / SECTION CARD
-========================================================= */
-
-.ZENVE-panel-card {
-  background: var(--ZENVE-panel);
-  border: 1px solid var(--ZENVE-line);
-  border-radius: 8px;
-  padding: 20px 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  box-sizing: border-box;
-}
-
-.ZENVE-panel-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.ZENVE-panel-title-block {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.ZENVE-panel-title {
-  margin: 0;
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--ZENVE-ink);
-}
-
-.ZENVE-panel-desc {
-  margin: 0;
-  font-size: 13px;
-  color: var(--ZENVE-muted);
-  line-height: 1.4;
-}
-
-/* =========================================================
-   SETTLEMENT TABLE
-========================================================= */
-
-.ZENVE-table-wrap {
-  width: 100%;
-  overflow-x: auto;
-  border-radius: 6px;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: var(--ZENVE-line) transparent;
-}
-
-.ZENVE-table-wrap::-webkit-scrollbar {
-  height: 6px;
-  width: 6px;
-}
-
-.ZENVE-table-wrap::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.ZENVE-table-wrap::-webkit-scrollbar-thumb {
-  background-color: var(--ZENVE-line);
-  border-radius: 4px;
-}
-
-.ZENVE-settlement-table {
-  width: 100%;
-  min-width: 680px;
-  border-collapse: collapse;
-  text-align: left;
-  font-size: 13.5px;
-}
-
-.ZENVE-settlement-table th {
-  padding: 10px 14px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ZENVE-muted);
-  border-bottom: 1px solid var(--ZENVE-line);
-  white-space: nowrap;
-}
-
-.ZENVE-settlement-table td {
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--ZENVE-line-light);
-  color: var(--ZENVE-ink);
-  vertical-align: middle;
-}
-
-.ZENVE-settlement-table tr:last-child td {
-  border-bottom: none;
-}
-
-.ZENVE-settlement-table tr:hover td {
-  background-color: #FFF8E8;
-}
-
-.settlement-cell-id {
-  margin: 0;
-  font-weight: 600;
-  color: var(--ZENVE-ink);
-  font-family: var(--ZENVE-font-mono);
-}
-
-.settlement-cell-order {
-  margin: 0;
+.stl-modal-subtitle {
   font-size: 11.5px;
-  color: var(--ZENVE-muted);
+  color: #8C7864;
+  line-height: 1.35;
 }
 
-.net-payable-text {
-  font-weight: 600;
-  color: var(--ZENVE-ink);
+.stl-modal-badge {
+  background: #EFF6FF;
+  color: #1D4ED8;
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  width: fit-content;
 }
 
-/* =========================================================
-   ACTION BUTTONS
-========================================================= */
-
-.ZENVE-btn-sm {
+.stl-modal-close-btn {
+  width: 32px;
   height: 32px;
-  padding: 0 12px;
-  font-size: 12px;
-  font-weight: 500;
-  border-radius: 6px;
+  border-radius: 8px;
+  background: #FAF5EE;
+  border: 1px solid #EADBCC;
+  font-size: 14px;
+  color: #7E6C58;
   cursor: pointer;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.15s ease;
-  border: 1px solid transparent;
-  white-space: nowrap;
-}
-
-.ZENVE-btn-sm.outline {
-  background-color: #FFFCF5;
-  border-color: var(--ZENVE-line);
-  color: var(--ZENVE-ink);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-}
-
-.ZENVE-btn-sm.outline:hover:not(:disabled) {
-  background-color: #FFF8E8;
-  border-color: #E7C77A;
-}
-
-.ZENVE-btn-sm:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background-color: #FFF8E8;
-  border-color: var(--ZENVE-line);
-}
-
-/* =========================================================
-   TONE BADGES
-========================================================= */
-
-.ZENVE-tone-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 2.5px 9px;
-  border-radius: 9999px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  line-height: 1.2;
-}
-
-.ZENVE-tone-badge.good {
-  background-color: rgba(16, 185, 129, 0.12);
-  color: #059669;
-  border: 1px solid rgba(16, 185, 129, 0.2);
-}
-
-.ZENVE-tone-badge.warn {
-  background-color: rgba(245, 158, 11, 0.12);
-  color: #b45309;
-  border: 1px solid rgba(245, 158, 11, 0.2);
-}
-
-.ZENVE-tone-badge.bad {
-  background-color: rgba(239, 68, 68, 0.12);
-  color: #dc2626;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-.ZENVE-tone-badge.info {
-  background-color: rgba(59, 130, 246, 0.12);
-  color: #1d4ed8;
-  border: 1px solid rgba(59, 130, 246, 0.2);
-}
-
-.ZENVE-tone-badge.neutral {
-  background-color: #FFF8E8;
-  color: #5c554e;
-  border: 1px solid #E7C77A;
-}
-
-/* =========================================================
-   EMPTY STATE BOX
-========================================================= */
-
-.ZENVE-empty-box {
-  padding: 36px 16px;
-  text-align: center;
-  border: 1px dashed var(--ZENVE-line);
-  border-radius: 6px;
-  color: var(--ZENVE-muted);
-  font-size: 13.5px;
-  background-color: #FFF8E8;
-}
-
-/* =========================================================
-   WHAT IS INCLUDED SECTION
-========================================================= */
-
-.ZENVE-included-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px 24px;
-  padding: 4px 0 0;
-  margin: 0;
-  list-style: none;
-}
-
-.ZENVE-included-item {
-  font-size: 13.5px;
-  color: var(--ZENVE-muted);
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  line-height: 1.45;
-}
-
-.ZENVE-included-bullet {
-  color: var(--ZENVE-ink);
-  font-size: 14px;
   flex-shrink: 0;
 }
 
+.stl-modal-close-btn:hover {
+  background: #F0E5D8;
+  color: #382617;
+}
+
+.stl-modal-body {
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.stl-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+.stl-modal-body::-webkit-scrollbar-track {
+  background: #FAF7F2;
+  border-radius: 4px;
+}
+.stl-modal-body::-webkit-scrollbar-thumb {
+  background: #D8C7B5;
+  border-radius: 4px;
+}
+
+/* Full Ledger inside View All Modal */
+.stl-transactions-list.full-ledger {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding-right: 4px;
+}
+
+.stl-transactions-list.full-ledger .stl-transaction-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #FAFAF8;
+  border: 1px solid #EFE6D9;
+  border-radius: 10px;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 2px rgba(45, 30, 15, 0.03);
+}
+
+.stl-transactions-list.full-ledger .stl-transaction-item:hover {
+  background: #FDF9F3;
+  border-color: #E2D0BD;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(45, 30, 15, 0.06);
+}
+
+.stl-transactions-list.full-ledger .stl-tx-icon-badge {
+  width: 34px;
+  height: 34px;
+}
+
+.stl-transactions-list.full-ledger .stl-tx-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2C1E14;
+}
+
+.stl-transactions-list.full-ledger .stl-tx-amount {
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.stl-transactions-list.full-ledger .stl-tx-sub-row {
+  margin-top: 3px;
+  font-size: 11px;
+}
+
+.stl-modal-lead {
+  font-size: 13px;
+  color: #6C5844;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.stl-modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stl-modal-field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #554433;
+}
+
+.stl-modal-input {
+  height: 38px;
+  padding: 0 12px;
+  background: #FAF7F2;
+  border: 1px solid #E5D9C8;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--stl-text-main);
+  outline: none;
+}
+
+.stl-modal-summary-box {
+  background: #FAF6ED;
+  border: 1px solid #EADBCC;
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stl-summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+  color: #6C5844;
+}
+
+.stl-summary-row strong {
+  color: #241A12;
+}
+
+.stl-summary-row.highlight {
+  border-top: 1px solid #E5D5BD;
+  padding-top: 8px;
+  margin-top: 2px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #A86915;
+}
+
+.stl-summary-row.highlight strong {
+  color: #A86915;
+  font-size: 15px;
+}
+
+.stl-details-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.stl-detail-pill {
+  background: #FAF6ED;
+  border: 1px solid #EADBCC;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stl-detail-pill span {
+  font-size: 11px;
+  color: #7E6C58;
+}
+
+.stl-detail-pill strong {
+  font-size: 15px;
+  color: #241A12;
+}
+
+.stl-detail-pill.primary {
+  background: #FFF8EB;
+  border-color: #E2CA9D;
+}
+
+.stl-detail-pill.primary strong {
+  color: #A86915;
+}
+
+.stl-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stl-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12.5px;
+}
+
+.stl-detail-item label {
+  font-size: 11.5px;
+  color: #8C7864;
+  font-weight: 600;
+}
+
+.stl-mono-code {
+  font-family: monospace;
+  font-size: 11.5px;
+  color: #382617;
+  background: #F4EBE0;
+  padding: 3px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.stl-audit-clause {
+  background: #FDF9F2;
+  border: 1px solid #EADBCC;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 11.5px;
+  color: #7E6C58;
+  line-height: 1.4;
+}
+
+.stl-modal-footer {
+  padding: 14px 20px;
+  background: #FBF8F2;
+  border-top: 1px solid #EADBCC;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.stl-btn-cancel {
+  padding: 8px 16px;
+  background: #FFFFFF;
+  border: 1px solid #E5D9C8;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #6C5B49;
+  cursor: pointer;
+}
+
+.stl-btn-confirm {
+  padding: 8px 18px;
+  background: #A86915;
+  border: none;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.stl-btn-confirm:hover {
+  background: #8F540E;
+}
+
+/* Payment Modal Specific Details */
+.stl-modal-card.payment-modal {
+  max-width: 540px;
+}
+
+.stl-payout-designer-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FAF6F0;
+  border: 1px solid #EADBCC;
+  border-radius: 8px;
+  padding: 12px 16px;
+  gap: 12px;
+}
+
+.stl-payout-designer-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stl-payout-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid #E0CEBA;
+}
+
+.stl-payout-designer-name {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #382617;
+}
+
+.stl-payout-code {
+  display: block;
+  font-size: 11.5px;
+  color: #8C7864;
+}
+
+.stl-payout-amount-box {
+  text-align: right;
+}
+
+.stl-payout-label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #8C7864;
+  font-weight: 600;
+}
+
+.stl-payout-val {
+  display: block;
+  font-size: 17px;
+  font-weight: 800;
+  color: #92540D;
+}
+
+.stl-payout-breakdown-mini {
+  background: #FDFBF8;
+  border: 1px dashed #E2D3C2;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.stl-mini-row {
+  display: flex;
+  justify-content: space-between;
+  color: #6B5744;
+}
+
+.stl-mini-row.total {
+  border-top: 1px solid #EADBCC;
+  padding-top: 6px;
+  font-weight: 700;
+  font-size: 13px;
+  color: #382617;
+}
+
 /* =========================================================
-   COMPREHENSIVE ALL-SCREEN-SIZE RESPONSIVE MEDIA QUERIES
+   8. RESPONSIVE BREAKPOINTS
 ========================================================= */
 
-/* ---------------------------------------------------------
-   1. MOBILE PHONES (320px - 640px)
-   Smartphones like iPhone, Pixel, Galaxy
---------------------------------------------------------- */
+@media (max-width: 1280px) {
+  .stl-kpi-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .stl-main-split-grid {
+    grid-template-columns: 1fr;
+  }
+}
 
-@media (max-width: 640px) {
-  .ZENVE-settlement-header {
+@media (max-width: 900px) {
+  .stl-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .stl-filters-toolbar-card {
     flex-direction: column;
     align-items: stretch;
-    padding: 12px 14px;
-    gap: 12px;
   }
-
-  .ZENVE-header-left {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    width: 100%;
-  }
-
-  .ZENVE-portal-logo {
-    flex-shrink: 0;
-  }
-
-  .ZENVE-portal-logo img {
-    height: 32px;
-    width: auto;
-  }
-
-  .ZENVE-header-title-block {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .ZENVE-portal-title {
-    font-size: 20px;
-    gap: 6px;
+  .stl-filter-dropdown-group {
     flex-wrap: wrap;
   }
-
-  .ZENVE-layer-num {
-    font-size: 20px;
+  .stl-hero-art-wrap {
+    display: none;
   }
+}
 
-  .ZENVE-portal-desc {
-    font-size: 12px;
-    line-height: 1.4;
-  }
-
-  .ZENVE-header-right {
-    width: 100%;
-  }
-
-  .ZENVE-header-right .search-user-wrapper {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
-
-  .ZENVE-header-right .search-bar-wrapper {
-    width: 100%;
-    flex: 1 1 100%;
-    max-width: 100%;
-  }
-
-  .ZENVE-header-right .search-box {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .ZENVE-header-right .home-user {
-    width: 100%;
-    justify-content: center;
-    box-sizing: border-box;
-  }
-
-  .ZENVE-settlement-main {
-    padding: 14px 12px 48px;
-    gap: 16px;
-  }
-
-  /* Top 4 KPI Cards: 2x2 grid */
-  .ZENVE-settlement-kpi-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-
-  .ZENVE-kpi-card {
-    padding: 12px 14px;
-  }
-
-  .ZENVE-kpi-label {
-    font-size: 10px;
-  }
-
-  .ZENVE-kpi-value {
-    font-size: 22px;
-  }
-
-  .ZENVE-kpi-hint {
-    font-size: 11px;
-  }
-
-  .ZENVE-panel-card {
-    padding: 14px 14px;
-    gap: 14px;
-  }
-
-  .ZENVE-panel-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 6px;
-  }
-
-  .ZENVE-panel-title {
-    font-size: 16px;
-  }
-
-  .ZENVE-panel-desc {
-    font-size: 12.5px;
-    line-height: 1.4;
-  }
-
-  /* Table on mobile */
-  .ZENVE-table-wrap {
-    margin: 0 -2px;
-  }
-
-  .ZENVE-settlement-table {
-    min-width: 640px;
-  }
-
-  .ZENVE-settlement-table th {
-    padding: 8px 10px;
-    font-size: 10.5px;
-  }
-
-  .ZENVE-settlement-table td {
-    padding: 10px 10px;
-    font-size: 13px;
-  }
-
-  .settlement-cell-id {
-    font-size: 13px;
-  }
-
-  .settlement-cell-order {
-    font-size: 11px;
-  }
-
-  .ZENVE-btn-sm {
-    height: 30px;
-    padding: 0 10px;
-    font-size: 11.5px;
-  }
-
-  /* Included list on mobile */
-  .ZENVE-included-grid {
+@media (max-width: 600px) {
+  .stl-kpi-grid {
     grid-template-columns: 1fr;
-    gap: 8px;
   }
-
-  .ZENVE-included-item {
-    font-size: 12.5px;
-    line-height: 1.45;
-  }
-}
-
-/* Extra small mobile (< 380px) */
-@media (max-width: 380px) {
-  .ZENVE-settlement-header {
-    padding: 10px 10px;
-  }
-
-  .ZENVE-settlement-main {
-    padding: 10px 8px 36px;
-    gap: 12px;
-  }
-
-  .ZENVE-settlement-kpi-grid {
-    grid-template-columns: 1fr;
-    gap: 6px;
-  }
-
-  .ZENVE-kpi-value {
-    font-size: 20px;
-  }
-
-  .ZENVE-settlement-table th {
-    padding: 7px 8px;
-    font-size: 10px;
-  }
-
-  .ZENVE-settlement-table td {
-    padding: 8px 8px;
-    font-size: 12px;
-  }
-
-  .ZENVE-btn-sm {
-    height: 28px;
-    padding: 0 8px;
-    font-size: 11px;
-  }
-}
-
-/* ---------------------------------------------------------
-   2. TABLETS & MEDIUM SCREENS (641px - 1140px)
-   iPad, iPad Air, iPad Pro, Android Tablets, Surface Pro
---------------------------------------------------------- */
-
-@media (min-width: 641px) and (max-width: 1140px) {
-  .ZENVE-settlement-header {
-    padding: 14px 24px;
+  .stl-actions-row {
     flex-direction: column;
     align-items: stretch;
-    gap: 12px;
   }
-
-  .ZENVE-header-left {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    min-width: 0;
-  }
-
-  .ZENVE-portal-logo {
-    flex-shrink: 0;
-  }
-
-  .ZENVE-portal-logo img {
-    height: 36px;
-    width: auto;
-  }
-
-  .ZENVE-header-title-block {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .ZENVE-portal-title {
-    font-size: 22px;
-    line-height: 1.25;
-    white-space: nowrap;
-  }
-
-  .ZENVE-portal-desc {
-    font-size: 12.5px;
-    line-height: 1.45;
-    color: var(--ZENVE-muted);
-    white-space: normal;
-    margin-top: 2px;
-  }
-
-  .ZENVE-header-right {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding-top: 12px;
-    border-top: 1px solid var(--ZENVE-line);
-  }
-
-  .ZENVE-header-right .search-user-wrapper {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-    min-width: 0;
-  }
-
-  .ZENVE-header-right .search-bar-wrapper {
-    flex: 1;
-    max-width: 340px;
-    min-width: 180px;
-  }
-
-  .ZENVE-header-right .home-user {
-    flex-shrink: 0;
-  }
-
-  .ZENVE-settlement-main {
-    max-width: 100%;
-    padding: 20px 24px 60px;
-    gap: 20px;
-  }
-
-  /* Top 4 KPIs: 4 columns on landscape tablet */
-  .ZENVE-settlement-kpi-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-  }
-
-  .ZENVE-kpi-card {
-    padding: 14px 16px;
-  }
-
-  .ZENVE-kpi-value {
-    font-size: 24px;
-  }
-
-  .ZENVE-panel-card {
-    padding: 18px 20px;
-  }
-
-  .ZENVE-included-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px 20px;
-  }
-}
-
-/* Tablet portrait & narrow tablets (641px - 840px) */
-@media (min-width: 641px) and (max-width: 840px) {
-  .ZENVE-settlement-header {
-    padding: 12px 18px;
-    gap: 10px;
-  }
-
-  .ZENVE-header-right {
-    gap: 12px;
-    padding-top: 10px;
-  }
-
-  .ZENVE-settlement-main {
-    padding: 16px 18px 48px;
-    gap: 16px;
-  }
-
-  /* Top 4 KPIs: 2x2 grid on portrait tablet */
-  .ZENVE-settlement-kpi-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-}
-
-/* ---------------------------------------------------------
-   3. LAPTOP & STANDARD DESKTOP (1141px - 1440px)
-   MacBook Pro, ThinkPad, Standard 1080p Desktop
---------------------------------------------------------- */
-
-@media (min-width: 1141px) and (max-width: 1440px) {
-  .ZENVE-settlement-main {
-    max-width: 1380px;
-  }
-
-  .ZENVE-settlement-kpi-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-  }
-}
-
-/* ---------------------------------------------------------
-   4. LARGE DESKTOP & WIDE MONITORS (1441px - 1920px)
-   iMac 24", 27" QHD, Studio Display
---------------------------------------------------------- */
-
-@media (min-width: 1441px) and (max-width: 1920px) {
-  .ZENVE-settlement-header {
-    padding: 18px 36px;
-  }
-
-  .ZENVE-portal-title {
-    font-size: 28px;
-  }
-
-  .ZENVE-layer-num {
-    font-size: 28px;
-  }
-
-  .ZENVE-settlement-main {
-    max-width: 1640px;
-    padding: 28px 36px 64px;
-    gap: 26px;
-  }
-
-  .ZENVE-settlement-kpi-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-  }
-
-  .ZENVE-kpi-card {
-    padding: 18px 22px;
-    gap: 8px;
-  }
-
-  .ZENVE-kpi-label {
-    font-size: 12px;
-  }
-
-  .ZENVE-kpi-value {
-    font-size: 28px;
-  }
-
-  .ZENVE-panel-card {
-    padding: 22px 26px;
-    gap: 18px;
-  }
-}
-
-/* ---------------------------------------------------------
-   5. 4K ULTRA HD SCREENS (1921px - 3840px+)
-   Ultra-high resolution displays, 4K/5K Monitors
---------------------------------------------------------- */
-
-@media (min-width: 1921px) {
-  .ZENVE-settlement-header {
-    padding: 24px 64px;
-  }
-
-  .ZENVE-portal-logo img {
-    height: 52px;
-  }
-
-  .ZENVE-back-link {
-    font-size: 13.5px;
-    gap: 8px;
-  }
-
-  .ZENVE-portal-title {
-    font-size: 34px;
-    gap: 12px;
-  }
-
-  .ZENVE-layer-num {
-    font-size: 34px;
-  }
-
-  .ZENVE-portal-desc {
-    font-size: 16.5px;
-  }
-
-  .ZENVE-settlement-main {
-    max-width: 2800px;
-    padding: 36px 64px 80px;
-    gap: 32px;
-  }
-
-  /* 4K Top 4 KPI Cards */
-  .ZENVE-settlement-kpi-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-  }
-
-  .ZENVE-kpi-card {
-    padding: 22px 26px;
-    border-radius: 10px;
-    gap: 8px;
-  }
-
-  .ZENVE-kpi-label {
-    font-size: 13px;
-  }
-
-  .ZENVE-kpi-value {
-    font-size: 36px;
-  }
-
-  .ZENVE-kpi-hint {
-    font-size: 14px;
-  }
-
-  /* 4K Panels */
-  .ZENVE-panel-card {
-    padding: 28px 32px;
-    border-radius: 10px;
-    gap: 22px;
-  }
-
-  .ZENVE-panel-title {
-    font-size: 22px;
-  }
-
-  .ZENVE-panel-desc {
-    font-size: 15.5px;
-  }
-
-  /* 4K Table */
-  .ZENVE-settlement-table th {
-    font-size: 13px;
-    padding: 14px 18px;
-  }
-
-  .ZENVE-settlement-table td {
-    font-size: 15.5px;
-    padding: 16px 18px;
-  }
-
-  .settlement-cell-id {
-    font-size: 16px;
-  }
-
-  .settlement-cell-order {
-    font-size: 13.5px;
-  }
-
-  .ZENVE-tone-badge {
-    font-size: 13px;
-    padding: 4px 10px;
-  }
-
-  .ZENVE-btn-sm {
-    height: 38px;
-    padding: 0 18px;
-    font-size: 14px;
-    border-radius: 6px;
-  }
-
-  /* 4K Included list */
-  .ZENVE-included-grid {
-    gap: 14px 36px;
-  }
-
-  .ZENVE-included-item {
-    font-size: 16px;
-  }
-}
-
-/* Extreme 4K Resolution (3200px - 3840px Native) */
-@media (min-width: 3200px) {
-  .ZENVE-settlement-main {
-    max-width: 3400px;
-  }
-
-  .ZENVE-portal-title {
-    font-size: 40px;
-  }
-
-  .ZENVE-layer-num {
-    font-size: 40px;
-  }
-
-  .ZENVE-kpi-value {
-    font-size: 42px;
-  }
-
-  .settlement-cell-id {
-    font-size: 18px;
+  .stl-tabs-group {
+    overflow-x: auto;
   }
 }

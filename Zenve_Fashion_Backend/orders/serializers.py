@@ -1,6 +1,6 @@
 from decimal import Decimal
 from rest_framework import serializers
-from .models import Order, OrderItem, ReturnRequest, Settlement
+from .models import Order, OrderItem, ReturnRequest, Settlement, Shipment
 from products.models import Product
 
 
@@ -434,10 +434,35 @@ class ReturnRequestSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        data["returnId"] = instance.return_number or f"RTN{instance.id:04d}"
         data["orderId"] = instance.order.order_number if instance.order else ""
+        data["customer"] = instance.order.customer_name if instance.order else "Customer"
         data["skuId"] = instance.order_item.sku if instance.order_item else ""
+        data["sku"] = instance.order_item.sku if instance.order_item else ""
         data["skuName"] = instance.order_item.product_name if instance.order_item else ""
+        data["productName"] = instance.order_item.product_name if instance.order_item else "Product"
+        data["price"] = float(instance.order_item.price) if instance.order_item else 0.0
+        data["formattedPrice"] = f"₹{int(instance.order_item.price):,}" if instance.order_item and instance.order_item.price else "₹0"
+        data["size"] = instance.order_item.size if (instance.order_item and instance.order_item.size) else ""
+        data["color"] = instance.order_item.color if (instance.order_item and instance.order_item.color) else ""
         data["refund"] = float(instance.refund_amount) if instance.refund_amount else 0.0
+        data["formatted_refund"] = f"₹{int(instance.refund_amount):,}" if instance.refund_amount else "₹0"
+
+        # Image URLs from real Product in database
+        img_url = ""
+        if instance.order_item and instance.order_item.product:
+            p = instance.order_item.product
+            if hasattr(p, "primary_image") and p.primary_image:
+                try:
+                    img_url = p.primary_image.url
+                except Exception:
+                    img_url = str(p.primary_image)
+            elif hasattr(p, "image") and p.image:
+                try:
+                    img_url = p.image.url
+                except Exception:
+                    img_url = str(p.image)
+        data["productImage"] = img_url
 
         st = instance.status
         if st == "INSPECTED_PASSED":
@@ -447,7 +472,20 @@ class ReturnRequestSerializer(serializers.ModelSerializer):
         else:
             data["normalized_status"] = st
 
-        data["formatted_refund"] = f"₹{int(instance.refund_amount):,}" if instance.refund_amount else "₹0"
+        data["reasonDisplay"] = instance.get_reason_display() if hasattr(instance, "get_reason_display") else instance.reason
+        data["statusDisplay"] = instance.get_status_display() if hasattr(instance, "get_status_display") else instance.status
+
+        # Date formatting from real instance timestamp
+        if instance.created_at:
+            data["requestDate"] = instance.created_at.strftime("%d %b %Y")
+            from datetime import timedelta
+            exp = instance.created_at + timedelta(days=4)
+            data["expectedResolution"] = exp.strftime("%d %b %Y")
+        else:
+            data["requestDate"] = "—"
+            data["expectedResolution"] = "—"
+
+        data["customerNote"] = instance.notes or ""
         return data
 
     def to_internal_value(self, data):
@@ -702,5 +740,46 @@ class SettlementSerializer(serializers.ModelSerializer):
         data["formatted_net"] = f"₹{int(instance.payout_amount):,}" if instance.payout_amount else "₹0"
         data["formatted_commission"] = f"₹{int(instance.commission_amount):,}" if instance.commission_amount else "₹0"
         return data
+
+
+class ShipmentSerializer(serializers.ModelSerializer):
+    trackingNo = serializers.CharField(source="tracking_number", required=False)
+    orderId = serializers.CharField(source="order_number", required=False)
+    customer = serializers.CharField(source="customer_name", required=False)
+    avatar = serializers.CharField(source="customer_avatar", required=False)
+    expectedDelivery = serializers.CharField(source="expected_delivery", required=False)
+    originHub = serializers.CharField(source="origin_hub", required=False)
+    destinationHub = serializers.CharField(source="destination_hub", required=False)
+    destinationAddress = serializers.CharField(source="destination_address", required=False)
+
+    class Meta:
+        model = Shipment
+        fields = [
+            "id",
+            "order",
+            "tracking_number",
+            "trackingNo",
+            "order_number",
+            "orderId",
+            "customer_name",
+            "customer",
+            "customer_phone",
+            "customer_avatar",
+            "avatar",
+            "courier",
+            "status",
+            "expected_delivery",
+            "expectedDelivery",
+            "origin_hub",
+            "originHub",
+            "destination_hub",
+            "destinationHub",
+            "destination_address",
+            "destinationAddress",
+            "timeline",
+            "created_at",
+            "updated_at",
+        ]
+
 
 
