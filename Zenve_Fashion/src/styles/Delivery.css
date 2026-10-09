@@ -582,10 +582,10 @@
 ========================================================= */
 
 .dlv-split-grid {
-  display: grid;
-  grid-template-columns: 1fr 360px;
-  gap: 18px;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: 100%;
 }
 
 /* ---------------------------------------------------------
@@ -894,11 +894,54 @@
   background: #FFFFFF;
   border: 1px solid #EFE4D2;
   border-radius: 12px;
-  padding: 18px;
+  padding: 22px 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Top bar: Shipment Tracking title on left, Track search on right */
+.dlv-tracking-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #EFE4D2;
+}
+
+.dlv-tracking-top-bar .dlv-panel-search-row {
+  width: 380px;
+  max-width: 100%;
+}
+
+/* Two-column body grid placed beneath the top bar */
+.dlv-tracking-body-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.dlv-tracking-left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.dlv-tracking-right-col {
+  background: #FAF7F2;
+  border: 1px solid #EFE4D2;
+  border-radius: 10px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
 }
 
 .dlv-tracking-header {
@@ -1028,7 +1071,7 @@
 
 .dlv-map-card {
   position: relative;
-  height: 160px;
+  height: 190px;
   background: #E8F3F8;
   border: 1px solid #D5E7EF;
   border-radius: 8px;
@@ -1408,8 +1451,8 @@
    8. RESPONSIVE BREAKPOINTS
 ========================================================= */
 
-@media (max-width: 1200px) {
-  .dlv-split-grid {
+@media (max-width: 1024px) {
+  .dlv-tracking-body-grid {
     grid-template-columns: 1fr;
   }
 

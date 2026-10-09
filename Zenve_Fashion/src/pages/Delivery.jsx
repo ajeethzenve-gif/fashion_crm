@@ -954,50 +954,55 @@ export default function DeliveryEngine() {
             </div>
           </div>
 
-          {/* RIGHT: SHIPMENT TRACKING WIDGET */}
+          {/* DOWN: SHIPMENT TRACKING WIDGET */}
           <aside className="dlv-tracking-panel">
-            <div className="dlv-tracking-header">
-              <div className="dlv-tracking-box-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                  <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-                  <line x1="12" y1="22.08" x2="12" y2="12" />
-                </svg>
+            <div className="dlv-tracking-top-bar">
+              <div className="dlv-tracking-header">
+                <div className="dlv-tracking-box-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                    <line x1="12" y1="22.08" x2="12" y2="12" />
+                  </svg>
+                </div>
+                <h3 className="dlv-tracking-title">Shipment Tracking</h3>
               </div>
-              <h3 className="dlv-tracking-title">Shipment Tracking</h3>
+
+              {/* Quick Track Search Input */}
+              <div className="dlv-panel-search-row">
+                <div className="dlv-panel-input-wrap">
+                  <svg
+                    className="dlv-panel-input-icon"
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                  <input
+                    type="text"
+                    className="dlv-panel-input"
+                    placeholder="Enter tracking number"
+                    value={panelTrackInput}
+                    onChange={(e) => setPanelTrackInput(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handlePanelTrack()}
+                  />
+                </div>
+                <button className="dlv-panel-track-btn" onClick={handlePanelTrack}>
+                  Track
+                </button>
+              </div>
             </div>
 
-            {/* Quick Track Search Input */}
-            <div className="dlv-panel-search-row">
-              <div className="dlv-panel-input-wrap">
-                <svg
-                  className="dlv-panel-input-icon"
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <circle cx="11" cy="11" r="8" />
-                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-                <input
-                  type="text"
-                  className="dlv-panel-input"
-                  placeholder="Enter tracking number"
-                  value={panelTrackInput}
-                  onChange={(e) => setPanelTrackInput(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handlePanelTrack()}
-                />
-              </div>
-              <button className="dlv-panel-track-btn" onClick={handlePanelTrack}>
-                Track
-              </button>
-            </div>
-
-            {/* Live Tracking Map */}
-            <div className="dlv-map-section">
+            <div className="dlv-tracking-body-grid">
+              {/* Left Column: Live Map + Summary */}
+              <div className="dlv-tracking-left-col">
+                {/* Live Tracking Map */}
+                <div className="dlv-map-section">
               <div className="dlv-map-header-row">
                 <h4 className="dlv-section-heading">Live Tracking</h4>
                 <div className="dlv-map-telemetry-pill">
@@ -1159,10 +1164,12 @@ export default function DeliveryEngine() {
                 </div>
               </div>
             )}
+          </div>
 
-            {/* Tracking Timeline */}
-            <div className="dlv-timeline-section">
-              <h4 className="dlv-section-heading">Tracking Timeline</h4>
+          {/* Right Column: Tracking Timeline */}
+          <div className="dlv-tracking-right-col">
+                <div className="dlv-timeline-section">
+                  <h4 className="dlv-section-heading">Tracking Timeline</h4>
               <div className="dlv-timeline-list">
                 {selectedShipment?.timeline && Array.isArray(selectedShipment.timeline) && selectedShipment.timeline.length > 0 ? (
                   selectedShipment.timeline.map((step, idx) => (
@@ -1253,8 +1260,10 @@ export default function DeliveryEngine() {
                 )}
               </div>
             </div>
-          </aside>
+          </div>
         </div>
+      </aside>
+    </div>
       </main>
 
       {/* =====================================================
