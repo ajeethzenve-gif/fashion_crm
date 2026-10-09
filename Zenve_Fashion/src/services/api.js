@@ -1132,7 +1132,7 @@ export async function getCommandCentreOverview() {
 export async function getDesignerPortalDashboard(
   designerId
 ) {
-  const response = await fetch(
+  let response = await fetch(
     `${API_BASE_URL}/designers/${designerId}/portal-dashboard/`,
     {
       method: "GET",
@@ -1142,6 +1142,18 @@ export async function getDesignerPortalDashboard(
       },
     }
   );
+
+  if (response.status === 401 || response.status === 403) {
+    response = await fetch(
+      `${API_BASE_URL}/designers/${designerId}/portal-dashboard/`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+  }
 
   if (!response.ok) {
     throw new Error(
@@ -1181,12 +1193,22 @@ export async function markDesignerNotificationsRead(
 ========================================================= */
 
 export async function getDesignerCredits(designerId) {
-  const response = await fetch(`${API_BASE_URL}/credits/designer/${designerId}/`, {
+  let response = await fetch(`${API_BASE_URL}/credits/designer/${designerId}/`, {
     method: "GET",
     headers: {
       Accept: "application/json",
+      ...authHeaders(),
     },
   });
+
+  if (response.status === 401 || response.status === 403) {
+    response = await fetch(`${API_BASE_URL}/credits/designer/${designerId}/`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+  }
 
   if (!response.ok) {
     throw new Error(`Failed to fetch designer credits: ${response.status}`);
@@ -1201,6 +1223,7 @@ export async function buyOfflineCreditPack(designerId, planId, planName) {
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
+      ...authHeaders(),
     },
     body: JSON.stringify({
       designer_id: designerId,
@@ -1222,6 +1245,7 @@ export async function getOfflineCreditPlans() {
     method: "GET",
     headers: {
       Accept: "application/json",
+      ...authHeaders(),
     },
   });
 
@@ -1258,17 +1282,31 @@ export async function getDesignerAccountDetails(designerId) {
     throw new Error("Designer ID is required.");
   }
 
-  const response = await fetch(
+  let response = await fetch(
     `${API_BASE_URL}/designers/${designerId}/account-details/`,
     {
       method: "GET",
       headers: {
         Accept: "application/json",
+        ...authHeaders(),
       },
     }
   );
 
-  const data = await parseResponse(response);
+  let data = await parseResponse(response);
+
+  if (response.status === 401 || response.status === 403) {
+    response = await fetch(
+      `${API_BASE_URL}/designers/${designerId}/account-details/`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+    data = await parseResponse(response);
+  }
 
   if (!response.ok) {
     throw new Error(
@@ -1298,6 +1336,7 @@ export async function saveDesignerAccountDetails(
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        ...authHeaders(),
       },
       body: JSON.stringify(accountData),
     }

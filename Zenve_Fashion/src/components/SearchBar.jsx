@@ -108,7 +108,7 @@ function UserIcon() {
 function SearchBar() {
   /* =======================================================
      STATES
-  ======================================================= */c
+  ======================================================= */
 
   // Layer 01 active by default
   const [activeIndex, setActiveIndex] = useState(0);

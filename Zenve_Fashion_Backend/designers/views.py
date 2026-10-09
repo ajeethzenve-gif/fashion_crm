@@ -491,7 +491,11 @@ class DesignerPortalDashboardAPIView(APIView):
     GET  /api/designers/<id>/portal-dashboard/
     POST /api/designers/<id>/portal-dashboard/mark-read/
     """
-    permission_classes = [DesignerDashboardAccess]
+    def get_permissions(self):
+        from rest_framework.permissions import AllowAny
+        if self.request.method in ("GET", "HEAD", "OPTIONS"):
+            return [AllowAny()]
+        return [DesignerDashboardAccess()]
 
     def get(self, request, designer_id):
         from decimal import Decimal

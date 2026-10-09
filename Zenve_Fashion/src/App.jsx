@@ -1,7 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import AppLayout from "./components/AppLayout.jsx";
-
 import Home from "./pages/Home.jsx";
 import MediaStudio from "./pages/MediaStudio.jsx";
 import DesignerCRM from "./pages/DesignerCrm.jsx";

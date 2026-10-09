@@ -6,6 +6,7 @@ import { MediaWorkspace } from "./MediaStudio";
 import { showToast, showErrorToast } from "../utils/zenveToast";
 import "../styles/DesignerPortal.css";
 import SearchBar from "../components/SearchBar";
+import AdminDesignerGrid from "../components/AdminDesignerGrid";
 import logo from "../assest/logo/zenve-logo-fashion.png";
 
 import {
@@ -338,6 +339,7 @@ export default function DesignerPortal() {
     }
   });
   const [loadingDesigners, setLoadingDesigners] = useState(true);
+  const [showGrid, setShowGrid] = useState(currentUser?.id !== "designer");
 
   /* =======================================================
      PORTAL DASHBOARD
@@ -2125,6 +2127,10 @@ export default function DesignerPortal() {
               onClick={() => {
                 setShowMediaReviews(false);
                 setShowProfileAndAccount(false);
+                if (currentUser?.id !== "designer") {
+                  setShowGrid(true);
+                  setSelectedDesignerId("");
+                }
               }}
               title="Return to Dashboard"
             >
@@ -2144,59 +2150,7 @@ export default function DesignerPortal() {
         <div className="ZENVE-header-right">
           {currentUser?.id !== "designer" && <SearchBar />}
           <div className="ZENVE-header-right-controls">
-            {currentUser?.id !== "designer" && (
-              <div className="ZENVE-signed-in-box">
-                <span className="ZENVE-signed-in-prefix">
-                  AS
-                </span>
-
-                <div className="ZENVE-select-wrap">
-                  <select
-                    value={selectedDesignerId}
-                    onChange={(e) => {
-                      const newId = e.target.value;
-                      setSelectedDesignerId(newId);
-                      try {
-                        localStorage.setItem("zenve_selected_designer_id", newId);
-                      } catch {
-                        // ignore
-                      }
-                    }}
-                    disabled={
-                      loadingDesigners ||
-                      designers.length === 0
-                    }
-                    className="ZENVE-designer-select"
-                    title="Switch active signed in designer"
-                  >
-                    {designers.length === 0 ? (
-                      <option value="">
-                        {loadingDesigners
-                          ? "Loading..."
-                          : "No designers found"}
-                      </option>
-                    ) : (
-                      designers.map((d) => (
-                        <option
-                          key={d.id}
-                          value={d.id}
-                        >
-                          {d.brand_name ||
-                            d.brand ||
-                            d.designer_name ||
-                            d.name ||
-                            `Designer #${d.id}`}
-                        </option>
-                      ))
-                    )}
-                  </select>
-
-                  <span className="ZENVE-select-chevron">
-                    <ArrowDownIcon />
-                  </span>
-                </div>
-              </div>
-            )}
+            
 
             <div className="ZENVE-header-actions-group">
               <button
@@ -2294,6 +2248,11 @@ export default function DesignerPortal() {
           </div>
         </div>
       </header>
+      {showGrid && currentUser?.id !== "designer" ? (
+        <AdminDesignerGrid designers={designers} onDesignerSelect={(id) => { setSelectedDesignerId(id); setShowGrid(false); }} />
+      ) : (
+        <>
+
 
       {/* =====================================================
           EMPTY DESIGNER
@@ -3652,6 +3611,7 @@ export default function DesignerPortal() {
                   UPLOAD SKU
               ================================================= */}
 
+              {currentUser?.id === "designer" && (
               <section className="ZENVE-portal-card">
                 <div className="ZENVE-card-header">
                   <div>
@@ -4594,6 +4554,7 @@ export default function DesignerPortal() {
                   </div>
                 </form>
               </section>
+              )}
 
               {/* =================================================
                   SKUS
@@ -5067,6 +5028,9 @@ export default function DesignerPortal() {
           </div>
         </div>
       )}
-    </div>
+    
+        </>
+      )}
+</div>
   );
 }
