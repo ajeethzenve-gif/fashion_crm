@@ -13,7 +13,9 @@ env/
 # Django
 db.sqlite3
 *.log
-media/
+/media/
+Zenve_Fashion_Backend/media/
+!Zenve_Fashion/public/media/
 staticfiles/
 
 # Node

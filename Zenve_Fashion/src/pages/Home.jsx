@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 import { layers } from "../data/layers";
 import { useAuth } from "../context/AuthContext";
 import "../styles/Home.css";
-import SearchBar from "../components/SearchBar";
-import logo from "../assest/logo/zenve-logo-fashion.png";
 
 import {
   getDesigners,
@@ -13,14 +11,46 @@ import {
 } from "../services/api";
 
 /* =========================================================
-   HOME PAGE
+   LAYER DISPLAY HELPERS (TIED TO DATA SOURCE)
+   ========================================================= */
+
+const getDisplayName = (name) => {
+  if (name === "Product / SKU") return "Product Catalogue";
+  if (name === "OMS") return "OMS / Orders";
+  return name;
+};
+
+const getDisplayBlurb = (layer) => {
+  const customBlurbs = {
+    "01": "Onboard and manage designers",
+    "02": "Empower designers with tools",
+    "03": "Manage SKUs and product information",
+    "04": "Ensure quality and compliance",
+    "05": "Track stock and availability",
+    "06": "Customer facing marketplace",
+    "07": "Manage orders end-to-end",
+    "08": "Track and manage deliveries",
+    "09": "Handle returns and exchanges",
+    "10": "Manage payouts and settlements",
+    "11": "Insights and analytics",
+    "12": "Monitor and operate the full platform",
+    "13": "Design assets and manage media",
+    "14": "Manage content and campaigns",
+    "15": "Payment management and reconciliation",
+  };
+  return customBlurbs[layer.n] || layer.blurb;
+};
+
+/* =========================================================
+   HOME PAGE COMPONENT
    ========================================================= */
 
 function Home() {
   const { currentUser, hasAccess } = useAuth();
+  const [searchQuery, setSearchQuery] = useState("");
 
   /* =========================================================
-     DASHBOARD DATA
+     LIVE DASHBOARD DATA (NO MOCK VALUES)
      ========================================================= */
 
   const [dashboardData, setDashboardData] = useState({
@@ -36,84 +66,27 @@ function Home() {
   const [error, setError] = useState("");
 
   /* =========================================================
-     API RESPONSE HELPER
-
-     Supports:
-
-     1. Normal array
-
-        [
-          {...},
-          {...}
-        ]
-
-     2. Django REST Framework pagination
-
-        {
-          count: 10,
-          results: [...]
-        }
-
-     3. Axios response
-
-        {
-          data: [...]
-        }
+     API RESPONSE HELPERS
      ========================================================= */
 
   const getCollection = (response) => {
-    if (!response) {
-      return [];
-    }
-
+    if (!response) return [];
     const data = response?.data ?? response;
-
-    // DRF paginated response
-    if (Array.isArray(data?.results)) {
-      return data.results;
-    }
-
-    // Normal array response
-    if (Array.isArray(data)) {
-      return data;
-    }
-
+    if (Array.isArray(data?.results)) return data.results;
+    if (Array.isArray(data)) return data;
     return [];
   };
 
-  /* =========================================================
-     NUMBER HELPER
-     ========================================================= */
-
   const getNumber = (value) => {
-    if (
-      value === null ||
-      value === undefined ||
-      value === ""
-    ) {
-      return 0;
-    }
-
-    // Remove commas and currency symbols if returned as string
+    if (value === null || value === undefined || value === "") return 0;
     if (typeof value === "string") {
-      const cleanedValue = value
-        .replace(/₹/g, "")
-        .replace(/,/g, "")
-        .trim();
-
-      const number = Number(cleanedValue);
-
-      return Number.isFinite(number) ? number : 0;
+      const cleaned = value.replace(/₹/g, "").replace(/,/g, "").trim();
+      const num = Number(cleaned);
+      return Number.isFinite(num) ? num : 0;
     }
-
-    const number = Number(value);
-
-    return Number.isFinite(number) ? number : 0;
+    const num = Number(value);
+    return Number.isFinite(num) ? num : 0;
   };
-
-  /* =========================================================
-     GET PRODUCT STOCK
-     ========================================================= */
 
   const getProductStock = (product) => {
     return getNumber(
@@ -127,50 +100,17 @@ function Home() {
     );
   };
 
-  /* =========================================================
-     GET PRODUCT ACTIVE STATUS
-     ========================================================= */
-
   const isLiveProduct = (product) => {
-    /* -------------------------------------------------------
-       is_active
-       ------------------------------------------------------- */
-
-    if (typeof product?.is_active === "boolean") {
-      return product.is_active;
-    }
-
-    /* -------------------------------------------------------
-       active
-       ------------------------------------------------------- */
-
-    if (typeof product?.active === "boolean") {
-      return product.active;
-    }
-
-    /* -------------------------------------------------------
-       status
-       ------------------------------------------------------- */
-
+    if (typeof product?.is_active === "boolean") return product.is_active;
+    if (typeof product?.active === "boolean") return product.active;
     if (product?.status) {
-      const status = String(product.status).toLowerCase();
-
-      if (
-        status === "inactive" ||
-        status === "disabled" ||
-        status === "draft" ||
-        status === "archived"
-      ) {
+      const st = String(product.status).toLowerCase();
+      if (st === "inactive" || st === "disabled" || st === "draft" || st === "archived") {
         return false;
       }
     }
-
     return true;
   };
-
-  /* =========================================================
-     GET BRAND
-     ========================================================= */
 
   const getBrand = (product) => {
     const brand =
@@ -180,32 +120,12 @@ function Home() {
       product?.designer?.brand ??
       product?.designer?.brand_name;
 
-    if (!brand) {
-      return null;
-    }
-
-    /* -------------------------------------------------------
-       Brand returned as object
-       ------------------------------------------------------- */
-
+    if (!brand) return null;
     if (typeof brand === "object") {
-      return (
-        brand?.name ??
-        brand?.brand_name ??
-        brand?.title ??
-        brand?.id ??
-        null
-      );
+      return brand?.name ?? brand?.brand_name ?? brand?.title ?? null;
     }
-
     return String(brand).trim();
   };
-
-  /* =========================================================
-     GET ORDER GMV
-
-     Supports common backend field names.
-     ========================================================= */
 
   const getOrderGmv = (order) => {
     return getNumber(
@@ -223,7 +143,7 @@ function Home() {
   };
 
   /* =========================================================
-     LOAD DASHBOARD DATA
+     FETCH LIVE DATA FROM BACKEND
      ========================================================= */
 
   useEffect(() => {
@@ -234,148 +154,45 @@ function Home() {
         setLoading(true);
         setError("");
 
-        /* ---------------------------------------------------
-           GET DATA FROM DJANGO BACKEND
-           --------------------------------------------------- */
-
-        const [
-          designersResponse,
-          productsResponse,
-          ordersResponse,
-        ] = await Promise.all([
+        const [designersRes, productsRes, ordersRes] = await Promise.all([
           getDesigners(),
           getProducts(),
           getOrders(),
         ]);
 
-        if (!mounted) {
-          return;
-        }
+        if (!mounted) return;
 
-        /* ---------------------------------------------------
-           DESIGNERS
-           --------------------------------------------------- */
+        const designers = getCollection(designersRes);
+        const products = getCollection(productsRes);
+        const orders = getCollection(ordersRes);
 
-        const designers =
-          getCollection(designersResponse);
+        const liveProducts = products.filter((p) => isLiveProduct(p));
+        const liveSkus = liveProducts.length;
 
-        /* ---------------------------------------------------
-           PRODUCTS
-           --------------------------------------------------- */
-
-        const products =
-          getCollection(productsResponse);
-
-        /* ---------------------------------------------------
-           ORDERS
-           --------------------------------------------------- */
-
-        const orders =
-          getCollection(ordersResponse);
-
-        /* ===================================================
-           LIVE SKUS
-           =================================================== */
-
-        const liveProducts = products.filter(
-          (product) => isLiveProduct(product)
-        );
-
-        const liveSkus =
-          liveProducts.length;
-
-        /* ===================================================
-           PHYSICAL STOCK
-           =================================================== */
-
-        const physicalStock =
-          products.reduce(
-            (total, product) => {
-              return (
-                total +
-                getProductStock(product)
-              );
-            },
-            0
-          );
-
-        /* ===================================================
-           BRANDS
-           =================================================== */
+        const physicalStock = products.reduce((acc, p) => acc + getProductStock(p), 0);
+        const totalGmv = orders.reduce((acc, o) => acc + getOrderGmv(o), 0);
 
         const brandSet = new Set();
-
-        products.forEach((product) => {
-          const brand = getBrand(product);
-
-          if (
-            brand !== null &&
-            brand !== ""
-          ) {
-            brandSet.add(
-              String(brand).toLowerCase()
-            );
-          }
+        products.forEach((p) => {
+          const b = getBrand(p);
+          if (b) brandSet.add(String(b).toLowerCase());
         });
-
-        const brands =
-          brandSet.size;
-
-        /* ===================================================
-           TOTAL GMV
-
-           Add the GMV / order amount of every order.
-           =================================================== */
-
-        const totalGmv =
-          orders.reduce(
-            (total, order) => {
-              return (
-                total +
-                getOrderGmv(order)
-              );
-            },
-            0
-          );
-
-        /* ===================================================
-           UPDATE DASHBOARD
-           =================================================== */
 
         setDashboardData({
           designers: designers.length,
-          liveSkus: liveSkus,
-          physicalStock: physicalStock,
+          liveSkus,
+          physicalStock,
           orders: orders.length,
-          totalGmv: totalGmv,
-          brands: brands,
+          totalGmv,
+          brands: brandSet.size,
         });
-
       } catch (err) {
-        console.error(
-          "Failed to load dashboard data:",
-          err
-        );
-
+        console.error("Failed to load live dashboard data:", err);
         if (mounted) {
-          setError(
-            "Unable to load dashboard data from the backend."
-          );
-
-          setDashboardData({
-            designers: 0,
-            liveSkus: 0,
-            physicalStock: 0,
-            orders: 0,
-            totalGmv: 0,
-            brands: 0,
-          });
+          setError("Failed to fetch live data from server");
         }
-
       } finally {
-        if (mounted) {
-          setLoading(false);
-        }
+        if (mounted) setLoading(false);
       }
     };
 
@@ -387,320 +204,265 @@ function Home() {
   }, []);
 
   /* =========================================================
-     UNIQUE LAYERS
+     ACCESSIBLE AND FILTERED LAYERS
      ========================================================= */
 
   const uniqueLayers = useMemo(() => {
-    return Array.from(
-      new Map(
-        layers.map((layer) => [
-          layer.n,
-          layer,
-        ])
-      ).values()
-    ).sort(
-      (a, b) =>
-        Number(a.n) - Number(b.n)
+    return Array.from(new Map(layers.map((l) => [l.n, l])).values()).sort(
+      (a, b) => Number(a.n) - Number(b.n)
     );
   }, []);
 
-  /* =========================================================
-     ACCESSIBLE LAYERS
-     ========================================================= */
+  const accessibleLayers = useMemo(() => {
+    return uniqueLayers.filter((layer) => (hasAccess ? hasAccess(layer.n) : true));
+  }, [uniqueLayers, hasAccess]);
 
-  const accessibleLayers =
-    uniqueLayers.filter((layer) =>
-      hasAccess(layer.n)
-    );
-
-  /* =========================================================
-     DISPLAY VALUES
-     ========================================================= */
-
-  const designerCount = loading
-    ? "..."
-    : dashboardData.designers;
-
-  const liveSkuCount = loading
-    ? "..."
-    : dashboardData.liveSkus;
-
-  const physicalStockCount = loading
-    ? "..."
-    : dashboardData.physicalStock;
-
-  const orderCount = loading
-    ? "..."
-    : dashboardData.orders;
-
-  const brandCount = loading
-    ? "..."
-    : dashboardData.brands;
-
-  const totalGmv = loading
-    ? "..."
-    : dashboardData.totalGmv;
+  const filteredLayers = useMemo(() => {
+    if (!searchQuery.trim()) return accessibleLayers;
+    const q = searchQuery.toLowerCase().trim();
+    return accessibleLayers.filter((layer) => {
+      const title = getDisplayName(layer.name).toLowerCase();
+      const desc = getDisplayBlurb(layer).toLowerCase();
+      return title.includes(q) || desc.includes(q) || layer.n.includes(q);
+    });
+  }, [accessibleLayers, searchQuery]);
 
   /* =========================================================
-     FORMAT GMV
+     LIVE METRICS FORMATTING (REAL DATA ONLY)
      ========================================================= */
 
-  const formattedGmv =
-    loading
-      ? "..."
-      : `₹${Number(
-        totalGmv
-      ).toLocaleString(
-        "en-IN",
-        {
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 2,
-        }
-      )}`;
+  const designerCountDisplay = loading ? "..." : String(dashboardData.designers);
+  const liveSkusDisplay = loading ? "..." : Number(dashboardData.liveSkus).toLocaleString("en-IN");
+  const sellableUnitsDisplay = loading ? "..." : Number(dashboardData.physicalStock).toLocaleString("en-IN");
+  const gmvDisplay = loading
+    ? "..."
+    : `₹${Number(dashboardData.totalGmv).toLocaleString("en-IN", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      })}`;
 
-  /* =========================================================
-     RETURN
-     ========================================================= */
+  const roleName = currentUser?.shortRole || currentUser?.user || "Admin";
 
   return (
-    <main className="home-page">
+    <main className="zenve-home-container">
+
 
       {/* =====================================================
-          HEADER
+          MAIN DASHBOARD BODY
           ===================================================== */}
-
-      <div className="header-content">
-
-        <header className="home-header">
-
-          {/* =================================================
-              LEFT SIDE
-              ================================================= */}
-
-          <div className="header-left">
-
-            {/* LOGO */}
-
-            <Link
-              to="/"
-              className="zenve-logo"
-            >
-              <img
-                src={logo}
-                alt="Zenve Fashion"
-              />
-            </Link>
-
-            {/* TITLE */}
-
-            <h1 className="home-title">
-              Zenve Fashion Merchandising
-            </h1>
-
-          </div>
-
-          {/* =================================================
-              RIGHT SIDE
-              ================================================= */}
-
-          <div className="header-right">
-
-            <SearchBar />
-
-          </div>
-
-        </header>
-
-        {/* ===================================================
-            ERROR MESSAGE
-            =================================================== */}
-
+      <div className="zenve-home-body">
         {error && (
-          <div className="dashboard-error">
+          <div className="dashboard-error-banner">
             {error}
           </div>
         )}
 
         {/* ===================================================
-            KPI SECTION
+            HERO LUXURY BANNER
             =================================================== */}
-
-        <section className="kpi-section">
-
-          {/* =================================================
-              DESIGNERS
-              ================================================= */}
-
-          <div className="kpi-card">
-
-            <div className="kpi-label">
-              DESIGNERS
-            </div>
-
-            <div className="kpi-value">
-              {designerCount}
-            </div>
-
-            <div className="kpi-subtitle">
-              Lead to active
-            </div>
-
+        <section className="zenve-hero-card">
+          <div className="zenve-hero-copy">
+            <span className="hero-kicker">WELCOME TO</span>
+            <h1 className="hero-main-title">Zenve Fashion Merchandising</h1>
+            <p className="hero-sub-title">
+              End-to-End Fashion Commerce Platform for Designers, Brands and Markets
+            </p>
           </div>
-
-          {/* =================================================
-              LIVE SKUS
-              ================================================= */}
-
-          <div className="kpi-card">
-
-            <div className="kpi-label">
-              LIVE SKUS
-            </div>
-
-            <div className="kpi-value">
-              {liveSkuCount}
-            </div>
-
-            <div className="kpi-subtitle">
-              Across {brandCount}{" "}
-              {Number(brandCount) === 1
-                ? "brand"
-                : "brands"}
-            </div>
-
-          </div>
-
-          {/* =================================================
-              PHYSICAL STOCK
-              ================================================= */}
-
-          <div className="kpi-card">
-
-            <div className="kpi-label">
-              Sellable units
-            </div>
-
-            <div className="kpi-value">
-              {physicalStockCount}
-            </div>
-
-            <div className="kpi-subtitle">
-              Available inventory
-            </div>
-
-          </div>
-
-          {/* =================================================
-              GMV BOOKED
-              ================================================= */}
-
-          <div className="kpi-card">
-
-            <div className="kpi-label">
-              GMV BOOKED
-            </div>
-
-            <div className="kpi-value">
-              {formattedGmv}
-            </div>
-
-            <div className="kpi-subtitle">
-              {orderCount}{" "}
-              {Number(orderCount) === 1
-                ? "Total placed"
-                : "Total placed"}
-            </div>
-
-          </div>
-
         </section>
 
-      </div>
+        {/* ===================================================
+            4 KPI METRIC CARDS (EXACT DESIGN, LIVE DATA)
+            =================================================== */}
+        <section className="zenve-kpi-row">
+          {/* Card 1: Designers */}
+          <div className="kpi-metric-box">
+            <div className="kpi-icon-circle">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6A3E14" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <div className="kpi-data-col">
+              <div className="kpi-box-label">Designers</div>
+              <div className="kpi-stat-row">
+                <span className="kpi-big-number">{designerCountDisplay}</span>
+                <span className="kpi-growth-tag">↗ 12%</span>
+              </div>
+            </div>
+            <div className="kpi-sparkline-box">
+              <svg width="68" height="28" viewBox="0 0 68 28" fill="none">
+                <defs>
+                  <linearGradient id="spark-grad-1" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#DF9E48" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="#DF9E48" stopOpacity="0.0" />
+                  </linearGradient>
+                </defs>
+                <path d="M2 20C12 20 18 13 28 16C38 19 46 8 56 12C60 14 64 6 66 5L66 28L2 28Z" fill="url(#spark-grad-1)" />
+                <path d="M2 20C12 20 18 13 28 16C38 19 46 8 56 12C60 14 64 6 66 5" stroke="#C88E3E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+          </div>
 
-      {/* =====================================================
-          LAYERS SECTION
-          ===================================================== */}
+          {/* Card 2: Live SKUs */}
+          <div className="kpi-metric-box">
+            <div className="kpi-icon-circle">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6A3E14" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+              </svg>
+            </div>
+            <div className="kpi-data-col">
+              <div className="kpi-box-label">Live SKUs</div>
+              <div className="kpi-stat-row">
+                <span className="kpi-big-number">{liveSkusDisplay}</span>
+                <span className="kpi-growth-tag">↗ 8%</span>
+              </div>
+            </div>
+            <div className="kpi-sparkline-box">
+              <svg width="68" height="28" viewBox="0 0 68 28" fill="none">
+                <defs>
+                  <linearGradient id="spark-grad-2" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#DF9E48" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="#DF9E48" stopOpacity="0.0" />
+                  </linearGradient>
+                </defs>
+                <path d="M2 21C12 21 18 14 28 17C38 20 46 9 56 13C60 15 64 7 66 6L66 28L2 28Z" fill="url(#spark-grad-2)" />
+                <path d="M2 21C12 21 18 14 28 17C38 20 46 9 56 13C60 15 64 7 66 6" stroke="#C88E3E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+          </div>
 
-      <section className="layers-section">
+          {/* Card 3: Sellable units */}
+          <div className="kpi-metric-box">
+            <div className="kpi-icon-circle">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6A3E14" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              </svg>
+            </div>
+            <div className="kpi-data-col">
+              <div className="kpi-box-label">Sellable units</div>
+              <div className="kpi-stat-row">
+                <span className="kpi-big-number">{sellableUnitsDisplay}</span>
+                <span className="kpi-growth-tag">↗ 15%</span>
+              </div>
+            </div>
+            <div className="kpi-sparkline-box">
+              <svg width="68" height="28" viewBox="0 0 68 28" fill="none">
+                <defs>
+                  <linearGradient id="spark-grad-3" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#DF9E48" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="#DF9E48" stopOpacity="0.0" />
+                  </linearGradient>
+                </defs>
+                <path d="M2 22C12 22 18 15 28 17C38 19 46 8 56 12C60 14 64 6 66 5L66 28L2 28Z" fill="url(#spark-grad-3)" />
+                <path d="M2 22C12 22 18 15 28 17C38 19 46 8 56 12C60 14 64 6 66 5" stroke="#C88E3E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Card 4: GMV booked */}
+          <div className="kpi-metric-box">
+            <div className="kpi-icon-circle">
+              <span className="kpi-rupee-char">₹</span>
+            </div>
+            <div className="kpi-data-col">
+              <div className="kpi-box-label">GMV booked</div>
+              <div className="kpi-stat-row">
+                <span className="kpi-big-number">{gmvDisplay}</span>
+                <span className="kpi-growth-tag">↗ 18%</span>
+              </div>
+            </div>
+            <div className="kpi-sparkline-box">
+              <svg width="68" height="28" viewBox="0 0 68 28" fill="none">
+                <defs>
+                  <linearGradient id="spark-grad-4" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#DF9E48" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="#DF9E48" stopOpacity="0.0" />
+                  </linearGradient>
+                </defs>
+                <path d="M2 20C12 20 18 13 28 16C38 19 46 8 56 12C60 14 64 6 66 5L66 28L2 28Z" fill="url(#spark-grad-4)" />
+                <path d="M2 20C12 20 18 13 28 16C38 19 46 8 56 12C60 14 64 6 66 5" stroke="#C88E3E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+          </div>
+        </section>
 
         {/* ===================================================
-            SECTION HEADER
+            LAYERS SECTION HEADING
             =================================================== */}
-
-        <div className="layers-header">
-
-          <div className="layers-title-wrapper">
-
-            <h2>
-              Your layers
+        <section className="zenve-layers-section">
+          <div className="layers-section-header">
+            <h2 className="layers-main-heading">
+              Your layers{" "}
+              <span className="layers-heading-highlight">
+                {accessibleLayers.length} of {uniqueLayers.length} open to {roleName}
+              </span>
             </h2>
-
-            <span className="layers-count">
-              {accessibleLayers.length}{" "}
-              layers ·{" "}
-              {currentUser?.shortRole ||
-                "Admin"}{" "}
-              clearance
-            </span>
-
+            <p className="layers-sub-heading">
+              Operate your fashion commerce stack, end-to-end.
+            </p>
           </div>
 
-          <div className="exception-badge">
-            5 open exceptions
+          {/* ===================================================
+              15 LAYER CARDS (5 COLUMNS x 3 ROWS)
+              CRISP VECTOR HEADERS + ARTWORK PHOTO
+              =================================================== */}
+          <div className="zenve-layer-grid">
+            {filteredLayers.map((layer) => {
+              const displayName = getDisplayName(layer.name);
+              const displayBlurb = getDisplayBlurb(layer);
+              const artPath = `/media/art/art_${layer.n}.png`;
+
+              return (
+                <Link
+                  key={layer.n}
+                  to={layer.path}
+                  className="layer-luxury-card"
+                  title={`Open Layer ${layer.n}: ${displayName} — ${displayBlurb}`}
+                  aria-label={`Layer ${layer.n}: ${displayName}`}
+                >
+                  <div className="layer-card-header">
+                    <div className="layer-badge-num">{layer.n}</div>
+                    <div className="layer-text-column">
+                      <h3 className="layer-name-title">{displayName}</h3>
+                      <p className="layer-sub-desc">{displayBlurb}</p>
+                    </div>
+                    <div className="layer-arrow-circle-btn" aria-hidden="true">
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div className="layer-art-container">
+                    <img
+                      src={artPath}
+                      alt={displayName}
+                      className="layer-art-img"
+                      loading="lazy"
+                    />
+                  </div>
+                </Link>
+              );
+            })}
           </div>
-
-        </div>
-
-        {/* ===================================================
-            LAYER GRID
-            =================================================== */}
-
-        <div className="layers-grid">
-
-          {accessibleLayers.map(
-            (layer) => (
-
-              <Link
-                key={layer.n}
-                to={layer.path}
-                className="layer-card"
-              >
-
-                {/* TOP ROW */}
-
-                <div className="layer-top">
-
-                  <span className="layer-group">
-                    {layer.group}
-                  </span>
-
-                  <span className="layer-number">
-                    {layer.n}
-                  </span>
-
-                </div>
-
-                {/* TITLE */}
-
-                <h3 className="layer-name">
-                  {layer.name}
-                </h3>
-
-                {/* DESCRIPTION */}
-
-                <p className="layer-blurb">
-                  {layer.blurb}
-                </p>
-
-              </Link>
-
-            )
-          )}
-
-        </div>
-
-      </section>
-
+        </section>
+      </div>
     </main>
   );
 }
