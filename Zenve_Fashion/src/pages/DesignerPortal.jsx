@@ -2153,8 +2153,10 @@ export default function DesignerPortal() {
             
 
             <div className="ZENVE-header-actions-group">
-              <button
-                type="button"
+              {currentUser?.id === "designer" && (
+                <>
+                  <button
+                    type="button"
                 className={`ZENVE-header-profile-btn ${showProfileAndAccount
                   ? "active"
                   : ""
@@ -2244,6 +2246,8 @@ export default function DesignerPortal() {
                   </span>
                 )}
               </button>
+              </>
+              )}
             </div>
           </div>
         </div>

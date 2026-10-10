@@ -1,6 +1,6 @@
 import { useAuth } from "../context/AuthContext";
 import React, { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import "../styles/Catalogue.css";
 import SearchBar from "../components/SearchBar";
 import logo from "../assest/logo/zenve-logo-fashion.png";
@@ -108,6 +108,8 @@ function formatInr(val) {
 
 export default function Catalogue() {
   const { currentUser } = useAuth();
+  const [searchParams] = useSearchParams();
+  const designerIdParam = searchParams.get("designer");
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -131,7 +133,15 @@ export default function Catalogue() {
     try {
       setLoading(true);
       setError("");
-      const data = await getProducts(currentUser?.id === "designer" ? { designer: currentUser.designerId } : {});
+      
+      const queryParam = {};
+      if (currentUser?.id === "designer") {
+        queryParam.designer = currentUser.designerId;
+      } else if (designerIdParam) {
+        queryParam.designer = designerIdParam;
+      }
+
+      const data = await getProducts(queryParam);
       const list = Array.isArray(data) ? data : data.results || [];
       setProducts(list);
     } catch (err) {
@@ -144,7 +154,7 @@ export default function Catalogue() {
 
   useEffect(() => {
     loadProducts();
-  }, []);
+  }, [designerIdParam]);
 
   /* =======================================================
      UPDATE SINGLE PRICE

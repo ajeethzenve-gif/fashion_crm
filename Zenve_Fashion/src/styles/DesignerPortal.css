@@ -75,22 +75,58 @@ DesignerPortal.css
 ========================================================= */
 
 .ZENVE-portal-header {
-  width: 100%;
-  background: url('/header-bg.png') no-repeat center right;
-  background-size: cover;
-  border-bottom: 1px solid var(--ZENVE-line);
+  position: relative;
+  width: auto;
+  margin: 24px;
+  border-radius: 14px;
+  border: 1px solid var(--ZENVE-line);
+  box-shadow: 0 4px 16px -4px rgba(78, 52, 28, 0.06);
   padding: 24px 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   box-sizing: border-box;
-  position: relative;
   z-index: 50;
-  min-height: 140px;
+  min-height: 124px;
+  overflow: hidden;
+  background: linear-gradient(90deg, #FAF6F0 0%, #F5ECDF 45%, #EFE1CF 100%);
+}
+
+.ZENVE-portal-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(250, 246, 240, 0.98) 0%,
+    rgba(250, 246, 240, 0.92) 35%,
+    rgba(250, 246, 240, 0.60) 60%,
+    rgba(250, 246, 240, 0.15) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ZENVE-portal-header::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 65%;
+  height: 100%;
+  background: url('/header-bg.png') no-repeat right center;
+  background-size: cover;
+  opacity: 0.85;
+  mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .ZENVE-header-left {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   gap: 20px;
@@ -163,6 +199,8 @@ DesignerPortal.css
 ========================================================= */
 
 .ZENVE-header-right {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -2968,4 +3006,104 @@ DesignerPortal.css
 .ZENVE-designer-select option {
   background-color: var(--panel, #FFFCF5);
   color: var(--ink, #1F2937);
+}
+
+/* =========================================================
+   DESIGNER PORTAL HERO BANNER (Matches Delivery Engine)
+========================================================= */
+
+.dp-hero-banner {
+  position: relative;
+  width: 100%;
+  height: 136px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 16px rgba(110, 70, 30, 0.08);
+  border: 1px solid #EAE0D0;
+  background: linear-gradient(90deg, #FAF6F0 0%, #F5ECDF 45%, #EFE1CF 100%);
+}
+
+.dp-hero-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(250, 246, 240, 0.98) 0%,
+    rgba(250, 246, 240, 0.92) 35%,
+    rgba(250, 246, 240, 0.60) 60%,
+    rgba(250, 246, 240, 0.15) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dp-banner-bg-img {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 65%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center;
+  opacity: 0.85;
+  mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
+  pointer-events: none;
+}
+
+.dp-banner-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 34px;
+  max-width: 580px;
+}
+
+.dp-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #7D4C25;
+  margin-bottom: 6px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.7);
+}
+
+.dp-breadcrumb a {
+  color: #7D4C25;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.dp-breadcrumb a:hover {
+  color: #4A2B13;
+  text-decoration: underline;
+}
+
+.dp-breadcrumb span {
+  color: #4A2B13;
+  font-weight: 700;
+}
+
+.dp-hero-title {
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 32px;
+  font-weight: 800;
+  color: #381E0D;
+  margin: 0 0 6px 0;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.dp-hero-subtitle {
+  font-size: 13.5px;
+  color: #5C3D24;
+  margin: 0;
+  font-weight: 600;
 }
