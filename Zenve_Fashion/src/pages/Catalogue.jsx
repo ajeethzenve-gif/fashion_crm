@@ -3,7 +3,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import "../styles/Catalogue.css";
 import SearchBar from "../components/SearchBar";
-import logo from "../assest/logo/zenve-logo-fashion.png";
 import { getProducts, updateProduct } from "../services/api";
 import { showToast } from "../utils/zenveToast";
 
@@ -11,11 +10,23 @@ import { showToast } from "../utils/zenveToast";
    ICONS & SWITCH
 ========================================================= */
 
-function BackIcon() {
+function RefreshIcon({ spinning }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M19 12H5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M10 7L5 12L10 17" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    <svg
+      className={`ZENVE-cat-refresh-svg ${spinning ? "spin-animate" : ""}`}
+      width="15"
+      height="15"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C15.3016 3 18.1884 4.77884 19.7545 7.42857M21 3V7.5H16.5"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -289,33 +300,89 @@ export default function Catalogue() {
   return (
     <div className="ZENVE-catalogue-layout">
       {/* =====================================================
-          HEADER SECTION
+          LUXURY CARD DESIGN HEADER
       ===================================================== */}
-      <header className="ZENVE-catalogue-header">
-        <div className="ZENVE-header-left">
-          <Link to="/" className="ZENVE-portal-logo">
-            <img src={logo} alt="Zenve Fashion" />
-          </Link>
+      <header className="ZENVE-cat-header-wrap">
+        <div className="ZENVE-cat-header-card">
+          {/* Ambient Lighting & Luxury Watermark */}
+          <div className="ZENVE-cat-header-aura" aria-hidden="true" />
+          <div className="ZENVE-cat-header-bg-art" aria-hidden="true" />
 
-          <div className="ZENVE-header-title-block">
-            <Link to="/" className="ZENVE-back-link">
-              <BackIcon />
-              <span>ALL 15 LAYERS</span>
-            </Link>
+          {/* Core Content: Left Identity & Right Action Suite */}
+          <div className="ZENVE-cat-header-main-row">
+            {/* Left: Title Block */}
+            <div className="ZENVE-cat-title-cluster">
+              <div className="ZENVE-cat-headings">
+                <div className="ZENVE-cat-title-badge-row">
+                  <h1 className="ZENVE-cat-title">
+                    Product &amp; SKU Catalogue
+                  </h1>
+                  <span className="ZENVE-cat-sku-counter-pill">
+                    {loading ? "Syncing..." : `${products.length} SKUs`}
+                  </span>
+                  {designerIdParam && (
+                    <div className="ZENVE-cat-designer-pill">
+                      <span className="ZENVE-cat-pill-dot gold" />
+                      <span>Filtered: Designer #{designerIdParam}</span>
+                      <Link to="/catalogue" className="ZENVE-cat-clear-filter" title="Clear designer filter">
+                        ✕
+                      </Link>
+                    </div>
+                  )}
+                </div>
+                <p className="ZENVE-cat-subtitle">
+                  Catalogue layer · Master SKU repository, variant matrices, multi-channel pricing, studio media assets &amp; compliance policy.
+                </p>
+              </div>
+            </div>
 
-            <h1 className="ZENVE-portal-title">
-              <span className="ZENVE-layer-num">03</span>
-              Product / SKU
-            </h1>
+            {/* Right: Search Bar & Actions */}
+            <div className="ZENVE-cat-header-actions">
+              <div className="ZENVE-cat-search-holder">
+                <SearchBar />
+              </div>
 
-            <p className="ZENVE-portal-subtitle">
-              Catalogue layer · Variants, attributes, media, pricing, policy
-            </p>
+              <div className="ZENVE-cat-action-buttons">
+                <button
+                  type="button"
+                  className={`ZENVE-cat-refresh-button ${loading ? "is-loading" : ""}`}
+                  onClick={loadProducts}
+                  disabled={loading}
+                  title="Synchronize Catalogue from Backend"
+                >
+                  <RefreshIcon spinning={loading} />
+                  <span>{loading ? "Syncing..." : "Sync SKUs"}</span>
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div className="ZENVE-header-right">
-          <SearchBar />
+          {/* Bottom Integrated Mini-Stat Ribbon (Hero KPI Strip) */}
+          <div className="ZENVE-cat-header-stats-ribbon">
+            <div className="ZENVE-cat-stat-pill">
+              <span className="stat-label">Total SKUs</span>
+              <span className="stat-value">{loading ? "—" : kpis.totalSkus}</span>
+            </div>
+            <div className="ZENVE-cat-stat-pill stat-live">
+              <span className="stat-dot green" />
+              <span className="stat-label">Live Active</span>
+              <span className="stat-value">{loading ? "—" : kpis.liveSkus}</span>
+            </div>
+            <div className="ZENVE-cat-stat-pill stat-qa">
+              <span className="stat-dot amber" />
+              <span className="stat-label">In QA Review</span>
+              <span className="stat-value">{loading ? "—" : kpis.inQa}</span>
+            </div>
+            <div className="ZENVE-cat-stat-pill stat-sale">
+              <span className="stat-dot purple" />
+              <span className="stat-label">Final Sale</span>
+              <span className="stat-value">{loading ? "—" : kpis.finalSale}</span>
+            </div>
+            <div className="ZENVE-cat-stat-pill stat-filtered">
+              <span className="stat-label">Matching Query</span>
+              <span className="stat-value">{loading ? "—" : filteredProducts.length}</span>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -340,30 +407,6 @@ export default function Catalogue() {
       )}
 
       <main className="ZENVE-catalogue-main">
-        {/* ===================================================
-            TOP 4 KPI CARDS
-        =================================================== */}
-        <div className="ZENVE-catalogue-kpis">
-          <div className="ZENVE-kpi-tile">
-            <div className="ZENVE-tile-label">SKUs</div>
-            <div className="ZENVE-tile-value">{loading ? "—" : kpis.totalSkus}</div>
-          </div>
-
-          <div className="ZENVE-kpi-tile">
-            <div className="ZENVE-tile-label">Live</div>
-            <div className="ZENVE-tile-value">{loading ? "—" : kpis.liveSkus}</div>
-          </div>
-
-          <div className="ZENVE-kpi-tile">
-            <div className="ZENVE-tile-label">In QA</div>
-            <div className="ZENVE-tile-value">{loading ? "—" : kpis.inQa}</div>
-          </div>
-
-          <div className="ZENVE-kpi-tile">
-            <div className="ZENVE-tile-label">Final sale</div>
-            <div className="ZENVE-tile-value">{loading ? "—" : kpis.finalSale}</div>
-          </div>
-        </div>
 
         {/* ===================================================
             SKU MASTER SECTION

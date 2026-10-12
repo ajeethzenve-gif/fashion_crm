@@ -372,6 +372,58 @@ class ProductSerializer(serializers.ModelSerializer):
     # -----------------------------------------------------
 
     product_images = serializers.SerializerMethodField()
+    first_image = serializers.SerializerMethodField()
+    media_studio_status = serializers.SerializerMethodField()
+    media_assets = serializers.SerializerMethodField()
+
+    def get_media_studio_status(self, product):
+        job = getattr(product, "media_job", None)
+        return job.status if job else "QUEUED"
+
+    def get_media_assets(self, product):
+        request = self.context.get("request")
+        job = getattr(product, "media_job", None)
+        if not job:
+            return []
+        assets = []
+        for a in job.assets.all().order_by("id"):
+            url = f"/api/products/media-files/generated/{a.id}/"
+            if request is not None:
+                url = request.build_absolute_uri(url)
+            assets.append({"id": a.id, "image": url})
+        return assets
+
+    def get_first_image(self, product):
+        request = self.context.get("request")
+
+        # 1. Prioritize verified MediaStudio assets if approved or in review
+        job = getattr(product, "media_job", None)
+        if job and job.assets.exists():
+            first_asset = job.assets.order_by("id").first()
+            if first_asset and first_asset.image:
+                try:
+                    url = f"/api/products/media-files/generated/{first_asset.id}/"
+                    return request.build_absolute_uri(url) if request is not None else url
+                except Exception:
+                    pass
+
+        # 2. Real product image (position 1 verified original from designer/upload)
+        first_img = product.product_images.filter(position=1).first() or product.product_images.first()
+        if first_img and first_img.image:
+            try:
+                url = f"/api/products/media-files/original/{first_img.id}/"
+                return request.build_absolute_uri(url) if request is not None else url
+            except Exception:
+                pass
+
+        # 3. Primary image field
+        if product.primary_image:
+            try:
+                url = product.primary_image.url
+                return request.build_absolute_uri(url) if request is not None else url
+            except Exception:
+                pass
+        return None
 
     def get_product_images(self, product):
 
@@ -1393,6 +1445,9 @@ class ProductSerializer(serializers.ModelSerializer):
 
             # Images
             "primary_image",
+            "first_image",
+            "media_studio_status",
+            "media_assets",
             "images",
             "product_images",
 
@@ -1434,4 +1489,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "is_fast_delivery",
 
             "product_images",
+            "first_image",
+            "media_studio_status",
+            "media_assets",
         ]

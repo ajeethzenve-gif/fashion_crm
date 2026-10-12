@@ -7,7 +7,6 @@ import { showToast, showErrorToast } from "../utils/zenveToast";
 import "../styles/DesignerPortal.css";
 import SearchBar from "../components/SearchBar";
 import AdminDesignerGrid from "../components/AdminDesignerGrid";
-import logo from "../assest/logo/zenve-logo-fashion.png";
 
 import {
   getDesigners,
@@ -2102,16 +2101,6 @@ export default function DesignerPortal() {
 
       <header className="ZENVE-portal-header">
         <div className="ZENVE-header-left">
-          <Link
-            to="/"
-            className="ZENVE-portal-logo"
-          >
-            <img
-              src={logo}
-              alt="Zenve Fashion"
-            />
-          </Link>
-
           <div className="ZENVE-header-title-block">
             <Link
               to="/"
