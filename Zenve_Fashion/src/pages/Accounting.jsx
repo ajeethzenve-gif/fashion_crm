@@ -1184,7 +1184,7 @@ export default function Accounting() {
               <thead>
                 <tr>
                   <th>SL.No</th>
-                  <th>Invoice ID</th>
+                  <th>In==voice ID</th>
                   <th>Customer / Designer</th>
                   <th>Order ID</th>
                   <th>Amount</th>

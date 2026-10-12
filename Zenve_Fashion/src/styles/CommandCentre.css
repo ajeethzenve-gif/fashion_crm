@@ -247,38 +247,50 @@
 .ZENVE-cc-kpi-row {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 10px;
-  margin-bottom: 16px;
+  gap: 12px;
+  margin-bottom: 20px;
   width: 100%;
   box-sizing: border-box;
+}
+
+@media (max-width: 1200px) {
+  .ZENVE-cc-kpi-row {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
 }
 
 .ZENVE-cc-kpi-card {
   background: #FFFFFF;
   border: 1px solid #E5D5C0;
-  border-radius: 10px;
-  padding: 10px 12px;
+  border-radius: 12px;
+  padding: 14px 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: space-between;
-  gap: 8px;
+  gap: 12px;
   min-width: 0;
   box-sizing: border-box;
-  height: 100%;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .ZENVE-cc-kpi-card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(180, 115, 38, 0.09);
   border-color: #D4A017;
 }
 
+.kpi-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .kpi-icon-pill {
-  width: 34px;
-  height: 34px;
-  min-width: 34px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
   border-radius: 50%;
   background: #FFF8E8;
   border: 1px solid #F3E6D0;
@@ -288,21 +300,34 @@
   flex-shrink: 0;
 }
 
+.kpi-sparkline-wrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  opacity: 0.85;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.ZENVE-cc-kpi-card:hover .kpi-sparkline-wrap {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
 .kpi-details {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
   min-width: 0;
-  flex: 1;
-  overflow: hidden;
+  width: 100%;
 }
 
 .kpi-label {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   color: #8C7862;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -310,49 +335,49 @@
 
 .kpi-value-row {
   display: flex;
-  align-items: center;
-  gap: 5px;
+  align-items: baseline;
+  gap: 8px;
   min-width: 0;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
 .kpi-number {
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 22px;
+  font-weight: 800;
   color: #2D1F15;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.kpi-delta-tag {
-  font-size: 9px;
-  font-weight: 700;
-  border-radius: 4px;
-  padding: 1px 4px;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
+.kpi-delta-tag {
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 2px 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1.2;
+}
+
 .kpi-delta-tag.positive {
-  color: #16A34A;
+  color: #15803D;
   background: #DCFCE7;
 }
 
 .kpi-hint-text {
-  font-size: 10px;
+  font-size: 11.5px;
   color: #8C7862;
+  font-weight: 500;
+  line-height: 1.3;
+  margin-top: 1px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
-}
-
-.kpi-sparkline-wrap {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
 }
 
 /* =========================================================

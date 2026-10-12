@@ -49,6 +49,19 @@ const LEAD_SOURCES = [
   "Agency",
 ];
 
+export const STAGES_PIPELINE = [
+  "LEAD",
+  "CONTACTED",
+  "QUALIFIED",
+  "PORTFOLIO",
+  "REVIEW",
+  "APPROVED",
+  "CONTRACT",
+  "SIGNED",
+  "LIVE",
+  "ACTIVE",
+];
+
 /* =========================================================
    ICONS & SPARKLINES
 ========================================================= */
@@ -134,7 +147,7 @@ export default function DesignerCRM() {
     gst: "",
     contractEnds: "",
     source: "Referral",
-    owner: "Nisha Kapoor",
+    owner: "",
     nextFollowUp: "",
     cac: "",
     renewalProbability: "",
@@ -145,12 +158,19 @@ export default function DesignerCRM() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [activeDesigner, setActiveDesigner] = useState(null);
   const [editForm, setEditForm] = useState({});
+  const [followUpTasks, setFollowUpTasks] = useState([]);
+  const [newFollowUpText, setNewFollowUpText] = useState("");
+  const [newFollowUpDate, setNewFollowUpDate] = useState("");
+  const [stageDropdownOpen, setStageDropdownOpen] = useState(false);
 
   // Close menus on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (!e.target.closest(".crm-action-menu-wrap")) {
         setOpenActionMenuId(null);
+      }
+      if (!e.target.closest(".crm-edit-stage-custom-dropdown")) {
+        setStageDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -319,21 +339,94 @@ export default function DesignerCRM() {
   const handleOpenEditModal = (designer) => {
     setActiveDesigner(designer);
     const { prodCount, sales } = getDesignerStats(designer);
+    const designerGst = designer.gst || (designer.useCompanyGst ? COMPANY_GST_INFO.gstNumber : "");
+    const vendorCac = Number(designer.vendor_cac ?? designer.cac ?? 0);
+    const vendorLtv = Number(designer.vendor_ltv ?? 0);
+    const computedLtvCac = vendorCac > 0 && vendorLtv > 0 
+      ? `${(vendorLtv / vendorCac).toFixed(1)}x` 
+      : (designer.ltv_cac || "—");
+
     setEditForm({
-      designer_name: designer.designer_name || designer.name || "",
+      designer_name: designer.designer_name || designer.name || designer.owner_name || "",
       brand_name: designer.brand_name || designer.brand || "",
       email: designer.email || "",
       phone: designer.phone || "",
-      primary_category: designer.primary_category || designer.category || "",
-      kyc_status: designer.kyc_status || (designer.kyc_verified ? "VERIFIED" : "PENDING"),
-      contract_status: designer.contract_status || (designer.stage === "CONTRACT" || designer.stage === "SIGNED" || designer.stage === "ACTIVE" ? "Active" : "Under Review"),
-      products_count: prodCount,
-      total_sales: sales,
-      status: designer.status || (designer.stage === "INACTIVE" ? "Inactive" : "Active"),
-      tier: designer.tier || "Emerging",
       city: designer.city || "",
+      state: designer.state || "",
+      primary_category: designer.primary_category || designer.category || "",
+      gst: designerGst,
+      take_rate: designer.take_rate !== undefined && designer.take_rate !== null ? designer.take_rate : (designer.takeRate || ""),
+      renewal_likelihood_pct: designer.renewal_likelihood_pct || designer.renewalProbability || "",
+      next_follow_up: designer.next_follow_up || designer.nextFollowUp || "",
+      contract_ends: designer.contract_ends || designer.contractEnds || "",
+      stage: designer.stage || (designer.status === "Inactive" ? "INACTIVE" : "LIVE"),
+      kyc_status: designer.kyc_status || (designer.kyc_verified ? "VERIFIED" : "PENDING"),
+      tier: designer.tier || "",
+      credits_plan: designer.credits_plan || designer.fashionCreditPlan || designer.membership_plan || "",
+      health_score: designer.health_score || "",
+      sales_admin: designer.sales_admin || designer.owner || designer.sales_owner || "",
+      renewal_likelihood: designer.renewal_likelihood || "",
+      fulfillment: designer.fulfillment || "",
+      lost_reason: designer.lost_reason || "",
+      source: designer.source || "",
+      monthly_gmv: Number(designer.monthly_gmv || 0),
+      lifetime_gmv: Number(sales || designer.lifetime_gmv || 0),
+      vendor_ltv: vendorLtv,
+      vendor_cac: vendorCac,
+      ltv_cac: computedLtvCac,
+      sku_productivity: Number(designer.sku_productivity || (prodCount > 0 && sales > 0 ? Math.round(sales / prodCount) : 0)),
     });
+    setFollowUpTasks(designer.follow_up_tasks || []);
+    setNewFollowUpText("");
+    setNewFollowUpDate("");
     setShowEditModal(true);
+  };
+
+  const handleToggleKycInEdit = () => {
+    const nextStatus = editForm.kyc_status === "VERIFIED" ? "PENDING" : "VERIFIED";
+    setEditForm((prev) => ({ ...prev, kyc_status: nextStatus }));
+    showSuccessToast(`KYC status set to ${nextStatus === "VERIFIED" ? "Verified" : "Pending"}`);
+  };
+
+  const handleAdvanceStageInEdit = () => {
+    const currentIdx = STAGES_PIPELINE.indexOf((editForm.stage || "LIVE").toUpperCase());
+    let nextStage = "LIVE";
+    if (currentIdx !== -1 && currentIdx < STAGES_PIPELINE.length - 1) {
+      nextStage = STAGES_PIPELINE[currentIdx + 1];
+    } else {
+      nextStage = "ACTIVE";
+    }
+    setEditForm((prev) => ({ ...prev, stage: nextStage }));
+    showSuccessToast(`Stage advanced to ${nextStage}`);
+  };
+
+  const handleCopyVendorLoginLink = () => {
+    const portalUrl = `${window.location.origin}/designer-login`;
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(portalUrl);
+    }
+    showSuccessToast("Designer login link copied to clipboard!");
+  };
+
+  const handleAddTaskInEdit = (e) => {
+    e.preventDefault();
+    if (!newFollowUpText.trim()) {
+      showWarningToast("Please enter task details");
+      return;
+    }
+    const newTask = {
+      id: Date.now(),
+      text: newFollowUpText.trim(),
+      date: newFollowUpDate || new Date().toISOString().split("T")[0],
+    };
+    setFollowUpTasks((prev) => [...prev, newTask]);
+    setNewFollowUpText("");
+    setNewFollowUpDate("");
+    showSuccessToast("Follow-up task added");
+  };
+
+  const handleRemoveTaskInEdit = (taskId) => {
+    setFollowUpTasks((prev) => prev.filter((t) => t.id !== taskId));
   };
 
   // Open View Modal
@@ -344,7 +437,7 @@ export default function DesignerCRM() {
 
   // Save Edit to Backend
   const handleSaveEdit = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     if (!activeDesigner) return;
     try {
       const updated = {
@@ -354,22 +447,34 @@ export default function DesignerCRM() {
         brand_name: editForm.brand_name,
         email: editForm.email,
         phone: editForm.phone,
+        city: editForm.city,
+        state: editForm.state,
         primary_category: editForm.primary_category,
+        gst: editForm.gst,
+        take_rate: editForm.take_rate,
+        renewal_likelihood_pct: editForm.renewal_likelihood_pct,
+        next_follow_up: editForm.next_follow_up,
+        contract_ends: editForm.contract_ends,
+        stage: editForm.stage,
         kyc_status: editForm.kyc_status,
         kyc_verified: editForm.kyc_status === "VERIFIED",
-        status: editForm.status,
-        stage: editForm.status === "Inactive" ? "INACTIVE" : activeDesigner.stage || "ACTIVE",
+        sales_admin: editForm.sales_admin,
+        credits_plan: editForm.credits_plan,
+        renewal_likelihood: editForm.renewal_likelihood,
+        fulfillment: editForm.fulfillment,
+        lost_reason: editForm.lost_reason,
+        follow_up_tasks: followUpTasks,
       };
 
       setDesigners((list) =>
         list.map((d) => (d.id === activeDesigner.id ? updated : d))
       );
+      setActiveDesigner(updated);
 
       await updateDesigner(activeDesigner.id, updated).catch(() => null);
-      showSuccessToast(`Updated ${editForm.designer_name || "Designer"}`);
-      setShowEditModal(false);
+      showSuccessToast(`Saved details for ${editForm.brand_name || editForm.designer_name || "Designer"}`);
     } catch (err) {
-      showErrorToast("Could not update designer.");
+      showErrorToast("Could not update designer details.");
     }
   };
 
@@ -717,7 +822,7 @@ Use your registered phone number and OTP to complete setup.`;
             <table className="crm-exact-table">
             <thead>
               <tr>
-                <th className="col-num">#</th>
+                <th className="col-num">Sl.No</th>
                 <th>Designer</th>
                 <th>Contact</th>
                 <th>Category</th>
@@ -1210,146 +1315,502 @@ Use your registered phone number and OTP to complete setup.`;
       </main>
 
       {/* =====================================================
-          8. EDIT DESIGNER MODAL
+          8. EDIT DESIGNER MODAL (FULL DOSSIER POPUP)
       ===================================================== */}
       {showEditModal && activeDesigner && (
         <div className="crm-modal-overlay" onClick={() => setShowEditModal(false)}>
-          <div className="crm-lead-modal-card" onClick={(e) => e.stopPropagation()}>
-            <div className="crm-lead-modal-header">
-              <div className="crm-lead-modal-title-wrap">
-                <h2 className="crm-lead-modal-title">Edit Designer Details</h2>
-                <p className="crm-lead-modal-subtitle">
-                  Update live credentials, categories, tier and compliance status.
-                </p>
-              </div>
-              <button
-                type="button"
-                className="crm-lead-modal-close-btn"
-                onClick={() => setShowEditModal(false)}
-              >
-                ✕
-              </button>
-            </div>
+          <div className="crm-edit-dossier-card" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="crm-edit-modal-close-btn"
+              onClick={() => setShowEditModal(false)}
+              aria-label="Close"
+            >
+              ✕
+            </button>
 
-            <form onSubmit={handleSaveEdit} className="crm-lead-form">
-              <div className="crm-lead-grid-3">
-                <div className="crm-lead-field">
-                  <label className="crm-field-label">DESIGNER NAME</label>
+            {/* Top Form Grid (4 rows x 3 columns) */}
+            <form onSubmit={handleSaveEdit} className="crm-edit-top-form">
+              <div className="crm-edit-form-grid">
+                {/* Row 1 */}
+                <div className="crm-edit-form-group">
+                  <label className="crm-edit-field-label">Designer name</label>
                   <input
                     type="text"
-                    className="crm-lead-input"
-                    value={editForm.designer_name}
+                    className="crm-edit-form-input"
+                    value={editForm.designer_name || ""}
                     onChange={(e) => setEditForm({ ...editForm, designer_name: e.target.value })}
-                    required
                   />
                 </div>
-
-                <div className="crm-lead-field">
-                  <label className="crm-field-label">BRAND NAME</label>
+                <div className="crm-edit-form-group">
+                  <label className="crm-edit-field-label">Brand</label>
                   <input
                     type="text"
-                    className="crm-lead-input"
-                    value={editForm.brand_name}
+                    className="crm-edit-form-input"
+                    value={editForm.brand_name || ""}
                     onChange={(e) => setEditForm({ ...editForm, brand_name: e.target.value })}
-                    required
                   />
                 </div>
-
-                <div className="crm-lead-field">
-                  <label className="crm-field-label">EMAIL ADDRESS</label>
+                <div className="crm-edit-form-group">
+                  <label className="crm-edit-field-label">Email</label>
                   <input
                     type="email"
-                    className="crm-lead-input"
-                    value={editForm.email}
+                    className="crm-edit-form-input"
+                    value={editForm.email || ""}
                     onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
                   />
                 </div>
 
-                <div className="crm-lead-field">
-                  <label className="crm-field-label">MOBILE NUMBER</label>
+                {/* Row 2 */}
+                <div className="crm-edit-form-group">
+                  <label className="crm-edit-field-label">Phone</label>
                   <input
                     type="tel"
-                    className="crm-lead-input"
-                    value={editForm.phone}
+                    className="crm-edit-form-input"
+                    value={editForm.phone || ""}
                     onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
                   />
                 </div>
-
-                <div className="crm-lead-field">
-                  <label className="crm-field-label">PRIMARY CATEGORY</label>
+                <div className="crm-edit-form-group">
+                  <label className="crm-edit-field-label">City</label>
                   <input
                     type="text"
-                    className="crm-lead-input"
-                    value={editForm.primary_category}
-                    onChange={(e) => setEditForm({ ...editForm, primary_category: e.target.value })}
+                    className="crm-edit-form-input"
+                    value={editForm.city || ""}
+                    onChange={(e) => setEditForm({ ...editForm, city: e.target.value })}
+                  />
+                </div>
+                <div className="crm-edit-form-group">
+                  <label className="crm-edit-field-label">State</label>
+                  <input
+                    type="text"
+                    className="crm-edit-form-input"
+                    value={editForm.state || ""}
+                    onChange={(e) => setEditForm({ ...editForm, state: e.target.value })}
                   />
                 </div>
 
-                <div className="crm-lead-field">
-                  <label className="crm-field-label">KYC STATUS</label>
-                  <div className="crm-select-wrap">
-                    <select
-                      className="crm-lead-select"
-                      value={editForm.kyc_status}
-                      onChange={(e) => setEditForm({ ...editForm, kyc_status: e.target.value })}
-                    >
-                      <option value="VERIFIED">VERIFIED</option>
-                      <option value="PENDING">PENDING</option>
-                    </select>
-                  </div>
+                {/* Row 3 */}
+                <div className="crm-edit-form-group">
+                  <label className="crm-edit-field-label">Category</label>
+                  <input
+                    type="text"
+                    className="crm-edit-form-input"
+                    value={editForm.primary_category || ""}
+                    onChange={(e) => setEditForm({ ...editForm, primary_category: e.target.value })}
+                  />
+                </div>
+                <div className="crm-edit-form-group">
+                  <label className="crm-edit-field-label">GST number</label>
+                  <input
+                    type="text"
+                    className="crm-edit-form-input"
+                    value={editForm.gst || ""}
+                    onChange={(e) => setEditForm({ ...editForm, gst: e.target.value })}
+                  />
+                </div>
+                <div className="crm-edit-form-group">
+                  <label className="crm-edit-field-label">Take rate (%)</label>
+                  <input
+                    type="text"
+                    className="crm-edit-form-input"
+                    value={editForm.take_rate || ""}
+                    onChange={(e) => setEditForm({ ...editForm, take_rate: e.target.value })}
+                  />
                 </div>
 
-                <div className="crm-lead-field">
-                  <label className="crm-field-label">CONTRACT STATUS</label>
-                  <div className="crm-select-wrap">
-                    <select
-                      className="crm-lead-select"
-                      value={editForm.contract_status}
-                      onChange={(e) => setEditForm({ ...editForm, contract_status: e.target.value })}
-                    >
-                      <option value="Active">Active</option>
-                      <option value="Under Review">Under Review</option>
-                      <option value="Expired">Expired</option>
-                    </select>
-                  </div>
+                {/* Row 4 */}
+                <div className="crm-edit-form-group">
+                  <label className="crm-edit-field-label">Renewal likelihood (%)</label>
+                  <input
+                    type="text"
+                    className="crm-edit-form-input"
+                    value={editForm.renewal_likelihood_pct || ""}
+                    onChange={(e) => setEditForm({ ...editForm, renewal_likelihood_pct: e.target.value })}
+                  />
                 </div>
-
-                <div className="crm-lead-field">
-                  <label className="crm-field-label">STATUS</label>
-                  <div className="crm-select-wrap">
-                    <select
-                      className="crm-lead-select"
-                      value={editForm.status}
-                      onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
-                    >
-                      <option value="Active">Active</option>
-                      <option value="Inactive">Inactive</option>
-                    </select>
-                  </div>
+                <div className="crm-edit-form-group">
+                  <label className="crm-edit-field-label">Next follow-up</label>
+                  <input
+                    type="date"
+                    className="crm-edit-form-input"
+                    value={editForm.next_follow_up || ""}
+                    onChange={(e) => setEditForm({ ...editForm, next_follow_up: e.target.value })}
+                  />
                 </div>
-
-                <div className="crm-lead-field">
-                  <label className="crm-field-label">TIER</label>
-                  <div className="crm-select-wrap">
-                    <select
-                      className="crm-lead-select"
-                      value={editForm.tier}
-                      onChange={(e) => setEditForm({ ...editForm, tier: e.target.value })}
-                    >
-                      <option value="Emerging">Emerging</option>
-                      <option value="Core">Core</option>
-                      <option value="Premium">Premium</option>
-                    </select>
-                  </div>
+                <div className="crm-edit-form-group">
+                  <label className="crm-edit-field-label">Contract end date</label>
+                  <input
+                    type="date"
+                    className="crm-edit-form-input"
+                    value={editForm.contract_ends || ""}
+                    onChange={(e) => setEditForm({ ...editForm, contract_ends: e.target.value })}
+                  />
                 </div>
               </div>
 
-              <div className="crm-lead-submit-row">
-                <button type="submit" className="crm-btn-create-lead">
-                  Save Changes
+              <div className="crm-edit-save-row">
+                <button type="submit" className="crm-edit-btn-save-details">
+                  Save details
                 </button>
               </div>
             </form>
+
+            <div className="crm-edit-divider" />
+
+            {/* Brand Title, Badges, and Stage Controls */}
+            <div className="crm-edit-brand-strip">
+              <div className="crm-edit-brand-title-badges">
+                <h3 className="crm-edit-brand-name">
+                  {editForm.brand_name || editForm.designer_name || activeDesigner.brand_name || activeDesigner.designer_name || "Designer"}
+                </h3>
+                <span className="crm-edit-badge crm-badge-live">{editForm.stage || "LIVE"}</span>
+                {editForm.tier && <span className="crm-edit-badge crm-badge-tier">{editForm.tier}</span>}
+                {editForm.credits_plan && <span className="crm-edit-badge crm-badge-points">★ {editForm.credits_plan}</span>}
+                <span className={`crm-edit-badge ${editForm.kyc_status === "VERIFIED" ? "crm-badge-kyc-verified" : "crm-badge-kyc-pending"}`}>
+                  {editForm.kyc_status === "VERIFIED" ? "KYC verified" : "KYC pending"}
+                </span>
+                {editForm.health_score && <span className="crm-edit-badge crm-badge-health">Health {editForm.health_score}</span>}
+              </div>
+
+              <div className="crm-edit-brand-actions">
+                <div className="crm-edit-stage-custom-dropdown">
+                  <button
+                    type="button"
+                    className={`crm-edit-stage-trigger-btn ${stageDropdownOpen ? "active" : ""}`}
+                    onClick={() => setStageDropdownOpen(!stageDropdownOpen)}
+                    aria-haspopup="listbox"
+                    aria-expanded={stageDropdownOpen}
+                  >
+                    <span>{editForm.stage || "LIVE"}</span>
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      className={`crm-stage-chevron ${stageDropdownOpen ? "open" : ""}`}
+                    >
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </button>
+
+                  {stageDropdownOpen && (
+                    <div className="crm-stage-menu-popup" role="listbox">
+                      {STAGES_PIPELINE.map((stg) => {
+                        const isSelected = (editForm.stage || "LIVE").toUpperCase() === stg.toUpperCase();
+                        return (
+                          <button
+                            key={stg}
+                            type="button"
+                            className={`crm-stage-menu-item ${isSelected ? "selected" : ""}`}
+                            role="option"
+                            aria-selected={isSelected}
+                            onClick={() => {
+                              setEditForm((prev) => ({ ...prev, stage: stg }));
+                              setStageDropdownOpen(false);
+                            }}
+                          >
+                            <span className="crm-stage-item-label">{stg}</span>
+                            {isSelected && (
+                              <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.8"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="crm-stage-check-icon"
+                              >
+                                <polyline points="20 6 9 17 4 12" />
+                              </svg>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  className="crm-edit-btn-revoke-kyc"
+                  onClick={handleToggleKycInEdit}
+                >
+                  {editForm.kyc_status === "VERIFIED" ? "Revoke KYC" : "Verify KYC"}
+                </button>
+
+                <button
+                  type="button"
+                  className="crm-edit-btn-advance-stage"
+                  onClick={handleAdvanceStageInEdit}
+                >
+                  Advance stage
+                </button>
+              </div>
+            </div>
+
+            {/* Metadata Line */}
+            <div className="crm-edit-meta-section">
+              {(editForm.useCompanyGst || activeDesigner.useCompanyGst) && (
+                <div className="crm-edit-company-gst-badge">Company GST</div>
+              )}
+              <p className="crm-edit-meta-line-1">
+                <span>VND-{String(activeDesigner.id || activeDesigner.designer_code || "").toUpperCase()}</span>
+                {editForm.designer_name && <>{" · "}<span>{editForm.designer_name}</span></>}
+                {editForm.email && <>{" · "}<span>{editForm.email}</span></>}
+                {editForm.city && <>{" · "}<span>{editForm.city}</span></>}
+                {editForm.primary_category && <>{" · "}<span>{editForm.primary_category}</span></>}
+                {editForm.take_rate ? <>{" · "}<span>take rate {editForm.take_rate}%</span></> : null}
+                {editForm.credits_plan ? <>{" · "}<span>Credits: {editForm.credits_plan}</span></> : null}
+                {editForm.contract_ends ? <>{" · "}<span>contract ends {editForm.contract_ends}</span></> : null}
+                {editForm.gst ? <>{" · "}<span>GST: {maskGstNumber(editForm.gst)}</span></> : null}
+                {(editForm.useCompanyGst || activeDesigner.useCompanyGst) && (
+                  <span className="crm-edit-zenve-pill">ZENVE</span>
+                )}
+                <button
+                  type="button"
+                  className="crm-edit-meta-edit-icon"
+                  title="Edit GST"
+                  onClick={() => {
+                    const el = document.querySelector('input[value="' + (editForm.gst || "") + '"]');
+                    el?.focus();
+                  }}
+                >
+                  ✏️
+                </button>
+              </p>
+              {(editForm.source || editForm.sales_admin || editForm.next_follow_up || editForm.renewal_likelihood) && (
+                <p className="crm-edit-meta-line-2">
+                  {editForm.source && <span>Source {editForm.source}</span>}
+                  {editForm.sales_admin && <>{" · "}<span>sales admin {editForm.sales_admin}</span></>}
+                  {editForm.next_follow_up && <>{" · "}<span>next follow-up {editForm.next_follow_up}</span></>}
+                  {editForm.renewal_likelihood && <>{" · "}<span>renewal likelihood {editForm.renewal_likelihood}</span></>}
+                </p>
+              )}
+            </div>
+
+            {/* 6 Metric KPI Tiles */}
+            <div className="crm-edit-metrics-grid">
+              <div className="crm-edit-metric-card">
+                <span className="crm-edit-metric-label">MONTHLY GMV</span>
+                <span className="crm-edit-metric-value">₹{Number(editForm.monthly_gmv || 0).toLocaleString("en-IN")}</span>
+              </div>
+              <div className="crm-edit-metric-card">
+                <span className="crm-edit-metric-label">LIFETIME GMV</span>
+                <span className="crm-edit-metric-value">₹{Number(editForm.lifetime_gmv || 0).toLocaleString("en-IN")}</span>
+              </div>
+              <div className="crm-edit-metric-card">
+                <span className="crm-edit-metric-label">DESIGNER LTV</span>
+                <span className="crm-edit-metric-value">₹{Number(editForm.vendor_ltv || 0).toLocaleString("en-IN")}</span>
+              </div>
+              <div className="crm-edit-metric-card">
+                <span className="crm-edit-metric-label">DESIGNER CAC</span>
+                <span className="crm-edit-metric-value">₹{Number(editForm.vendor_cac || 0).toLocaleString("en-IN")}</span>
+              </div>
+              <div className="crm-edit-metric-card">
+                <span className="crm-edit-metric-label">LTV / CAC</span>
+                <span className="crm-edit-metric-value">{editForm.ltv_cac || "—"}</span>
+              </div>
+              <div className="crm-edit-metric-card">
+                <span className="crm-edit-metric-label">SKU PRODUCTIVITY</span>
+                <span className="crm-edit-metric-value">₹{Number(editForm.sku_productivity || 0).toLocaleString("en-IN")}</span>
+              </div>
+            </div>
+
+            {/* Green Box: Designer Login Link */}
+            <div className="crm-edit-access-card">
+              <div className="crm-edit-access-top">
+                <span className="crm-edit-access-badge">
+                  <WhatsAppIcon size={13} className="crm-edit-access-wa-icon" /> DESIGNER LOGIN LINK
+                </span>
+                <span className="crm-edit-access-wa-status">WhatsApp Ready</span>
+              </div>
+
+              <div className="crm-edit-access-middle">
+                <div className="crm-edit-access-info">
+                  <h4 className="crm-edit-access-title">
+                    {editForm.brand_name || editForm.designer_name || activeDesigner.brand_name || activeDesigner.designer_name || "Designer"} Company Access
+                  </h4>
+                  <p className="crm-edit-access-company">
+                    Company details confirmed: <strong>{activeDesigner.company_name || activeDesigner.brand_name || COMPANY_GST_INFO.name}</strong>
+                    {editForm.gst ? <> · GST: <strong>{maskGstNumber(editForm.gst)}</strong></> : null}
+                    {editForm.city ? <> · City: <strong>{editForm.city}</strong></> : null}
+                  </p>
+                  {editForm.phone && (
+                    <p className="crm-edit-access-contact">
+                      <span role="img" aria-label="phone">📱</span> Registered contact: <strong>{editForm.phone}</strong>
+                    </p>
+                  )}
+                </div>
+
+                <div className="crm-edit-access-actions">
+                  <button
+                    type="button"
+                    className="crm-edit-btn-share-wa"
+                    onClick={() => handleSendWhatsAppPortalLink(activeDesigner)}
+                  >
+                    <WhatsAppIcon size={16} /> Share Login on WhatsApp
+                  </button>
+                  <button
+                    type="button"
+                    className="crm-edit-btn-copy-link"
+                    onClick={handleCopyVendorLoginLink}
+                  >
+                    Copy designer login link
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Two-Column Bottom Section */}
+            <div className="crm-edit-bottom-split">
+              {/* Left Column: Follow-up Tasks */}
+              <div className="crm-edit-bottom-left">
+                <h4 className="crm-edit-section-header">FOLLOW-UP TASKS</h4>
+                {followUpTasks.length === 0 ? (
+                  <p className="crm-edit-tasks-empty">Nothing scheduled.</p>
+                ) : (
+                  <div className="crm-edit-tasks-list">
+                    {followUpTasks.map((task) => (
+                      <div key={task.id} className="crm-edit-task-item">
+                        <span className="crm-edit-task-text">{task.text}</span>
+                        <span className="crm-edit-task-date">{task.date}</span>
+                        <button
+                          type="button"
+                          className="crm-edit-task-remove-btn"
+                          onClick={() => handleRemoveTaskInEdit(task.id)}
+                          title="Remove task"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="crm-edit-task-add-row">
+                  <input
+                    type="text"
+                    className="crm-edit-task-input"
+                    placeholder="New follow-up task"
+                    value={newFollowUpText}
+                    onChange={(e) => setNewFollowUpText(e.target.value)}
+                  />
+                  <input
+                    type="date"
+                    className="crm-edit-task-date-input"
+                    value={newFollowUpDate}
+                    onChange={(e) => setNewFollowUpDate(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="crm-edit-btn-add-task"
+                    onClick={handleAddTaskInEdit}
+                  >
+                    Add task
+                  </button>
+                </div>
+              </div>
+
+              {/* Right Column: Admin & Plan dropdowns */}
+              <div className="crm-edit-bottom-right">
+                <div className="crm-edit-dropdowns-grid">
+                  <div className="crm-edit-dropdown-field">
+                    <label className="crm-edit-dropdown-label">SALES ADMIN</label>
+                    <div className="crm-edit-select-wrap">
+                      <select
+                        className="crm-edit-dropdown-select"
+                        value={editForm.sales_admin || ""}
+                        onChange={(e) => setEditForm({ ...editForm, sales_admin: e.target.value })}
+                      >
+                        <option value="">Select Sales Admin</option>
+                        {SALES_OWNERS.map((own) => (
+                          <option key={own} value={own}>{own}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="crm-edit-dropdown-field">
+                    <label className="crm-edit-dropdown-label">GIVEN CREDITS PLAN</label>
+                    <div className="crm-edit-select-wrap">
+                      <select
+                        className="crm-edit-dropdown-select"
+                        value={editForm.credits_plan || ""}
+                        onChange={(e) => setEditForm({ ...editForm, credits_plan: e.target.value })}
+                      >
+                        <option value="">Select Credits Plan</option>
+                        {FASHION_CREDIT_PLANS.map((plan) => (
+                          <option key={plan.id} value={`${plan.name} (${plan.points} Pts)`}>
+                            {plan.name} ({plan.points} Pts)
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="crm-edit-dropdown-field">
+                    <label className="crm-edit-dropdown-label">RENEWAL LIKELIHOOD</label>
+                    <div className="crm-edit-select-wrap">
+                      <select
+                        className="crm-edit-dropdown-select"
+                        value={editForm.renewal_likelihood || ""}
+                        onChange={(e) => setEditForm({ ...editForm, renewal_likelihood: e.target.value })}
+                      >
+                        <option value="">Select Renewal Likelihood</option>
+                        <option value="No">No</option>
+                        <option value="Yes">Yes</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                        <option value="Under Discussion">Under Discussion</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="crm-edit-dropdown-field">
+                    <label className="crm-edit-dropdown-label">FULFILLMENT</label>
+                    <div className="crm-edit-select-wrap">
+                      <select
+                        className="crm-edit-dropdown-select"
+                        value={editForm.fulfillment || ""}
+                        onChange={(e) => setEditForm({ ...editForm, fulfillment: e.target.value })}
+                      >
+                        <option value="">Select Fulfillment</option>
+                        <option value="Both">Both</option>
+                        <option value="Dropship">Dropship</option>
+                        <option value="Direct Dispatch">Direct Dispatch</option>
+                        <option value="B2B Wholesale">B2B Wholesale</option>
+                        <option value="Zenve Direct">Zenve Direct</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="crm-edit-dropdown-field crm-edit-field-full">
+                  <label className="crm-edit-dropdown-label">MARK LOST WITH A REASON</label>
+                  <div className="crm-edit-select-wrap">
+                    <select
+                      className="crm-edit-dropdown-select"
+                      value={editForm.lost_reason || ""}
+                      onChange={(e) => setEditForm({ ...editForm, lost_reason: e.target.value })}
+                    >
+                      <option value="">Select a lost reason</option>
+                      <option value="High Take Rate">High Take Rate</option>
+                      <option value="Competitor Better Offer">Competitor Better Offer</option>
+                      <option value="Not Interested">Not Interested</option>
+                      <option value="Budget Constraints">Budget Constraints</option>
+                      <option value="Ghosted / Unresponsive">Ghosted / Unresponsive</option>
+                      <option value="Quality Mismatch">Quality Mismatch</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -1408,7 +1869,7 @@ Use your registered phone number and OTP to complete setup.`;
                   <p><strong>Mobile:</strong> {activeDesigner.phone || "—"}</p>
                   <p><strong>Email:</strong> {activeDesigner.email || "—"}</p>
                   <p><strong>City:</strong> {activeDesigner.city || "—"}</p>
-                  <p><strong>Sales Owner:</strong> {activeDesigner.sales_owner || "Nisha Kapoor"}</p>
+                  <p><strong>Sales Owner:</strong> {activeDesigner.sales_owner || activeDesigner.sales_admin || activeDesigner.owner || "—"}</p>
                 </div>
 
                 <div className="crm-view-actions-footer">
