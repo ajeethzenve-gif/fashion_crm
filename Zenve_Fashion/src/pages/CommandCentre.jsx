@@ -94,7 +94,7 @@ function MiniSparkline({ color = "#E08F35", variant = 0 }) {
     "M2 16 C 12 17, 18 10, 26 12 C 34 14, 42 6, 48 8 C 51 7, 53 4, 54 3",
   ];
   return (
-    <svg width="42" height="18" viewBox="0 0 56 20" fill="none" style={{ display: "block" }}>
+    <svg width="48" height="20" viewBox="0 0 56 20" fill="none" style={{ display: "block" }}>
       <path
         d={paths[variant % paths.length]}
         stroke={color}
@@ -1133,19 +1133,23 @@ export default function CommandCentre() {
           const Icon = kpi.icon;
           return (
             <div key={kpi.id} className="ZENVE-cc-kpi-card">
-              <div className="kpi-icon-pill">
-                <Icon />
+              <div className="kpi-card-header">
+                <div className="kpi-icon-pill">
+                  <Icon />
+                </div>
+                <div className="kpi-sparkline-wrap">
+                  <MiniSparkline color={kpi.color} variant={kpi.variant} />
+                </div>
               </div>
               <div className="kpi-details">
-                <span className="kpi-label">{kpi.label}</span>
+                <span className="kpi-label" title={kpi.label}>{kpi.label}</span>
                 <div className="kpi-value-row">
                   <strong className="kpi-number">{loading ? "..." : kpi.value}</strong>
-                  <span className="kpi-delta-tag positive">{kpi.growth}</span>
+                  {kpi.growth && (
+                    <span className="kpi-delta-tag positive">{kpi.growth}</span>
+                  )}
                 </div>
-                {kpi.hint && <small className="kpi-hint-text">{kpi.hint}</small>}
-              </div>
-              <div className="kpi-sparkline-wrap">
-                <MiniSparkline color={kpi.color} variant={kpi.variant} />
+                {kpi.hint && <small className="kpi-hint-text" title={kpi.hint}>{kpi.hint}</small>}
               </div>
             </div>
           );

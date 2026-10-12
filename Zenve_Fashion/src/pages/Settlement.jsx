@@ -586,26 +586,24 @@ export default function Settlement() {
         {/* Card 1: Total Sales */}
         <div className="stl-kpi-card">
           <div className="stl-kpi-header">
-            <div className="stl-kpi-title-block">
-              <div className="stl-kpi-icon-badge">
-                <span className="stl-icon-symbol">₹</span>
-              </div>
-              <span className="stl-kpi-label">Total Sales</span>
+            <div className="stl-kpi-icon-badge">
+              <span className="stl-icon-symbol">₹</span>
             </div>
+            <svg className="stl-sparkline" width="46" height="20" viewBox="0 0 46 20">
+              <path
+                d="M2 16 Q 14 14, 24 9 T 44 3"
+                fill="none"
+                stroke="#16A34A"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+              />
+            </svg>
           </div>
-          <div className="stl-kpi-body">
-            <strong className="stl-kpi-value">{kpis.totalSales}</strong>
-            <div className="stl-kpi-trend-spark">
+          <div className="stl-kpi-details">
+            <span className="stl-kpi-label" title="Total Sales">Total Sales</span>
+            <div className="stl-kpi-value-row">
+              <strong className="stl-kpi-value">{kpis.totalSales}</strong>
               <span className="stl-trend-pill up">{kpis.regularCount} Settled</span>
-              <svg className="stl-sparkline" width="46" height="20" viewBox="0 0 46 20">
-                <path
-                  d="M2 16 Q 14 14, 24 9 T 44 3"
-                  fill="none"
-                  stroke="#16A34A"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                />
-              </svg>
             </div>
           </div>
         </div>
@@ -613,30 +611,28 @@ export default function Settlement() {
         {/* Card 2: Total Payouts */}
         <div className="stl-kpi-card">
           <div className="stl-kpi-header">
-            <div className="stl-kpi-title-block">
-              <div className="stl-kpi-icon-badge">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A86915" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <ellipse cx="12" cy="5" rx="8" ry="3" />
-                  <path d="M4 5v6c0 1.66 3.58 3 8 3s8-1.34 8-3V5" />
-                  <path d="M4 11v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6" />
-                </svg>
-              </div>
-              <span className="stl-kpi-label">Total Payouts</span>
-            </div>
-          </div>
-          <div className="stl-kpi-body">
-            <strong className="stl-kpi-value">{kpis.totalPayouts}</strong>
-            <div className="stl-kpi-trend-spark">
-              <span className="stl-trend-pill up">Disbursed</span>
-              <svg className="stl-sparkline" width="46" height="20" viewBox="0 0 46 20">
-                <path
-                  d="M2 17 Q 15 13, 26 8 T 44 4"
-                  fill="none"
-                  stroke="#16A34A"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                />
+            <div className="stl-kpi-icon-badge">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A86915" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <ellipse cx="12" cy="5" rx="8" ry="3" />
+                <path d="M4 5v6c0 1.66 3.58 3 8 3s8-1.34 8-3V5" />
+                <path d="M4 11v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6" />
               </svg>
+            </div>
+            <svg className="stl-sparkline" width="46" height="20" viewBox="0 0 46 20">
+              <path
+                d="M2 17 Q 15 13, 26 8 T 44 4"
+                fill="none"
+                stroke="#16A34A"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+          <div className="stl-kpi-details">
+            <span className="stl-kpi-label" title="Total Payouts">Total Payouts</span>
+            <div className="stl-kpi-value-row">
+              <strong className="stl-kpi-value">{kpis.totalPayouts}</strong>
+              <span className="stl-trend-pill up">Disbursed</span>
             </div>
           </div>
         </div>
@@ -644,26 +640,24 @@ export default function Settlement() {
         {/* Card 3: Platform Commission */}
         <div className="stl-kpi-card">
           <div className="stl-kpi-header">
-            <div className="stl-kpi-title-block">
-              <div className="stl-kpi-icon-badge">
-                <span className="stl-icon-symbol" style={{ fontSize: "16px" }}>%</span>
-              </div>
-              <span className="stl-kpi-label">Platform Commission</span>
+            <div className="stl-kpi-icon-badge">
+              <span className="stl-icon-symbol" style={{ fontSize: "16px" }}>%</span>
             </div>
+            <svg className="stl-sparkline" width="46" height="20" viewBox="0 0 46 20">
+              <path
+                d="M2 18 Q 12 12, 25 8 T 44 2"
+                fill="none"
+                stroke="#16A34A"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+              />
+            </svg>
           </div>
-          <div className="stl-kpi-body">
-            <strong className="stl-kpi-value">{kpis.platformCommission}</strong>
-            <div className="stl-kpi-trend-spark">
+          <div className="stl-kpi-details">
+            <span className="stl-kpi-label" title="Platform Commission">Platform Commission</span>
+            <div className="stl-kpi-value-row">
+              <strong className="stl-kpi-value">{kpis.platformCommission}</strong>
               <span className="stl-trend-pill up">Take Rate</span>
-              <svg className="stl-sparkline" width="46" height="20" viewBox="0 0 46 20">
-                <path
-                  d="M2 18 Q 12 12, 25 8 T 44 2"
-                  fill="none"
-                  stroke="#16A34A"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                />
-              </svg>
             </div>
           </div>
         </div>
@@ -671,29 +665,27 @@ export default function Settlement() {
         {/* Card 4: Pending Settlement */}
         <div className="stl-kpi-card">
           <div className="stl-kpi-header">
-            <div className="stl-kpi-title-block">
-              <div className="stl-kpi-icon-badge">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A86915" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10" />
-                  <polyline points="12 6 12 12 16 14" />
-                </svg>
-              </div>
-              <span className="stl-kpi-label">Pending Settlement</span>
-            </div>
-          </div>
-          <div className="stl-kpi-body">
-            <strong className="stl-kpi-value">{kpis.pendingSettlement}</strong>
-            <div className="stl-kpi-trend-spark">
-              <span className="stl-trend-pill down">Pending</span>
-              <svg className="stl-sparkline" width="46" height="20" viewBox="0 0 46 20">
-                <path
-                  d="M2 4 Q 14 7, 24 12 T 44 17"
-                  fill="none"
-                  stroke="#DC2626"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                />
+            <div className="stl-kpi-icon-badge">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A86915" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
               </svg>
+            </div>
+            <svg className="stl-sparkline" width="46" height="20" viewBox="0 0 46 20">
+              <path
+                d="M2 4 Q 14 7, 24 12 T 44 17"
+                fill="none"
+                stroke="#DC2626"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+          <div className="stl-kpi-details">
+            <span className="stl-kpi-label" title="Pending Settlement">Pending Settlement</span>
+            <div className="stl-kpi-value-row">
+              <strong className="stl-kpi-value">{kpis.pendingSettlement}</strong>
+              <span className="stl-trend-pill down">Pending</span>
             </div>
           </div>
         </div>
@@ -701,29 +693,27 @@ export default function Settlement() {
         {/* Card 5: Settled This Month */}
         <div className="stl-kpi-card">
           <div className="stl-kpi-header">
-            <div className="stl-kpi-title-block">
-              <div className="stl-kpi-icon-badge">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A86915" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                  <path d="M9 12l2 2 4-4" />
-                </svg>
-              </div>
-              <span className="stl-kpi-label">Settled This Month</span>
-            </div>
-          </div>
-          <div className="stl-kpi-body">
-            <strong className="stl-kpi-value">{kpis.settledThisMonth}</strong>
-            <div className="stl-kpi-trend-spark">
-              <span className="stl-trend-pill up">Live DB</span>
-              <svg className="stl-sparkline" width="46" height="20" viewBox="0 0 46 20">
-                <path
-                  d="M2 17 Q 15 14, 25 8 T 44 2"
-                  fill="none"
-                  stroke="#16A34A"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                />
+            <div className="stl-kpi-icon-badge">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A86915" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                <path d="M9 12l2 2 4-4" />
               </svg>
+            </div>
+            <svg className="stl-sparkline" width="46" height="20" viewBox="0 0 46 20">
+              <path
+                d="M2 17 Q 15 14, 25 8 T 44 2"
+                fill="none"
+                stroke="#16A34A"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+          <div className="stl-kpi-details">
+            <span className="stl-kpi-label" title="Settled This Month">Settled This Month</span>
+            <div className="stl-kpi-value-row">
+              <strong className="stl-kpi-value">{kpis.settledThisMonth}</strong>
+              <span className="stl-trend-pill up">Live DB</span>
             </div>
           </div>
         </div>
@@ -777,7 +767,7 @@ export default function Settlement() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by settlement ID, designer name, order ID..."
+                placeholder="Search settlements, designers, orders..."
                 className="stl-filter-search-input"
               />
             </div>
