@@ -325,6 +325,10 @@ class Designer(models.Model):
         verbose_name="Renewal Likelihood (%)",
     )
 
+    gst_requested_at = models.DateTimeField(null=True, blank=True, editable=False)
+    renewal_preference = models.CharField(max_length=30, blank=True, default="")
+    fulfillment = models.CharField(max_length=30, blank=True, default="")
+
     lost_reason = models.CharField(
         max_length=255,
         blank=True,

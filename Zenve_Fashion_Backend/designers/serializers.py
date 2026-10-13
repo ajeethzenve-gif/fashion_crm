@@ -73,6 +73,8 @@ class DesignerAccountDetailsSerializer(serializers.ModelSerializer):
 # =========================================================
 
 class DesignerSerializer(serializers.ModelSerializer):
+    request_company_gst = serializers.BooleanField(write_only=True, required=False)
+    gst_requested_at = serializers.DateTimeField(read_only=True)
     login_username = serializers.CharField(source="user.username", read_only=True, default="")
 
     is_kyc_verified = serializers.ReadOnlyField()
@@ -94,6 +96,8 @@ class DesignerSerializer(serializers.ModelSerializer):
         model = Designer
 
         fields = [
+            "request_company_gst",
+            "gst_requested_at",
             "login_username",
             "id",
 
@@ -135,6 +139,8 @@ class DesignerSerializer(serializers.ModelSerializer):
 
             "acquisition_cost",
             "renewal_likelihood",
+            "renewal_preference",
+            "fulfillment",
             "lost_reason",
             "health_score",
             "follow_up_tasks",
@@ -185,6 +191,16 @@ class DesignerSerializer(serializers.ModelSerializer):
             "effective_sku_productivity",
             "overdue_tasks_count",
         ]
+
+    def create(self, validated_data):
+        if validated_data.pop("request_company_gst", False):
+            validated_data["gst_requested_at"] = timezone.now()
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        if validated_data.pop("request_company_gst", False) and not instance.gst_requested_at:
+            validated_data["gst_requested_at"] = timezone.now()
+        return super().update(instance, validated_data)
 
     def validate_online_membership_plan(self, value):
         if value:
