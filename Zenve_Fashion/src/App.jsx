@@ -32,7 +32,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
 
         {/* Exclusive Brand Designer Login */}
-        <Route path="/designer-login" element={<DesignerLogin />} />
+        <Route path="/designer-login" element={<DesignerLogin />}  name="vendor login"/>
 
         <Route element={<AppLayout />}>
           {/* Main (layers) page — only after login */}

@@ -1,0 +1,33 @@
+[1mdiff --git a/Zenve_Fashion_Backend/designers/views.py b/Zenve_Fashion_Backend/designers/views.py[m
+[1mindex 68bb06b..685bbd1 100644[m
+[1m--- a/Zenve_Fashion_Backend/designers/views.py[m
+[1m+++ b/Zenve_Fashion_Backend/designers/views.py[m
+[36m@@ -16,6 +16,7 @@[m [mfrom .models import ([m
+     DesignerAccountDetails,[m
+ )[m
+ from .permissions import DesignerDashboardAccess, DesignerManagementAccess[m
+[32m+[m[32mfrom .loading import designer_list_context[m
+ [m
+ from .serializers import ([m
+     DesignerSerializer,[m
+[36m@@ -40,17 +41,18 @@[m [mclass DesignerListAPIView(APIView):[m
+         return [DesignerManagementAccess()][m
+ [m
+     def get(self, request):[m
+[31m-        designers = Designer.objects.all().order_by([m
+[32m+[m[32m        designers = Designer.objects.select_related("account_details").prefetch_related("products").order_by([m
+             "-created_at"[m
+         )[m
+         assignment = getattr(request.user, "user_role", None)[m
+         if assignment and assignment.role.name == "Designer":[m
+             designers = designers.filter(user=request.user)[m
+ [m
+[32m+[m[32m        designers = list(designers)[m
+         serializer = DesignerSerializer([m
+             designers,[m
+             many=True,[m
+[31m-            context={"request": request},[m
+[32m+[m[32m            context=designer_list_context(designers, request),[m
+         )[m
+ [m
+         return Response([m

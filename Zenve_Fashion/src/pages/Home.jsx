@@ -10,6 +10,12 @@ import {
   getProducts,
 } from "../services/api";
 
+const layerArtwork = import.meta.glob("../assets/art/art_*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+
 /* =========================================================
    LAYER DISPLAY HELPERS (TIED TO DATA SOURCE)
    ========================================================= */
@@ -416,7 +422,7 @@ function Home() {
             {filteredLayers.map((layer) => {
               const displayName = getDisplayName(layer.name);
               const displayBlurb = getDisplayBlurb(layer);
-              const artPath = `/media/art/art_${layer.n}.png`;
+              const artPath = layerArtwork[`../assets/art/art_${layer.n}.png`];
 
               return (
                 <Link

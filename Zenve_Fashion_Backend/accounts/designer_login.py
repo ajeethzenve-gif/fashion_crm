@@ -9,6 +9,7 @@ from django.utils.module_loading import import_string
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
 from rest_framework_simplejwt.tokens import RefreshToken
 from designers.models import Designer, DesignerLoginOTP
 from designers.authentication import LOGIN_STAGES, normalize_phone
@@ -33,6 +34,37 @@ def kyc_error(designer):
     if designer.kyc_status != Designer.KYCStatus.VERIFIED:
         return Response({"detail": "KYC verification is required before designer login. Contact your account manager."}, status=403)
     return None
+
+
+class DesignerPasswordThrottle(AnonRateThrottle):
+    scope = "designer_password_login"
+    rate = "10/min"
+
+
+class DesignerPasswordLoginAPIView(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
+    throttle_classes = [DesignerPasswordThrottle]
+
+    def post(self, request):
+        designer = Designer.objects.select_related("user").filter(
+            user__username=str(request.data.get("username", "")).strip().lower(),
+            user__is_active=True, user__user_role__role__name="Designer",
+            is_active=True, stage__in=LOGIN_STAGES,
+        ).first()
+        if not designer or not designer.user.check_password(str(request.data.get("password", ""))):
+            return Response({"detail": "Invalid username or password."}, status=401)
+        denied = kyc_error(designer)
+        if denied is not None:
+            return denied
+        refresh = RefreshToken.for_user(designer.user)
+        return Response({
+            "access": str(refresh.access_token), "refresh": str(refresh),
+            "role": "Designer", "layers": ["02", "03", "06"],
+            "designer": {"id": designer.pk, "designer_name": designer.designer_name,
+                         "brand_name": designer.brand_name, "email": designer.email,
+                         "phone": designer.phone},
+        })
 
 
 class DesignerOTPAPIView(APIView):

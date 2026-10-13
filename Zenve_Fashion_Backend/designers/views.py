@@ -16,6 +16,7 @@ from .models import (
     DesignerAccountDetails,
 )
 from .permissions import DesignerDashboardAccess, DesignerManagementAccess
+from .loading import designer_list_context
 
 from .serializers import (
     DesignerSerializer,
@@ -40,17 +41,18 @@ class DesignerListAPIView(APIView):
         return [DesignerManagementAccess()]
 
     def get(self, request):
-        designers = Designer.objects.all().order_by(
+        designers = Designer.objects.select_related("account_details", "user").prefetch_related("products").order_by(
             "-created_at"
         )
         assignment = getattr(request.user, "user_role", None)
         if assignment and assignment.role.name == "Designer":
             designers = designers.filter(user=request.user)
 
+        designers = list(designers)
         serializer = DesignerSerializer(
             designers,
             many=True,
-            context={"request": request},
+            context=designer_list_context(designers, request),
         )
 
         return Response(

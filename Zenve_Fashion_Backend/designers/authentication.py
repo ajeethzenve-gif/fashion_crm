@@ -20,8 +20,14 @@ def provision_designer_user(designer):
         user = designer.user
     else:
         # Dedicated account avoids overwriting unrelated customer/staff roles.
-        user = User(username=f"designer_{designer.pk}")
-        user.set_unusable_password()
+        user = User()
+    if not user.pk or not user.has_usable_password():
+        name = re.sub(r"[^a-z0-9]", "", designer.designer_name.lower()) or "designer"
+        username = f"{name[:140]}@zf"
+        if User.objects.filter(username=username).exclude(pk=user.pk).exists():
+            username = f"{name[:130]}{designer.pk}@zf"
+        user.username = username
+        user.set_password(f"{name}@zf{normalize_phone(designer.phone)[-4:]}")
     names = (designer.owner_name or designer.designer_name).split(maxsplit=1)
     user.first_name = names[0][:150] if names else ""
     user.last_name = names[1][:150] if len(names) > 1 else ""

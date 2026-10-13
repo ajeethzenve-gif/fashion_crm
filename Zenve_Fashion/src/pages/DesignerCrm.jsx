@@ -140,7 +140,7 @@ export default function DesignerCRM() {
     city: "",
     state: "",
     category: "",
-    tier: "Emerging",
+    tier: "EMERGING",
     fashionCreditPlan: "",
     creditPoints: 0,
     takeRate: "",
@@ -401,7 +401,7 @@ export default function DesignerCRM() {
   };
 
   const handleCopyVendorLoginLink = () => {
-    const portalUrl = `${window.location.origin}/designer-login`;
+    const portalUrl = "https://zenvefashioncrm.zenvevet.com/designer-login/";
     if (navigator.clipboard?.writeText) {
       navigator.clipboard.writeText(portalUrl);
     }
@@ -471,7 +471,10 @@ export default function DesignerCRM() {
       );
       setActiveDesigner(updated);
 
-      await updateDesigner(activeDesigner.id, updated).catch(() => null);
+      const savedDesigner = await updateDesigner(activeDesigner.id, updated);
+      const saved = { ...updated, ...savedDesigner };
+      setDesigners((list) => list.map((d) => d.id === activeDesigner.id ? saved : d));
+      setActiveDesigner(saved);
       showSuccessToast(`Saved details for ${editForm.brand_name || editForm.designer_name || "Designer"}`);
     } catch (err) {
       showErrorToast("Could not update designer details.");
@@ -497,7 +500,7 @@ export default function DesignerCRM() {
       primary_category: modalNewLead.category.trim() || "Fashion",
       city: modalNewLead.city.trim() || "",
       state: modalNewLead.state.trim() || null,
-      tier: modalNewLead.tier,
+      tier: modalNewLead.tier.trim().toUpperCase(),
       stage: "LEAD",
       status: "Active",
       kyc_status: "PENDING",
@@ -529,7 +532,7 @@ export default function DesignerCRM() {
         city: "",
         state: "",
         category: "",
-        tier: "Emerging",
+        tier: "EMERGING",
         fashionCreditPlan: "",
         creditPoints: 0,
         takeRate: "",
@@ -594,13 +597,23 @@ export default function DesignerCRM() {
     let phone = String(designer.phone || "").replace(/[^0-9]/g, "");
     if (phone.length === 10) phone = `91${phone}`;
     const name = designer.designer_name || designer.name || "Designer";
-    const portalUrl = `${window.location.origin}/designer-login`;
+    if (!designer.login_username) {
+      showSuccessToast("Approve the designer before sending login credentials.");
+      return;
+    }
+    const portalUrl = "https://zenvefashioncrm.zenvevet.com/designer-login/";
+    const credentialName = name.toLowerCase().replace(/[^a-z0-9]/g, "") || "designer";
+    const initialPassword = `${credentialName}@zf${phone.slice(-4)}`;
     const message = `Hello ${name}, welcome to ZENVE Fashion.
 
 Sign in to your Designer Portal:
 ${portalUrl}
 
-Use your registered phone number and OTP to complete setup.`;
+Username: ${designer.login_username}
+Initial password: ${initialPassword}
+
+You can also log in using your registered mobile number and OTP.
+Login requires approval and completed KYC verification.`;
 
     window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`, "_blank");
     showSuccessToast("WhatsApp invitation opened!");
@@ -1186,9 +1199,9 @@ Use your registered phone number and OTP to complete setup.`;
                       value={modalNewLead.tier}
                       onChange={(e) => setModalNewLead({ ...modalNewLead, tier: e.target.value })}
                     >
-                      <option value="Emerging">Emerging</option>
-                      <option value="Core">Core</option>
-                      <option value="Premium">Premium</option>
+                      <option value="EMERGING">Emerging</option>
+                      <option value="CORE">Core</option>
+                      <option value="PREMIUM">Premium</option>
                     </select>
                   </div>
                 </div>

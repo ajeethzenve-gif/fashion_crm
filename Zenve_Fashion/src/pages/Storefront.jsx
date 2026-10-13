@@ -132,7 +132,7 @@ export default function Storefront() {
       setError(null);
 
       const [prodsData, mediaData, desData] = await Promise.all([
-        getProducts(currentUser?.id === "designer" ? { designer: currentUser.designerId } : {}).catch(() => []),
+        getProducts({ status: "APPROVED", ...(currentUser?.id === "designer" ? { designer: currentUser.designerId } : {}) }).catch(() => []),
         getMediaQueue().catch(() => []),
         getDesigners().catch(() => []),
       ]);
@@ -180,10 +180,9 @@ export default function Storefront() {
         p.brand ||
         "Independent Studio";
 
-      // Product is shown unless explicitly archived/inactive
+      // Only products approved by QA are eligible for the storefront.
       const isLive = Boolean(
-        p.status !== "INACTIVE" &&
-        p.status !== "REJECTED" &&
+        p.status === "APPROVED" &&
         p.is_active !== false
       );
 
