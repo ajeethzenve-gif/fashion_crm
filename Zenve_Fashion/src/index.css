@@ -11,7 +11,9 @@
   --brick-soft: #f4e6e2;
   --moss-soft: #e9efe4;
 
-  --serif: 'Playfair Display', 'Fraunces', Georgia, 'Times New Roman', serif;
+  --serif: 'Playfair Display', 'Cormorant Garamond', 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-luxury: 'Playfair Display', 'Cormorant Garamond', 'Fraunces', Georgia, 'Times New Roman', serif;
+  --zenve-luxury-font: 'Playfair Display', 'Cormorant Garamond', 'Fraunces', Georgia, 'Times New Roman', serif;
   --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
   /* Standardized Responsive Spacing Scale (Mobile 320px -> 4K 3840px) */
@@ -1228,4 +1230,33 @@ button {
   border: none !important;
   padding: 0 !important;
 }
-
+
+/* =========================================================
+   ZENVE LUXURY COUTURE TYPOGRAPHY SYSTEM
+   Uniform luxury font style across all 15 Operational Layer Headers
+   ========================================================= */
+.crm-hero-title,
+.ZENVE-portal-title,
+.ZENVE-cat-title,
+.qa-hero-title,
+.inv-hero-title,
+.ZENVE-sf-title,
+.ord-hero-title,
+.dlv-hero-title,
+.rtn-hero-title,
+.stl-hero-title,
+.bi-hero-title,
+.ZENVE-cc-hero-title,
+.hero-banner-title,
+.ZENVE-sm-hero-title,
+.acc-hero-title,
+.brand-title,
+.hero-main-title,
+.layer-head h1 {
+  font-family: 'Playfair Display', 'Cormorant Garamond', 'Fraunces', Georgia, 'Times New Roman', serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.015em !important;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

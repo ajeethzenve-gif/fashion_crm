@@ -86,10 +86,11 @@
 }
 
 .bi-hero-title {
+  font-family: 'Playfair Display', 'Cormorant Garamond', 'Fraunces', Georgia, serif;
   font-size: 28px;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--bi-text-title);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
   margin: 0;
   line-height: 1.15;
 }
@@ -238,13 +239,11 @@
 .bi-hero-glow-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    90deg,
-    #FBF8F2 0%,
-    rgba(251, 248, 242, 0.94) 15%,
-    rgba(251, 248, 242, 0.3) 55%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      #FBF8F2 0%,
+      rgba(251, 248, 242, 0.94) 15%,
+      rgba(251, 248, 242, 0.3) 55%,
+      transparent 100%);
 }
 
 /* =========================================================
@@ -280,9 +279,17 @@
 }
 
 @keyframes biPulse {
-  0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5); }
-  70% { box-shadow: 0 0 0 6px rgba(22, 163, 74, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5);
+  }
+
+  70% {
+    box-shadow: 0 0 0 6px rgba(22, 163, 74, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+  }
 }
 
 .bi-db-status-text {
@@ -320,7 +327,9 @@
 }
 
 @keyframes biSpin {
-  100% { transform: rotate(360deg); }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* =========================================================
@@ -994,13 +1003,25 @@
 }
 
 @keyframes biFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes biScaleUp {
-  from { transform: scale(0.96); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .bi-modal-header {
@@ -1107,9 +1128,11 @@
   .bi-cards-tri-grid {
     grid-template-columns: 1fr;
   }
+
   .bi-hero-content {
     max-width: 65%;
   }
+
   .bi-hero-action-area {
     margin-right: 0;
   }
@@ -1119,18 +1142,22 @@
   .bi-dashboard-page {
     padding: 12px 14px 30px 14px;
   }
+
   .bi-kpi-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
   .bi-hero-banner {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
     padding: 18px 20px;
   }
+
   .bi-hero-content {
     max-width: 100%;
   }
+
   .bi-hero-art-wrap {
     display: none;
   }

@@ -220,11 +220,11 @@
 
 .stl-hero-title {
   font-size: 30px;
-  font-weight: 800;
+  font-weight: 700;
   color: #43260D;
   margin: 0 0 6px 0;
-  letter-spacing: -0.02em;
-  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  letter-spacing: -0.015em;
+  font-family: 'Playfair Display', 'Cormorant Garamond', 'Fraunces', Georgia, serif;
 }
 
 .stl-hero-subtitle {
@@ -254,13 +254,11 @@
 .stl-hero-glow-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    90deg,
-    #FDF9F1 0%,
-    rgba(253, 249, 241, 0.95) 25%,
-    rgba(253, 249, 241, 0.35) 65%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      #FDF9F1 0%,
+      rgba(253, 249, 241, 0.95) 25%,
+      rgba(253, 249, 241, 0.35) 65%,
+      transparent 100%);
 }
 
 /* =========================================================
@@ -752,6 +750,7 @@
   background: #EAF7ED;
   color: #15803D;
 }
+
 .stl-status-pill.paid .stl-status-dot {
   background: #15803D;
 }
@@ -760,6 +759,7 @@
   background: #FEF6E7;
   color: #B45309;
 }
+
 .stl-status-pill.pending .stl-status-dot {
   background: #B45309;
 }
@@ -768,6 +768,7 @@
   background: #EFF6FF;
   color: #1D4ED8;
 }
+
 .stl-status-pill.processing .stl-status-dot {
   background: #1D4ED8;
 }
@@ -776,6 +777,7 @@
   background: #FEF2F2;
   color: #B91C1C;
 }
+
 .stl-status-pill.failed .stl-status-dot {
   background: #B91C1C;
 }
@@ -1243,6 +1245,7 @@
     opacity: 0;
     transform: scale(0.97) translateY(8px);
   }
+
   to {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -1326,10 +1329,12 @@
 .stl-modal-body::-webkit-scrollbar {
   width: 6px;
 }
+
 .stl-modal-body::-webkit-scrollbar-track {
   background: #FAF7F2;
   border-radius: 4px;
 }
+
 .stl-modal-body::-webkit-scrollbar-thumb {
   background: #D8C7B5;
   border-radius: 4px;
@@ -1658,6 +1663,7 @@
   .stl-kpi-grid {
     grid-template-columns: repeat(3, 1fr);
   }
+
   .stl-main-split-grid {
     grid-template-columns: 1fr;
   }
@@ -1667,13 +1673,16 @@
   .stl-kpi-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .stl-filters-toolbar-card {
     flex-direction: column;
     align-items: stretch;
   }
+
   .stl-filter-dropdown-group {
     flex-wrap: wrap;
   }
+
   .stl-hero-art-wrap {
     display: none;
   }
@@ -1683,10 +1692,12 @@
   .stl-kpi-grid {
     grid-template-columns: 1fr;
   }
+
   .stl-actions-row {
     flex-direction: column;
     align-items: stretch;
   }
+
   .stl-tabs-group {
     overflow-x: auto;
   }

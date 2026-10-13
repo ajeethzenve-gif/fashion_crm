@@ -213,8 +213,8 @@
   font-size: 28px;
   font-weight: 700;
   color: #4A2E12;
-  letter-spacing: -0.02em;
-  font-family: ui-serif, Georgia, Cambria, "Times New Roman", serif;
+  letter-spacing: -0.015em;
+  font-family: 'Playfair Display', 'Cormorant Garamond', 'Fraunces', Georgia, serif;
 }
 
 .inv-hero-subtitle {
@@ -593,21 +593,24 @@
 ========================================================= */
 /* Critical Red Row (< 10): High-urgency whole-row flashing (0.55s) */
 .inv-data-table tbody tr.row-critical-blink,
-.inv-data-table tbody tr.row-critical-blink > td {
+.inv-data-table tbody tr.row-critical-blink>td {
   animation: invRowBlinkCritical 0.55s infinite ease-in-out;
 }
 
 /* Warning Amber Row (< 30): Slower whole-row warning pulsing (1.4s) */
 .inv-data-table tbody tr.row-warning-blink,
-.inv-data-table tbody tr.row-warning-blink > td {
+.inv-data-table tbody tr.row-warning-blink>td {
   animation: invRowBlinkWarning 1.4s infinite ease-in-out;
 }
 
 @keyframes invRowBlinkCritical {
-  0%, 100% {
+
+  0%,
+  100% {
     background-color: rgba(254, 226, 226, 0.75);
     border-bottom-color: #F87171;
   }
+
   50% {
     background-color: rgba(255, 255, 255, 0.95);
     border-bottom-color: #F5ECE0;
@@ -615,10 +618,13 @@
 }
 
 @keyframes invRowBlinkWarning {
-  0%, 100% {
+
+  0%,
+  100% {
     background-color: rgba(254, 243, 199, 0.8);
     border-bottom-color: #FBBF24;
   }
+
   50% {
     background-color: rgba(255, 255, 255, 0.95);
     border-bottom-color: #F5ECE0;
@@ -781,13 +787,16 @@
 ========================================================= */
 /* Critical Red (< 10): The entire div flashes between solid red and pale red */
 @keyframes invBlinkCriticalWholeDiv {
-  0%, 100% {
+
+  0%,
+  100% {
     background-color: #DC2626;
     color: #FFFFFF;
     border: 1px solid #991B1B;
     box-shadow: 0 0 12px rgba(220, 38, 38, 0.75), inset 0 0 4px rgba(255, 255, 255, 0.2);
     transform: scale(1.02);
   }
+
   50% {
     background-color: #FEF2F2;
     color: #DC2626;
@@ -799,13 +808,16 @@
 
 /* Warning Amber (< 30): The entire div pulses between solid amber and soft pale amber */
 @keyframes invBlinkWarningWholeDiv {
-  0%, 100% {
+
+  0%,
+  100% {
     background-color: #D97706;
     color: #FFFFFF;
     border: 1px solid #92400E;
     box-shadow: 0 0 10px rgba(217, 119, 6, 0.65), inset 0 0 4px rgba(255, 255, 255, 0.2);
     transform: scale(1.02);
   }
+
   50% {
     background-color: #FFFBEB;
     color: #92400E;
@@ -817,11 +829,14 @@
 
 /* Beacon Dots Pulsing */
 @keyframes invBeaconPulseRed {
-  0%, 100% {
+
+  0%,
+  100% {
     background-color: #FFFFFF;
     box-shadow: 0 0 6px #FFFFFF;
     transform: scale(1.15);
   }
+
   50% {
     background-color: #DC2626;
     box-shadow: 0 0 4px rgba(220, 38, 38, 0.8);
@@ -830,11 +845,14 @@
 }
 
 @keyframes invBeaconPulseAmber {
-  0%, 100% {
+
+  0%,
+  100% {
     background-color: #FFFFFF;
     box-shadow: 0 0 6px #FFFFFF;
     transform: scale(1.15);
   }
+
   50% {
     background-color: #D97706;
     box-shadow: 0 0 4px rgba(217, 119, 6, 0.8);
@@ -964,8 +982,15 @@
 }
 
 @keyframes invModalSlide {
-  from { opacity: 0; transform: translateY(12px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .inv-modal-header {

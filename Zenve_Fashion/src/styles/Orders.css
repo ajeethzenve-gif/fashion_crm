@@ -183,8 +183,8 @@
   font-size: 28px;
   font-weight: 700;
   color: #4A2E12;
-  letter-spacing: -0.02em;
-  font-family: ui-serif, Georgia, Cambria, "Times New Roman", serif;
+  letter-spacing: -0.015em;
+  font-family: 'Playfair Display', 'Cormorant Garamond', 'Fraunces', Georgia, serif;
 }
 
 .ord-hero-subtitle {
@@ -1010,17 +1010,31 @@
 
 /* Animations */
 @keyframes ordFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes ordScaleUp {
-  from { opacity: 0; transform: scale(0.96); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes ordSpin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Responsive adjustments */
@@ -1035,6 +1049,7 @@
     flex-direction: column;
     align-items: stretch;
   }
+
   .ord-filter-actions {
     margin-left: 0;
     justify-content: flex-end;
@@ -1051,12 +1066,15 @@
   .ord-page-wrapper {
     padding: 12px 14px 30px;
   }
+
   .ord-kpi-grid {
     grid-template-columns: 1fr;
   }
+
   .ord-hero-title {
     font-size: 22px;
   }
+
   .ord-top-bar {
     flex-direction: column;
     align-items: stretch;

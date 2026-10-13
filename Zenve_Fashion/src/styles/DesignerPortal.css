@@ -25,7 +25,7 @@ DesignerPortal.css
   --ZENVE-blue: #1d4ed8;
   --ZENVE-shadow-panel: 0 1px 2px rgba(29, 20, 13, 0.06), 0 12px 32px -18px rgba(29, 20, 13, 0.25);
 
-  --ZENVE-font-serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --ZENVE-font-serif: 'Playfair Display', 'Cormorant Garamond', 'Fraunces', Georgia, 'Times New Roman', serif;
   --ZENVE-font-sans: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
@@ -97,13 +97,11 @@ DesignerPortal.css
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(250, 246, 240, 0.98) 0%,
-    rgba(250, 246, 240, 0.92) 35%,
-    rgba(250, 246, 240, 0.60) 60%,
-    rgba(250, 246, 240, 0.15) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(250, 246, 240, 0.98) 0%,
+      rgba(250, 246, 240, 0.92) 35%,
+      rgba(250, 246, 240, 0.60) 60%,
+      rgba(250, 246, 240, 0.15) 100%);
   pointer-events: none;
   z-index: 1;
 }
@@ -173,11 +171,12 @@ DesignerPortal.css
 
 .ZENVE-portal-title {
   margin: 0;
-  font-family: var(--ZENVE-font-serif);
-  font-size: 24px;
-  font-weight: 600;
+  font-family: 'Playfair Display', 'Cormorant Garamond', 'Fraunces', Georgia, serif;
+  font-size: 28px;
+  font-weight: 700;
   line-height: 1.2;
   color: var(--ZENVE-ink);
+  letter-spacing: -0.015em;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1682,8 +1681,15 @@ DesignerPortal.css
 }
 
 @keyframes fadeInNotice {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .ZENVE-sku-preview-text {
@@ -2979,6 +2985,7 @@ DesignerPortal.css
   .ZENVE-credits-kpi-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .ZENVE-offline-packs-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -2988,14 +2995,17 @@ DesignerPortal.css
   .ZENVE-credits-kpi-grid {
     grid-template-columns: 1fr;
   }
+
   .ZENVE-offline-packs-grid {
     grid-template-columns: 1fr;
   }
+
   .ZENVE-statement-row {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
+
   .ZENVE-statement-meta {
     width: 100%;
     justify-content: space-between;
@@ -3029,13 +3039,11 @@ DesignerPortal.css
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(250, 246, 240, 0.98) 0%,
-    rgba(250, 246, 240, 0.92) 35%,
-    rgba(250, 246, 240, 0.60) 60%,
-    rgba(250, 246, 240, 0.15) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(250, 246, 240, 0.98) 0%,
+      rgba(250, 246, 240, 0.92) 35%,
+      rgba(250, 246, 240, 0.60) 60%,
+      rgba(250, 246, 240, 0.15) 100%);
   pointer-events: none;
   z-index: 1;
 }

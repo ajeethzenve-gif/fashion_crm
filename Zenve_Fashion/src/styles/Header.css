@@ -127,13 +127,15 @@
   color: #211a15;
 
   font-family:
+    'Playfair Display',
+    'Cormorant Garamond',
+    'Fraunces',
     Georgia,
-    "Times New Roman",
     serif;
 
   font-size: 58px;
 
-  font-weight: 400;
+  font-weight: 600;
 
   line-height: 1;
 

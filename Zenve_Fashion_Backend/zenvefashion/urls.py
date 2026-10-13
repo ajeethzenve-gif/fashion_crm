@@ -68,12 +68,33 @@ urlpatterns = [
 ]
 
 
+from django.views.static import serve
+from django.urls import re_path
+
+
+def serve_media(request, path):
+    private_file = settings.PRIVATE_MEDIA_ROOT / path
+    if private_file.exists() and private_file.is_file():
+        return serve(request, path, document_root=settings.PRIVATE_MEDIA_ROOT)
+
+    frontend_media = settings.BASE_DIR.parent / "Zenve_Fashion" / "public" / "media"
+    frontend_file = frontend_media / path
+    if frontend_file.exists() and frontend_file.is_file():
+        return serve(request, path, document_root=frontend_media)
+
+    frontend_public = settings.BASE_DIR.parent / "Zenve_Fashion" / "public"
+    public_file = frontend_public / path
+    if public_file.exists() and public_file.is_file():
+        return serve(request, path, document_root=frontend_public)
+
+    media_file = settings.MEDIA_ROOT / path
+    if media_file.exists() and media_file.is_file():
+        return serve(request, path, document_root=settings.MEDIA_ROOT)
+
+    return serve(request, path, document_root=settings.PRIVATE_MEDIA_ROOT)
+
+
 if settings.DEBUG:
-    urlpatterns += static(
-        settings.MEDIA_URL,
-        document_root=settings.PRIVATE_MEDIA_ROOT,
-    )
-    urlpatterns += static(
-        settings.MEDIA_URL,
-        document_root=settings.MEDIA_ROOT,
-    )
+    urlpatterns += [
+        re_path(r"^media/(?P<path>.*)$", serve_media),
+    ]
