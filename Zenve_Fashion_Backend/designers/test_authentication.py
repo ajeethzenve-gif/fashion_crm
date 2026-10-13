@@ -43,7 +43,36 @@ class DesignerAuthenticationTests(TestCase):
         self.assertEqual(User.objects.count(), 1)
         self.assertEqual(UserRole.objects.get(user_id=user_id).role.name, "Designer")
         self.assertEqual(self.designer.user.email, "test@example.com")
-        self.assertFalse(self.designer.user.has_usable_password())
+        self.assertEqual(self.designer.user.username, "testdesigner@zf")
+        self.assertTrue(self.designer.user.check_password("testdesigner@zf3210"))
+
+    def test_password_login_requires_approval_and_kyc(self):
+        self.approve()
+        credentials = {"username": "testdesigner@zf", "password": "testdesigner@zf3210"}
+        response = self.client.post("/api/designer/login/", credentials)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["designer"]["id"], self.designer.pk)
+        self.designer.kyc_status = "PENDING"
+        self.designer.save()
+        self.assertEqual(self.client.post("/api/designer/login/", credentials).status_code, 403)
+        self.designer.stage = "REVIEW"
+        self.designer.save()
+        self.assertEqual(self.client.post("/api/designer/login/", credentials).status_code, 401)
+
+    def test_approval_does_not_reset_changed_password(self):
+        self.approve()
+        self.designer.user.set_password("ChangedSecret123!")
+        self.designer.user.save()
+        self.approve()
+        self.assertTrue(self.designer.user.check_password("ChangedSecret123!"))
+
+    def test_duplicate_name_preserves_existing_account(self):
+        existing = User.objects.create_user(username="testdesigner@zf", password="ExistingSecret123!")
+        self.approve()
+        self.assertEqual(self.designer.user.username, f"testdesigner{self.designer.pk}@zf")
+        self.assertTrue(self.designer.user.check_password("testdesigner@zf3210"))
+        existing.refresh_from_db()
+        self.assertTrue(existing.check_password("ExistingSecret123!"))
 
     def test_stale_instances_reuse_existing_account(self):
         stale = Designer.objects.get(pk=self.designer.pk)

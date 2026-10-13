@@ -73,6 +73,7 @@ class DesignerAccountDetailsSerializer(serializers.ModelSerializer):
 # =========================================================
 
 class DesignerSerializer(serializers.ModelSerializer):
+    login_username = serializers.CharField(source="user.username", read_only=True, default="")
 
     is_kyc_verified = serializers.ReadOnlyField()
     is_live = serializers.ReadOnlyField()
@@ -93,6 +94,7 @@ class DesignerSerializer(serializers.ModelSerializer):
         model = Designer
 
         fields = [
+            "login_username",
             "id",
 
             "designer_code",
@@ -201,9 +203,7 @@ class DesignerSerializer(serializers.ModelSerializer):
             )
 
             products = list(
-                Product.objects.filter(
-                    designer=instance
-                )
+                instance.products.all()
             )
 
             product_ids = [
@@ -217,7 +217,8 @@ class DesignerSerializer(serializers.ModelSerializer):
                 if product.sku
             ]
 
-            items = OrderItem.objects.filter(
+            cached_items = self.context.get("designer_order_items")
+            items = cached_items.get(instance.pk, []) if cached_items is not None else OrderItem.objects.filter(
                 models.Q(
                     product_id__in=product_ids
                 )

@@ -17,6 +17,7 @@ from .models import (
 )
 
 from .serializers import ProductSerializer
+from .social_serializers import SocialMediaProductSerializer
 from .access import scoped_products
 
 
@@ -1247,7 +1248,7 @@ class SocialMediaListAPIView(APIView):
         active_live = all_growth.filter(social_media_status__in=["PROMOTION_ACTIVE", "COMPLETED"]).count()
         pending = all_growth.filter(social_media_status="PENDING_REVIEW").count()
 
-        serializer = ProductSerializer(
+        serializer = SocialMediaProductSerializer(
             qs,
             many=True,
             context={"request": request}
@@ -1300,7 +1301,7 @@ class SocialMediaDetailAPIView(APIView):
             "updated_at",
         ])
 
-        serializer = ProductSerializer(product, context={"request": request})
+        serializer = SocialMediaProductSerializer(product, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, pk):
@@ -1328,5 +1329,5 @@ class SocialMediaDetailAPIView(APIView):
 
         return Response({
             "message": f"Designer {product.designer.designer_name} ({product.designer.brand_name}) approached successfully!",
-            "product": ProductSerializer(product, context={"request": request}).data
+            "product": SocialMediaProductSerializer(product, context={"request": request}).data
         }, status=status.HTTP_200_OK)

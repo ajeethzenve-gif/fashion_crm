@@ -41,7 +41,7 @@ class DesignerListAPIView(APIView):
         return [DesignerManagementAccess()]
 
     def get(self, request):
-        designers = Designer.objects.select_related("account_details").prefetch_related("products").order_by(
+        designers = Designer.objects.select_related("account_details", "user").prefetch_related("products").order_by(
             "-created_at"
         )
         assignment = getattr(request.user, "user_role", None)

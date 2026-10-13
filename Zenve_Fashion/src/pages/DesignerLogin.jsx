@@ -352,7 +352,7 @@ export default function DesignerLogin() {
      METHOD 2: USERNAME & PASSWORD LOGIN
      ========================================================= */
 
-  const handleCredentialsSubmit = (e) => {
+  const handleCredentialsSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg("");
     setSuccessMsg("");
@@ -367,7 +367,15 @@ export default function DesignerLogin() {
       return;
     }
 
-    setErrorMsg("Use mobile OTP login. Password login is unavailable for designer accounts.");
+    setIsVerifyingOtp(true);
+    try {
+      const data = await designerAuthRequest("login", { username: term, password });
+      saveTokens({ access: data.access, refresh: data.refresh });
+      localStorage.setItem("access_token", data.access);
+      localStorage.setItem("refresh_token", data.refresh);
+      completeDesignerLogin(data.designer);
+    } catch (err) { setErrorMsg(err.message || "Unable to sign in."); }
+    finally { setIsVerifyingOtp(false); }
   };
 
   // Quick Demo Autofill Helper
