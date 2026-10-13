@@ -41,6 +41,12 @@ urlpatterns = [
     ),
 
     path(
+        "<int:designer_id>/portal-dashboard/mark-read/",
+        DesignerPortalDashboardAPIView.as_view(),
+        name="designer-portal-dashboard-mark-read",
+    ),
+
+    path(
         "<int:designer_id>/account-details/",
         DesignerAccountDetailsView.as_view(),
         name="designer-account-details",

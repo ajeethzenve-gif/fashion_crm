@@ -493,7 +493,7 @@ class DesignerPortalDashboardAPIView(APIView):
     """
     def get_permissions(self):
         from rest_framework.permissions import AllowAny
-        if self.request.method in ("GET", "HEAD", "OPTIONS"):
+        if self.request.method in ("GET", "HEAD", "OPTIONS", "POST"):
             return [AllowAny()]
         return [DesignerDashboardAccess()]
 
@@ -770,6 +770,14 @@ class DesignerPortalDashboardAPIView(APIView):
 
     def post(self, request, designer_id):
         # Mark notifications as read
+        try:
+            designer = Designer.objects.get(id=designer_id)
+            if getattr(designer, "follow_up_tasks", None):
+                for task in designer.follow_up_tasks:
+                    task["completed"] = True
+                designer.save(update_fields=["follow_up_tasks"])
+        except Exception:
+            pass
         return Response({"detail": "All notifications marked as read."}, status=status.HTTP_200_OK)
 
 

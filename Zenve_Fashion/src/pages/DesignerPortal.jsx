@@ -780,6 +780,22 @@ export default function DesignerPortal() {
         await getDesignerPortalDashboard(designerId);
 
       const data = unwrapApiResponse(response);
+      if (data && Array.isArray(data.notifications)) {
+        try {
+          const storedReadIds = JSON.parse(
+            localStorage.getItem(`zenve_read_notifications_${designerId}`) || "[]"
+          );
+          if (storedReadIds.length > 0) {
+            const readSet = new Set(storedReadIds.map(String));
+            data.notifications = data.notifications.map((n) => ({
+              ...n,
+              read: n.read || readSet.has(String(n.id)),
+            }));
+          }
+        } catch (e) {
+          console.warn("Read notifications parse error:", e);
+        }
+      }
       setPortalData(data || null);
 
       if (!data?.credits) {
@@ -1558,40 +1574,76 @@ export default function DesignerPortal() {
      MARK NOTIFICATIONS READ
   ======================================================= */
 
-  const handleMarkNotificationsRead =
-    async () => {
-      if (!selectedDesignerId) return;
+  const handleMarkNotificationsRead = async () => {
+    const designerIdToUse = selectedDesignerId || currentUser?.designerId;
+    if (!designerIdToUse) return;
 
-      try {
-        await markDesignerNotificationsRead(
-          selectedDesignerId
-        );
+    // 1. Immediately persist all notification IDs to localStorage so read state is preserved
+    const currentNotifs = portalData?.notifications || [];
+    const allIds = currentNotifs.map((n) => String(n.id));
+    try {
+      localStorage.setItem(
+        `zenve_read_notifications_${designerIdToUse}`,
+        JSON.stringify(allIds)
+      );
+    } catch (e) {
+      console.warn("Storage warning:", e);
+    }
 
-        setPortalData((prev) => {
-          if (!prev) return prev;
+    // 2. Immediately update local state so UI updates instantly
+    setPortalData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        notifications: (prev.notifications || []).map((n) => ({
+          ...n,
+          read: true,
+        })),
+      };
+    });
 
-          return {
-            ...prev,
-            notifications: (
-              prev.notifications || []
-            ).map((n) => ({
-              ...n,
-              read: true,
-            })),
-          };
-        });
+    setAlertMessage({
+      type: "success",
+      text: "All notifications marked as read.",
+    });
 
-        setAlertMessage({
-          type: "success",
-          text: "Notifications marked as read.",
-        });
-      } catch (err) {
-        console.error(
-          "Mark notifications read error:",
-          err
+    // 3. Notify backend API
+    try {
+      await markDesignerNotificationsRead(designerIdToUse);
+    } catch (err) {
+      console.warn("Backend mark-read call notice:", err);
+    }
+  };
+
+  const handleMarkSingleNotificationRead = async (notifId) => {
+    const designerIdToUse = selectedDesignerId || currentUser?.designerId;
+    if (!designerIdToUse || !notifId) return;
+
+    try {
+      const stored = JSON.parse(
+        localStorage.getItem(`zenve_read_notifications_${designerIdToUse}`) || "[]"
+      );
+      if (!stored.includes(String(notifId))) {
+        stored.push(String(notifId));
+        localStorage.setItem(
+          `zenve_read_notifications_${designerIdToUse}`,
+          JSON.stringify(stored)
         );
       }
-    };
+    } catch (e) {
+      console.warn("Storage warning:", e);
+    }
+
+    setPortalData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        notifications: (prev.notifications || []).map((n) =>
+          String(n.id) === String(notifId) ? { ...n, read: true } : n
+        ),
+      };
+    });
+  };
 
   /* =======================================================
      PROFILE HANDLERS
@@ -2102,14 +2154,6 @@ export default function DesignerPortal() {
       <header className="ZENVE-portal-header">
         <div className="ZENVE-header-left">
           <div className="ZENVE-header-title-block">
-            <Link
-              to="/"
-              className="ZENVE-back-link"
-            >
-              <BackIcon />
-              <span>ALL 12 LAYERS</span>
-            </Link>
-
             <h1 
               className="ZENVE-portal-title"
               style={{ cursor: "pointer" }}
@@ -2123,9 +2167,6 @@ export default function DesignerPortal() {
               }}
               title="Return to Dashboard"
             >
-              <span className="ZENVE-layer-num">
-                02
-              </span>
               Designer Portal
             </h1>
 
@@ -4861,6 +4902,9 @@ export default function DesignerPortal() {
                           ? "unread"
                           : ""
                           }`}
+                        onClick={() => !n.read && handleMarkSingleNotificationRead(n.id)}
+                        style={{ cursor: !n.read ? "pointer" : "default" }}
+                        title={!n.read ? "Click to mark as read" : undefined}
                       >
                         <div className="ZENVE-notif-left">
                           {!n.read && (

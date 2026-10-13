@@ -184,8 +184,7 @@ DesignerPortal.css
 }
 
 .ZENVE-layer-num {
-  font-weight: 400;
-  color: #92400e;
+  display: none !important;
 }
 
 .ZENVE-portal-subtitle {
