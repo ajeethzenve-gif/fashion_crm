@@ -1178,24 +1178,148 @@
   .qa-top-nav {
     flex-direction: column;
     align-items: stretch;
-    padding: 12px 16px;
+    padding: 12px 14px;
+    gap: 12px;
   }
 
   .qa-top-search-wrap {
     width: 100%;
   }
 
+  .qa-top-actions {
+    justify-content: space-between;
+    width: 100%;
+  }
+
   .qa-container {
-    padding: 14px 16px 0;
+    padding: 14px 14px 30px;
+    gap: 14px;
+  }
+
+  .qa-hero-banner {
+    padding: 16px 14px;
+    min-height: auto;
+    border-radius: 10px;
+  }
+
+  .qa-hero-title {
+    font-size: 22px;
+  }
+
+  .qa-hero-subtitle {
+    font-size: 12.5px;
+  }
+
+  .qa-tabs-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .qa-tabs-group {
+    overflow-x: auto;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+    padding: 4px;
+    box-sizing: border-box;
+  }
+
+  .qa-actions-group-wrap {
+    width: 100%;
+    margin-left: 0;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .qa-submit-btn,
+  .qa-bulk-actions-wrap,
+  .qa-bulk-btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .qa-filter-card {
     flex-direction: column;
     align-items: stretch;
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .qa-filter-search-wrap {
+    min-width: 100%;
+    width: 100%;
+  }
+
+  .qa-select-group {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .qa-select-control {
+    flex: 1 1 calc(50% - 6px);
+    min-width: 120px;
   }
 
   .qa-reset-btn {
     margin-left: 0;
+    width: 100%;
     justify-content: center;
+  }
+
+  .qa-modal-card {
+    max-width: 95vw;
+    margin: 10px auto;
+  }
+
+  .qa-modal-header {
+    padding: 14px 16px;
+  }
+
+  .qa-modal-body {
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .qa-modal-footer {
+    padding: 14px 16px;
+    flex-direction: column;
+  }
+
+  .qa-modal-footer button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .qa-form-row,
+  .qa-inspect-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .qa-container {
+    padding: 10px 10px 24px;
+  }
+
+  .qa-hero-title {
+    font-size: 19px;
+  }
+
+  .qa-select-control {
+    flex: 1 1 100%;
+  }
+
+  .qa-kpi-card {
+    padding: 12px 14px;
+  }
+
+  .qa-kpi-number {
+    font-size: 19px;
+  }
+
+  .qa-tab-btn {
+    padding: 6px 12px;
+    font-size: 12px;
   }
 }

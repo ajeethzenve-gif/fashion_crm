@@ -2168,13 +2168,84 @@ textarea.acc-form-input {
   }
 }
 
-@media (max-width: 600px) {
-  .acc-kpi-grid {
-    grid-template-columns: 1fr;
+@media (max-width: 768px) {
+  .acc-page-container {
+    padding: 14px 14px 30px;
+  }
+
+  .acc-hero-banner {
+    min-height: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px 14px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+  }
+
+  .acc-hero-content {
+    padding: 0;
+    max-width: 100%;
+  }
+
+  .acc-hero-title {
+    font-size: 22px;
+  }
+
+  .acc-hero-subtitle {
+    font-size: 12.5px;
   }
 
   .acc-tabs-action-bar {
     flex-direction: column;
     align-items: stretch;
+    gap: 10px;
+  }
+
+  .acc-tabs-list {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+
+  .acc-tabs-right-actions {
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .acc-export-statement-btn,
+  .acc-create-entry-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .acc-table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .acc-modal-card {
+    max-width: 95vw;
+    margin: 10px auto;
+  }
+
+  .acc-modal-footer {
+    flex-direction: column;
+  }
+
+  .acc-modal-footer button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .acc-hero-title {
+    font-size: 19px;
+  }
+
+  .acc-kpi-grid {
+    grid-template-columns: 1fr;
   }
 }

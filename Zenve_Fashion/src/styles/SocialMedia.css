@@ -1214,3 +1214,83 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 768px) {
+  .ZENVE-sm-hero-banner {
+    min-height: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px 14px;
+    border-radius: 10px;
+    margin: 12px 14px;
+  }
+
+  .ZENVE-sm-hero-content {
+    max-width: 100%;
+  }
+
+  .ZENVE-sm-hero-title {
+    font-size: 22px;
+  }
+
+  .ZENVE-sm-hero-subtitle {
+    font-size: 12px;
+  }
+
+  .ZENVE-sm-hero-actions {
+    align-self: flex-end;
+    margin-top: 10px;
+  }
+
+  .ZENVE-sm-metrics-strip {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 12px 14px;
+    gap: 8px;
+  }
+
+  .ZENVE-sm-controls-section {
+    padding: 10px 14px;
+  }
+
+  .ZENVE-sm-tabs-row {
+    overflow-x: auto;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+
+  .ZENVE-sm-filters-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .ZENVE-sm-search-input-wrap {
+    max-width: 100%;
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .ZENVE-sm-sync-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .ZENVE-sm-main-container {
+    padding: 12px 14px 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ZENVE-sm-hero-title {
+    font-size: 19px;
+  }
+
+  .ZENVE-sm-metrics-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .ZENVE-sm-kpi-card {
+    padding: 12px 14px;
+  }
+}

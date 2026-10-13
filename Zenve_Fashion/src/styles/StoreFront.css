@@ -1286,6 +1286,11 @@
     gap: 14px;
   }
 
+  .ZENVE-sf-header-bg-art {
+    width: 100%;
+    opacity: 0.15;
+  }
+
   .ZENVE-sf-header-top-bar {
     flex-direction: column;
     align-items: flex-start;

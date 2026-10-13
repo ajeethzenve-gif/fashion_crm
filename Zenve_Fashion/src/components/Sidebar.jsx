@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { layers } from "../data/layers";
@@ -146,29 +146,7 @@ function UserIcon() {
   );
 }
 
-function LogoutIcon() {
-  return (
-    <svg
-      className="user-icon"
-      width="21"
-      height="21"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-      <polyline points="16 17 21 12 16 7"></polyline>
-      <line x1="21" y1="12" x2="9" y2="12"></line>
-    </svg>
-  );
-}
-
-export default function Sidebar() {
+export default function Sidebar({ mobileOpen = false, onCloseMobile = () => {} }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { currentUser, logout, hasAccess } = useAuth();
@@ -178,66 +156,163 @@ export default function Sidebar() {
     navigate("/login");
   };
 
+  // Close mobile drawer on route change
+  useEffect(() => {
+    if (mobileOpen) {
+      onCloseMobile();
+    }
+  }, [location.pathname]);
+
+  // Close mobile drawer on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && mobileOpen) {
+        onCloseMobile();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [mobileOpen, onCloseMobile]);
+
+  // Lock body scroll when mobile drawer is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
+
+  // Clean user handle format (e.g. ajeeth.zenve or priya.zenve)
+  const userHandle = currentUser?.user
+    ? `${currentUser.user.toLowerCase().split(/[\s._-]+/)[0]}.zenve`
+    : "guest.zenve";
+
   return (
-    <aside className="zenve-sidebar">
-      <div className="sidebar-logo">
-        <img src={logo} alt="Zenve Logo" />
-        <div className="sidebar-logo-text">
-          <span className="logo-zenve">ZENVE</span>
-          <span className="logo-sub">Fashion Merchandising</span>
-        </div>
-      </div>
+    <>
+      {/* Mobile Dark Backdrop Overlay */}
+      {mobileOpen && (
+        <div
+          className="zenve-mobile-overlay"
+          onClick={onCloseMobile}
+          aria-hidden="true"
+        />
+      )}
 
-      <nav className="sidebar-nav">
-        {currentUser?.id !== "designer" && (
-          <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
-            <div className="nav-icon-wrap">{iconMap["Home"]}</div>
-            <span>Home</span>
-          </Link>
-        )}
-
-        {layers.filter((layer) => hasAccess(layer.n)).map((layer) => {
-          const isActive = location.pathname === layer.path || location.pathname.startsWith(`${layer.path}/`);
-          const icon = iconMap[layer.name] || iconMap["Home"];
-          const displayName = getDisplayName(layer.name);
-          return (
-            <Link key={layer.n} to={layer.path} className={`nav-link ${isActive ? 'active' : ''}`}>
-              <div className="nav-icon-wrap">{icon}</div>
-              <span>{displayName}</span>
-            </Link>
-          );
-        })}
-      </nav>
-
-      <div className="sidebar-bottom">
-        {currentUser ? (
-          <>
-            <div className="sidebar-user-info">
-              <div className="sidebar-user-avatar">
-                <UserIcon />
-              </div>
-              <div className="sidebar-user-details">
-                <span className="sidebar-user-name">
-                  {currentUser.user || "User"}
-                </span>
-                <span className="sidebar-user-role">
-                  {currentUser.shortRole || "Role"}
-                </span>
-              </div>
+      <aside className={`zenve-sidebar ${mobileOpen ? "mobile-open" : ""}`}>
+        {/* Mobile-Only Drawer Header (Matches Reference Image) */}
+        <div className="mobile-drawer-header">
+          <div className="mobile-drawer-user">
+            <div className="mobile-drawer-avatar">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+              </svg>
             </div>
-            <button onClick={handleLogout} className="sidebar-signout-btn" title="Sign out">
-              Sign out
-            </button>
-          </>
-        ) : (
-          <Link to="/login" className="sidebar-signout-btn" title="Sign in">
-            Sign In
-          </Link>
-        )}
-      </div>
+            <div className="mobile-drawer-user-meta">
+              <span className="mobile-drawer-username">{userHandle}</span>
+              <span className="mobile-drawer-account-label">My Account</span>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="mobile-drawer-close-btn"
+            onClick={onCloseMobile}
+            aria-label="Close menu"
+            title="Close menu"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
 
-      <div className="sidebar-golden-waves"></div>
-    </aside>
+        {/* Desktop Logo (Visible in normal desktop view only) */}
+        <div className="sidebar-logo">
+          <img src={logo} alt="Zenve Logo" />
+          <div className="sidebar-logo-text">
+            <span className="logo-zenve">ZENVE</span>
+            <span className="logo-sub">Fashion Merchandising</span>
+          </div>
+        </div>
+
+        {/* Navigation list */}
+        <nav className="sidebar-nav">
+          {currentUser?.id !== "designer" && (
+            <Link
+              to="/"
+              className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
+              onClick={onCloseMobile}
+            >
+              <div className="nav-icon-wrap">{iconMap["Home"]}</div>
+              <span>Home</span>
+            </Link>
+          )}
+
+          {layers.filter((layer) => hasAccess(layer.n)).map((layer) => {
+            const isActive = location.pathname === layer.path || location.pathname.startsWith(`${layer.path}/`);
+            const icon = iconMap[layer.name] || iconMap["Home"];
+            const displayName = getDisplayName(layer.name);
+            return (
+              <Link
+                key={layer.n}
+                to={layer.path}
+                className={`nav-link ${isActive ? 'active' : ''}`}
+                onClick={onCloseMobile}
+              >
+                <div className="nav-icon-wrap">{icon}</div>
+                <span>{displayName}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Bottom Section */}
+        <div className="sidebar-bottom">
+          {currentUser ? (
+            <>
+              <div className="sidebar-user-info">
+                <div className="sidebar-user-avatar">
+                  <UserIcon />
+                </div>
+                <div className="sidebar-user-details">
+                  <span className="sidebar-user-name">
+                    {currentUser.user || "User"}
+                  </span>
+                  <span className="sidebar-user-role">
+                    {currentUser.shortRole || "Role"}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  handleLogout();
+                  onCloseMobile();
+                }}
+                className="sidebar-signout-btn"
+                title="Sign out"
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/login"
+              onClick={onCloseMobile}
+              className="sidebar-signout-btn"
+              title="Sign in"
+            >
+              Sign In
+            </Link>
+          )}
+        </div>
+
+        <div className="sidebar-golden-waves"></div>
+      </aside>
+    </>
   );
 }
 

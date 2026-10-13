@@ -1116,24 +1116,139 @@
     padding: 14px;
   }
 
+  .inv-top-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .inv-global-search-wrap {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .inv-top-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .inv-hero-banner {
+    min-height: auto;
+    border-radius: 10px;
+  }
+
+  .inv-hero-art-wrap {
+    width: 100%;
+    opacity: 0.15;
+  }
+
+  .inv-hero-content {
+    padding: 16px 14px;
+    max-width: 100%;
+  }
+
+  .inv-hero-title {
+    font-size: 22px;
+  }
+
+  .inv-hero-subtitle {
+    font-size: 12.5px;
+  }
+
   .inv-kpi-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .inv-tabs-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .inv-tabs-group {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+
+  .inv-add-stock-btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .inv-filter-bar {
     flex-direction: column;
     align-items: stretch;
+    padding: 12px;
+    gap: 10px;
   }
 
   .inv-table-search-wrap {
     max-width: 100%;
+    min-width: 100%;
+    width: 100%;
   }
 
-  .inv-hero-content {
-    padding: 16px;
+  .inv-dropdown-filters-group {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .inv-filter-item {
+    flex: 1 1 calc(50% - 6px);
+  }
+
+  .inv-select-control {
+    width: 100%;
+  }
+
+  .inv-btn-reset {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .inv-modal-card {
+    max-width: 95vw;
+    margin: 10px auto;
+  }
+
+  .inv-modal-footer {
+    flex-direction: column;
+  }
+
+  .inv-modal-footer button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .inv-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 480px) {
+  .inv-page-wrapper {
+    padding: 10px 10px 30px;
   }
 
   .inv-hero-title {
-    font-size: 22px;
+    font-size: 19px;
+  }
+
+  .inv-kpi-row {
+    grid-template-columns: 1fr;
+  }
+
+  .inv-kpi-card {
+    padding: 10px 12px;
+  }
+
+  .inv-filter-item {
+    flex: 1 1 100%;
   }
 }

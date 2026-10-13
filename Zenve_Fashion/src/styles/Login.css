@@ -220,8 +220,8 @@
   .zl-error-alert { animation: none; }
 }
 
-/* Phones and small tablets in portrait: whole picture, fills the screen */
-@media (max-width: 768px) and (orientation: portrait) {
+/* Phones and small tablets: whole picture, fills the screen */
+@media (max-width: 768px) {
   .zl-stage {
     --px: 0.9px;
   }
@@ -239,7 +239,7 @@
 }
 
 /* Very small phones */
-@media (max-width: 360px) and (orientation: portrait) {
+@media (max-width: 360px) {
   .zl-stage {
     --px: 0.8px;
   }

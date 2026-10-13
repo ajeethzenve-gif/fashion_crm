@@ -1821,3 +1821,202 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 768px) {
+  .crm-main-container {
+    padding: 16px 14px;
+  }
+
+  .crm-hero-banner {
+    min-height: auto;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .crm-banner-bg-img {
+    width: 100%;
+    opacity: 0.18;
+  }
+
+  .crm-banner-content {
+    padding: 18px 16px;
+    max-width: 100%;
+  }
+
+  .crm-hero-title {
+    font-size: 24px;
+  }
+
+  .crm-hero-subtitle {
+    font-size: 13px;
+  }
+
+  .crm-kpi-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .crm-filter-toolbar {
+    padding: 12px;
+    gap: 12px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .crm-filter-search-box {
+    min-width: 100%;
+    width: 100%;
+  }
+
+  .crm-filter-select-group {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .crm-filter-select {
+    flex: 1 1 calc(50% - 8px);
+    min-width: 120px;
+  }
+
+  .crm-btn-reset {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .crm-btn-add-designer {
+    width: 100%;
+    margin-left: 0;
+    justify-content: center;
+  }
+
+  .crm-view-stats-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .crm-view-contact-details {
+    grid-template-columns: 1fr;
+    padding: 12px;
+  }
+
+  .crm-view-actions-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .crm-view-actions-footer button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .crm-lead-modal-card {
+    max-width: 95vw;
+    margin: 12px auto;
+  }
+
+  .crm-lead-modal-header {
+    padding: 16px;
+  }
+
+  .crm-lead-form {
+    padding: 16px;
+  }
+
+  .crm-lead-grid-3 {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .crm-edit-dossier-card {
+    padding: 18px 16px;
+    margin: 10px;
+    max-width: calc(100vw - 20px);
+  }
+
+  .crm-edit-brand-strip {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .crm-edit-brand-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .crm-edit-brand-actions button,
+  .crm-edit-stage-custom-dropdown {
+    width: 100%;
+  }
+
+  .crm-edit-stage-trigger-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .crm-main-container {
+    padding: 12px 10px;
+  }
+
+  .crm-hero-banner {
+    border-radius: 10px;
+    margin-bottom: 14px;
+  }
+
+  .crm-banner-content {
+    padding: 14px 12px;
+  }
+
+  .crm-hero-title {
+    font-size: 20px;
+  }
+
+  .crm-hero-subtitle {
+    font-size: 12px;
+  }
+
+  .crm-kpi-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .crm-kpi-card {
+    height: auto;
+    min-height: 72px;
+    padding: 10px 12px;
+  }
+
+  .crm-kpi-number {
+    font-size: 19px;
+  }
+
+  .crm-filter-select {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .crm-view-stats-row {
+    grid-template-columns: 1fr;
+  }
+
+  .crm-gst-modal-card {
+    max-width: 95vw;
+    margin: 10px auto;
+  }
+
+  .crm-gst-modal-body {
+    padding: 14px;
+  }
+
+  .crm-gst-modal-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .crm-gst-modal-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+}

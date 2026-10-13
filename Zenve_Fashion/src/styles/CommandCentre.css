@@ -1654,6 +1654,22 @@
     padding: 14px 16px 36px 16px;
   }
 
+  .ZENVE-cc-top-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .ZENVE-cc-search-box {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .ZENVE-cc-top-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
   .ZENVE-cc-hero-banner {
     padding: 14px 18px;
     min-height: 96px;
@@ -1746,5 +1762,19 @@
 
   .ZENVE-notif-sidebar {
     width: 100vw;
+  }
+}
+
+@media (max-width: 480px) {
+  .ZENVE-cc-root {
+    padding: 10px 10px 24px 10px;
+  }
+
+  .ZENVE-cc-hero-title {
+    font-size: 18px;
+  }
+
+  .ZENVE-cc-kpi-card {
+    padding: 10px 12px;
   }
 }

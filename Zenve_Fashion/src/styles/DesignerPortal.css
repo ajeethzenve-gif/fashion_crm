@@ -2133,7 +2133,21 @@ DesignerPortal.css
     justify-content: space-between;
   }
 
-  /* Profile Definition List: 1-column */
+  /* Profile Definition List & Layout: 1-column */
+  .ZENVE-profile-card-body {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .ZENVE-profile-image-aside {
+    border-left: none;
+    padding-left: 0;
+    width: 100%;
+    border-bottom: 1px solid var(--ZENVE-line);
+    padding-bottom: 16px;
+  }
+
   .ZENVE-profile-dl {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -2155,10 +2169,43 @@ DesignerPortal.css
     text-align: center;
   }
 
+  /* Hero Banner on mobile */
+  .dp-hero-banner {
+    height: auto;
+    min-height: 100px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    border-radius: 10px;
+  }
+
+  .dp-banner-content {
+    padding: 0;
+    max-width: 100%;
+  }
+
+  .dp-hero-title {
+    font-size: 20px;
+  }
+
+  .dp-hero-subtitle {
+    font-size: 12px;
+  }
+
+  .dp-banner-bg-img {
+    width: 100%;
+    opacity: 0.18;
+  }
+
+  .ZENVE-portal-header {
+    margin: 12px;
+  }
+
   /* Table Horizontal Scrolling */
   .ZENVE-table-responsive {
     border: 1px solid var(--ZENVE-line);
     border-radius: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .ZENVE-table {
@@ -2715,7 +2762,7 @@ DesignerPortal.css
 
 .ZENVE-credits-kpi-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr) !important;
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -2980,35 +3027,156 @@ DesignerPortal.css
   text-align: right;
 }
 
-/* Responsive */
+/* Responsive Credit Section */
 @media (max-width: 1200px) {
   .ZENVE-credits-kpi-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 
   .ZENVE-offline-packs-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .ZENVE-offline-packs-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 }
 
 @media (max-width: 768px) {
+  .ZENVE-credits-section-card {
+    margin-top: 16px !important;
+    padding: 16px 14px !important;
+  }
+
   .ZENVE-credits-kpi-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    margin-bottom: 18px !important;
+  }
+
+  .ZENVE-credits-kpi-tile {
+    padding: 12px 14px !important;
+  }
+
+  .ZENVE-credits-tile-label {
+    font-size: 10.5px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .ZENVE-credits-tile-value {
+    font-size: 22px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .ZENVE-credits-tile-subtext {
+    font-size: 11px !important;
+  }
+
+  .ZENVE-daily-burn-banner {
+    padding: 12px 14px !important;
+    margin-bottom: 18px !important;
+    gap: 6px !important;
+  }
+
+  .ZENVE-daily-burn-calc {
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+    word-break: break-word !important;
+  }
+
+  .ZENVE-daily-burn-total {
+    font-size: 13.5px !important;
+  }
+
+  .ZENVE-daily-burn-rates {
+    font-size: 11.5px !important;
+  }
+
+  .ZENVE-credits-section-block {
+    margin-top: 18px !important;
+    margin-bottom: 20px !important;
   }
 
   .ZENVE-offline-packs-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .ZENVE-offline-pack-card {
+    padding: 14px !important;
+  }
+
+  .ZENVE-pack-details {
+    min-height: auto !important;
+    margin-bottom: 12px !important;
+    font-size: 11.5px !important;
+  }
+
+  .ZENVE-btn-buy-pack {
+    width: 100% !important;
+    align-self: stretch !important;
+    text-align: center !important;
+    justify-content: center !important;
+    display: flex !important;
+    padding: 9px 16px !important;
+    font-size: 13px !important;
+    box-sizing: border-box !important;
   }
 
   .ZENVE-statement-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    padding: 12px 14px !important;
+  }
+
+  .ZENVE-statement-desc {
+    width: 100% !important;
+    font-size: 13px !important;
   }
 
   .ZENVE-statement-meta {
-    width: 100%;
-    justify-content: space-between;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .ZENVE-statement-pts {
+    min-width: auto !important;
+    text-align: left !important;
+    font-size: 13px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .ZENVE-credits-kpi-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .ZENVE-credits-kpi-tile {
+    padding: 10px 12px !important;
+  }
+
+  .ZENVE-credits-tile-value {
+    font-size: 20px !important;
+  }
+
+  .ZENVE-offline-pack-card {
+    padding: 12px 12px !important;
+  }
+
+  .ZENVE-pack-name {
+    font-size: 15px !important;
+  }
+
+  .ZENVE-pack-price {
+    font-size: 14px !important;
   }
 }
 

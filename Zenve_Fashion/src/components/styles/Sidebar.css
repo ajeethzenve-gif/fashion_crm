@@ -223,3 +223,372 @@
   position: relative;
 }
 
+/* =========================================================
+   DESKTOP DEFAULT RULES (NORMAL VIEW REMAINS 100% UNCHANGED)
+   ========================================================= */
+.mobile-drawer-header,
+.zenve-mobile-topbar,
+.zenve-mobile-overlay {
+  display: none !important;
+}
+
+/* =========================================================
+   MOBILE RESPONSIVE DRAWER & MENU SYSTEM (max-width: 1024px)
+   Matches Reference Image: Royal Blue Header Card + White Menu Options
+   ========================================================= */
+@media (max-width: 1024px) {
+  /* Layout container switches to mobile column stack */
+  .zenve-app-layout {
+    flex-direction: column !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  /* Sticky Mobile Top Bar with Branding & ☰ Hamburger Menu Trigger */
+  .zenve-mobile-topbar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    padding: 0 16px !important;
+    background: linear-gradient(90deg, #FFFDF9 0%, #FFF8EE 100%) !important;
+    border-bottom: 1px solid rgba(212, 160, 23, 0.28) !important;
+    box-shadow: 0 2px 10px rgba(78, 52, 28, 0.05) !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 500 !important;
+    flex-shrink: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .zenve-mobile-brand {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+
+  .zenve-mobile-brand img {
+    height: 32px !important;
+    width: auto !important;
+    object-fit: contain !important;
+  }
+
+  .zenve-mobile-brand-text {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .zenve-mobile-brand-title {
+    font-family: var(--ZENVE-serif, Georgia, serif) !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    color: #7A4A12 !important;
+    letter-spacing: 0.8px !important;
+    line-height: 1 !important;
+  }
+
+  .zenve-mobile-brand-sub {
+    font-size: 8.5px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    color: #A67C00 !important;
+    font-weight: 600 !important;
+    margin-top: 2px !important;
+  }
+
+  .zenve-mobile-topbar-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+
+  .zenve-mobile-user-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: #7A4A12 !important;
+    background: #FFF1C7 !important;
+    border: 1px solid rgba(212, 160, 23, 0.35) !important;
+    padding: 3px 10px !important;
+    border-radius: 12px !important;
+    max-width: 130px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .zenve-mobile-menu-toggle {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 8px !important;
+    background: #FFF4DC !important;
+    border: 1px solid rgba(212, 160, 23, 0.4) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #7A4A12 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    padding: 0 !important;
+  }
+
+  .zenve-mobile-menu-toggle:active {
+    transform: scale(0.94) !important;
+    background: #FFE8B6 !important;
+  }
+
+  /* Content area occupies full width on mobile */
+  .zenve-main-content {
+    width: 100% !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .zenve-page-scroll {
+    width: 100% !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Dark Blurred Backdrop Overlay behind the Drawer */
+  .zenve-mobile-overlay {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(36, 20, 7, 0.55) !important;
+    backdrop-filter: blur(3px) !important;
+    -webkit-backdrop-filter: blur(3px) !important;
+    z-index: 9998 !important;
+    animation: zenveFadeIn 0.25s ease-out !important;
+  }
+
+  @keyframes zenveFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Mobile Slide-Out Drawer Panel (slides in smoothly from the right) */
+  .zenve-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: auto !important;
+    width: min(85vw, 340px) !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    background: linear-gradient(180deg, #FFFDF9 0%, #FFF8EE 100%) !important;
+    border-left: 1px solid rgba(212, 160, 23, 0.25) !important;
+    border-right: none !important;
+    box-shadow: -8px 0 36px rgba(78, 52, 28, 0.25) !important;
+    z-index: 9999 !important;
+    transform: translateX(100%) !important;
+    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  .zenve-sidebar.mobile-open {
+    transform: translateX(0) !important;
+  }
+
+  /* Hide desktop header & decorative waves inside mobile drawer */
+  .sidebar-logo {
+    display: none !important;
+  }
+
+  .sidebar-golden-waves {
+    display: none !important;
+  }
+
+  /* =========================================================
+     TOP USER HEADER CARD IN MOBILE DRAWER
+     Warm Luxury Fashion Espresso & Gold Atelier Palette
+     ========================================================= */
+  .mobile-drawer-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 16px 18px !important;
+    background: linear-gradient(135deg, #2D1A0A 0%, #4A2E12 50%, #6E441B 100%) !important;
+    color: #FFFFFF !important;
+    flex-shrink: 0 !important;
+    box-sizing: border-box !important;
+    border-bottom: 2px solid #D4A017 !important;
+    box-shadow: 0 4px 16px rgba(45, 26, 10, 0.2) !important;
+  }
+
+  .mobile-drawer-user {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    min-width: 0 !important;
+  }
+
+  .mobile-drawer-avatar {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
+    background: linear-gradient(135deg, #FFF6E0 0%, #FFE5A3 100%) !important;
+    color: #7A4A12 !important;
+    border: 1.5px solid #D4A017 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .mobile-drawer-user-meta {
+    display: flex !important;
+    flex-direction: column !important;
+    min-width: 0 !important;
+  }
+
+  .mobile-drawer-username {
+    font-size: 16.5px !important;
+    font-weight: 700 !important;
+    color: #FFFBF2 !important;
+    line-height: 1.25 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-family: var(--font-luxury, 'Playfair Display', Georgia, serif) !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  .mobile-drawer-account-label {
+    font-size: 11.5px !important;
+    color: #E5C88E !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    margin-top: 2px !important;
+  }
+
+  /* Close "✕" Button on Top Right */
+  .mobile-drawer-close-btn {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 8px !important;
+    background: rgba(255, 248, 232, 0.15) !important;
+    border: 1px solid rgba(231, 199, 122, 0.35) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #FFF8E8 !important;
+    cursor: pointer !important;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease !important;
+    flex-shrink: 0 !important;
+    padding: 0 !important;
+  }
+
+  .mobile-drawer-close-btn:hover {
+    background: rgba(255, 248, 232, 0.28) !important;
+    border-color: #D4A017 !important;
+    color: #FFFFFF !important;
+  }
+
+  .mobile-drawer-close-btn:active {
+    transform: scale(0.92) !important;
+    background: #D4A017 !important;
+    color: #2D1A0A !important;
+  }
+
+  /* =========================================================
+     MENU OPTIONS LIST IN MOBILE DRAWER
+     Warm Luxury Silk Cream + Antique Gold & Cognac Accents
+     ========================================================= */
+  .sidebar-nav {
+    padding: 14px 10px 18px 10px !important;
+    background: transparent !important;
+    flex: 1 !important;
+    overflow-y: auto !important;
+    gap: 4px !important;
+  }
+
+  .nav-link {
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    padding: 12px 14px !important;
+    border-radius: 8px !important;
+    color: #4A2E12 !important;
+    font-size: 14.5px !important;
+    font-weight: 500 !important;
+    text-decoration: none !important;
+    transition: background 0.15s ease, color 0.15s ease !important;
+    border: none !important;
+    background: transparent !important;
+  }
+
+  .nav-link:hover {
+    background: rgba(212, 160, 23, 0.12) !important;
+    color: #2D1A0A !important;
+  }
+
+  .nav-link.active {
+    background: linear-gradient(90deg, #C89B5B 0%, #B8860B 100%) !important;
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(184, 134, 11, 0.3) !important;
+  }
+
+  .nav-icon-wrap {
+    color: #B8860B !important; /* Deep antique gold matching Zenve brand */
+    opacity: 1 !important;
+    width: 22px !important;
+    height: 22px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    transition: color 0.15s ease !important;
+  }
+
+  .nav-link:hover .nav-icon-wrap {
+    color: #7A4A12 !important;
+  }
+
+  .nav-link.active .nav-icon-wrap {
+    color: #FFFFFF !important;
+  }
+
+  /* Bottom Actions Section */
+  .sidebar-bottom {
+    background: #FFF8E8 !important;
+    border-top: 1px solid rgba(212, 160, 23, 0.22) !important;
+    padding: 14px 16px !important;
+    margin-top: auto !important;
+  }
+
+  .sidebar-user-info {
+    display: none !important; /* Profile is already in the top luxury header card */
+  }
+
+  .sidebar-signout-btn {
+    background: #FFF1C7 !important;
+    border: 1px solid #E7C77A !important;
+    color: #7A4A12 !important;
+    font-weight: 600 !important;
+    padding: 11px !important;
+    border-radius: 8px !important;
+    font-size: 13.5px !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .sidebar-signout-btn:hover {
+    background: #FFE8A3 !important;
+    border-color: #D4A017 !important;
+    color: #4A2C0A !important;
+  }
+}
+

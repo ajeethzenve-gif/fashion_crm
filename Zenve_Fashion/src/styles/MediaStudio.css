@@ -3189,3 +3189,17 @@
     max-height: 85vh;
   }
 }
+
+@media (max-width: 480px) {
+  .media-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .media-metric-card:last-child {
+    grid-column: span 1;
+  }
+
+  .media-cards-grid-10 {
+    grid-template-columns: 1fr;
+  }
+}
