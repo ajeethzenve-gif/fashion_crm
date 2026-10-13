@@ -117,6 +117,7 @@ export default function DesignerCRM() {
   // Add Designer Modal State
   const [showAddModal, setShowAddModal] = useState(false);
   const [useCompanyGst, setUseCompanyGst] = useState(false);
+  const [requestCompanyGst, setRequestCompanyGst] = useState(false);
   const [showGstModal, setShowGstModal] = useState(false);
   const addSectionRef = useRef(null);
 
@@ -354,18 +355,18 @@ export default function DesignerCRM() {
       city: designer.city || "",
       state: designer.state || "",
       primary_category: designer.primary_category || designer.category || "",
-      gst: designerGst,
+      gst: designer.gst_number || designerGst,
       take_rate: designer.take_rate !== undefined && designer.take_rate !== null ? designer.take_rate : (designer.takeRate || ""),
-      renewal_likelihood_pct: designer.renewal_likelihood_pct || designer.renewalProbability || "",
-      next_follow_up: designer.next_follow_up || designer.nextFollowUp || "",
-      contract_ends: designer.contract_ends || designer.contractEnds || "",
+      renewal_likelihood_pct: designer.renewal_likelihood ?? "",
+      next_follow_up: designer.next_followup_date || "",
+      contract_ends: designer.contract_end_date || "",
       stage: designer.stage || (designer.status === "Inactive" ? "INACTIVE" : "LIVE"),
       kyc_status: designer.kyc_status || (designer.kyc_verified ? "VERIFIED" : "PENDING"),
       tier: designer.tier || "",
-      credits_plan: designer.credits_plan || designer.fashionCreditPlan || designer.membership_plan || "",
+      credits_plan: designer.online_membership_plan || "",
       health_score: designer.health_score || "",
       sales_admin: designer.sales_admin || designer.owner || designer.sales_owner || "",
-      renewal_likelihood: designer.renewal_likelihood || "",
+      renewal_likelihood: designer.renewal_preference || "",
       fulfillment: designer.fulfillment || "",
       lost_reason: designer.lost_reason || "",
       source: designer.source || "",
@@ -382,10 +383,34 @@ export default function DesignerCRM() {
     setShowEditModal(true);
   };
 
+  const editSaveQueue = useRef(Promise.resolve());
+  const saveEditSection = (changes) => {
+    const designerId = activeDesigner.id;
+    const save = editSaveQueue.current.catch(() => {}).then(async () => {
+      const saved = await updateDesigner(designerId, changes);
+      setDesigners((list) => list.map((d) => d.id === designerId ? { ...d, ...saved } : d));
+      setActiveDesigner((current) => current?.id === designerId ? { ...current, ...saved } : current);
+      return saved;
+    });
+    editSaveQueue.current = save;
+    return save;
+  };
+
+  const handleAutoSaveEdit = async (field, value, changes = { [field]: value }) => {
+    const previous = editForm[field];
+    setEditForm((prev) => ({ ...prev, [field]: value }));
+    try {
+      await saveEditSection(changes);
+      showSuccessToast("Change saved.");
+    } catch (err) {
+      setEditForm((prev) => prev[field] === value ? { ...prev, [field]: previous } : prev);
+      showErrorToast(err.message || "Could not save change.");
+    }
+  };
+
   const handleToggleKycInEdit = () => {
     const nextStatus = editForm.kyc_status === "VERIFIED" ? "PENDING" : "VERIFIED";
-    setEditForm((prev) => ({ ...prev, kyc_status: nextStatus }));
-    showSuccessToast(`KYC status set to ${nextStatus === "VERIFIED" ? "Verified" : "Pending"}`);
+    handleAutoSaveEdit("kyc_status", nextStatus);
   };
 
   const handleAdvanceStageInEdit = () => {
@@ -396,8 +421,7 @@ export default function DesignerCRM() {
     } else {
       nextStage = "ACTIVE";
     }
-    setEditForm((prev) => ({ ...prev, stage: nextStage }));
-    showSuccessToast(`Stage advanced to ${nextStage}`);
+    handleAutoSaveEdit("stage", nextStage);
   };
 
   const handleCopyVendorLoginLink = () => {
@@ -408,7 +432,7 @@ export default function DesignerCRM() {
     showSuccessToast("Designer login link copied to clipboard!");
   };
 
-  const handleAddTaskInEdit = (e) => {
+  const handleAddTaskInEdit = async (e) => {
     e.preventDefault();
     if (!newFollowUpText.trim()) {
       showWarningToast("Please enter task details");
@@ -416,17 +440,26 @@ export default function DesignerCRM() {
     }
     const newTask = {
       id: Date.now(),
-      text: newFollowUpText.trim(),
-      date: newFollowUpDate || new Date().toISOString().split("T")[0],
+      title: newFollowUpText.trim(),
+      due_date: newFollowUpDate || new Date().toISOString().split("T")[0],
     };
-    setFollowUpTasks((prev) => [...prev, newTask]);
+    try {
+      const saved = await saveEditSection({ add_task: newTask });
+      setFollowUpTasks(saved.follow_up_tasks || []);
+    } catch (err) {
+      showErrorToast(err.message || "Could not save task.");
+      return;
+    }
     setNewFollowUpText("");
     setNewFollowUpDate("");
     showSuccessToast("Follow-up task added");
   };
 
-  const handleRemoveTaskInEdit = (taskId) => {
-    setFollowUpTasks((prev) => prev.filter((t) => t.id !== taskId));
+  const handleRemoveTaskInEdit = async (taskId) => {
+    try {
+      const saved = await saveEditSection({ remove_task_id: taskId });
+      setFollowUpTasks(saved.follow_up_tasks || []);
+    } catch (err) { showErrorToast(err.message || "Could not remove task."); }
   };
 
   // Open View Modal
@@ -441,8 +474,6 @@ export default function DesignerCRM() {
     if (!activeDesigner) return;
     try {
       const updated = {
-        ...activeDesigner,
-        ...editForm,
         designer_name: editForm.designer_name,
         brand_name: editForm.brand_name,
         email: editForm.email,
@@ -450,31 +481,14 @@ export default function DesignerCRM() {
         city: editForm.city,
         state: editForm.state,
         primary_category: editForm.primary_category,
-        gst: editForm.gst,
+        gst_number: editForm.gst || null,
         take_rate: editForm.take_rate,
-        renewal_likelihood_pct: editForm.renewal_likelihood_pct,
-        next_follow_up: editForm.next_follow_up,
-        contract_ends: editForm.contract_ends,
-        stage: editForm.stage,
-        kyc_status: editForm.kyc_status,
-        kyc_verified: editForm.kyc_status === "VERIFIED",
-        sales_admin: editForm.sales_admin,
-        credits_plan: editForm.credits_plan,
-        renewal_likelihood: editForm.renewal_likelihood,
-        fulfillment: editForm.fulfillment,
-        lost_reason: editForm.lost_reason,
-        follow_up_tasks: followUpTasks,
+        renewal_likelihood: Number(editForm.renewal_likelihood_pct) || 0,
+        next_followup_date: editForm.next_follow_up || null,
+        contract_end_date: editForm.contract_ends || null,
       };
 
-      setDesigners((list) =>
-        list.map((d) => (d.id === activeDesigner.id ? updated : d))
-      );
-      setActiveDesigner(updated);
-
-      const savedDesigner = await updateDesigner(activeDesigner.id, updated);
-      const saved = { ...updated, ...savedDesigner };
-      setDesigners((list) => list.map((d) => d.id === activeDesigner.id ? saved : d));
-      setActiveDesigner(saved);
+      await saveEditSection(updated);
       showSuccessToast(`Saved details for ${editForm.brand_name || editForm.designer_name || "Designer"}`);
     } catch (err) {
       showErrorToast("Could not update designer details.");
@@ -511,6 +525,7 @@ export default function DesignerCRM() {
       credit_points: Number(modalNewLead.creditPoints) || 0,
       take_rate: modalNewLead.takeRate ? Number(modalNewLead.takeRate) : 0,
       gst_number: useCompanyGst ? COMPANY_GST_INFO.gstNumber : (modalNewLead.gst || null),
+      request_company_gst: requestCompanyGst,
       contract_end_date: modalNewLead.contractEnds || null,
       next_followup_date: modalNewLead.nextFollowUp || null,
       acquisition_cost: modalNewLead.cac ? Number(modalNewLead.cac) : 0,
@@ -545,6 +560,7 @@ export default function DesignerCRM() {
         renewalProbability: "",
       });
       setUseCompanyGst(false);
+      setRequestCompanyGst(false);
     } catch (err) {
       showErrorToast(err.message || "Failed to create designer record on server.");
     }
@@ -625,6 +641,16 @@ Login requires approval and completed KYC verification.`;
           LUXURY HERO BANNER WITH FASHION ATELIER ARTWORK
       ===================================================== */}
       <main className="crm-main-container">
+        {designers.some((designer) => designer.gst_requested_at && !designer.gst_number) && (
+          <section className="crm-gst-notifications" aria-label="GST request notifications">
+            <strong>New GST requests need review</strong>
+            {designers.filter((designer) => designer.gst_requested_at && !designer.gst_number).map((designer) => (
+              <button type="button" key={designer.id} onClick={() => handleOpenEditModal(designer)}>
+                {designer.brand_name || designer.designer_name}: company GST creation requested · View designer
+              </button>
+            ))}
+          </section>
+        )}
         <section className="crm-hero-banner">
           <div className="crm-banner-content">
             <h1 className="crm-hero-title">Designer CRM</h1>
@@ -1293,18 +1319,19 @@ Login requires approval and completed KYC verification.`;
                     type="checkbox"
                     id="lead-company-gst-chk"
                     className="crm-custom-checkbox"
-                    checked={useCompanyGst}
+                    checked={useCompanyGst || requestCompanyGst}
                     onChange={(e) => {
                       if (e.target.checked) {
                         setShowGstModal(true);
                       } else {
                         setUseCompanyGst(false);
+                        setRequestCompanyGst(false);
                         setModalNewLead((prev) => ({ ...prev, gst: "" }));
                       }
                     }}
                   />
                   <label htmlFor="lead-company-gst-chk" className="crm-checkbox-label">
-                    Designer doesn't have a GST number? (Use / Request Company GST)
+                    {requestCompanyGst ? "New GST requested — will be submitted when you create this designer" : "Designer doesn't have a GST number? (Use / Request Company GST)"}
                   </label>
                 </div>
               </div>
@@ -1521,7 +1548,7 @@ Login requires approval and completed KYC verification.`;
                             role="option"
                             aria-selected={isSelected}
                             onClick={() => {
-                              setEditForm((prev) => ({ ...prev, stage: stg }));
+                              handleAutoSaveEdit("stage", stg);
                               setStageDropdownOpen(false);
                             }}
                           >
@@ -1690,8 +1717,8 @@ Login requires approval and completed KYC verification.`;
                   <div className="crm-edit-tasks-list">
                     {followUpTasks.map((task) => (
                       <div key={task.id} className="crm-edit-task-item">
-                        <span className="crm-edit-task-text">{task.text}</span>
-                        <span className="crm-edit-task-date">{task.date}</span>
+                        <span className="crm-edit-task-text">{task.title || task.text}</span>
+                        <span className="crm-edit-task-date">{task.due_date || task.date}</span>
                         <button
                           type="button"
                           className="crm-edit-task-remove-btn"
@@ -1738,7 +1765,7 @@ Login requires approval and completed KYC verification.`;
                       <select
                         className="crm-edit-dropdown-select"
                         value={editForm.sales_admin || ""}
-                        onChange={(e) => setEditForm({ ...editForm, sales_admin: e.target.value })}
+                        onChange={(e) => handleAutoSaveEdit("sales_admin", e.target.value, { sales_owner: e.target.value })}
                       >
                         <option value="">Select Sales Admin</option>
                         {SALES_OWNERS.map((own) => (
@@ -1754,11 +1781,11 @@ Login requires approval and completed KYC verification.`;
                       <select
                         className="crm-edit-dropdown-select"
                         value={editForm.credits_plan || ""}
-                        onChange={(e) => setEditForm({ ...editForm, credits_plan: e.target.value })}
+                        onChange={(e) => handleAutoSaveEdit("credits_plan", e.target.value, { online_membership_plan: e.target.value || null })}
                       >
                         <option value="">Select Credits Plan</option>
                         {FASHION_CREDIT_PLANS.map((plan) => (
-                          <option key={plan.id} value={`${plan.name} (${plan.points} Pts)`}>
+                          <option key={plan.id} value={plan.id.toUpperCase()}>
                             {plan.name} ({plan.points} Pts)
                           </option>
                         ))}
@@ -1772,7 +1799,7 @@ Login requires approval and completed KYC verification.`;
                       <select
                         className="crm-edit-dropdown-select"
                         value={editForm.renewal_likelihood || ""}
-                        onChange={(e) => setEditForm({ ...editForm, renewal_likelihood: e.target.value })}
+                        onChange={(e) => handleAutoSaveEdit("renewal_likelihood", e.target.value, { renewal_preference: e.target.value })}
                       >
                         <option value="">Select Renewal Likelihood</option>
                         <option value="No">No</option>
@@ -1791,7 +1818,7 @@ Login requires approval and completed KYC verification.`;
                       <select
                         className="crm-edit-dropdown-select"
                         value={editForm.fulfillment || ""}
-                        onChange={(e) => setEditForm({ ...editForm, fulfillment: e.target.value })}
+                        onChange={(e) => handleAutoSaveEdit("fulfillment", e.target.value)}
                       >
                         <option value="">Select Fulfillment</option>
                         <option value="Both">Both</option>
@@ -1810,7 +1837,7 @@ Login requires approval and completed KYC verification.`;
                     <select
                       className="crm-edit-dropdown-select"
                       value={editForm.lost_reason || ""}
-                      onChange={(e) => setEditForm({ ...editForm, lost_reason: e.target.value })}
+                      onChange={(e) => handleAutoSaveEdit("lost_reason", e.target.value)}
                     >
                       <option value="">Select a lost reason</option>
                       <option value="High Take Rate">High Take Rate</option>
@@ -1918,9 +1945,10 @@ Login requires approval and completed KYC verification.`;
           <div className="crm-lead-modal-card crm-gst-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="crm-lead-modal-header">
               <div className="crm-lead-modal-title-wrap">
-                <h3 className="crm-lead-modal-title">Company GST Coverage</h3>
+                <span className="crm-gst-eyebrow">PLATFORM TAX COMPLIANCE</span>
+                <h3 className="crm-lead-modal-title">Company GST Coverage & Creation</h3>
                 <p className="crm-lead-modal-subtitle">
-                  Apply ZENVE Fashion's master GSTIN to this designer.
+                  Assign our master company GST number or request a new dedicated GST number for this vendor.
                 </p>
               </div>
               <button
@@ -1936,28 +1964,47 @@ Login requires approval and completed KYC verification.`;
               <div className="crm-gst-info-card">
                 <p><strong>Legal Entity:</strong> {COMPANY_GST_INFO.name}</p>
                 <p><strong>Master GSTIN:</strong> <code>{maskGstNumber(COMPANY_GST_INFO.gstNumber)}</code></p>
+                <p><strong>Security mask:</strong> Protected for security (Only last 4 digits shown)</p>
                 <p><strong>Jurisdiction:</strong> {COMPANY_GST_INFO.state}</p>
               </div>
 
+              <div className="crm-gst-request-card">
+                <strong>CREATE NEW GST · Request Company to Create New GST for Vendor</strong>
+                <p>Does this vendor need their own dedicated GST number? Submit a request for the company tax team to review and register a GSTIN for this vendor.</p>
+                <button type="button" className="crm-gst-request-btn" onClick={() => {
+                  setRequestCompanyGst(true); setUseCompanyGst(false);
+                  setModalNewLead((prev) => ({ ...prev, gst: "" }));
+                  setShowGstModal(false);
+                  showSuccessToast("GST request selected. Create the designer to submit the request.");
+                }}>＋ Request Company to Create New GST for This Vendor</button>
+              </div>
+              <p className="crm-gst-apply-note">Or apply your existing company master GST (<strong>{maskGstNumber(COMPANY_GST_INFO.gstNumber)}</strong>) for this new vendor lead immediately?</p>
               <div className="crm-gst-modal-actions">
                 <button
                   type="button"
                   className="crm-btn-create-lead"
                   onClick={() => {
                     setUseCompanyGst(true);
+                    setRequestCompanyGst(false);
                     setModalNewLead((prev) => ({ ...prev, gst: COMPANY_GST_INFO.gstNumber }));
                     setShowGstModal(false);
                     showSuccessToast("Applied Company GSTIN!");
                   }}
                 >
-                  Apply Company GST
+                  ✓ Yes, Use Company GST
                 </button>
+                <button type="button" className="crm-gst-request-secondary" onClick={() => {
+                  setRequestCompanyGst(true); setUseCompanyGst(false);
+                  setModalNewLead((prev) => ({ ...prev, gst: "" }));
+                  setShowGstModal(false);
+                  showSuccessToast("GST request selected. Create the designer to submit the request.");
+                }}>＋ Request New Company GST</button>
                 <button
                   type="button"
                   className="crm-btn-reset"
                   onClick={() => setShowGstModal(false)}
                 >
-                  Cancel
+                  No, Cancel
                 </button>
               </div>
             </div>

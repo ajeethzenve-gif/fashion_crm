@@ -241,6 +241,13 @@ class DesignerDetailAPIView(APIView):
             # FOLLOW-UP TASK
             # =================================================
 
+            if "remove_task_id" in data:
+                task_id = str(data.pop("remove_task_id"))
+                data["follow_up_tasks"] = [
+                    task for task in (designer.follow_up_tasks or [])
+                    if str(task.get("id")) != task_id
+                ]
+
             if "add_task" in data:
 
                 task = data.pop(
@@ -584,6 +591,12 @@ class DesignerPortalDashboardAPIView(APIView):
 
         # Notifications list from designer or recent activity
         notifications = []
+        if designer.gst_requested_at:
+            notifications.append({
+                "id": f"gst-request-{designer.pk}", "kind": "GST_REQUEST",
+                "message": "A new GST number has been requested for your business. The company tax team needs to review this request.",
+                "at": designer.gst_requested_at.isoformat(), "read": False,
+            })
         if getattr(designer, "follow_up_tasks", None):
             for idx, task in enumerate(designer.follow_up_tasks):
                 notifications.append({

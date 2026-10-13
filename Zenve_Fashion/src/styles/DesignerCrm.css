@@ -1832,7 +1832,6 @@
     grid-template-columns: 1fr;
   }
 }
-<<<<<<< Updated upstream
 
 @media (max-width: 768px) {
   .crm-main-container {
@@ -2032,5 +2031,3 @@
     justify-content: center;
   }
 }
-=======
->>>>>>> Stashed changes
