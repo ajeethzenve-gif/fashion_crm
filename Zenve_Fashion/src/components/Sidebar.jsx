@@ -335,7 +335,7 @@ export default function Sidebar({ mobileOpen = false, onCloseMobile = () => {} }
 
           {layers.filter((layer) => hasAccess(layer.n)).map((layer) => {
             const isActive = location.pathname === layer.path || location.pathname.startsWith(`${layer.path}/`);
-            const icon = iconMap[layer.name] || iconMap["Home"];
+            const icon = layer.n === "16" ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" /><path d="M10 21h4" /></svg> : iconMap[layer.name] || iconMap["Home"];
             const displayName = getDisplayName(layer.name);
             return (
               <Link
