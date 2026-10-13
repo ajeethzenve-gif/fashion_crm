@@ -349,13 +349,84 @@ export default function DesignerPortal() {
   const [portalError, setPortalError] = useState("");
 
   /* =======================================================
-     NOTIFICATIONS
+     NOTIFICATIONS & SUB-VIEWS (PROFILE, REVIEWS)
   ======================================================= */
 
   const [notifSidebarOpen, setNotifSidebarOpen] = useState(false);
   const [showMediaReviews, setShowMediaReviews] = useState(false);
+  const [showProfileAndAccount, setShowProfileAndAccount] = useState(false);
+  const hasPromptedAccountRef = useRef({});
   
   const location = useLocation();
+
+  // Listen to quick-action triggers from Sidebar menu option (Desktop & Mobile Drawer)
+  useEffect(() => {
+    const handleToggleProfile = () => {
+      setShowMediaReviews(false);
+      setShowProfileAndAccount((prev) => {
+        const nextState = !prev;
+        if (nextState) {
+          hasPromptedAccountRef.current[selectedDesignerId] = false;
+          setTimeout(() => {
+            const el = document.getElementById("zenve-profile-account-section");
+            if (el) {
+              el.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          }, 120);
+        }
+        return nextState;
+      });
+    };
+
+    const handleToggleReviews = () => {
+      setShowProfileAndAccount(false);
+      setShowMediaReviews((prev) => !prev);
+    };
+
+    const handleOpenNotif = () => setNotifSidebarOpen(true);
+
+    window.addEventListener("zenve:toggle-profile", handleToggleProfile);
+    window.addEventListener("zenve:toggle-reviews", handleToggleReviews);
+    window.addEventListener("zenve:open-notifications", handleOpenNotif);
+
+    return () => {
+      window.removeEventListener("zenve:toggle-profile", handleToggleProfile);
+      window.removeEventListener("zenve:toggle-reviews", handleToggleReviews);
+      window.removeEventListener("zenve:open-notifications", handleOpenNotif);
+    };
+  }, [selectedDesignerId]);
+
+  // Sync active view states back to the menu option
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("zenve:designer-view-state", {
+        detail: {
+          profile: showProfileAndAccount,
+          reviews: showMediaReviews,
+        },
+      })
+    );
+  }, [showProfileAndAccount, showMediaReviews]);
+
+  // Support deep-link / URL query navigation (e.g. /designer-portal?view=profile)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const view = params.get("view");
+    if (view === "profile") {
+      setShowMediaReviews(false);
+      setShowProfileAndAccount(true);
+      setTimeout(() => {
+        const el = document.getElementById("zenve-profile-account-section");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 150);
+    } else if (view === "reviews") {
+      setShowProfileAndAccount(false);
+      setShowMediaReviews(true);
+    }
+  }, [location.search]);
+
   useEffect(() => {
     setShowMediaReviews(false);
     setShowProfileAndAccount(false);
@@ -669,11 +740,8 @@ export default function DesignerPortal() {
   const [isAccountMasked, setIsAccountMasked] = useState(true);
 
   /* =======================================================
-     PROFILE / ACCOUNT VIEW
+     PROFILE / ACCOUNT VIEW (Declared at top for menu sync)
   ======================================================= */
-
-  const [showProfileAndAccount, setShowProfileAndAccount] =
-    useState(false);
 
   /* =======================================================
      CREDIT POINTS STATE
@@ -1865,8 +1933,6 @@ export default function DesignerPortal() {
      ACCOUNT DETAILS INCOMPLETE SWEETALERT REMINDER
   ======================================================= */
 
-  const hasPromptedAccountRef = useRef({});
-
   useEffect(() => {
     if (
       showProfileAndAccount &&
@@ -2177,106 +2243,36 @@ export default function DesignerPortal() {
           </div>
         </div>
 
-        <div className="ZENVE-header-right">
+        <div className={`ZENVE-header-right ${currentUser?.id === "designer" ? "zenve-designer-header-right" : ""}`}>
           {currentUser?.id !== "designer" && <SearchBar />}
           <div className="ZENVE-header-right-controls">
-            
-
             <div className="ZENVE-header-actions-group">
               {currentUser?.id === "designer" && (
-                <>
-                  <button
-                    type="button"
-                className={`ZENVE-header-profile-btn ${showProfileAndAccount
-                  ? "active"
-                  : ""
-                  }`}
-                onClick={() => {
-                  setShowProfileAndAccount(
-                    (prev) => {
-                      const nextState = !prev;
+                <button
+                  type="button"
+                  className="ZENVE-header-notif-btn"
+                  onClick={() =>
+                    setNotifSidebarOpen(true)
+                  }
+                  aria-label="Open notifications sidebar"
+                  title={
+                    unreadNotifications > 0
+                      ? `${unreadNotifications} unread notification${unreadNotifications >
+                        1
+                        ? "s"
+                        : ""
+                      }`
+                      : "Notifications"
+                  }
+                >
+                  <BellIcon />
 
-                      if (!prev) {
-                        hasPromptedAccountRef.current[selectedDesignerId] = false;
-                        setTimeout(() => {
-                          const el =
-                            document.getElementById(
-                              "zenve-profile-account-section"
-                            );
-
-                          if (el) {
-                            el.scrollIntoView({
-                              behavior: "smooth",
-                              block: "start",
-                            });
-                          }
-                        }, 120);
-                      }
-
-                      return nextState;
-                    }
-                  );
-                }}
-                title={
-                  showProfileAndAccount
-                    ? "Hide My Profile & Account Details"
-                    : "View My Profile & Account Details"
-                }
-                aria-expanded={
-                  showProfileAndAccount
-                }
-                aria-label="Profile and Account Details"
-              >
-                <UserProfileIcon />
-
-                {showProfileAndAccount && (
-                  <span className="ZENVE-header-active-dot" />
-                )}
-              </button>
-
-              <button
-                type="button"
-                className={`ZENVE-header-profile-btn ${showMediaReviews ? "active" : ""}`}
-                onClick={() => {
-                  setShowMediaReviews(!showMediaReviews);
-                  if (!showMediaReviews) setShowProfileAndAccount(false); // mutually exclusive
-                }}
-                title="Designer Reviews"
-              >
-                <ImageIcon />
-                {showMediaReviews && (
-                  <span className="ZENVE-header-active-dot" />
-                )}
-              </button>
-
-
-
-              <button
-                type="button"
-                className="ZENVE-header-notif-btn"
-                onClick={() =>
-                  setNotifSidebarOpen(true)
-                }
-                aria-label="Open notifications sidebar"
-                title={
-                  unreadNotifications > 0
-                    ? `${unreadNotifications} unread notification${unreadNotifications >
-                      1
-                      ? "s"
-                      : ""
-                    }`
-                    : "Notifications"
-                }
-              >
-                <BellIcon />
-
-                {unreadNotifications > 0 && (
-                  <span className="ZENVE-header-notif-badge">
-                    {unreadNotifications}
-                  </span>
-                )}
-              </button>
-              </>
+                  {unreadNotifications > 0 && (
+                    <span className="ZENVE-header-notif-badge">
+                      {unreadNotifications}
+                    </span>
+                  )}
+                </button>
               )}
             </div>
           </div>

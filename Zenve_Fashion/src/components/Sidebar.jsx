@@ -146,10 +146,91 @@ function UserIcon() {
   );
 }
 
+function DesignerProfileIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  );
+}
+
+function DesignerImageIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+      <circle cx="8.5" cy="8.5" r="1.5" />
+      <polyline points="21 15 16 10 5 21" />
+    </svg>
+  );
+}
+
 export default function Sidebar({ mobileOpen = false, onCloseMobile = () => {} }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { currentUser, logout, hasAccess } = useAuth();
+
+  const [designerProfileActive, setDesignerProfileActive] = React.useState(false);
+  const [designerReviewsActive, setDesignerReviewsActive] = React.useState(false);
+
+  // Sync active view states with DesignerPortal
+  useEffect(() => {
+    const handleStateChange = (e) => {
+      if (e?.detail) {
+        setDesignerProfileActive(Boolean(e.detail.profile));
+        setDesignerReviewsActive(Boolean(e.detail.reviews));
+      }
+    };
+    window.addEventListener("zenve:designer-view-state", handleStateChange);
+    return () => {
+      window.removeEventListener("zenve:designer-view-state", handleStateChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (location.pathname !== "/designer-portal") {
+      setDesignerProfileActive(false);
+      setDesignerReviewsActive(false);
+    }
+  }, [location.pathname]);
+
+  const handleDesignerProfileClick = () => {
+    if (location.pathname === "/designer-portal") {
+      window.dispatchEvent(new CustomEvent("zenve:toggle-profile"));
+    } else {
+      navigate("/designer-portal?view=profile");
+    }
+    if (onCloseMobile) onCloseMobile();
+  };
+
+  const handleDesignerReviewsClick = () => {
+    if (location.pathname === "/designer-portal") {
+      window.dispatchEvent(new CustomEvent("zenve:toggle-reviews"));
+    } else {
+      navigate("/designer-portal?view=reviews");
+    }
+    if (onCloseMobile) onCloseMobile();
+  };
 
   const handleLogout = () => {
     logout();
@@ -287,6 +368,36 @@ export default function Sidebar({ mobileOpen = false, onCloseMobile = () => {} }
                   </span>
                 </div>
               </div>
+
+              {currentUser?.id === "designer" && (
+                <div className="sidebar-designer-menu-actions">
+                  <button
+                    type="button"
+                    className={`sidebar-designer-action-btn ${designerProfileActive ? "active" : ""}`}
+                    onClick={handleDesignerProfileClick}
+                    title="My Profile & Account Details"
+                    aria-label="My Profile & Account Details"
+                  >
+                    <DesignerProfileIcon />
+                    {designerProfileActive && (
+                      <span className="sidebar-designer-active-dot" />
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    className={`sidebar-designer-action-btn ${designerReviewsActive ? "active" : ""}`}
+                    onClick={handleDesignerReviewsClick}
+                    title="Designer Reviews"
+                    aria-label="Designer Reviews"
+                  >
+                    <DesignerImageIcon />
+                    {designerReviewsActive && (
+                      <span className="sidebar-designer-active-dot" />
+                    )}
+                  </button>
+                </div>
+              )}
+
               <button
                 onClick={() => {
                   handleLogout();

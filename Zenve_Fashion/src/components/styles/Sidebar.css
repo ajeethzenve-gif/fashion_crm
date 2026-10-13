@@ -196,6 +196,73 @@
 }
 
 /* =========================================================
+   DESIGNER QUICK-ACTION MENU ICONS (Inside Menu, above Sign Out)
+   Matches exact reference screenshot: Gold bordered square buttons
+   ========================================================= */
+.sidebar-designer-menu-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 12px 0 10px 0;
+  width: 100%;
+}
+
+.sidebar-designer-action-btn {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFFDF8;
+  border: 1.5px solid #E7C77A;
+  border-radius: 8px;
+  color: #5C3814;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(78, 52, 28, 0.05);
+  padding: 0;
+}
+
+.sidebar-designer-action-btn:hover {
+  background: #FFF4DB;
+  border-color: #D4A017;
+  color: #381E07;
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 10px rgba(212, 160, 23, 0.18);
+}
+
+.sidebar-designer-action-btn:active {
+  transform: translateY(0);
+}
+
+.sidebar-designer-action-btn.active {
+  background: #FFEEC4;
+  border-color: #B47814;
+  color: #2D1A0A;
+  box-shadow: 0 0 0 2px rgba(180, 120, 20, 0.22);
+}
+
+.sidebar-designer-action-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+}
+
+.sidebar-designer-active-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #B47814;
+  box-shadow: 0 0 0 1.5px #FFFDF8;
+}
+
+/* =========================================================
    INTEGRATION LAYOUT HELPERS
    To be used by App.jsx or parent components
 ========================================================= */

@@ -205,6 +205,14 @@ DesignerPortal.css
   flex-shrink: 0;
 }
 
+/* Designer Header Right: pinned to far right corner of the page */
+.zenve-designer-header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
 .ZENVE-header-right .search-user-wrapper {
   display: flex;
   align-items: center;
@@ -616,26 +624,34 @@ DesignerPortal.css
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: var(--ZENVE-radius-md);
-  border: 1px solid var(--ZENVE-line);
-  background: var(--ZENVE-paper);
-  color: var(--ZENVE-ink);
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  border: 1.5px solid #E7C77A;
+  background: #FFFDF8;
+  color: #5C3814;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(78, 52, 28, 0.05);
+  padding: 0;
 }
 
 .ZENVE-header-notif-btn:hover {
-  background: var(--ZENVE-subtle);
+  background: #FFF4DB;
   border-color: #D4A017;
-  color: #D4A017;
-  transform: translateY(-1px);
+  color: #381E07;
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 10px rgba(212, 160, 23, 0.18);
 }
 
 .ZENVE-header-notif-btn:active {
   transform: translateY(0);
+}
+
+.ZENVE-header-notif-btn svg {
+  width: 20px;
+  height: 20px;
 }
 
 .ZENVE-header-notif-badge {
@@ -2039,6 +2055,22 @@ DesignerPortal.css
     gap: 8px;
   }
 
+  /* Pinned to far top-right corner on mobile */
+  .zenve-designer-header-right {
+    position: absolute !important;
+    top: 14px !important;
+    right: 14px !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding-top: 0 !important;
+    border-top: none !important;
+    z-index: 10 !important;
+  }
+
+  .zenve-designer-header-right .ZENVE-header-right-controls {
+    width: auto !important;
+  }
+
   .ZENVE-header-right .search-user-wrapper {
     width: 100%;
     display: flex;
@@ -2323,6 +2355,22 @@ DesignerPortal.css
     align-items: center;
     gap: 8px;
     flex-shrink: 0;
+  }
+
+  /* Pinned to top-right corner on tablet / mobile drawer view */
+  .zenve-designer-header-right {
+    position: absolute !important;
+    top: 18px !important;
+    right: 20px !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding-top: 0 !important;
+    border-top: none !important;
+    z-index: 10 !important;
+  }
+
+  .zenve-designer-header-right .ZENVE-header-right-controls {
+    width: auto !important;
   }
 
   .ZENVE-portal-main {
