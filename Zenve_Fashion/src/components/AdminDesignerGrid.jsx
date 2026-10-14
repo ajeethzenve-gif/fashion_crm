@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import bannerImg from '../assest/designer-bg.png';
+import bannerImg from '../assets/login_bg/designer-bg.png';
 
 export default function AdminDesignerGrid({ designers, onDesignerSelect }) {
   const navigate = useNavigate();

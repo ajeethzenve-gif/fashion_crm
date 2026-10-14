@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import Header from "../components/Header.jsx";
 import SearchBar from "../components/SearchBar";
-import logo from "../assest/logo/zenve-logo-fashion.png";
+import logo from "../assets/logo/zenve-logo-fashion.png";
 
 
 export default function LayerPage({ layer }) {

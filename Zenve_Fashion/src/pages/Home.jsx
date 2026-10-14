@@ -422,7 +422,7 @@ function Home() {
             {filteredLayers.map((layer) => {
               const displayName = getDisplayName(layer.name);
               const displayBlurb = getDisplayBlurb(layer);
-              const artPath = layerArtwork[`../assets/art/art_${layer.n}.png`];
+              const artPath = layerArtwork[`../assets/art/art_${layer.n}.png`] || layerArtwork["../assets/art/art_12.png"];
 
               return (
                 <Link

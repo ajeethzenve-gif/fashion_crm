@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Analytics.css";
-import bannerImg from "../assest/bi-dashboard-banner.jpg";
+import bannerImg from "../assets/bi-dashboard-banner.jpg";
 import {
   ResponsiveContainer,
   ComposedChart,

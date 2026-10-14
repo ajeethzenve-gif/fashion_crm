@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { layers } from "../data/layers";
 import "./styles/Sidebar.css";
-import logo from "../assest/logo/zenve-logo-fashion.png";
+import logo from "../assets/logo/zenve-logo-fashion.png";
 
 const iconMap = {
   Home: (

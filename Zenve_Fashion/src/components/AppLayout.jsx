@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import { Outlet } from "react-router-dom";
-import logo from "../assest/logo/zenve-logo-fashion.png";
+import logo from "../assets/logo/zenve-logo-fashion.png";
 import { useAuth } from "../context/AuthContext";
 
 export default function AppLayout({ children }) {

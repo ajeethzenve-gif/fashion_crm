@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../services/api";
 import { getAccessToken } from "../services/authApi";
-import bannerImg from "../assest/accounting-banner.jpg";
+import bannerImg from "../assets/accounting-banner.jpg";
 import "../styles/DesignerCrm.css";
 import "../styles/RequestsNotifications.css";
 

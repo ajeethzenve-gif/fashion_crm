@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import "../styles/Accounting.css";
-import bannerImg from "../assest/accounting-banner.jpg";
+import bannerImg from "../assets/accounting-banner.jpg";
 import {
   getAccountingSettlements,
   getAccountingStats,

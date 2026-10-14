@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Orders.css";
-import bannerImg from "../assest/accounting-banner.jpg";
+import bannerImg from "../assets/accounting-banner.jpg";
 import { getOrders, getOrderStats, transitionOrder, cancelOrder } from "../services/api";
 import { showSuccessToast, showErrorToast } from "../utils/zenveToast";
 import { useAuth } from "../context/AuthContext";

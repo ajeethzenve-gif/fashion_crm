@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import "../styles/SocialMedia.css";
 import SearchBar from "../components/SearchBar";
-import zenveLogo from "../assest/logo/zenve-logo-fashion.png";
+import zenveLogo from "../assets/logo/zenve-logo-fashion.png";
 import {
   getSocialMediaCampaigns,
   updateSocialMediaCampaign,

@@ -4,9 +4,21 @@ import { useAuth, ROLES } from "../context/AuthContext";
 import { saveTokens } from "../services/authApi";
 import { API_BASE_URL } from "../services/api";
 import "../styles/DesignerLogin.css";
-import designerBg from "../assest/designer-bg.png";
 
-import zenveLogo from "../assest/logo/zenve-logo-fashion.png";
+import zenveLogo from "../assets/logo/zenve-logo-fashion.png";
+// Automatically load all images from login_bg folder
+const backgroundModules = import.meta.glob(
+  "../assets/login_bg/*.{png,jpg,jpeg,webp}",
+  {
+    eager: true,
+    query: "?url",
+    import: "default",
+  }
+);
+
+const backgroundImages = Object.entries(backgroundModules)
+  .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
+  .map(([, image]) => image);
 
 /* =========================================================
    VECTOR ICONS & BOTANICAL FLOURISHES (EXACT TO IMAGE 2)
@@ -146,6 +158,21 @@ function ArrowRightIcon() {
 export default function DesignerLogin() {
   const navigate = useNavigate();
   const { loginWithRole, ROLES } = useAuth();
+
+  // Background slideshow
+  const [currentBgIndex, setCurrentBgIndex] = useState(0);
+
+  useEffect(() => {
+    if (backgroundImages.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentBgIndex((prevIndex) =>
+        (prevIndex + 1) % backgroundImages.length
+      );
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Active Login Method: 'phone' or 'credentials'
   const [activeTab, setActiveTab] = useState("phone");
@@ -396,15 +423,21 @@ export default function DesignerLogin() {
 
   return (
     <div className="designer-login-page">
-      {/* Full-Screen Edge-to-Edge Atelier Background Stage */}
-      <div className="designer-stage">
+          {/* Full-Screen Edge-to-Edge Atelier Background Stage */}
+          {/* Automatic background slideshow */}
+    <div className="designer-stage" aria-hidden="true">
+      {backgroundImages.map((image, index) => (
         <img
-          className="designer-bg-img"
-          src={designerBg}
-          alt="Zenve Fashion CRM Designer Studio"
+          key={image}
+          className={`designer-bg-img designer-bg-slide ${
+            currentBgIndex === index ? "active" : ""
+          }`}
+          src={image}
+          alt=""
           draggable="false"
         />
-      </div>
+      ))}
+    </div>
 
       {/* Studio Luxury Vignette Overlay */}
       <div className="designer-login-overlay" />
@@ -425,7 +458,7 @@ export default function DesignerLogin() {
 
         <div className="ambient-crest-box">
           <h1 className="ambient-title">ZENVE</h1>
-          <div className="ambient-subtitle">FASHION CRM</div>
+          <div className="ambient-subtitle">FASHION </div>
           <div className="ambient-strip">CREATORS | COUTURE | DESIGN | BUSINESS</div>
         </div>
       </div>
@@ -443,7 +476,7 @@ export default function DesignerLogin() {
           <div className="designer-card-header">
             <img src={zenveLogo} alt="ZENVE Fashion" className="designer-card-logo-img" />
             <div className="designer-card-brand">ZENVE</div>
-            <div className="designer-card-crm">FASHION CRM</div>
+            <div className="designer-card-crm">FASHION </div>
 
             <h2 className="designer-welcome-title">Welcome Back</h2>
             <p className="designer-welcome-sub">

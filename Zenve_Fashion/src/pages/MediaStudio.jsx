@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import "../styles/MediaStudio.css";
 import SearchBar from "../components/SearchBar";
-import zenveLogo from "../assest/logo/zenve-logo-fashion.png";
+import zenveLogo from "../assets/logo/zenve-logo-fashion.png";
 import { getMediaQueue, submitMediaAction } from "../services/api";
 import { showSuccessToast, showErrorToast, showWarningToast, showDesignerAcceptedToast } from "../utils/zenveToast";
 

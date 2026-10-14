@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import "../styles/Inventory.css";
-import bannerImg from "../assest/accounting-banner.jpg";
+import bannerImg from "../assets/accounting-banner.jpg";
 import { getProducts, updateProduct, createProduct, getDesigners } from "../services/api";
 import { showSuccessToast, showErrorToast } from "../utils/zenveToast";
 
