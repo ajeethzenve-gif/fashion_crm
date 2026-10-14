@@ -302,6 +302,7 @@ class RoleLayerAccess(models.Model):
         ("13", "13 - Media Studio"),
         ("14", "14 - Social Media"),
         ("15", "15 - Accounting"),
+        ("16", "16 - Requests & Notifications"),
     )
 
     role = models.ForeignKey(
@@ -323,3 +324,12 @@ class RoleLayerAccess(models.Model):
 
     def __str__(self):
         return f"{self.role.name} -> {self.layer}"
+
+
+class NotificationRead(models.Model):
+    user = models.ForeignKey("auth.User", on_delete=models.CASCADE)
+    notification_id = models.CharField(max_length=160)
+    read_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["user", "notification_id"], name="unique_user_notification_read")]

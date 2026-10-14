@@ -1,4 +1,5 @@
 from django.urls import path
+from .notifications import NotificationsAPIView
 from .designer_login import DesignerOTPAPIView, DesignerVerifyOTPAPIView, DesignerPasswordLoginAPIView
 from .views import (RegisterAPIView,
                     LoginAPIView,
@@ -10,6 +11,7 @@ from .views import (RegisterAPIView,
                     )
 
 urlpatterns = [
+    path("notifications/", NotificationsAPIView.as_view(), name="requests-notifications"),
     path("designer/login/", DesignerPasswordLoginAPIView.as_view(), name="designer-password-login"),
     path("designer/send-otp/", DesignerOTPAPIView.as_view(), name="designer-send-otp"),
     path("designer/verify-otp/", DesignerVerifyOTPAPIView.as_view(), name="designer-verify-otp"),

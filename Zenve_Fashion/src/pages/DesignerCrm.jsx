@@ -103,6 +103,14 @@ export default function DesignerCRM() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openActionMenuId, setOpenActionMenuId] = useState(null);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const notificationsDialog = useRef(null);
+  const gstRequests = designers.filter((designer) => designer.gst_requested_at && !designer.gst_number);
+  useEffect(() => {
+    const dialog = notificationsDialog.current;
+    if (notificationsOpen && !dialog.open) dialog.showModal();
+    else if (!notificationsOpen && dialog.open) dialog.close();
+  }, [notificationsOpen]);
 
   // Search & Filters
   const [searchTerm, setSearchTerm] = useState("");
@@ -641,16 +649,6 @@ Login requires approval and completed KYC verification.`;
           LUXURY HERO BANNER WITH FASHION ATELIER ARTWORK
       ===================================================== */}
       <main className="crm-main-container">
-        {designers.some((designer) => designer.gst_requested_at && !designer.gst_number) && (
-          <section className="crm-gst-notifications" aria-label="GST request notifications">
-            <strong>New GST requests need review</strong>
-            {designers.filter((designer) => designer.gst_requested_at && !designer.gst_number).map((designer) => (
-              <button type="button" key={designer.id} onClick={() => handleOpenEditModal(designer)}>
-                {designer.brand_name || designer.designer_name}: company GST creation requested · View designer
-              </button>
-            ))}
-          </section>
-        )}
         <section className="crm-hero-banner">
           <div className="crm-banner-content">
             <h1 className="crm-hero-title">Designer CRM</h1>
@@ -659,6 +657,10 @@ Login requires approval and completed KYC verification.`;
             </p>
           </div>
           <img src={bannerImg} alt="Zenve Fashion Designer CRM" className="crm-banner-bg-img" />
+          <button type="button" className="crm-notification-bell" aria-label={`Open notifications, ${gstRequests.length} GST requests`} aria-haspopup="dialog" aria-expanded={notificationsOpen} onClick={() => setNotificationsOpen(true)}>
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" /><path d="M10 21h4" /></svg>
+            {gstRequests.length > 0 && <span>{gstRequests.length}</span>}
+          </button>
         </section>
 
         {/* =====================================================
@@ -1940,6 +1942,18 @@ Login requires approval and completed KYC verification.`;
       {/* =====================================================
           10. COMPANY GST MODAL
       ===================================================== */}
+      <dialog ref={notificationsDialog} className="crm-notification-drawer" aria-labelledby="crm-notification-title" onCancel={() => setNotificationsOpen(false)} onClose={() => setNotificationsOpen(false)} onClick={(event) => {
+        const bounds = event.currentTarget.getBoundingClientRect();
+        if (event.target === event.currentTarget && (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom)) setNotificationsOpen(false);
+      }}>
+        <div className="crm-notification-drawer-header"><div><h2 id="crm-notification-title">Notifications</h2><p>{gstRequests.length} GST requests need review</p></div><button type="button" aria-label="Close notifications" onClick={() => setNotificationsOpen(false)}>✕</button></div>
+        <div className="crm-notification-drawer-body">
+          {gstRequests.length === 0 ? <p>No pending GST requests.</p> : gstRequests.map((designer) => <button className="crm-notification-item" type="button" key={designer.id} onClick={() => {
+            notificationsDialog.current.close(); setNotificationsOpen(false); handleOpenEditModal(designer);
+          }}><strong>New GST number requested</strong><span>{designer.brand_name || designer.designer_name}</span><small>Company GST creation requested · View designer →</small></button>)}
+        </div>
+      </dialog>
+
       {showGstModal && (
         <div className="crm-modal-overlay" onClick={() => setShowGstModal(false)}>
           <div className="crm-lead-modal-card crm-gst-modal-card" onClick={(e) => e.stopPropagation()}>

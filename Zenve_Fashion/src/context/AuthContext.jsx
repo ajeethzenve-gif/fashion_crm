@@ -92,7 +92,10 @@ export const ROLES = [
   },
 ];
 
+ROLES.filter((role) => role.id !== "designer").forEach((role) => role.clearance.push("16"));
+
 const LAYER_PATH_MAP = {
+  "/requests-notifications": "16",
   "/designer-crm": "01",
   "/designer-portal": "02",
   "/catalogue": "03",
