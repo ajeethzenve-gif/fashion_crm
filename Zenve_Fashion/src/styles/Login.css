@@ -24,12 +24,10 @@
 }
 
 .zl-stage {
-  --px: calc(100vw / 1536);
   position: absolute;
   inset: 0;
+  --px: calc(100vw / 1536);
 }
-
-
 
 .zl-bg {
   position: absolute;
@@ -43,22 +41,24 @@
 }
 
 /* =========================================================
-   LOGIN CARD (locked to the card in the artwork)
+   LOGIN CARD (centered directly under the logo/motto)
 ========================================================= */
 
 .zl-card {
   position: absolute;
-  left: 40.04%;
-  top: 53.22%;
-  width: 23.63%;
+  left: 50%;
+  top: 57.5%;
+  transform: translateX(-50%);
+  width: calc(376 * var(--px));
+  max-width: 92vw;
   box-sizing: border-box;
-  padding: calc(22 * var(--px)) calc(24 * var(--px)) calc(20 * var(--px));
-  border-radius: calc(22 * var(--px));
-  background: rgba(250, 241, 229, 0.92);
+  padding: calc(20 * var(--px)) calc(22 * var(--px)) calc(18 * var(--px));
+  border-radius: calc(20 * var(--px));
+  background: rgba(250, 241, 229, 0.94);
   border: 1.5px solid rgba(255, 255, 255, 0.9);
   box-shadow:
     0 0 calc(34 * var(--px)) rgba(255, 233, 196, 0.55),
-    0 calc(10 * var(--px)) calc(30 * var(--px)) rgba(120, 80, 30, 0.12);
+    0 calc(10 * var(--px)) calc(30 * var(--px)) rgba(120, 80, 30, 0.14);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -232,8 +232,8 @@
 
   .zl-card {
     left: 50%;
-    top: 53.22%;
-    width: min(86vw, 340px);
+    top: 57.5%;
+    width: min(88vw, 360px);
     transform: translateX(-50%);
   }
 }

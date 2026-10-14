@@ -395,10 +395,17 @@ export default function DesignerLogin() {
   };
 
   return (
-    <div
-      className="designer-login-page"
-      style={{ backgroundImage: `url(${designerBg})` }}
-    >
+    <div className="designer-login-page">
+      {/* Full-Screen Edge-to-Edge Atelier Background Stage */}
+      <div className="designer-stage">
+        <img
+          className="designer-bg-img"
+          src={designerBg}
+          alt="Zenve Fashion CRM Designer Studio"
+          draggable="false"
+        />
+      </div>
+
       {/* Studio Luxury Vignette Overlay */}
       <div className="designer-login-overlay" />
 
@@ -749,47 +756,6 @@ export default function DesignerLogin() {
           </div>
         </div>
 
-        {/* Back to Home & Switch to Staff Login links outside the card */}
-        <div className="designer-portal-switch">
-          <Link to="/" className="designer-switch-link">
-            ← Dashboard Home
-          </Link>
-          <button
-            type="button"
-            className="designer-demo-toggle-btn"
-            onClick={() => setShowQuickDemo(!showQuickDemo)}
-          >
-            {showQuickDemo ? "Hide Quick Test" : "⚡ Quick Test"}
-          </button>
-          <Link to="/login" className="designer-switch-link">
-            Staff & Admin Login →
-          </Link>
-        </div>
-
-        {/* Optional Quick Demo Designer Selectors for instant pair testing */}
-        {showQuickDemo && (
-          <div className="designer-quick-demo">
-            <div className="designer-quick-demo-head">
-              <span>Quick Test Designer:</span>
-              <span style={{ fontSize: "10px", color: "#a89785" }}>Click to autofill</span>
-            </div>
-            <div className="designer-quick-pills">
-              {(registeredDesigners.length > 0 ? registeredDesigners.slice(0, 2) : [
-                { id: 19, designer_name: "Aarav Mehta", brand_name: "Aarav Pet Atelier", email: "aarav@petatelier.in", phone: "9820011223", designer_code: "DSG-001" },
-                { id: 18, designer_name: "Ashwin", brand_name: "Ashwin Couture", email: "ashwin@gmail.com", phone: "9876545321", designer_code: "DSG-002" },
-              ]).map((d) => (
-                <button
-                  key={d.id}
-                  type="button"
-                  className="demo-chip-btn"
-                  onClick={() => fillDemoDesigner(d)}
-                >
-                  {d.designer_name} ({d.designer_code || "DSG"})
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
