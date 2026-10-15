@@ -1069,6 +1069,21 @@
   max-width: 580px;
 }
 
+.crm-notification-bell { position: absolute; right: 24px; top: 24px; z-index: 3; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: #fffaf0; color: #8d551b; border: 1px solid #e8d39e; border-radius: 50%; cursor: pointer; }
+.crm-notification-bell > span { position: absolute; top: -4px; right: -4px; background: #a14915; color: #fff; min-width: 18px; height: 18px; padding: 0 3px; border-radius: 10px; font-size: 10px; line-height: 18px; }
+.crm-notification-drawer { position: fixed; inset: 0 0 0 auto; margin: 0; padding: 0; width: min(420px, 100vw); height: 100dvh; max-width: 100vw; max-height: 100dvh; border: 0; background: #fffdf9; color: #38210a; box-shadow: -8px 0 32px #38210a20; box-sizing: border-box; }
+.crm-notification-drawer:not([open]) { display: none; }
+.crm-notification-drawer::backdrop { background: #21180f55; }
+.crm-notification-drawer-header { padding: 24px; display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid #efe5d5; }
+.crm-notification-drawer-header h2 { margin: 0; font-size: 22px; }
+.crm-notification-drawer-header p { color: #847563; font-size: 12px; margin: 8px 0 0; }
+.crm-notification-drawer-header button { border: 0; background: transparent; font-size: 18px; color: #847563; cursor: pointer; }
+.crm-notification-drawer-body { padding: 20px; }
+.crm-notification-item { display: grid; gap: 8px; width: 100%; text-align: left; padding: 16px; border: 1px solid #e8d39e; border-radius: 10px; background: #fff8ee; color: #38210a; margin-bottom: 12px; cursor: pointer; }
+.crm-notification-item span { font-size: 13px; color: #847563; }
+.crm-notification-item small { color: #a14915; }
+@media (max-width: 600px) { .crm-main-container .crm-banner-content { padding-right: 75px; } .crm-notification-bell { right: 16px; top: 18px; } }
+
 .crm-gst-eyebrow { display: block; color: #9c591c; font-size: 10px; font-weight: 700; letter-spacing: 1.4px; margin-bottom: 6px; }
 .crm-gst-info-card p { display: flex; justify-content: space-between; gap: 12px; }
 .crm-gst-request-card { border: 1px dashed #e8bd96; border-radius: 8px; padding: 16px; color: #302820; font-size: 13px; }

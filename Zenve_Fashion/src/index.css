@@ -1216,7 +1216,7 @@ button {
 /* Replace the layer number (e.g. "06") with the lady logo */
 .ZENVE-layer-num {
   color: transparent !important;
-  background-image: url('./assest/logo/zenve-logo-fashion.png') !important;
+  background-image: url('assets/logo/zenve-logo-fashion.png') !important;
   background-size: contain !important;
   background-repeat: no-repeat !important;
   background-position: center !important;

@@ -1,3 +1,4 @@
+import { useDataLoading } from "../components/DataLoading.jsx";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link, useLocation } from "react-router-dom";
@@ -736,6 +737,7 @@ export default function DesignerPortal() {
 
   const [savingAccount, setSavingAccount] = useState(false);
   const [loadingAccount, setLoadingAccount] = useState(false);
+  useDataLoading(loadingDesigners || loadingPortal || loadingAccount);
   const [hasAccountDetails, setHasAccountDetails] = useState(false);
   const [isAccountMasked, setIsAccountMasked] = useState(true);
 
@@ -1831,10 +1833,6 @@ export default function DesignerPortal() {
       payload.append(
         "brand_name",
         profileForm.brand.trim()
-      );
-      payload.append(
-        "designer_name",
-        profileForm.name.trim()
       );
       payload.append(
         "owner_name",

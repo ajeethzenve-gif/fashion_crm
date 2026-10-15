@@ -1,7 +1,8 @@
+import { useDataLoading } from "../components/DataLoading.jsx";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Returns.css";
-import bannerImg from "../assest/accounting-banner.jpg";
+import bannerImg from "../assets/accounting-banner.jpg";
 import {
   getReturns,
   getReturnStats,
@@ -80,6 +81,7 @@ export default function Returns() {
   const [stats, setStats] = useState(null);
   const [deliveredOrders, setDeliveredOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  useDataLoading(loading);
 
   // Filters & Search
   const [globalSearch, setGlobalSearch] = useState("");

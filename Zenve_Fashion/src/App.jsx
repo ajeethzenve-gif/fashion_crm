@@ -19,6 +19,7 @@ import Accounting from "./pages/Accounting.jsx";
 import SocialMedia from "./pages/SocialMedia.jsx";
 import Login from "./pages/Login.jsx";
 import DesignerLogin from "./pages/DesignerLogin.jsx";
+import RequestsNotifications from "./pages/RequestsNotifications.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import RequireAuth from "./components/RequireAuth.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
@@ -39,6 +40,7 @@ export default function App() {
           <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
 
           {/* Operational Layers (Role Clearance Protected) */}
+          <Route path="/requests-notifications" element={<ProtectedRoute layer="16"><RequestsNotifications /></ProtectedRoute>} />
           <Route path="/media" element={<ProtectedRoute layer="13"><MediaStudio /></ProtectedRoute>} />
           <Route path="/designer-crm" element={<ProtectedRoute layer="01"><DesignerCRM /></ProtectedRoute>} />
           <Route path="/designer-portal" element={<ProtectedRoute layer="02"><DesignerPortal /></ProtectedRoute>} />

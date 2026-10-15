@@ -1,3 +1,4 @@
+import { useDataLoading } from "../components/DataLoading.jsx";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/CommandCentre.css";
@@ -156,6 +157,7 @@ export default function CommandCentre() {
 
   // Live Backend State
   const [loading, setLoading] = useState(true);
+  useDataLoading(loading);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
 

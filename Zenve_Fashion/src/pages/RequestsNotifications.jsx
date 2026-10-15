@@ -1,14 +1,16 @@
+import { useDataLoading } from "../components/DataLoading.jsx";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../services/api";
 import { getAccessToken } from "../services/authApi";
-import bannerImg from "../assest/accounting-banner.jpg";
+import bannerImg from "../assets/accounting-banner.jpg";
 import "../styles/DesignerCrm.css";
 import "../styles/RequestsNotifications.css";
 
 export default function RequestsNotifications() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  useDataLoading(loading);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");

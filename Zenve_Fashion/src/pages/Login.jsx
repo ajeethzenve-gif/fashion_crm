@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "../styles/Login.css";
-import zenveLoginBg from "../assest/zenve-login.png";
+import zenveLoginBg from "../assets/zenve-login.png";
 
 function UserIcon() {
   return (

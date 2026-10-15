@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "../styles/Header.css";
+import zenveLogo from "../assets/logo/zenve-logo-fashion.png";
 
 /* =========================================================
    SEARCH ICON
@@ -123,7 +124,7 @@ function Header() {
 
           <div className="brand-logo">
             <img
-              src="/logo.png"
+              src={zenveLogo}
               alt="Zenve Fashion"
             />
           </div>

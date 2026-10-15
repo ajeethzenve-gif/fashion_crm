@@ -2,7 +2,7 @@ import React from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { layers } from "../data/layers";
-import zenveLogo from "../assest/logo/zenve-logo-fashion.png";
+import zenveLogo from "../assets/logo/zenve-logo-fashion.png";
 
 function LockIcon() {
   return (

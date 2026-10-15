@@ -20,11 +20,21 @@ class DesignerManagementAccess(BasePermission):
         assignment = getattr(user, "user_role", None) if user.is_authenticated else None
         if not (assignment and assignment.role.name == "Designer"):
             return has_layer(user, "01")
+        designer_id = view.kwargs.get("designer_id")
+        if request.method == "PATCH" and designer_id:
+            allowed_fields = {
+                "brand_name", "owner_name", "email", "phone",
+                "city", "gst_number", "profile_image",
+            }
+            if set(request.data) - allowed_fields:
+                self.message = "Designers can change only brand, owner, contact, city, GST and profile image."
+                return False
+            return Designer.objects.filter(
+                pk=designer_id, user=user, is_active=True, stage__in=LOGIN_STAGES,
+                kyc_status="VERIFIED", user__is_active=True,
+            ).exists()
         if request.method not in ("GET", "HEAD", "OPTIONS"):
             return False
-        if not assignment or assignment.role.name != "Designer":
-            return False
-        designer_id = view.kwargs.get("designer_id")
         return Designer.objects.filter(user=user, **({"pk": designer_id} if designer_id else {})).exists()
 
 

@@ -1,7 +1,8 @@
+import { useDataLoading } from "../components/DataLoading.jsx";
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Analytics.css";
-import bannerImg from "../assest/bi-dashboard-banner.jpg";
+import bannerImg from "../assets/bi-dashboard-banner.jpg";
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -91,6 +92,7 @@ function createSparkline(dataPoints, isUp = true) {
 
 export default function Analytics() {
   const [loading, setLoading] = useState(true);
+  useDataLoading(loading);
   const [error, setError] = useState(null);
 
   // Filter States - Default to "All Time" so all database records appear immediately

@@ -1,6 +1,7 @@
+import { useDataLoading } from "../components/DataLoading.jsx";
 import React, { useState, useEffect, useMemo } from "react";
 import "../styles/Accounting.css";
-import bannerImg from "../assest/accounting-banner.jpg";
+import bannerImg from "../assets/accounting-banner.jpg";
 import {
   getAccountingSettlements,
   getAccountingStats,
@@ -52,6 +53,7 @@ export default function Accounting() {
   const [designers, setDesigners] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  useDataLoading(loading);
   const [error, setError] = useState(null);
 
   // Navigation
