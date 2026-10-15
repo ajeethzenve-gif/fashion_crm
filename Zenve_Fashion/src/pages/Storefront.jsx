@@ -1,3 +1,4 @@
+import { useDataLoading } from "../components/DataLoading.jsx";
 import { useAuth } from "../context/AuthContext";
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
@@ -92,6 +93,7 @@ export default function Storefront() {
   const [mediaJobs, setMediaJobs] = useState([]);
   const [designers, setDesigners] = useState([]);
   const [loading, setLoading] = useState(true);
+  useDataLoading(loading);
   const [error, setError] = useState(null);
 
   // Delivery pincode (defaults to 400001 per blueprint)

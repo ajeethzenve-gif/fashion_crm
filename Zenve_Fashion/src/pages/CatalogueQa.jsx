@@ -1,3 +1,4 @@
+import { useDataLoading } from "../components/DataLoading.jsx";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import "../styles/CatalogueQa.css";
@@ -52,6 +53,7 @@ export default function CatalogueQa() {
   const [qaProducts, setQaProducts] = useState([]);
   const [designersList, setDesignersList] = useState([]);
   const [loading, setLoading] = useState(true);
+  useDataLoading(loading);
 
   // Search & Filters
   const [topSearch, setTopSearch] = useState("");

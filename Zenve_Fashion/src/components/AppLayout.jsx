@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
+import { DataLoadingBody } from "./DataLoading.jsx";
 import { Outlet } from "react-router-dom";
 import logo from "../assets/logo/zenve-logo-fashion.png";
 import { useAuth } from "../context/AuthContext";
@@ -54,7 +55,7 @@ export default function AppLayout({ children }) {
 
       <div className="zenve-main-content">
         <div className="zenve-page-scroll">
-          {children || <Outlet />}
+          <DataLoadingBody>{children || <Outlet />}</DataLoadingBody>
         </div>
       </div>
     </div>

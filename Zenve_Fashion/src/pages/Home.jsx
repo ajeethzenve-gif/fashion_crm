@@ -1,3 +1,4 @@
+import { useDataLoading } from "../components/DataLoading.jsx";
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { layers } from "../data/layers";
@@ -69,6 +70,7 @@ function Home() {
   });
 
   const [loading, setLoading] = useState(true);
+  useDataLoading(loading);
   const [error, setError] = useState("");
 
   /* =========================================================

@@ -1,0 +1,10 @@
+.zenve-data-loading-stage { min-height: 75vh; display: grid; place-items: center; background: #faf7f2; padding: 24px; box-sizing: border-box; }
+.zenve-data-loading { position: relative; display: flex; align-items: center; gap: 13px; padding: 24px 32px 28px; background: #fffdf8; color: #38210a; border: 1px solid #e8d39e; border-radius: 12px; box-shadow: 0 8px 32px #38210a16; overflow: hidden; font-family: inherit; }
+.zenve-data-loading strong { display: block; font-size: 13px; font-weight: 600; }
+.zenve-data-loading small { display: block; font-size: 11px; margin-top: 4px; color: #847563; }
+.zenve-data-loading-spinner { width: 26px; height: 26px; border: 3px solid #f0e5cf; border-top-color: #b88632; border-radius: 50%; animation: zenve-loading-spin .8s linear infinite; flex-shrink: 0; }
+.zenve-data-loading-track { position: absolute; bottom: 0; left: 0; width: 40%; height: 3px; background: #c99a48; animation: zenve-loading-slide 1.4s ease-in-out infinite; }
+@keyframes zenve-loading-spin { to { transform: rotate(360deg); } }
+@keyframes zenve-loading-slide { from { transform: translateX(-100%); } to { transform: translateX(350%); } }
+@media (max-width: 600px) { .zenve-data-loading { min-width: 210px; padding: 20px 18px 24px; } }
+@media (prefers-reduced-motion: reduce) { .zenve-data-loading-spinner, .zenve-data-loading-track { animation: none; } .zenve-data-loading-track { width: 100%; } }

@@ -1,3 +1,4 @@
+import { useDataLoading } from "../components/DataLoading.jsx";
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Orders.css";
@@ -237,6 +238,7 @@ export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  useDataLoading(loading);
 
   // Filter States
   const [activeTab, setActiveTab] = useState("All Orders");

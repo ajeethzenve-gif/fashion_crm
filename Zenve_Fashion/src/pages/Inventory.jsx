@@ -1,3 +1,4 @@
+import { useDataLoading } from "../components/DataLoading.jsx";
 import React, { useState, useEffect, useMemo } from "react";
 import "../styles/Inventory.css";
 import bannerImg from "../assets/accounting-banner.jpg";
@@ -28,6 +29,7 @@ export default function Inventory() {
   const [liveProducts, setLiveProducts] = useState([]);
   const [designers, setDesigners] = useState([]);
   const [loading, setLoading] = useState(true);
+  useDataLoading(loading);
 
   // Filter States
   const [activeTab, setActiveTab] = useState("All Items");

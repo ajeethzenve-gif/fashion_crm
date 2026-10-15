@@ -1,3 +1,4 @@
+import { useDataLoading } from "../components/DataLoading.jsx";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Delivery.css";
@@ -78,6 +79,7 @@ export default function DeliveryEngine() {
   const [selectedShipment, setSelectedShipment] = useState(null);
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [loading, setLoading] = useState(true);
+  useDataLoading(loading);
   const [activeTab, setActiveTab] = useState("All Shipments");
 
   // Filters

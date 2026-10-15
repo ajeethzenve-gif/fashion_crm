@@ -1,3 +1,4 @@
+import { useDataLoading } from "../components/DataLoading.jsx";
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import "../styles/MediaStudio.css";
@@ -685,6 +686,7 @@ export function MediaWorkspace({
   const designerMode = designerId !== undefined;
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  useDataLoading(loading);
   const [error, setError] = useState("");
   const [activeStatusFilter, setActiveStatusFilter] = useState(designerReviewOnly ? "DESIGNER_VIEW" : "ALL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -1199,6 +1201,7 @@ function MiniSparkline({ color = "#e67e22" }) {
 export default function MediaStudio() {
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
+  useDataLoading(loading);
   const [selectedAssetId, setSelectedAssetId] = useState(null);
   const [selectedCheckboxIds, setSelectedCheckboxIds] = useState([]);
   const [activeTab, setActiveTab] = useState("ALL");

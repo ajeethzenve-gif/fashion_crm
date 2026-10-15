@@ -148,6 +148,46 @@ class DesignerAuthenticationTests(TestCase):
         self.assertEqual(response.status_code, 400)
         sender.assert_not_called()
 
+    def test_designer_can_update_own_profile_from_portal(self):
+        self.approve()
+        self.client.force_authenticate(user=self.designer.user)
+        response = self.client.patch(f"/api/designers/{self.designer.pk}/", {
+            "brand_name": "Updated Brand",
+            "owner_name": "Updated Owner", "email": "updated@example.com",
+            "phone": "9876543210", "city": "Chennai", "gst_number": "",
+        }, format="multipart")
+        self.assertEqual(response.status_code, 200, response.data)
+        self.designer.refresh_from_db()
+        self.assertEqual(self.designer.city, "Chennai")
+        self.assertEqual(self.designer.brand_name, "Updated Brand")
+        self.assertEqual(self.designer.owner_name, "Updated Owner")
+        self.assertEqual(self.designer.designer_name, "Test Designer")
+
+    def test_designer_cannot_change_protected_fields_or_other_profiles(self):
+        self.approve()
+        self.client.force_authenticate(user=self.designer.user)
+        url = f"/api/designers/{self.designer.pk}/"
+        for field, value in {"kyc_status": "VERIFIED", "stage": "ACTIVE", "take_rate": 0,
+                             "credit_points": 99999, "add_task": {"title": "Task"},
+                             "designer_name": "Another name", "state": "State", "country": "Country",
+                             "logo": "logo.png", "description": "Description", "website": "https://example.com",
+                             "instagram_url": "https://example.com", "facebook_url": "https://example.com"}.items():
+            self.assertEqual(self.client.patch(url, {field: value}, format="json").status_code, 403)
+        other = Designer.objects.create(designer_code="OTHER-PROFILE", designer_name="Other",
+            brand_name="Other", owner_name="Owner", email="other@example.com",
+            phone="9876543211", city="Mumbai", primary_category="people")
+        self.assertEqual(self.client.patch(f"/api/designers/{other.pk}/", {"city": "Chennai"}).status_code, 403)
+        self.assertEqual(self.client.delete(url).status_code, 403)
+        self.designer.refresh_from_db()
+        self.assertEqual(self.designer.stage, "APPROVED")
+
+    def test_profile_update_requires_current_approval_and_kyc(self):
+        self.approve()
+        self.client.force_authenticate(user=self.designer.user)
+        self.designer.kyc_status = "PENDING"
+        self.designer.save()
+        self.assertEqual(self.client.patch(f"/api/designers/{self.designer.pk}/", {"city": "Chennai"}).status_code, 403)
+
     def test_dashboard_requires_own_verified_account(self):
         self.approve()
         url = f"/api/designers/{self.designer.pk}/portal-dashboard/"

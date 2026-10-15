@@ -1,3 +1,4 @@
+import { useDataLoading } from "../components/DataLoading.jsx";
 import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import "../styles/SocialMedia.css";
@@ -184,6 +185,7 @@ export default function SocialMedia() {
   });
   const [designersList, setDesignersList] = useState([]);
   const [loading, setLoading] = useState(true);
+  useDataLoading(loading);
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");

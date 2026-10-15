@@ -1,3 +1,4 @@
+import { useDataLoading } from "../components/DataLoading.jsx";
 import { useAuth } from "../context/AuthContext";
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
@@ -123,6 +124,7 @@ export default function Catalogue() {
   const designerIdParam = searchParams.get("designer");
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  useDataLoading(loading);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [priceInputs, setPriceInputs] = useState({});

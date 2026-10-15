@@ -1,3 +1,4 @@
+import { useDataLoading } from "../components/DataLoading.jsx";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Settlement.css";
@@ -63,6 +64,7 @@ export default function Settlement() {
   const [designers, setDesigners] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  useDataLoading(loading);
 
   // Modals & Popovers
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);

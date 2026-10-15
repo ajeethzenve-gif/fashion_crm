@@ -1,3 +1,4 @@
+import { useDataLoading } from "../components/DataLoading.jsx";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import "../styles/DesignerCrm.css";
 import bannerImg from "../assets/accounting-banner.jpg";
@@ -102,6 +103,7 @@ export default function DesignerCRM() {
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  useDataLoading(loading);
   const [openActionMenuId, setOpenActionMenuId] = useState(null);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const notificationsDialog = useRef(null);

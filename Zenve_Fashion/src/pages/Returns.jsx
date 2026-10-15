@@ -1,3 +1,4 @@
+import { useDataLoading } from "../components/DataLoading.jsx";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Returns.css";
@@ -80,6 +81,7 @@ export default function Returns() {
   const [stats, setStats] = useState(null);
   const [deliveredOrders, setDeliveredOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  useDataLoading(loading);
 
   // Filters & Search
   const [globalSearch, setGlobalSearch] = useState("");
