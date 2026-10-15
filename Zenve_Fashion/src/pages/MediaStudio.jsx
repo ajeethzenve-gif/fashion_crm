@@ -1598,26 +1598,28 @@ export default function MediaStudio() {
               </select>
             </div>
 
-            <button
-              type="button"
-              className="btn-toolbar-date"
-              onClick={() => setDateFilter((d) => (d ? "" : "Active"))}
-              title="Filter by upload date"
-            >
-              <span>Date</span>
-            </button>
+            <div className="toolbar-actions-row">
+              <button
+                type="button"
+                className="btn-toolbar-date"
+                onClick={() => setDateFilter((d) => (d ? "" : "Active"))}
+                title="Filter by upload date"
+              >
+                <span>Date</span>
+              </button>
 
-            <button
-              type="button"
-              className="btn-toolbar-reset"
-              onClick={handleResetFilters}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="1 4 1 10 7 10" />
-                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
-              </svg>
-              <span>Reset</span>
-            </button>
+              <button
+                type="button"
+                className="btn-toolbar-reset"
+                onClick={handleResetFilters}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="1 4 1 10 7 10" />
+                  <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+                </svg>
+                <span>Reset</span>
+              </button>
+            </div>
           </div>
 
           <MediaWorkspace

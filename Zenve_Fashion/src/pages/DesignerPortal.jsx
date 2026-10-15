@@ -2247,6 +2247,32 @@ export default function DesignerPortal() {
           {currentUser?.id !== "designer" && <SearchBar />}
           <div className="ZENVE-header-right-controls">
             <div className="ZENVE-header-actions-group">
+              {/* Profile & Account Details Toggle for Designer / Active Designer */}
+              {(currentUser?.id === "designer" || selectedDesignerId) && (
+                <button
+                  type="button"
+                  className={`ZENVE-header-profile-btn ${showProfileAndAccount ? "active" : ""}`}
+                  onClick={() => {
+                    const next = !showProfileAndAccount;
+                    setShowProfileAndAccount(next);
+                    if (next) {
+                      setShowMediaReviews(false);
+                      setTimeout(() => {
+                        const el = document.getElementById("zenve-profile-account-section");
+                        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                      }, 100);
+                    }
+                  }}
+                  title="My Profile & Account Details"
+                  aria-label="My Profile & Account Details"
+                >
+                  <UserProfileIcon />
+                  {showProfileAndAccount && (
+                    <span className="ZENVE-header-active-dot" />
+                  )}
+                </button>
+              )}
+
               {currentUser?.id === "designer" && (
                 <button
                   type="button"
@@ -3256,58 +3282,60 @@ export default function DesignerPortal() {
                     </p>
                   </div>
 
-                  {!isEditingAccount ? (
-                    hasAccountDetails ? (
-                      <button
-                        type="button"
-                        className="ZENVE-btn-edit-profile"
-                        onClick={
-                          handleStartEditAccount
-                        }
-                        disabled={
-                          !activeDesigner ||
-                          loadingAccount
-                        }
-                        title="Edit banking and account details"
-                      >
-                        <EditPencilIcon />
+                  <div className="ZENVE-profile-header-actions">
+                    {!isEditingAccount ? (
+                      hasAccountDetails ? (
+                        <button
+                          type="button"
+                          className="ZENVE-btn-edit-profile"
+                          onClick={
+                            handleStartEditAccount
+                          }
+                          disabled={
+                            !activeDesigner ||
+                            loadingAccount
+                          }
+                          title="Edit banking and account details"
+                        >
+                          <EditPencilIcon />
 
-                        <span>
-                          Edit account
-                        </span>
-                      </button>
-                    ) : null
-                  ) : (
-                    <div className="ZENVE-edit-actions-row">
-                      <button
-                        type="button"
-                        className="ZENVE-btn-secondary-sm"
-                        onClick={
-                          handleCancelEditAccount
-                        }
-                        disabled={
-                          savingAccount
-                        }
-                      >
-                        Cancel
-                      </button>
+                          <span>
+                            Edit account
+                          </span>
+                        </button>
+                      ) : null
+                    ) : (
+                      <div className="ZENVE-edit-actions-row">
+                        <button
+                          type="button"
+                          className="ZENVE-btn-secondary-sm"
+                          onClick={
+                            handleCancelEditAccount
+                          }
+                          disabled={
+                            savingAccount
+                          }
+                        >
+                          Cancel
+                        </button>
 
-                      <button
-                        type="button"
-                        className="ZENVE-btn-save-sm"
-                        onClick={
-                          handleSaveAccountDetails
-                        }
-                        disabled={
-                          savingAccount
-                        }
-                      >
-                        {savingAccount
-                          ? "Saving..."
-                          : "Save changes"}
-                      </button>
-                    </div>
-                  )}
+                        <button
+                          type="button"
+                          className="ZENVE-btn-save-sm"
+                          onClick={
+                            handleSaveAccountDetails
+                          }
+                          disabled={
+                            savingAccount
+                          }
+                        >
+                          {savingAccount
+                            ? "Saving..."
+                            : "Save changes"}
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* ACCOUNT LOADING */}

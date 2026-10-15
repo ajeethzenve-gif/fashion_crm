@@ -688,11 +688,13 @@ DesignerPortal.css
 
 /* =========================================================
    HEADER PROFILE & ACCOUNT ACCESS BUTTON (ICON-ONLY)
+   Hidden on normal desktop view (sidebar already has profile button).
+   Only displayed on mobile & tablet view (<= 1024px) where sidebar is collapsed.
 ========================================================= */
 
 .ZENVE-header-profile-btn {
+  display: none !important; /* Removed in normal view to prevent duplicate profile icons */
   position: relative;
-  display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 38px;
@@ -705,6 +707,13 @@ DesignerPortal.css
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   flex-shrink: 0;
   padding: 0;
+}
+
+/* Show in mobile view (<= 1024px) where sidebar is collapsed into drawer */
+@media (max-width: 1024px) {
+  .ZENVE-header-profile-btn {
+    display: inline-flex !important;
+  }
 }
 
 .ZENVE-header-profile-btn:hover {
@@ -1023,16 +1032,11 @@ DesignerPortal.css
   width: 100%;
 }
 
-.ZENVE-profile-card-body .ZENVE-profile-dl {
+.ZENVE-profile-card-body .ZENVE-profile-dl,
+.ZENVE-profile-dl,
+form.ZENVE-profile-dl {
   flex: 1;
   min-width: 0;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px 24px;
-  margin: 0;
-}
-
-.ZENVE-profile-dl {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px 24px;
@@ -1195,12 +1199,21 @@ DesignerPortal.css
     gap: 20px;
   }
 
+  .ZENVE-profile-card-body .ZENVE-profile-dl,
+  .ZENVE-profile-dl,
+  form.ZENVE-profile-dl {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
   .ZENVE-profile-image-aside {
     width: 100%;
     padding-left: 0;
     border-left: none;
     border-bottom: 1px solid var(--ZENVE-line);
     padding-bottom: 18px;
+    align-items: center;
+    text-align: center;
   }
 }
 
@@ -2165,24 +2178,285 @@ DesignerPortal.css
     justify-content: space-between;
   }
 
-  /* Profile Definition List & Layout: 1-column */
+  /* =========================================================
+     EXCLUSIVE PROFILE & ACCOUNT SECTION: MOBILE OPTIMIZED
+  ========================================================= */
+  .ZENVE-profile-account-exclusive-view {
+    gap: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
   .ZENVE-profile-card-body {
+    display: flex;
     flex-direction: column-reverse;
     align-items: stretch;
     gap: 16px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
+  /* Single-column grid for all profile definition lists with top specificity */
+  .ZENVE-profile-card-body .ZENVE-profile-dl,
+  .ZENVE-profile-dl,
+  form.ZENVE-profile-dl {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+  }
+
+  .ZENVE-profile-item {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  /* Distinct rounded card row in display mode for easy scanning on mobile */
+  .ZENVE-profile-dl:not(form) .ZENVE-profile-item {
+    background: #FAF8F5;
+    border: 1px solid #EFE8DE;
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+
+  .ZENVE-profile-item dt,
+  .ZENVE-profile-item label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #8C6D46;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 0;
+    display: block;
+  }
+
+  .ZENVE-profile-item dd {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--ZENVE-ink, #1F2937);
+    word-break: break-word;
+    margin: 0;
+  }
+
+  /* Top Centered Profile Avatar Panel on Mobile */
   .ZENVE-profile-image-aside {
     border-left: none;
     padding-left: 0;
     width: 100%;
-    border-bottom: 1px solid var(--ZENVE-line);
+    border-bottom: 1px solid var(--ZENVE-line, #EAE0D0);
     padding-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-sizing: border-box;
   }
 
-  .ZENVE-profile-dl {
-    grid-template-columns: 1fr;
-    gap: 12px;
+  .ZENVE-profile-avatar-wrapper {
+    width: 88px;
+    height: 88px;
+    margin: 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  }
+
+  .ZENVE-profile-avatar-caption {
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ZENVE-ink, #1F2937);
+    max-width: 240px;
+  }
+
+  .ZENVE-btn-upload-photo {
+    width: auto;
+    min-width: 140px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 8px;
+    box-sizing: border-box;
+  }
+
+  .ZENVE-btn-remove-photo-link {
+    min-height: 32px;
+    padding: 4px 8px;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .ZENVE-profile-image-help {
+    font-size: 11px;
+    color: var(--ZENVE-muted, #78716C);
+    margin-top: 4px;
+  }
+
+  /* Mobile Profile Header Actions */
+  .ZENVE-profile-header-actions {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 2px;
+  }
+
+  .ZENVE-edit-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex: 1 1 auto;
+  }
+
+  .ZENVE-btn-edit-profile,
+  .ZENVE-btn-save-sm,
+  .ZENVE-btn-secondary-sm,
+  .ZENVE-btn-hide-profile-section {
+    min-height: 40px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 8px;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .ZENVE-btn-hide-profile-section {
+    margin-left: auto;
+  }
+
+  /* Touch-friendly Profile Inputs */
+  .ZENVE-profile-input {
+    min-height: 44px;
+    font-size: 15px;
+    border-radius: 8px;
+    padding: 8px 12px;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1.5px solid #D6CBC0;
+    background: #FFFFFF;
+    color: var(--ZENVE-ink, #1F2937);
+  }
+
+  .ZENVE-profile-input:focus {
+    border-color: #92400E;
+    box-shadow: 0 0 0 3px rgba(146, 64, 14, 0.12);
+  }
+
+  .ZENVE-profile-readonly-box {
+    min-height: 44px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #F5EFEB;
+    border: 1px solid #E2D7CC;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+  }
+
+  .ZENVE-profile-readonly-val {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    word-break: break-word;
+  }
+
+  .ZENVE-profile-lock-badge {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 3px 6px;
+    border-radius: 4px;
+    background: rgba(146, 64, 14, 0.1);
+    color: #78350F;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+
+  /* Account Details Rows on Mobile */
+  .ZENVE-account-holder-dd,
+  .ZENVE-account-num-dd,
+  .ZENVE-ifsc-dd,
+  .ZENVE-pan-dd {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .ZENVE-account-num-dd span {
+    font-size: 15px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ZENVE-mask-toggle-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: #EDE5DA;
+    border: 1px solid #DFD5C8;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .ZENVE-bank-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: #EFF6FF;
+    color: #1E40AF;
+    border: 1px solid #DBEAFE;
+  }
+
+  .ZENVE-verified-mini-pill {
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: #ECFDF5;
+    color: #065F46;
+    border: 1px solid #A7F3D0;
+  }
+
+  .ZENVE-field-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+  }
+
+  .ZENVE-field-hint {
+    font-size: 11.5px;
+    color: var(--ZENVE-muted, #78716C);
+    margin-top: 4px;
+    display: block;
   }
 
   /* Upload SKU Form: 1-column */
@@ -2260,10 +2534,53 @@ DesignerPortal.css
   }
 }
 
+/* Extra small mobile (< 480px) */
+@media (max-width: 480px) {
+  .ZENVE-profile-header-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .ZENVE-profile-header-actions .ZENVE-btn-edit-profile,
+  .ZENVE-profile-header-actions .ZENVE-btn-hide-profile-section {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .ZENVE-edit-actions-row {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+  }
+
+  .ZENVE-edit-actions-row .ZENVE-btn-save-sm,
+  .ZENVE-edit-actions-row .ZENVE-btn-secondary-sm {
+    flex: 1;
+    min-width: 0;
+    justify-content: center;
+  }
+
+  .ZENVE-profile-readonly-box {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    height: auto;
+  }
+}
+
 /* Extra small mobile (< 380px) */
 @media (max-width: 380px) {
   .ZENVE-kpi-grid {
     grid-template-columns: 1fr;
+  }
+
+  .ZENVE-portal-card {
+    padding: 14px 10px;
+  }
+
+  .ZENVE-profile-dl:not(form) .ZENVE-profile-item {
+    padding: 8px 10px;
   }
 }
 
@@ -2393,9 +2710,11 @@ DesignerPortal.css
     font-size: 20px;
   }
 
-  .ZENVE-profile-dl {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+  .ZENVE-profile-card-body .ZENVE-profile-dl,
+  .ZENVE-profile-dl,
+  form.ZENVE-profile-dl {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px;
   }
 
   .ZENVE-form-grid {
@@ -2461,8 +2780,10 @@ DesignerPortal.css
     gap: 10px;
   }
 
-  .ZENVE-profile-dl {
-    grid-template-columns: repeat(2, 1fr);
+  .ZENVE-profile-card-body .ZENVE-profile-dl,
+  .ZENVE-profile-dl,
+  form.ZENVE-profile-dl {
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 12px;
   }
 }

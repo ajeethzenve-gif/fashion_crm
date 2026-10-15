@@ -1066,3 +1066,21 @@
     max-width: 58px;
   }
 }
+
+@media (max-width: 360px) {
+  .designer-login-card {
+    padding: 14px 12px 12px;
+  }
+
+  .designer-tab-btn {
+    font-size: 10px;
+    padding: 6px 4px;
+    gap: 4px;
+  }
+
+  .designer-phone-row,
+  .btn-designer-gold,
+  .designer-input-box {
+    height: 38px;
+  }
+}

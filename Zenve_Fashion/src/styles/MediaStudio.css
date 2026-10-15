@@ -2307,6 +2307,12 @@
   outline: none;
 }
 
+.toolbar-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .btn-toolbar-date {
   border: 1px solid #E2D9CC;
   background: #FFFFFF;
@@ -3044,6 +3050,21 @@
     padding: 14px 16px 40px 16px;
   }
 
+  .ZENVE-media-kpi-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .card-photography-workspace {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .buttons-cluster {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
   .media-metrics-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -3095,7 +3116,35 @@
 }
 
 /* Mobile Screens (Under 768px) */
-@media (max-width: 767px) {
+@media (max-width: 768px) {
+  /* Layout & Container Reset */
+  .ZENVE-media-layout {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  .ZENVE-media-main {
+    padding: 12px 10px 48px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+
+  .pipeline-view-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .ZENVE-media-workspace {
+    width: 100% !important;
+    max-width: 100% !important;
+    gap: 16px !important;
+    box-sizing: border-box !important;
+  }
+
   .ZENVE-media-top-navbar {
     padding: 10px 14px;
     flex-wrap: wrap;
@@ -3111,23 +3160,572 @@
     margin-left: auto;
   }
 
+  /* Hero Banner */
   .ZENVE-media-hero-banner {
-    min-height: 70px;
-    padding: 12px 14px;
+    min-height: 80px !important;
+    padding: 12px 14px !important;
+    border-radius: 10px !important;
+    margin-bottom: 12px !important;
   }
 
   .hero-banner-content {
-    padding: 6px 0;
+    padding: 4px 44px 4px 0 !important;
+    max-width: 100% !important;
   }
 
   .hero-banner-title {
-    font-size: 20px;
+    font-size: 20px !important;
+    line-height: 1.25 !important;
   }
 
   .hero-banner-subtitle {
-    font-size: 11.5px;
+    font-size: 11.5px !important;
+    line-height: 1.35 !important;
   }
 
+  .hero-banner-actions {
+    top: 10px !important;
+    right: 12px !important;
+  }
+
+  .media-nav-notif-btn {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  /* Filter Controls Toolbar */
+  .media-filter-toolbar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+    padding: 10px !important;
+    border-radius: 8px !important;
+    margin-bottom: 14px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .toolbar-search-field {
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    padding: 8px 10px !important;
+  }
+
+  .toolbar-search-field input {
+    font-size: 13px !important;
+    width: 100% !important;
+  }
+
+  .toolbar-dropdown-item {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    box-sizing: border-box !important;
+    gap: 8px !important;
+  }
+
+  .toolbar-dropdown-item .dropdown-label {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    min-width: 60px !important;
+  }
+
+  .toolbar-dropdown-item .toolbar-select {
+    flex: 1 !important;
+    min-height: 36px !important;
+    font-size: 12.5px !important;
+    padding: 6px 10px !important;
+    border-radius: 6px !important;
+    box-sizing: border-box !important;
+  }
+
+  .toolbar-actions-row {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    box-sizing: border-box !important;
+  }
+
+  .toolbar-actions-row .btn-toolbar-date,
+  .toolbar-actions-row .btn-toolbar-reset,
+  .media-filter-toolbar > .btn-toolbar-date,
+  .media-filter-toolbar > .btn-toolbar-reset {
+    flex: 1 !important;
+    width: 100% !important;
+    min-height: 38px !important;
+    font-size: 12.5px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 8px 12px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* KPI Grid */
+  .ZENVE-media-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .ZENVE-media-kpi-card {
+    padding: 10px 12px !important;
+    border-radius: 8px !important;
+  }
+
+  .ZENVE-media-kpi-card .kpi-label {
+    font-size: 10px !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  .ZENVE-media-kpi-card .kpi-val {
+    font-size: 20px !important;
+  }
+
+  .ZENVE-media-kpi-card .kpi-hint {
+    font-size: 10px !important;
+    line-height: 1.25 !important;
+  }
+
+  /* Approval Banner */
+  .media-approval-alert-banner {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    padding: 12px 14px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .media-approval-alert-banner .banner-icon-title {
+    gap: 10px !important;
+  }
+
+  .media-approval-alert-banner .banner-actions {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .media-approval-alert-banner .btn-banner-view,
+  .media-approval-alert-banner .btn-banner-dismiss {
+    width: 100% !important;
+    min-height: 38px !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  /* Workspace Hero Bar (when embedded/active) */
+  .workspace-hero-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .workspace-hero-bar .btn-refresh {
+    width: 100% !important;
+    justify-content: center !important;
+    min-height: 38px !important;
+  }
+
+  /* Secondary Toolbar (when embedded/active) */
+  .ZENVE-media-toolbar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+    padding: 10px 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .ZENVE-media-toolbar .toolbar-search {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .ZENVE-media-toolbar .toolbar-filter-item {
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+
+  .ZENVE-media-toolbar .toolbar-filter-item .ZENVE-select {
+    flex: 1 !important;
+  }
+
+  /* Media Card & Production Queue Stack */
+  .media-cards-stack {
+    width: 100% !important;
+    gap: 16px !important;
+  }
+
+  .ZENVE-media-card {
+    padding: 14px 12px !important;
+    gap: 14px !important;
+    border-radius: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .card-top-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    padding-bottom: 12px !important;
+  }
+
+  .product-identity {
+    width: 100% !important;
+    gap: 6px !important;
+  }
+
+  .sku-badge-row {
+    gap: 6px !important;
+  }
+
+  .product-name {
+    font-size: 16px !important;
+    line-height: 1.35 !important;
+    word-break: break-word !important;
+  }
+
+  .status-badge-wrap {
+    width: 100% !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding-top: 8px !important;
+    border-top: 1px dashed var(--ZENVE-line-light) !important;
+  }
+
+  .status-pill {
+    font-size: 10.5px !important;
+    padding: 3px 8px !important;
+  }
+
+  .sent-timestamp {
+    font-size: 10.5px !important;
+  }
+
+  /* Dual Photography Workspace */
+  .card-photography-workspace {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .photo-lane {
+    padding: 12px 10px !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .lane-header h4 {
+    font-size: 12.5px !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  .lane-sub {
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+  }
+
+  .originals-grid,
+  .generated-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .image-box {
+    border-radius: 6px !important;
+  }
+
+  .image-pos-badge {
+    font-size: 8.5px !important;
+    padding: 1px 4px !important;
+    bottom: 4px !important;
+    left: 4px !important;
+  }
+
+  .no-generated-box {
+    padding: 20px 10px !important;
+  }
+
+  .no-generated-box p {
+    font-size: 12px !important;
+  }
+
+  .no-generated-box span {
+    font-size: 10.5px !important;
+    line-height: 1.3 !important;
+  }
+
+  /* Figma Integration Bar */
+  .figma-integration-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+    padding: 10px 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .figma-brand-label {
+    font-size: 12px !important;
+  }
+
+  .figma-link-pill {
+    width: 100% !important;
+    display: flex !important;
+    gap: 6px !important;
+  }
+
+  .figma-external-link {
+    flex: 1 !important;
+    text-align: center !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    font-size: 11.5px !important;
+    padding: 6px 10px !important;
+  }
+
+  .figma-copy-btn {
+    flex-shrink: 0 !important;
+    padding: 6px 12px !important;
+    font-size: 11.5px !important;
+  }
+
+  /* Feedback & Notes Callouts */
+  .media-feedback-callout,
+  .media-notes-callout {
+    padding: 10px 12px !important;
+    gap: 6px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .feedback-body,
+  .notes-body {
+    font-size: 12px !important;
+    word-break: break-word !important;
+  }
+
+  /* Action Zone & Upload Controls */
+  .card-action-zone {
+    padding-top: 12px !important;
+    width: 100% !important;
+  }
+
+  .media-team-controls {
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .media-team-controls .input-label {
+    font-size: 11.5px !important;
+  }
+
+  .media-team-controls .ZENVE-input-text {
+    font-size: 12.5px !important;
+    padding: 8px 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .media-upload-dropzone {
+    padding: 16px 10px !important;
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .dropzone-text strong {
+    font-size: 12.5px !important;
+  }
+
+  .dropzone-text span {
+    font-size: 10.5px !important;
+    line-height: 1.35 !important;
+  }
+
+  .selected-files-preview-strip {
+    padding: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .preview-thumbnails-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .media-action-footer {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .lock-notice {
+    width: 100% !important;
+    text-align: center !important;
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+  }
+
+  .buttons-cluster {
+    width: 100% !important;
+    margin-left: 0 !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .buttons-cluster .ZENVE-btn,
+  .buttons-cluster .ZENVE-btn-success,
+  .buttons-cluster .ZENVE-btn-primary,
+  .buttons-cluster .ZENVE-btn-secondary {
+    width: 100% !important;
+    min-height: 42px !important;
+    justify-content: center !important;
+    font-size: 13px !important;
+    box-sizing: border-box !important;
+  }
+
+  .designer-review-controls .action-buttons-row {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+
+  .designer-review-controls .action-buttons-row button {
+    width: 100% !important;
+    min-height: 42px !important;
+    justify-content: center !important;
+  }
+
+  /* Notifications Sidebar / Drawer */
+  .ZENVE-notif-sidebar {
+    width: 100% !important;
+    max-width: 100vw !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+  }
+
+  .ZENVE-notif-sidebar-header {
+    padding: 14px 16px !important;
+  }
+
+  .ZENVE-notif-sidebar-title {
+    font-size: 17px !important;
+  }
+
+  .ZENVE-notif-sidebar-actions {
+    padding: 10px 16px !important;
+  }
+
+  .ZENVE-notif-sidebar-body {
+    padding: 12px 14px !important;
+  }
+
+  .ZENVE-notification-row {
+    padding: 12px 10px !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+
+  .ZENVE-notif-left {
+    width: 100% !important;
+  }
+
+  .media-notif-product-name {
+    font-size: 12.5px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+
+  .ZENVE-notif-right {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    margin-top: 4px !important;
+    padding-top: 6px !important;
+    border-top: 1px dashed var(--ZENVE-line-light) !important;
+  }
+
+  .btn-media-notif-view {
+    min-height: 32px !important;
+    padding: 4px 12px !important;
+  }
+
+  .ZENVE-notif-sidebar-footer {
+    padding: 12px 16px !important;
+  }
+
+  .ZENVE-notif-sidebar-footer button {
+    width: 100% !important;
+    min-height: 40px !important;
+    justify-content: center !important;
+  }
+
+  /* Lightbox & Dialogs */
+  .lightbox-content-box {
+    max-width: 95vw !important;
+  }
+
+  .lightbox-close-btn {
+    top: 10px !important;
+    right: 10px !important;
+    font-size: 28px !important;
+    z-index: 100 !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    border-radius: 50% !important;
+    width: 36px !important;
+    height: 36px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .lightbox-nav-btn {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 24px !important;
+  }
+
+  .lightbox-nav-btn.prev {
+    left: 6px !important;
+  }
+
+  .lightbox-nav-btn.next {
+    right: 6px !important;
+  }
+
+  .lightbox-caption-bar {
+    padding: 8px 12px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+
+  .ZENVE-upload-modal-dialog {
+    width: 94% !important;
+    margin: 16px auto !important;
+  }
+
+  /* Catalog / Asset Grids Legacy Support */
   .media-metrics-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
@@ -3154,21 +3752,6 @@
     justify-content: center;
   }
 
-  .media-filter-toolbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
-
-  .toolbar-search-field {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .toolbar-dropdown-item {
-    justify-content: space-between;
-  }
-
   .media-cards-grid-10 {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
@@ -3191,6 +3774,33 @@
 }
 
 @media (max-width: 480px) {
+  .ZENVE-media-main {
+    padding: 10px 8px 48px !important;
+  }
+
+  .ZENVE-media-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  .ZENVE-media-kpi-card {
+    padding: 8px 10px !important;
+  }
+
+  .ZENVE-media-kpi-card .kpi-val {
+    font-size: 18px !important;
+  }
+
+  .originals-grid,
+  .generated-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  .preview-thumbnails-grid {
+    grid-template-columns: 1fr !important;
+  }
+
   .media-metrics-grid {
     grid-template-columns: 1fr;
   }
@@ -3201,5 +3811,11 @@
 
   .media-cards-grid-10 {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 360px) {
+  .ZENVE-media-kpi-grid {
+    grid-template-columns: 1fr !important;
   }
 }
