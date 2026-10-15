@@ -100,6 +100,12 @@ class ProductListCreateAPIView(APIView):
 
         products = scoped_products(request, products)
 
+        if str(request.query_params.get("storefront", "")).lower() in ("true", "1"):
+            products = products.filter(
+                status=Product.ProductStatus.APPROVED,
+                media_job__assets__image__gt="",
+            ).distinct()
+
         if designer:
 
             designer_value = str(
