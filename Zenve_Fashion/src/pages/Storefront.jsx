@@ -134,7 +134,7 @@ export default function Storefront() {
       setError(null);
 
       const [prodsData, mediaData, desData] = await Promise.all([
-        getProducts({ status: "APPROVED", ...(currentUser?.id === "designer" ? { designer: currentUser.designerId } : {}) }).catch(() => []),
+        getProducts({ status: "APPROVED", storefront: true, ...(currentUser?.id === "designer" ? { designer: currentUser.designerId } : {}) }).catch(() => []),
         getMediaQueue().catch(() => []),
         getDesigners().catch(() => []),
       ]);
@@ -185,6 +185,7 @@ export default function Storefront() {
       // Only products approved by QA are eligible for the storefront.
       const isLive = Boolean(
         p.status === "APPROVED" &&
+        Array.isArray(p.media_assets) && p.media_assets.some((asset) => Boolean(asset.image)) &&
         p.is_active !== false
       );
 

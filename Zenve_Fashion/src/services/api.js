@@ -235,7 +235,9 @@ export async function updateDesigner(
 ========================================================= */
 
 export async function getProducts(params = {}) {
+  // Storefront requests require both QA approval and generated Media Studio assets.
   const query = new URLSearchParams();
+  if (params.storefront) query.set("storefront", "true");
 
   if (params.designer) {
     query.set(
