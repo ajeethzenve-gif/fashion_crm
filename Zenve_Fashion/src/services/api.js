@@ -132,7 +132,7 @@ export async function createDesigner(
     method: "POST",
     headers: {
       Accept: "application/json",
-        ...authHeaders(),
+      ...authHeaders(),
     },
   };
 
@@ -191,7 +191,7 @@ export async function updateDesigner(
     method: "PATCH",
     headers: {
       Accept: "application/json",
-        ...authHeaders(),
+      ...authHeaders(),
     },
   };
 
@@ -329,7 +329,7 @@ export async function createProduct(
     method: "POST",
     headers: {
       Accept: "application/json",
-        ...authHeaders(),
+      ...authHeaders(),
     },
   };
 
@@ -393,7 +393,7 @@ export async function updateProduct(
     method: "PATCH",
     headers: {
       Accept: "application/json",
-        ...authHeaders(),
+      ...authHeaders(),
     },
   };
 
