@@ -68,6 +68,24 @@ class MediaWorkflowTests(TestCase):
         fake = SimpleUploadedFile("fake.png", b"not an image", content_type="image/png")
         self.assertEqual(self.client.post(self.url, {"action": "send", "images": [fake]}, format="multipart").status_code, 400)
         self.assertEqual(MediaJob.objects.get().status, "IN_PROGRESS")
-        self.product.product_images.first().delete()
+        self.product.product_images.all().delete()
         self.assertEqual(self.client.get("/api/products/media/").data, [])
         self.assertEqual(self.client.post(self.url, {"action": "send"}).status_code, 400)
+
+    def test_one_original_image_can_enter_media_workflow(self):
+        self.product.product_images.exclude(position=1).delete()
+        response = self.client.get("/api/products/media/")
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data[0]["originals"]), 1)
+        response = self.client.post(self.url, {"action": "send", "images": [image_file()]}, format="multipart")
+        self.assertEqual(response.status_code, 200, response.data)
+
+    def test_generated_upload_requires_one_to_four_images(self):
+        self.assertEqual(self.client.post(self.url, {"action": "save"}).status_code, 400)
+        response = self.client.post(self.url, {"action": "save", "images": [image_file(f"{i}.png") for i in range(5)]}, format="multipart")
+        self.assertEqual(response.status_code, 400)
+        for count in [1, 4]:
+            response = self.client.post(self.url, {"action": "save", "images": [image_file(f"{i}.png") for i in range(count)]}, format="multipart")
+            self.assertEqual(response.status_code, 200, response.data)
+            self.assertEqual(MediaAsset.objects.count(), count)
+        self.assertEqual(self.client.post(self.url, {"action": "send"}).status_code, 200)

@@ -1,3 +1,4 @@
+from django.db import models
 from rest_framework.views import APIView
 from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
@@ -47,6 +48,10 @@ def inbox_items(user):
     if has_layer(user, "14"):
         for p in Product.objects.filter(social_media_status="PENDING_REVIEW").only("id", "product_name", "updated_at"):
             add(f"social-{p.pk}-{p.updated_at.isoformat()}", "Social Media", "Growth add-on review requested", p.product_name, p.updated_at, "/social-media")
+    if has_layer(user, "17"):
+        from designers.models import DesignerKYC
+        for record in DesignerKYC.objects.select_related("designer").filter(pan_status="PENDING"):
+            add(f"kyc-review-{record.pk}-{record.updated_at.isoformat()}", "KYC Verification", "PAN verification awaiting review", record.designer.brand_name, record.updated_at, "/designer-kyc")
     read_ids = set(NotificationRead.objects.filter(user=user).values_list("notification_id", flat=True))
     for item in items:
         item["read"] = item["id"] in read_ids

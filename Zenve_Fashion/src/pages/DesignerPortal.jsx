@@ -1,7 +1,7 @@
 import { useDataLoading } from "../components/DataLoading.jsx";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { MediaWorkspace } from "./MediaStudio";
 import { showToast, showErrorToast } from "../utils/zenveToast";
@@ -359,6 +359,7 @@ export default function DesignerPortal() {
   const hasPromptedAccountRef = useRef({});
   
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Listen to quick-action triggers from Sidebar menu option (Desktop & Mobile Drawer)
   useEffect(() => {
@@ -651,7 +652,7 @@ export default function DesignerPortal() {
 
     if (availableSlots <= 0) {
       setImageWarningText(
-        "You can upload exactly 4 product images. Remove an image before adding another."
+        "You can upload a maximum of 4 product images. Remove an image before adding another."
       );
       setImageWarningOpen(true);
       return;
@@ -682,7 +683,7 @@ export default function DesignerPortal() {
     if (selectedFiles.length > availableSlots) {
       setImageWarningText(
         `Only ${availableSlots} more image${availableSlots === 1 ? "" : "s"
-        } can be selected. A product requires exactly 4 images.`
+        } can be selected. A product requires 1 to 4 images.`
       );
       setImageWarningOpen(true);
     }
@@ -1292,10 +1293,10 @@ export default function DesignerPortal() {
     }
 
     if (
-      productImages.length !== MAX_PRODUCT_IMAGES
+      productImages.length < 1 || productImages.length > MAX_PRODUCT_IMAGES
     ) {
       setImageWarningText(
-        `Please select exactly ${MAX_PRODUCT_IMAGES} product images. You currently selected ${productImages.length}.`
+        `Please select 1 to ${MAX_PRODUCT_IMAGES} product images. You currently selected ${productImages.length}.`
       );
 
       setImageWarningOpen(true);
@@ -4294,7 +4295,7 @@ export default function DesignerPortal() {
                               "#666",
                           }}
                         >
-                          Upload up to 4 images.{" "}
+                          Upload 1 to 4 images (at least 1 required).{" "}
 
                           {productImages.length}/4
                           selected.
@@ -4924,9 +4925,15 @@ export default function DesignerPortal() {
                           ? "unread"
                           : ""
                           }`}
-                        onClick={() => !n.read && handleMarkSingleNotificationRead(n.id)}
-                        style={{ cursor: !n.read ? "pointer" : "default" }}
-                        title={!n.read ? "Click to mark as read" : undefined}
+                        role={n.action_url ? "link" : undefined}
+                        tabIndex={n.action_url ? 0 : undefined}
+                        onKeyDown={(event) => { if (n.action_url && event.key === "Enter") { setNotifSidebarOpen(false); navigate(n.action_url); } }}
+                        onClick={() => {
+                          if (!n.read) handleMarkSingleNotificationRead(n.id);
+                          if (n.action_url) { setNotifSidebarOpen(false); navigate(n.action_url); }
+                        }}
+                        style={{ cursor: n.action_url || !n.read ? "pointer" : "default" }}
+                        title={n.action_url ? "Open KYC details form" : !n.read ? "Click to mark as read" : undefined}
                       >
                         <div className="ZENVE-notif-left">
                           {!n.read && (
@@ -4937,6 +4944,7 @@ export default function DesignerPortal() {
                             {
                               n.message
                             }
+                            {n.action_url && <strong> Submit KYC details →</strong>}
                           </span>
                         </div>
 

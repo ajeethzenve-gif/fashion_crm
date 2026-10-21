@@ -46,7 +46,7 @@ class DesignerAuthenticationTests(TestCase):
         self.assertEqual(self.designer.user.username, "testdesigner@zf")
         self.assertTrue(self.designer.user.check_password("testdesigner@zf3210"))
 
-    def test_password_login_requires_approval_and_kyc(self):
+    def test_password_login_requires_approval_only(self):
         self.approve()
         credentials = {"username": "testdesigner@zf", "password": "testdesigner@zf3210"}
         response = self.client.post("/api/designer/login/", credentials)
@@ -54,7 +54,7 @@ class DesignerAuthenticationTests(TestCase):
         self.assertEqual(response.data["designer"]["id"], self.designer.pk)
         self.designer.kyc_status = "PENDING"
         self.designer.save()
-        self.assertEqual(self.client.post("/api/designer/login/", credentials).status_code, 403)
+        self.assertEqual(self.client.post("/api/designer/login/", credentials).status_code, 200)
         self.designer.stage = "REVIEW"
         self.designer.save()
         self.assertEqual(self.client.post("/api/designer/login/", credentials).status_code, 401)
@@ -125,21 +125,21 @@ class DesignerAuthenticationTests(TestCase):
         self.approve()
         self.assertEqual(self.send()[0].status_code, 503)
 
-    def test_pending_kyc_blocks_sms_but_approval_creates_user(self):
+    def test_pending_kyc_allows_sms_after_approval(self):
         self.designer.stage = "APPROVED"
         self.designer.save()
         self.assertIsNotNone(self.designer.user_id)
         with patch("accounts.designer_login.import_string") as sender:
             response = self.client.post("/api/designer/send-otp/", {"phone_number": "9876543210"})
-        self.assertEqual(response.status_code, 403)
-        sender.assert_not_called()
+        self.assertEqual(response.status_code, 200)
+        sender.assert_called_once()
 
-    def test_kyc_revoked_after_sending_blocks_verification(self):
+    def test_kyc_status_does_not_block_approved_login(self):
         self.approve()
         _, otp = self.send()
         self.designer.kyc_status = "REJECTED"
         self.designer.save()
-        self.assertEqual(self.verify(otp).status_code, 403)
+        self.assertEqual(self.verify(otp).status_code, 200)
 
     def test_unregistered_mobile_is_rejected(self):
         self.approve()
@@ -181,14 +181,14 @@ class DesignerAuthenticationTests(TestCase):
         self.designer.refresh_from_db()
         self.assertEqual(self.designer.stage, "APPROVED")
 
-    def test_profile_update_requires_current_approval_and_kyc(self):
+    def test_profile_update_allows_pending_kyc(self):
         self.approve()
         self.client.force_authenticate(user=self.designer.user)
         self.designer.kyc_status = "PENDING"
         self.designer.save()
-        self.assertEqual(self.client.patch(f"/api/designers/{self.designer.pk}/", {"city": "Chennai"}).status_code, 403)
+        self.assertEqual(self.client.patch(f"/api/designers/{self.designer.pk}/", {"city": "Chennai"}).status_code, 200)
 
-    def test_dashboard_requires_own_verified_account(self):
+    def test_dashboard_requires_own_approved_account(self):
         self.approve()
         url = f"/api/designers/{self.designer.pk}/portal-dashboard/"
         self.assertIn(self.client.get(url).status_code, (401, 403))
@@ -197,7 +197,7 @@ class DesignerAuthenticationTests(TestCase):
         self.assertEqual(self.client.get(f"/api/designers/{self.designer.pk + 1}/portal-dashboard/").status_code, 403)
         self.designer.kyc_status = "PENDING"
         self.designer.save()
-        self.assertEqual(self.client.get(url).status_code, 403)
+        self.assertEqual(self.client.get(url).status_code, 200)
 
     def test_onboarding_requires_crm_role(self):
         url = f"/api/designers/{self.designer.pk}/"

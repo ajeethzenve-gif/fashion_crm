@@ -14,11 +14,11 @@ function LockIcon() {
 }
 
 export default function ProtectedRoute({ layer, children }) {
-  const { currentUser, hasAccess, isLoggedIn } = useAuth();
+  const { currentUser, hasAccess, isLoggedIn, loginPath } = useAuth();
 
   // Not logged in at all -> send to login page
   if (!isLoggedIn) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={loginPath} replace />;
   }
 
   const isAuthorized = hasAccess(layer);

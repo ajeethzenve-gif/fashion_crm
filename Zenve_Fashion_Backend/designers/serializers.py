@@ -192,6 +192,22 @@ class DesignerSerializer(serializers.ModelSerializer):
             "overdue_tasks_count",
         ]
 
+    def validate(self, attrs):
+        if self.instance and attrs.get("kyc_status") == "VERIFIED":
+            from .models import DesignerKYC
+            submission = DesignerKYC.objects.filter(designer=self.instance).first()
+            if submission and submission.pan_status != "VERIFIED":
+                raise serializers.ValidationError({"kyc_status": "Approve PAN in Designer KYC Verification first."})
+        if self.instance is None or "contract_start_date" in attrs or "contract_end_date" in attrs:
+            start = attrs.get("contract_start_date") or getattr(self.instance, "contract_start_date", None) or timezone.localdate()
+            try:
+                end = start.replace(year=start.year + 2)
+            except ValueError:
+                end = start.replace(year=start.year + 2, day=28)
+            attrs["contract_start_date"] = start
+            attrs["contract_end_date"] = end
+        return attrs
+
     def create(self, validated_data):
         if validated_data.pop("request_company_gst", False):
             validated_data["gst_requested_at"] = timezone.now()

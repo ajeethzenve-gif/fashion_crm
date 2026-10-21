@@ -414,6 +414,14 @@ LOGOUT_REDIRECT_URL = "/"
 PRIVATE_MEDIA_ROOT = BASE_DIR / "private_uploads"
 
 SMS_PROVIDER = os.getenv("SMS_PROVIDER", "APITXT")
+APITXT_KYC_HANDLER = os.getenv("APITXT_KYC_HANDLER", "designers.apitxt_kyc.verify_identity")
+APITXT_AUTH_KEY = os.getenv("APITXT_AUTH_KEY", "")
+APITXT_CONNECT_TIMEOUT = float(os.getenv("APITXT_CONNECT_TIMEOUT", "10"))
+APITXT_READ_TIMEOUT = float(os.getenv("APITXT_READ_TIMEOUT", "30"))
+APITXT_AADHAAR_VERIFY_TIMEOUT = float(os.getenv("APITXT_AADHAAR_VERIFY_TIMEOUT", "300"))
+APITXT_PAN_VERIFY_URL = os.getenv("APITXT_PAN_VERIFY_URL", "https://apitxt.com/api/panVerify")
+APITXT_AADHAAR_SEND_URL = os.getenv("APITXT_AADHAAR_SEND_URL", "https://apitxt.com/api/aadhaarSendOTP")
+APITXT_AADHAAR_VERIFY_URL = os.getenv("APITXT_AADHAAR_VERIFY_URL", "https://apitxt.com/api/aadhaarVerifyOTP")
 
 SMS_API_KEY = os.getenv("SMS_API_KEY", "")
 SMS_AUTH_KEY = os.getenv("SMS_AUTH_KEY", "")

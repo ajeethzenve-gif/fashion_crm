@@ -255,9 +255,9 @@ function MediaCard({ item, designerMode, onUpdate, onInspectImage }) {
       validFiles.push(f);
     }
 
-    if (validFiles.length + selectedFiles.length > 12) {
-      showWarningToast("Maximum 12 generated assets allowed per product.");
-      const allowed = validFiles.slice(0, 12 - selectedFiles.length);
+    if (validFiles.length + selectedFiles.length > 4) {
+      showWarningToast("Maximum 4 generated images allowed per product.");
+      const allowed = validFiles.slice(0, Math.max(0, 4 - selectedFiles.length));
       setSelectedFiles((prev) => [...prev, ...allowed]);
     } else {
       setSelectedFiles((prev) => [...prev, ...validFiles]);
@@ -277,6 +277,13 @@ function MediaCard({ item, designerMode, onUpdate, onInspectImage }) {
   };
 
   const submit = async (action) => {
+    if (!designerMode && ["save", "send"].includes(action)) {
+      const count = selectedFiles.length || item.assets?.length || 0;
+      if (count < 1 || count > 4) {
+        showWarningToast("Upload 1 to 4 generated images before saving or sending.");
+        return;
+      }
+    }
     setBusy(true);
     try {
       const body = new FormData();
@@ -341,10 +348,10 @@ function MediaCard({ item, designerMode, onUpdate, onInspectImage }) {
         <div className="photo-lane">
           <div className="lane-header">
             <h4>
-              <span className="lane-counter">4/4</span>
+              <span className="lane-counter">{item.originals.length}/4</span>
               <span>Designer Original Photography</span>
             </h4>
-            <span className="lane-sub">Standard angles required from studio upload</span>
+            <span className="lane-sub">Minimum 1 image · Maximum 4 images</span>
           </div>
 
           <div className="originals-grid">
@@ -574,7 +581,7 @@ function MediaCard({ item, designerMode, onUpdate, onInspectImage }) {
               <UploadCloudIcon />
               <div className="dropzone-text">
                 <strong>Click or drag & drop generated visuals</strong>
-                <span>JPG, PNG or WebP · Up to 12 images · Max 10 MB per asset</span>
+                <span>JPG, PNG or WebP · 1 to 4 images · Max 10 MB per asset</span>
               </div>
             </div>
 
@@ -887,7 +894,7 @@ export function MediaWorkspace({
             <p className="workspace-subtitle">
               {designerMode
                 ? "Review photography deliverables from the creative studio, inspect high-resolution assets, and approve for catalogue."
-                : "Studio pipeline: 4 Original Studio Photos → Figma Creative Direction → Retouched Generated Assets → Designer Review & Approval."}
+                : "Studio pipeline: 1–4 Original Photos → Figma Creative Direction → 1–4 Generated Images → Designer Review & Approval."}
             </p>
           </div>
 
@@ -925,7 +932,7 @@ export function MediaWorkspace({
         >
           <span className="kpi-label">Ready for Media</span>
           <strong className="kpi-val text-blue">{kpis.queued}</strong>
-          <span className="kpi-hint">4 originals verified</span>
+          <span className="kpi-hint">1–4 original images per product</span>
         </div>
 
         <div
@@ -1070,7 +1077,7 @@ export function MediaWorkspace({
               ? "No creative assets match the selected filters."
               : designerMode
               ? "No creative deliveries yet. Visual deliverables sent by the creative team will appear here for your approval."
-              : "Products automatically enter the Media Studio queue as soon as a designer uploads all four original product angles."}
+              : "Products automatically enter the Media Studio queue when a designer uploads 1 to 4 original product images."}
           </p>
           {(activeStatusFilter !== "ALL" || brandFilter !== "ALL" || searchQuery) && (
             <button

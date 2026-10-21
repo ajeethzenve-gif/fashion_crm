@@ -31,7 +31,7 @@ class DesignerManagementAccess(BasePermission):
                 return False
             return Designer.objects.filter(
                 pk=designer_id, user=user, is_active=True, stage__in=LOGIN_STAGES,
-                kyc_status="VERIFIED", user__is_active=True,
+                user__is_active=True,
             ).exists()
         if request.method not in ("GET", "HEAD", "OPTIONS"):
             return False
@@ -39,7 +39,7 @@ class DesignerManagementAccess(BasePermission):
 
 
 class DesignerDashboardAccess(BasePermission):
-    message = "An approved account and verified KYC are required for your own designer dashboard."
+    message = "An approved account is required for your own designer dashboard."
 
     def has_permission(self, request, view):
         user = request.user
@@ -51,6 +51,6 @@ class DesignerDashboardAccess(BasePermission):
         if role and role.role.name == "Designer":
             return Designer.objects.filter(
                 pk=view.kwargs.get("designer_id"), user=user,
-                is_active=True, stage__in=LOGIN_STAGES, kyc_status="VERIFIED",
+                is_active=True, stage__in=LOGIN_STAGES,
             ).exists()
         return has_layer(user, "02") or has_layer(user, "01")

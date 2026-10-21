@@ -496,14 +496,12 @@ class DesignerDetailAPIView(APIView):
 # =========================================================
 
 class DesignerPortalDashboardAPIView(APIView):
+    permission_classes = [DesignerDashboardAccess]
     """
     GET  /api/designers/<id>/portal-dashboard/
     POST /api/designers/<id>/portal-dashboard/mark-read/
     """
     def get_permissions(self):
-        from rest_framework.permissions import AllowAny
-        if self.request.method in ("GET", "HEAD", "OPTIONS", "POST"):
-            return [AllowAny()]
         return [DesignerDashboardAccess()]
 
     def get(self, request, designer_id):
@@ -591,6 +589,14 @@ class DesignerPortalDashboardAPIView(APIView):
 
         # Notifications list from designer or recent activity
         notifications = []
+        kyc = getattr(designer, "kyc_submission", None)
+        invitation = kyc.api_checks.get("details_request", {}) if kyc else {}
+        if invitation.get("requested_at") and not invitation.get("submitted_at") and designer.kyc_status != "VERIFIED":
+            notifications.append({
+                "id": f"kyc-request-{kyc.pk}-{invitation['requested_at']}", "kind": "KYC_DETAILS_REQUEST",
+                "message": "Your KYC verification has started. Please send your PAN name, date of birth, PAN number using the secure form.",
+                "at": invitation["requested_at"], "read": False, "action_url": "/designer-kyc-submit",
+            })
         if designer.gst_requested_at:
             notifications.append({
                 "id": f"gst-request-{designer.pk}", "kind": "GST_REQUEST",

@@ -3,7 +3,7 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth.hashers import make_password, check_password
-from django.db import transaction
+from django.db import transaction, OperationalError
 from django.utils import timezone
 from django.utils.module_loading import import_string
 from rest_framework.views import APIView
@@ -30,18 +30,19 @@ def find_designer(phone):
     return matches[0] if len(matches) == 1 else None
 
 
-def kyc_error(designer):
-    if designer.kyc_status != Designer.KYCStatus.VERIFIED:
-        return Response({"detail": "KYC verification is required before designer login. Contact your account manager."}, status=403)
-    return None
-
-
 class DesignerPasswordThrottle(AnonRateThrottle):
     scope = "designer_password_login"
     rate = "10/min"
 
 
-class DesignerPasswordLoginAPIView(APIView):
+class DesignerLoginAPIView(APIView):
+    def handle_exception(self, exc):
+        if isinstance(exc, OperationalError) and exc.args and exc.args[0] in (1045, 2002, 2003, 2006, 2013):
+            return Response({"detail": "Login is temporarily unavailable because the database connection failed. Please contact the administrator."}, status=503)
+        return super().handle_exception(exc)
+
+
+class DesignerPasswordLoginAPIView(DesignerLoginAPIView):
     authentication_classes = []
     permission_classes = [AllowAny]
     throttle_classes = [DesignerPasswordThrottle]
@@ -54,9 +55,6 @@ class DesignerPasswordLoginAPIView(APIView):
         ).first()
         if not designer or not designer.user.check_password(str(request.data.get("password", ""))):
             return Response({"detail": "Invalid username or password."}, status=401)
-        denied = kyc_error(designer)
-        if denied is not None:
-            return denied
         refresh = RefreshToken.for_user(designer.user)
         return Response({
             "access": str(refresh.access_token), "refresh": str(refresh),
@@ -67,7 +65,7 @@ class DesignerPasswordLoginAPIView(APIView):
         })
 
 
-class DesignerOTPAPIView(APIView):
+class DesignerOTPAPIView(DesignerLoginAPIView):
     authentication_classes = []
     permission_classes = [AllowAny]
 
@@ -79,9 +77,6 @@ class DesignerOTPAPIView(APIView):
         designer = find_designer(phone)
         if not designer:
             return Response({"detail": "No approved designer account for this mobile number."}, status=400)
-        denied = kyc_error(designer)
-        if denied is not None:
-            return denied
         sender = getattr(settings, "DESIGNER_OTP_SMS_SENDER", "")
         if not sender:
             return Response({"detail": "SMS delivery is not configured. Contact the administrator."}, status=503)
@@ -91,9 +86,6 @@ class DesignerOTPAPIView(APIView):
             current_designer = find_designer(phone)
             if not current_designer:
                 return Response({"detail": "Designer account is not eligible for login."}, status=400)
-            denied = kyc_error(current_designer)
-            if denied is not None:
-                return denied
             challenge, _ = DesignerLoginOTP.objects.get_or_create(designer=designer)
             now = timezone.now()
             if challenge.sent_at and now < challenge.sent_at + timedelta(seconds=30):
@@ -117,7 +109,7 @@ class DesignerOTPAPIView(APIView):
         return Response({"message": "OTP sent to your mobile number.", "retry_after": 30})
 
 
-class DesignerVerifyOTPAPIView(APIView):
+class DesignerVerifyOTPAPIView(DesignerLoginAPIView):
     authentication_classes = []
     permission_classes = [AllowAny]
 
@@ -132,17 +124,11 @@ class DesignerVerifyOTPAPIView(APIView):
         designer = find_designer(phone)
         if not designer:
             return Response({"detail": "Designer account is not eligible for login."}, status=400)
-        denied = kyc_error(designer)
-        if denied is not None:
-            return denied
         with transaction.atomic():
             Designer.objects.select_for_update().get(pk=designer.pk)
             current_designer = find_designer(phone)
             if not current_designer:
                 return Response({"detail": "Designer account is not eligible for login."}, status=400)
-            denied = kyc_error(current_designer)
-            if denied is not None:
-                return denied
             challenge = DesignerLoginOTP.objects.filter(designer=designer, phone=phone).first()
             if not challenge or not challenge.otp_hash or challenge.expires_at <= timezone.now() or challenge.attempts >= 5:
                 return Response({"detail": "OTP expired or unavailable. Request a new OTP."}, status=400)

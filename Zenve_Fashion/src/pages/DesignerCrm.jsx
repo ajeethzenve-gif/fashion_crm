@@ -63,6 +63,16 @@ export const STAGES_PIPELINE = [
   "ACTIVE",
 ];
 
+const todayDate = () => {
+  const date = new Date();
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+};
+const contractEndDate = (start = todayDate()) => {
+  const [year, month, day] = start.split("-").map(Number);
+  const lastDay = new Date(year + 2, month, 0).getDate();
+  return `${year + 2}-${String(month).padStart(2, "0")}-${String(Math.min(day, lastDay)).padStart(2, "0")}`;
+};
+
 /* =========================================================
    ICONS & SPARKLINES
 ========================================================= */
@@ -156,7 +166,7 @@ export default function DesignerCRM() {
     creditPoints: 0,
     takeRate: "",
     gst: "",
-    contractEnds: "",
+    contractEnds: contractEndDate(),
     source: "Referral",
     owner: "",
     nextFollowUp: "",
@@ -364,12 +374,13 @@ export default function DesignerCRM() {
       phone: designer.phone || "",
       city: designer.city || "",
       state: designer.state || "",
-      primary_category: designer.primary_category || designer.category || "",
+      primary_category: (designer.primary_category || designer.category || "").toLowerCase(),
       gst: designer.gst_number || designerGst,
       take_rate: designer.take_rate !== undefined && designer.take_rate !== null ? designer.take_rate : (designer.takeRate || ""),
       renewal_likelihood_pct: designer.renewal_likelihood ?? "",
       next_follow_up: designer.next_followup_date || "",
-      contract_ends: designer.contract_end_date || "",
+      contract_start_date: designer.contract_start_date || todayDate(),
+      contract_ends: contractEndDate(designer.contract_start_date || todayDate()),
       stage: designer.stage || (designer.status === "Inactive" ? "INACTIVE" : "LIVE"),
       kyc_status: designer.kyc_status || (designer.kyc_verified ? "VERIFIED" : "PENDING"),
       tier: designer.tier || "",
@@ -496,6 +507,7 @@ export default function DesignerCRM() {
         renewal_likelihood: Number(editForm.renewal_likelihood_pct) || 0,
         next_followup_date: editForm.next_follow_up || null,
         contract_end_date: editForm.contract_ends || null,
+        contract_start_date: editForm.contract_start_date,
       };
 
       await saveEditSection(updated);
@@ -521,7 +533,7 @@ export default function DesignerCRM() {
       owner_name: modalNewLead.name.trim(),
       phone: modalNewLead.phone.trim() || null,
       email: modalNewLead.email.trim() || `${modalNewLead.name.toLowerCase().replace(/\s+/g, "")}@zenve.com`,
-      primary_category: modalNewLead.category.trim() || "Fashion",
+      primary_category: modalNewLead.category,
       city: modalNewLead.city.trim() || "",
       state: modalNewLead.state.trim() || null,
       tier: modalNewLead.tier.trim().toUpperCase(),
@@ -536,7 +548,8 @@ export default function DesignerCRM() {
       take_rate: modalNewLead.takeRate ? Number(modalNewLead.takeRate) : 0,
       gst_number: useCompanyGst ? COMPANY_GST_INFO.gstNumber : (modalNewLead.gst || null),
       request_company_gst: requestCompanyGst,
-      contract_end_date: modalNewLead.contractEnds || null,
+      contract_start_date: todayDate(),
+      contract_end_date: contractEndDate(),
       next_followup_date: modalNewLead.nextFollowUp || null,
       acquisition_cost: modalNewLead.cac ? Number(modalNewLead.cac) : 0,
       renewal_likelihood: modalNewLead.renewalProbability ? Number(modalNewLead.renewalProbability) : 0,
@@ -562,7 +575,7 @@ export default function DesignerCRM() {
         creditPoints: 0,
         takeRate: "",
         gst: "",
-        contractEnds: "",
+        contractEnds: contractEndDate(),
         source: "Referral",
         owner: "Nisha Kapoor",
         nextFollowUp: "",
@@ -1212,12 +1225,17 @@ Login requires approval and completed KYC verification.`;
 
                 <div className="crm-lead-field">
                   <label className="crm-field-label">PRIMARY CATEGORY</label>
-                  <input
-                    type="text"
-                    className="crm-lead-input"
+                  <select
+                    className="crm-lead-select"
                     value={modalNewLead.category}
                     onChange={(e) => setModalNewLead({ ...modalNewLead, category: e.target.value })}
-                  />
+                    required
+                  >
+                    <option value="">Select primary category</option>
+                    <option value="pets">Pets</option>
+                    <option value="people">People</option>
+                    <option value="twin">Twin</option>
+                  </select>
                 </div>
 
                 {/* Row 4 */}
@@ -1297,8 +1315,8 @@ Login requires approval and completed KYC verification.`;
                   <input
                     type="date"
                     className="crm-lead-input"
-                    value={modalNewLead.contractEnds}
-                    onChange={(e) => setModalNewLead({ ...modalNewLead, contractEnds: e.target.value })}
+                    value={contractEndDate()}
+                    readOnly
                   />
                 </div>
               </div>
@@ -1436,13 +1454,18 @@ Login requires approval and completed KYC verification.`;
 
                 {/* Row 3 */}
                 <div className="crm-edit-form-group">
-                  <label className="crm-edit-field-label">Category</label>
-                  <input
-                    type="text"
+                  <label className="crm-edit-field-label">Primary Category</label>
+                  <select
                     className="crm-edit-form-input"
                     value={editForm.primary_category || ""}
                     onChange={(e) => setEditForm({ ...editForm, primary_category: e.target.value })}
-                  />
+                    required
+                  >
+                    <option value="">Select primary category</option>
+                    <option value="pets">Pets</option>
+                    <option value="people">People</option>
+                    <option value="twin">Twin</option>
+                  </select>
                 </div>
                 <div className="crm-edit-form-group">
                   <label className="crm-edit-field-label">GST number</label>
@@ -1488,7 +1511,7 @@ Login requires approval and completed KYC verification.`;
                     type="date"
                     className="crm-edit-form-input"
                     value={editForm.contract_ends || ""}
-                    onChange={(e) => setEditForm({ ...editForm, contract_ends: e.target.value })}
+                    readOnly
                   />
                 </div>
               </div>
