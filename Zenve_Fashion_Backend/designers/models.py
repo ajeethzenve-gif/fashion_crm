@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from django.db import models
+from .kyc_storage import kyc_storage, kyc_upload_path
 from django.core.validators import (
     MinValueValidator,
     MaxValueValidator,
@@ -11,6 +12,33 @@ from django.core.validators import (
 # =========================================================
 # DESIGNER
 # =========================================================
+
+class DesignerKYC(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "PENDING", "Pending review"
+        VERIFIED = "VERIFIED", "Verified by staff"
+        REJECTED = "REJECTED", "Rejected"
+
+    designer = models.OneToOneField("Designer", on_delete=models.CASCADE, related_name="kyc_submission")
+    holder_name = models.CharField(max_length=255)
+    aadhaar_last4 = models.CharField(max_length=4)
+    pan_number = models.CharField(max_length=10)
+    verification_method = models.CharField(max_length=12, default="MANUAL")
+    api_checks = models.JSONField(default=dict, blank=True)
+    aadhaar_document = models.FileField(storage=kyc_storage, upload_to=kyc_upload_path)
+    pan_document = models.FileField(storage=kyc_storage, upload_to=kyc_upload_path)
+    aadhaar_status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING)
+    pan_status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING)
+    aadhaar_notes = models.TextField(blank=True)
+    pan_notes = models.TextField(blank=True)
+    aadhaar_reviewed_by = models.ForeignKey("auth.User", null=True, blank=True, on_delete=models.SET_NULL, related_name="aadhaar_reviews")
+    pan_reviewed_by = models.ForeignKey("auth.User", null=True, blank=True, on_delete=models.SET_NULL, related_name="pan_reviews")
+    aadhaar_reviewed_at = models.DateTimeField(null=True, blank=True)
+    pan_reviewed_at = models.DateTimeField(null=True, blank=True)
+    submitted_by = models.ForeignKey("auth.User", null=True, on_delete=models.SET_NULL, related_name="kyc_submissions")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
 
 class Designer(models.Model):
 

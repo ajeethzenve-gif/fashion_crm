@@ -11,9 +11,9 @@ def designer_for_request(request):
     if not assignment or assignment.role.name != "Designer":
         return None
     designer = Designer.objects.filter(user=user, is_active=True,
-        stage__in=LOGIN_STAGES, kyc_status="VERIFIED").first()
+        stage__in=LOGIN_STAGES).first()
     if not designer:
-        raise PermissionDenied("Approval and verified KYC are required.")
+        raise PermissionDenied("An approved designer account is required.")
     return designer
 
 

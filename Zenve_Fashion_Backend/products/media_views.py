@@ -18,7 +18,7 @@ class MediaInput(serializers.Serializer):
     figma_url = serializers.URLField(required=False, allow_blank=True, max_length=1000)
     notes = serializers.CharField(required=False, allow_blank=True, max_length=10000)
     feedback = serializers.CharField(required=False, allow_blank=True, max_length=10000)
-    images = serializers.ListField(child=serializers.ImageField(), required=False, max_length=12)
+    images = serializers.ListField(child=serializers.ImageField(), required=False, min_length=1, max_length=4)
 
     def validate_figma_url(self, value):
         if value and (urlparse(value).scheme != "https" or urlparse(value).hostname not in {"figma.com", "www.figma.com"}):
@@ -53,7 +53,7 @@ class MediaQueueView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        products = Product.objects.annotate(image_count=Count("product_images")).filter(image_count=4).select_related("designer", "media_job").prefetch_related("product_images", "media_job__assets")
+        products = Product.objects.annotate(image_count=Count("product_images")).filter(image_count__range=(1, 4)).select_related("designer", "media_job").prefetch_related("product_images", "media_job__assets")
         designer = request.query_params.get("designer")
         if designer:
             if not designer.isdigit():
@@ -72,8 +72,8 @@ class MediaDetailView(APIView):
         data.is_valid(raise_exception=True)
         values = data.validated_data
         action = values["action"]
-        if product.product_images.count() != 4:
-            return Response({"detail": "Four original product images are required."}, status=400)
+        if not 1 <= product.product_images.count() <= 4:
+            return Response({"detail": "Between 1 and 4 original product images are required."}, status=400)
         job, _ = MediaJob.objects.get_or_create(product=product)
         if action in {"approve", "changes"}:
             if job.status != "IN_REVIEW":
@@ -86,8 +86,9 @@ class MediaDetailView(APIView):
             if job.status in {"IN_REVIEW", "APPROVED"}:
                 return Response({"detail": "This delivery is locked while in review or approved."}, status=400)
             images = values.get("images", [])
-            if action == "send" and not images and not job.assets.exists():
-                return Response({"detail": "Upload generated images before sending."}, status=400)
+            image_count = len(images) if images else job.assets.count()
+            if not 1 <= image_count <= 4:
+                return Response({"detail": "Upload between 1 and 4 generated images before saving or sending."}, status=400)
             if images:
                 job.assets.all().delete()
                 for image in images:

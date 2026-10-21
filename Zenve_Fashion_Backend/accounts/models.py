@@ -303,6 +303,7 @@ class RoleLayerAccess(models.Model):
         ("14", "14 - Social Media"),
         ("15", "15 - Accounting"),
         ("16", "16 - Requests & Notifications"),
+        ("17", "17 - Designer KYC Verification"),
     )
 
     role = models.ForeignKey(

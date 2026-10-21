@@ -1,3 +1,4 @@
+import DesignerKYCDetails from "./pages/DesignerKYCDetails.jsx";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import AppLayout from "./components/AppLayout.jsx";
@@ -20,6 +21,7 @@ import SocialMedia from "./pages/SocialMedia.jsx";
 import Login from "./pages/Login.jsx";
 import DesignerLogin from "./pages/DesignerLogin.jsx";
 import RequestsNotifications from "./pages/RequestsNotifications.jsx";
+import DesignerKYC from "./pages/DesignerKYC.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import RequireAuth from "./components/RequireAuth.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
@@ -29,6 +31,8 @@ export default function App() {
     <ErrorBoundary>
       <AuthProvider>
         <Routes>
+          <Route path="/designer-kyc-submit" element={<RequireAuth><DesignerKYCDetails authenticated /></RequireAuth>} />
+          <Route path="/designer-kyc-details" element={<DesignerKYCDetails />} />
           {/* Role-Based Staff Login */}
           <Route path="/login" element={<Login />} />
 
@@ -40,6 +44,7 @@ export default function App() {
           <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
 
           {/* Operational Layers (Role Clearance Protected) */}
+          <Route path="/designer-kyc" element={<ProtectedRoute layer="17"><DesignerKYC /></ProtectedRoute>} />
           <Route path="/requests-notifications" element={<ProtectedRoute layer="16"><RequestsNotifications /></ProtectedRoute>} />
           <Route path="/media" element={<ProtectedRoute layer="13"><MediaStudio /></ProtectedRoute>} />
           <Route path="/designer-crm" element={<ProtectedRoute layer="01"><DesignerCRM /></ProtectedRoute>} />

@@ -108,6 +108,7 @@ export const layers = [
   },
 
   { n: "16", group: "Operations", name: "Requests & Notifications", blurb: "GST requests, approvals, follow-ups and team alerts", path: "/requests-notifications" },
+  { n: "17", group: "Compliance", name: "Designer KYC Verification", blurb: "Aadhaar and PAN document review, decisions and verification status", path: "/designer-kyc" },
 ];
 
 export const getLayerByPath = (path) => {

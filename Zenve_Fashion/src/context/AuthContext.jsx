@@ -1,5 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { loginRequest, normalizeSession, saveTokens, clearTokens } from "../services/authApi";
+import { useNavigate } from "react-router-dom";
+import { tokenExpiry, SESSION_EXPIRED_EVENT } from "../services/sessionExpiry";
+import React, { createContext, useContext, useState, useEffect, useLayoutEffect } from "react";
+import { loginRequest, normalizeSession, saveTokens, clearTokens, getAccessToken } from "../services/authApi";
 
 const SESSION_KEY = "zenve_session";
 const LEGACY_KEY = "zenve_auth_user";
@@ -93,8 +95,10 @@ export const ROLES = [
 ];
 
 ROLES.filter((role) => role.id !== "designer").forEach((role) => role.clearance.push("16"));
+ROLES.filter((role) => ["admin", "merchandiser"].includes(role.id)).forEach((role) => role.clearance.push("17"));
 
 const LAYER_PATH_MAP = {
+  "/designer-kyc": "17",
   "/requests-notifications": "16",
   "/designer-crm": "01",
   "/designer-portal": "02",
@@ -117,6 +121,7 @@ const LAYER_PATH_MAP = {
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
+  const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       localStorage.removeItem(LEGACY_KEY); // remove old mock session
@@ -146,6 +151,38 @@ export function AuthProvider({ children }) {
     }
   }, [currentUser]);
 
+  const loginPath = currentUser?.id === "designer" ? "/designer-login" : "/login";
+  const accessToken = () => getAccessToken() || localStorage.getItem("access_token");
+
+  useLayoutEffect(() => {
+    if (!currentUser) return;
+    let timer;
+    const expire = () => {
+      clearTimeout(timer);
+      clearTokens();
+      sessionStorage.removeItem(SESSION_KEY);
+      localStorage.removeItem(LEGACY_KEY);
+      setCurrentUser(null);
+      navigate(loginPath, { replace: true });
+    };
+    const check = () => {
+      clearTimeout(timer);
+      const remaining = tokenExpiry(accessToken()) - Date.now();
+      if (remaining <= 0) { expire(); return; }
+      timer = setTimeout(check, Math.min(remaining, 2147483647));
+    };
+    window.addEventListener(SESSION_EXPIRED_EVENT, expire);
+    window.addEventListener("focus", check);
+    document.addEventListener("visibilitychange", check);
+    check();
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener(SESSION_EXPIRED_EVENT, expire);
+      window.removeEventListener("focus", check);
+      document.removeEventListener("visibilitychange", check);
+    };
+  }, [currentUser, loginPath, navigate]);
+
   // Real login: username + password are checked by the backend.
   // The role and allowed layers come back from the database.
   const login = async (username, password) => {
@@ -174,6 +211,8 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     clearTokens();
+    sessionStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(LEGACY_KEY);
     setCurrentUser(null);
   };
 
@@ -195,7 +234,8 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         currentUser,
-        isLoggedIn: !!currentUser,
+        isLoggedIn: !!currentUser && tokenExpiry(accessToken()) > Date.now(),
+        loginPath,
         ROLES,
         login,
         loginWithRole,

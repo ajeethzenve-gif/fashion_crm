@@ -813,11 +813,11 @@ class ProductSerializer(serializers.ModelSerializer):
                 [],
             )
 
-            if len(images) != 4:
+            if not 1 <= len(images) <= 4:
 
                 raise serializers.ValidationError({
                     "images": (
-                        "Exactly 4 product "
+                        "Between 1 and 4 product "
                         "images are required."
                     )
                 })

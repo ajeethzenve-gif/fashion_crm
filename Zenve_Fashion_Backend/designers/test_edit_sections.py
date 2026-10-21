@@ -15,6 +15,21 @@ class DesignerEditSectionTests(TestCase):
         )
         self.url = f"/api/designers/{self.designer.pk}/"
 
+    def test_contract_dates_are_two_calendar_years_apart(self):
+        for start, end in [("2026-10-15", "2028-10-15"), ("2028-02-29", "2030-02-28")]:
+            response = self.client.patch(self.url, {"contract_start_date": start}, format="json")
+            self.assertEqual(response.status_code, 200, response.data)
+            self.assertEqual(response.data["contract_end_date"], end)
+
+    def test_new_contract_defaults_to_today_plus_two_years(self):
+        from django.utils import timezone
+        from .serializers import DesignerSerializer
+        serializer = DesignerSerializer(data={})
+        values = serializer.validate({})
+        start = timezone.localdate()
+        self.assertEqual(values["contract_start_date"], start)
+        self.assertEqual(values["contract_end_date"].year, start.year + 2)
+
     def test_lower_controls_persist_without_saving_upper_fields(self):
         changes = {"sales_owner": "Nisha Kapoor", "online_membership_plan": "GOLD",
                    "renewal_preference": "High", "fulfillment": "Dropship",

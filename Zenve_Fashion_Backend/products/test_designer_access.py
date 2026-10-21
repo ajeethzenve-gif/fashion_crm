@@ -8,7 +8,7 @@ class DesignerProductAccessTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.designer = Designer.objects.create(designer_code="OWN", designer_name="Own",
-            owner_name="Own", stage="APPROVED", kyc_status="VERIFIED")
+            owner_name="Own", phone="9876543210", stage="APPROVED", kyc_status="PENDING")
         self.other = Designer.objects.create(designer_code="OTHER", designer_name="Other")
         self.own_product = Product.objects.create(designer=self.designer, sku="OWN-1", product_name="Own product", mrp=100, selling_price=80)
         self.other_product = Product.objects.create(designer=self.other, sku="OTHER-1", product_name="Other product", mrp=100, selling_price=80)

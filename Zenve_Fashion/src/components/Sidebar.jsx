@@ -9,7 +9,7 @@ const iconMap = {
   Home: (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-      <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      <polyline points="9 22 9 12 15 12 1   5 22"></polyline>
     </svg>
   ),
   "Designer CRM": (
@@ -233,8 +233,9 @@ export default function Sidebar({ mobileOpen = false, onCloseMobile = () => {} }
   };
 
   const handleLogout = () => {
+    const loginPath = currentUser?.id === "designer" ? "/designer-login" : "/login";
     logout();
-    navigate("/login");
+    navigate(loginPath, { replace: true });
   };
 
   // Close mobile drawer on route change
@@ -348,7 +349,7 @@ export default function Sidebar({ mobileOpen = false, onCloseMobile = () => {} }
 
           {layers.filter((layer) => hasAccess(layer.n)).map((layer) => {
             const isActive = location.pathname === layer.path || location.pathname.startsWith(`${layer.path}/`);
-            const icon = layer.n === "16" ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" /><path d="M10 21h4" /></svg> : iconMap[layer.name] || iconMap["Home"];
+            const icon = layer.n === "16" ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" /><path d="M10 21h4" /></svg> : layer.n === "17" ? iconMap["Catalogue QA"] : iconMap[layer.name] || iconMap["Home"];
             const displayName = getDisplayName(layer.name);
             return (
               <Link
