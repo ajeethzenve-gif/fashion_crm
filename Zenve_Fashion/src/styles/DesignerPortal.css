@@ -693,7 +693,8 @@ DesignerPortal.css
 ========================================================= */
 
 .ZENVE-header-profile-btn {
-  display: none !important; /* Removed in normal view to prevent duplicate profile icons */
+  display: none !important;
+  /* Removed in normal view to prevent duplicate profile icons */
   position: relative;
   align-items: center;
   justify-content: center;
@@ -1512,6 +1513,17 @@ form.ZENVE-profile-dl {
 .ZENVE-form-group select:focus {
   border-color: #92400e;
   box-shadow: 0 0 0 1px #92400e;
+}
+
+.ZENVE-form-group select {
+  background-color: var(--panel, #FFFCF5);
+  cursor: pointer;
+}
+
+.ZENVE-form-group select option {
+  background-color: #ffffff;
+  color: #1F2937;
+  padding: 6px 10px;
 }
 
 /* 2. Fix toggle rows: add spacing (gap) between the text span and toggle button */
@@ -3122,6 +3134,110 @@ form.ZENVE-profile-dl {
 }
 
 /* =========================================================
+   PAYMENT GATEWAY SWEETALERT POPUP THEME
+========================================================= */
+
+.zenve-swal-gateway-popup {
+  font-family: var(--sans, 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif) !important;
+  border-radius: 16px !important;
+  padding: 28px 24px 24px 24px !important;
+  width: 440px !important;
+  max-width: calc(100vw - 32px) !important;
+  box-shadow: 0 24px 50px rgba(31, 41, 55, 0.22) !important;
+  border: 1px solid var(--line, #e7c77a) !important;
+  background: var(--panel, #FFFCF5) !important;
+}
+
+.zenve-swal-gateway-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.zenve-swal-gateway-icon-badge {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFF8E8 0%, #FEF3C7 100%);
+  border: 1.5px solid var(--line, #e7c77a);
+  box-shadow: 0 4px 14px rgba(212, 160, 23, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.zenve-swal-gateway-title {
+  font-family: var(--serif, 'Playfair Display', 'Cormorant Garamond', Georgia, serif) !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: var(--ink, #1F2937) !important;
+  margin: 0 0 10px 0 !important;
+  letter-spacing: -0.01em !important;
+  line-height: 1.25 !important;
+}
+
+.zenve-swal-gateway-highlight {
+  font-family: var(--serif, 'Playfair Display', Georgia, serif);
+  font-size: 15px;
+  font-weight: 600;
+  color: #B8860B;
+  background: #FFF8E8;
+  border: 1px solid #E7C77A;
+  border-radius: 8px;
+  padding: 9px 16px;
+  margin: 4px 0 14px 0;
+  display: inline-block;
+  letter-spacing: 0.01em;
+  box-shadow: 0 2px 6px rgba(184, 134, 11, 0.08);
+}
+
+.zenve-swal-gateway-desc {
+  font-family: var(--sans, 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-size: 13.5px;
+  color: #44403c;
+  line-height: 1.55;
+  margin: 0 0 12px 0;
+}
+
+.zenve-swal-gateway-meta {
+  font-family: var(--sans, 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-size: 12px;
+  color: #78716c;
+  line-height: 1.5;
+  background: #fcfaf5;
+  border: 1px dashed #d6d3d1;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 4px 0 0 0;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.zenve-swal-gateway-confirm-btn {
+  background: linear-gradient(135deg, #1F2937 0%, #2e2621 100%) !important;
+  color: #FFF8E8 !important;
+  font-family: var(--sans, 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif) !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 10px 26px !important;
+  letter-spacing: 0.02em !important;
+  border: 1px solid #D4A017 !important;
+  box-shadow: 0 4px 12px rgba(31, 41, 55, 0.2) !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+.zenve-swal-gateway-confirm-btn:hover {
+  background: linear-gradient(135deg, #2e2621 0%, #1F2937 100%) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 16px rgba(212, 160, 23, 0.3) !important;
+}
+
+/* =========================================================
    CREDIT POINTS SECTION (02 DESIGNER PORTAL)
 ========================================================= */
 
@@ -3131,58 +3247,66 @@ form.ZENVE-profile-dl {
 
 .ZENVE-credits-kpi-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.ZENVE-products-kpi-grid {
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: -6px;
   margin-bottom: 24px;
 }
 
 .ZENVE-credits-kpi-tile {
-  background-color: #FFFCF5;
-  border: 1px solid var(--ZENVE-line, #e2ddd5);
-  border-radius: 8px;
-  padding: 18px 20px;
+  background-color: #fffdf9;
+  border: 1.5px solid #d8b87d;
+  border-radius: 12px;
+  padding: 20px 22px;
   display: flex;
   flex-direction: column;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 1px 3px rgba(184, 134, 11, 0.05);
 }
 
 .ZENVE-credits-kpi-tile:hover {
-  border-color: #cfc7bc;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  border-color: #c99e52;
+  box-shadow: 0 4px 12px rgba(184, 134, 11, 0.12);
 }
 
 .ZENVE-credits-tile-label {
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: var(--ZENVE-muted, #746a60);
-  margin-bottom: 8px;
+  color: #8c672b;
+  margin-bottom: 10px;
 }
 
 .ZENVE-credits-tile-value {
-  font-family: var(--ZENVE-font-serif, "Fraunces", serif);
-  font-size: 26px;
-  font-weight: 600;
-  color: var(--ZENVE-ink, #1f160f);
+  font-family: var(--ZENVE-font-serif, "Fraunces", Georgia, serif);
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1612;
   line-height: 1.15;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   display: flex;
   align-items: baseline;
-  gap: 5px;
+  gap: 6px;
 }
 
 .ZENVE-pts-unit {
-  font-family: var(--ZENVE-font-sans, "Manrope", sans-serif);
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--ZENVE-ink, #1f160f);
+  font-family: var(--ZENVE-font-serif, "Fraunces", Georgia, serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1612;
 }
 
 .ZENVE-credits-tile-subtext {
-  font-size: 12px;
-  color: var(--ZENVE-muted, #746a60);
-  line-height: 1.3;
+  font-size: 12.5px;
+  font-weight: 400;
+  color: #635a50;
+  line-height: 1.35;
 }
 
 /* Daily point burn banner */

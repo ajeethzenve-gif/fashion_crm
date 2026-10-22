@@ -52,6 +52,18 @@ def inbox_items(user):
         from designers.models import DesignerKYC
         for record in DesignerKYC.objects.select_related("designer").filter(pan_status="PENDING"):
             add(f"kyc-review-{record.pk}-{record.updated_at.isoformat()}", "KYC Verification", "PAN verification awaiting review", record.designer.brand_name, record.updated_at, "/designer-kyc")
+    if has_layer(user, "16") or has_layer(user, "01"):
+        from credits.models import OfflinePlanRequest
+        for req in OfflinePlanRequest.objects.select_related("designer").filter(status="PENDING").order_by("-created_at")[:50]:
+            add(
+                f"offline-plan-req-{req.pk}",
+                "Subscription",
+                "Designer needs offline subscription plan",
+                f"{req.designer.brand_name or req.designer.designer_name} requested {req.plan_name} offline plan",
+                req.created_at,
+                "/designer-portal",
+                "Needs review",
+            )
     read_ids = set(NotificationRead.objects.filter(user=user).values_list("notification_id", flat=True))
     for item in items:
         item["read"] = item["id"] in read_ids

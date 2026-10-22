@@ -74,7 +74,7 @@ export default function RequestsNotifications() {
           <td><span className="request-category">{item.category}</span></td>
           <td><span className={`request-status ${item.status === "Completed" ? "completed" : "pending"}`}>{item.status}</span><small className="request-read-label">{item.read ? "Read" : "Unread"}</small></td>
           <td className="request-date">{item.at && new Date(item.at).toLocaleString()}</td>
-          <td><div className="request-actions"><Link to={item.path}>Open {item.path === "/designer-crm" ? "Designer CRM" : item.category}</Link>{!item.read && <button disabled={saving} onClick={() => markRead([item.id])}>Mark as read</button>}</div></td>
+          <td><div className="request-actions"><Link to={item.path}>Open {item.path === "/designer-crm" ? "Designer CRM" : item.path === "/designer-portal" ? "Designer Portal" : item.category}</Link>{!item.read && <button disabled={saving} onClick={() => markRead([item.id])}>Mark as read</button>}</div></td>
         </tr>)}</tbody></table></div>
       </section>}
     </>}

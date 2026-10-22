@@ -1395,6 +1395,29 @@ export async function buyOfflineCreditPack(designerId, planId, planName) {
   return response.json();
 }
 
+export async function requestOfflineCreditPack(designerId, planId, planName) {
+  const response = await fetch(`${API_BASE_URL}/credits/request-offline-pack/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      ...authHeaders(),
+    },
+    body: JSON.stringify({
+      designer_id: designerId,
+      plan_id: planId,
+      plan_name: planName,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.detail || `Failed to request offline pack: ${response.status}`);
+  }
+
+  return response.json();
+}
+
 export async function getOfflineCreditPlans() {
   const response = await fetch(`${API_BASE_URL}/credits/`, {
     method: "GET",

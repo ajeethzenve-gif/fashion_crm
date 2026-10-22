@@ -623,6 +623,20 @@ class DesignerPortalDashboardAPIView(APIView):
                 "read": False
             })
 
+        # Add offline subscription plan requests
+        try:
+            from credits.models import OfflinePlanRequest
+            for req in OfflinePlanRequest.objects.filter(designer=designer, status="PENDING").order_by("-created_at")[:3]:
+                notifications.append({
+                    "id": f"offline-sub-req-{req.id}",
+                    "kind": "SUBSCRIPTION_REQUEST",
+                    "message": f"Your request for {req.plan_name} offline subscription plan is under review. Offline access will be granted once approved.",
+                    "at": req.created_at.isoformat(),
+                    "read": False,
+                })
+        except Exception:
+            pass
+
         # Add recent settlement / order notifications if empty
         if not [n for n in notifications if n.get("kind") != "QA_IMAGE_APPROVAL"]:
             for s in settlements[:2]:
@@ -705,6 +719,9 @@ class DesignerPortalDashboardAPIView(APIView):
 
                 "country":
                     designer.country,
+
+                "primary_category":
+                    designer.primary_category or "",
 
                 "stage":
                     designer.stage,

@@ -245,7 +245,8 @@ class DesignerCreditWallet(models.Model):
 
     @property
     def total_balance(self):
-        return self.online_credits + self.offline_credits
+        return max(0, (self.online_credits - self.points_used) + self.offline_credits)
+
 
 
 # =========================================================
@@ -302,3 +303,58 @@ class DesignerCreditStatement(models.Model):
 
     def __str__(self):
         return f"{self.designer.brand_name} - {self.description} ({self.points} pts)"
+
+
+# =========================================================
+# OFFLINE PLAN REQUEST
+# =========================================================
+
+class OfflinePlanRequest(models.Model):
+    designer = models.ForeignKey(
+        "designers.Designer",
+        on_delete=models.CASCADE,
+        related_name="offline_plan_requests",
+    )
+
+    plan = models.ForeignKey(
+        "credits.OfflineFashionCredit",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
+    plan_name = models.CharField(
+        max_length=100,
+        verbose_name="Plan Name",
+    )
+
+    price = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0,
+        verbose_name="Plan Price",
+    )
+
+    status = models.CharField(
+        max_length=30,
+        default="PENDING",
+        choices=[("PENDING", "Pending"), ("APPROVED", "Approved"), ("REJECTED", "Rejected")],
+        verbose_name="Request Status",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        db_table = "offline_plan_request"
+        ordering = ["-created_at"]
+        verbose_name = "Offline Plan Request"
+        verbose_name_plural = "Offline Plan Requests"
+
+    def __str__(self):
+        return f"{self.designer.brand_name} - {self.plan_name} ({self.status})"

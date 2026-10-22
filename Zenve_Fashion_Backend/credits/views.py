@@ -34,39 +34,31 @@ def get_or_create_designer_wallet(designer):
     ))
     actual_points_used = max(actual_listings_count * 500, statement_deductions)
 
-    # Determine allocated online credits based on plan or designer credit_points
+    # Determine allocated online credits strictly from designer.credit_points in database (no auto-allocation from plan)
     allocated_credits = designer.credit_points or 0
-    if not allocated_credits and designer.online_membership_plan:
-        plan_obj = OnlineFashionCredit.objects.filter(
-            plan__iexact=designer.online_membership_plan
-        ).first()
-        if plan_obj:
-            allocated_credits = plan_obj.credit_points
 
     # Current remaining online credits
     current_online_credits = max(0, allocated_credits - actual_points_used)
 
-    # Determine allocated offline credits based on designer.offline_membership_plan in DB
-    offline_allocated = 0
+    # Determine offline plan title and expiry based on designer.offline_membership_plan (no credit points allocated)
     offline_expiry = None
-    offline_plan_title = "None"
+    offline_plan_title = "No active pack"
     if designer.offline_membership_plan:
         off_plan_obj = OfflineFashionCredit.objects.filter(
             plan__iexact=designer.offline_membership_plan
         ).first()
         if off_plan_obj:
-            offline_allocated = off_plan_obj.credit_points
             offline_expiry = timezone.now().date() + timedelta(days=off_plan_obj.min_days or 30)
             offline_plan_title = off_plan_obj.get_plan_display()
 
     wallet, created = DesignerCreditWallet.objects.get_or_create(
         designer=designer,
         defaults={
-            "online_credits": current_online_credits,
-            "offline_credits": offline_allocated,
+            "online_credits": allocated_credits,
+            "offline_credits": 0,
             "points_used": actual_points_used,
             "online_plan": (designer.online_membership_plan or "").title() or "—",
-            "offline_plan": offline_plan_title if offline_allocated > 0 else "—",
+            "offline_plan": offline_plan_title,
             "offline_pack_expiry": offline_expiry,
         },
     )
@@ -74,10 +66,9 @@ def get_or_create_designer_wallet(designer):
     # ALWAYS sync wallet points and plans with live Designer fields in the database
     updated = False
 
-    # Sync Online Credits & Plan
-    expected_online = max(0, allocated_credits - actual_points_used)
-    if wallet.online_credits != expected_online:
-        wallet.online_credits = expected_online
+    # Sync Online Credits & Plan (online_credits stores total allocated free credits)
+    if wallet.online_credits != allocated_credits:
+        wallet.online_credits = allocated_credits
         updated = True
 
     if wallet.points_used != actual_points_used:
@@ -89,16 +80,26 @@ def get_or_create_designer_wallet(designer):
         wallet.online_plan = online_plan_title
         updated = True
 
-    # Sync Offline Credits & Plan
-    if designer.offline_membership_plan and offline_allocated > 0:
-        if wallet.offline_credits == 0:
-            wallet.offline_credits = offline_allocated
+    # Sync Offline Plan & Expiry (offline plans do not grant credit points)
+    if designer.offline_membership_plan:
+        if wallet.offline_credits != 0:
+            wallet.offline_credits = 0
             updated = True
         if wallet.offline_plan != offline_plan_title:
             wallet.offline_plan = offline_plan_title
             updated = True
         if not wallet.offline_pack_expiry and offline_expiry:
             wallet.offline_pack_expiry = offline_expiry
+            updated = True
+    else:
+        if wallet.offline_credits != 0:
+            wallet.offline_credits = 0
+            updated = True
+        if wallet.offline_plan not in ["No active pack", "—"]:
+            wallet.offline_plan = "No active pack"
+            updated = True
+        if wallet.offline_pack_expiry is not None:
+            wallet.offline_pack_expiry = None
             updated = True
 
     if updated:
@@ -128,6 +129,40 @@ def get_designer_credits_data(designer):
 
     offline_plans = OfflineFashionCredit.objects.filter(is_active=True).order_by("id")
 
+    # Offline products quota based on Image 1 offline plan specifications
+    plan_code = (designer.offline_membership_plan or "").upper().strip()
+    if plan_code in ["PALLADIUM_PLUS", "PALLADIUM ++", "PALLADIUM+"]:
+        plan_code = "PALLADIUM++"
+    offline_plan_spec = (
+        OfflineFashionCredit.objects.filter(plan=plan_code, is_active=True).first()
+        if plan_code else None
+    )
+
+    offline_total_products = offline_plan_spec.included_catalogue if offline_plan_spec else 0
+    offline_per_showroom = offline_plan_spec.per_showroom if offline_plan_spec else 0
+    offline_extra_catalogue = offline_plan_spec.extra_catalogue if offline_plan_spec else 0
+    offline_average_sku = offline_plan_spec.average_sku if offline_plan_spec else 0
+
+    from products.models import ProductSizeStock
+
+    # Calculate actual offline product quantity given across all size stocks
+    size_stocks_offline_sum = (
+        ProductSizeStock.objects.filter(product__in=designer_skus).aggregate(
+            total=models.Sum("offline_quantity")
+        )["total"]
+        or 0
+    )
+
+    if size_stocks_offline_sum > 0:
+        offline_given_products = size_stocks_offline_sum
+    else:
+        offline_given_products = designer_skus.filter(
+            models.Q(sales_channel__in=["OFFLINE", "BOTH"]) |
+            models.Q(fulfilment_location__icontains="STORE")
+        ).count()
+
+    offline_balance_products = max(0, offline_total_products - offline_given_products)
+
     is_expiry_valid = (
         wallet.offline_pack_expiry and wallet.offline_pack_expiry >= timezone.now().date()
     )
@@ -152,18 +187,42 @@ def get_designer_credits_data(designer):
     if not offline_plan_clean or str(offline_plan_clean).strip() in ["None", "none", "—", "-"]:
         offline_plan_clean = "No active pack" if wallet.offline_credits == 0 else "Offline Pack"
 
+    allocated_online = wallet.online_credits
+    remaining_online = max(0, wallet.online_credits - wallet.points_used)
+    online_listings_left = remaining_online // 500
+    online_listings_total = allocated_online // 500
+
     return {
         "wallet": {
-            "online_credits": wallet.online_credits,
+            "online_credits": allocated_online,
+            "allocated_online_credits": allocated_online,
+            "remaining_online_credits": remaining_online,
             "offline_credits": wallet.offline_credits,
             "points_used": wallet.points_used,
             "total_balance": wallet.total_balance,
             "online_plan": wallet.online_plan or "—",
             "offline_plan": offline_plan_clean,
-            "online_listings_left": wallet.online_credits // 500,
+            "online_listings_left": online_listings_left,
+            "online_listings_total": online_listings_total,
             "offline_listings_left": wallet.offline_credits // 500,
             "offline_pack_expiry": expiry_str,
             "points_used_subtitle": points_used_subtitle,
+            "offline_total_products": offline_total_products,
+            "offline_given_products": offline_given_products,
+            "offline_balance_products": offline_balance_products,
+            "offline_per_showroom": offline_per_showroom,
+            "offline_extra_catalogue": offline_extra_catalogue,
+            "offline_average_sku": offline_average_sku,
+        },
+        "offline_products_quota": {
+            "total_products": offline_total_products,
+            "given_products": offline_given_products,
+            "balance_products": offline_balance_products,
+            "per_showroom": offline_per_showroom,
+            "extra_catalogue": offline_extra_catalogue,
+            "average_sku": offline_average_sku,
+            "expiry_date": expiry_str,
+            "plan_name": offline_plan_clean,
         },
         "daily_burn": {
             "online_count": online_count,
@@ -284,4 +343,56 @@ class BuyOfflineCreditPackAPIView(APIView):
                 "credits": full_data,
             },
             status=status.HTTP_200_OK,
+        )
+
+
+class RequestOfflineCreditPackAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        designer_id = request.data.get("designer_id")
+        plan_id = request.data.get("plan_id")
+        plan_name = request.data.get("plan_name")
+
+        if not designer_id:
+            return Response(
+                {"detail": "designer_id is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            designer = Designer.objects.get(id=designer_id)
+        except Designer.DoesNotExist:
+            return Response(
+                {"detail": "Designer not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        plan = None
+        if plan_id:
+            plan = OfflineFashionCredit.objects.filter(id=plan_id).first()
+        elif plan_name:
+            plan = OfflineFashionCredit.objects.filter(plan__iexact=plan_name).first()
+
+        plan_display = plan.get_plan_display() if plan else (plan_name or "Offline Plan")
+        price = plan.membership_price if plan else 0
+
+        from .models import OfflinePlanRequest
+
+        req = OfflinePlanRequest.objects.create(
+            designer=designer,
+            plan=plan,
+            plan_name=plan_display,
+            price=price,
+            status="PENDING",
+        )
+
+        return Response(
+            {
+                "success": True,
+                "message": f"Offline subscription plan request for {plan_display} submitted successfully.",
+                "request_id": req.id,
+                "plan_name": plan_display,
+            },
+            status=status.HTTP_201_CREATED,
         )
