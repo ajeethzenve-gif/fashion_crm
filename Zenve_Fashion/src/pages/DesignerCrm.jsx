@@ -34,6 +34,22 @@ export const FASHION_CREDIT_PLANS = [
   { id: "Palladium", name: "Palladium", catalogue: 999, products: 999, points: "7,00,000", pointsNum: 700000, catalogueCharges: 500, minDays: 200 },
 ];
 
+export const OFFLINE_FASHION_CREDIT_PLANS = [
+  { id: "Silver", name: "Silver", price: "₹15,000", priceNum: 15000, catalogue: 50, products: 50 },
+  { id: "Gold", name: "Gold", price: "₹25,000", priceNum: 25000, catalogue: 75, products: 75 },
+  { id: "Platinum", name: "Platinum", price: "₹45,000", priceNum: 45000, catalogue: 150, products: 150 },
+  { id: "Palladium", name: "Palladium", price: "₹1,00,000", priceNum: 100000, catalogue: 225, products: 225 },
+  { id: "Palladium++", name: "Palladium++", price: "₹3,50,000", priceNum: 350000, catalogue: 300, products: 300 },
+];
+
+export const getOfflinePlanPrice = (planId) => {
+  if (!planId) return "";
+  const found = OFFLINE_FASHION_CREDIT_PLANS.find(
+    (p) => p.id.toUpperCase() === String(planId).toUpperCase()
+  );
+  return found ? found.price : "";
+};
+
 const SALES_OWNERS = [
   "Nisha Kapoor",
   "Dev Ranganathan",
@@ -163,6 +179,7 @@ export default function DesignerCRM() {
     category: "",
     tier: "EMERGING",
     fashionCreditPlan: "",
+    offlineCreditPlan: "",
     creditPoints: 0,
     takeRate: "",
     gst: "",
@@ -385,6 +402,7 @@ export default function DesignerCRM() {
       kyc_status: designer.kyc_status || (designer.kyc_verified ? "VERIFIED" : "PENDING"),
       tier: designer.tier || "",
       credits_plan: designer.online_membership_plan || "",
+      offline_credits_plan: designer.offline_membership_plan || "",
       health_score: designer.health_score || "",
       sales_admin: designer.sales_admin || designer.owner || designer.sales_owner || "",
       renewal_likelihood: designer.renewal_preference || "",
@@ -504,6 +522,8 @@ export default function DesignerCRM() {
         primary_category: editForm.primary_category,
         gst_number: editForm.gst || null,
         take_rate: editForm.take_rate,
+        online_membership_plan: editForm.credits_plan || null,
+        offline_membership_plan: editForm.offline_credits_plan || null,
         renewal_likelihood: Number(editForm.renewal_likelihood_pct) || 0,
         next_followup_date: editForm.next_follow_up || null,
         contract_end_date: editForm.contract_ends || null,
@@ -544,6 +564,7 @@ export default function DesignerCRM() {
       sales_owner: modalNewLead.owner,
       lead_source: modalNewLead.source,
       online_membership_plan: modalNewLead.fashionCreditPlan ? modalNewLead.fashionCreditPlan.toUpperCase() : null,
+      offline_membership_plan: modalNewLead.offlineCreditPlan ? modalNewLead.offlineCreditPlan.toUpperCase() : null,
       credit_points: Number(modalNewLead.creditPoints) || 0,
       take_rate: modalNewLead.takeRate ? Number(modalNewLead.takeRate) : 0,
       gst_number: useCompanyGst ? COMPANY_GST_INFO.gstNumber : (modalNewLead.gst || null),
@@ -572,6 +593,7 @@ export default function DesignerCRM() {
         category: "",
         tier: "EMERGING",
         fashionCreditPlan: "",
+        offlineCreditPlan: "",
         creditPoints: 0,
         takeRate: "",
         gst: "",
@@ -1280,6 +1302,29 @@ Login requires approval and completed KYC verification.`;
                 </div>
 
                 <div className="crm-lead-field">
+                  <label className="crm-field-label">OFFLINE MEMBERSHIP PLAN</label>
+                  <div className="crm-select-wrap">
+                    <select
+                      className="crm-lead-select"
+                      value={modalNewLead.offlineCreditPlan || ""}
+                      onChange={(e) => {
+                        setModalNewLead({
+                          ...modalNewLead,
+                          offlineCreditPlan: e.target.value,
+                        });
+                      }}
+                    >
+                      <option value="">Select offline plan...</option>
+                      {OFFLINE_FASHION_CREDIT_PLANS.map((plan) => (
+                        <option key={plan.id} value={plan.id}>
+                          {plan.name} — {plan.price}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="crm-lead-field">
                   <label className="crm-field-label">TAKE RATE %</label>
                   <input
                     type="number"
@@ -1534,6 +1579,11 @@ Login requires approval and completed KYC verification.`;
                 <span className="crm-edit-badge crm-badge-live">{editForm.stage || "LIVE"}</span>
                 {editForm.tier && <span className="crm-edit-badge crm-badge-tier">{editForm.tier}</span>}
                 {editForm.credits_plan && <span className="crm-edit-badge crm-badge-points">★ {editForm.credits_plan}</span>}
+                {editForm.offline_credits_plan && (
+                  <span className="crm-edit-badge crm-badge-tier" style={{ background: "#EEF2FF", color: "#4F46E5", borderColor: "#C7D2FE" }}>
+                    🏢 Offline: {editForm.offline_credits_plan} {getOfflinePlanPrice(editForm.offline_credits_plan) ? `(${getOfflinePlanPrice(editForm.offline_credits_plan)})` : ""}
+                  </span>
+                )}
                 <span className={`crm-edit-badge ${editForm.kyc_status === "VERIFIED" ? "crm-badge-kyc-verified" : "crm-badge-kyc-pending"}`}>
                   {editForm.kyc_status === "VERIFIED" ? "KYC verified" : "KYC pending"}
                 </span>
@@ -1633,6 +1683,7 @@ Login requires approval and completed KYC verification.`;
                 {editForm.primary_category && <>{" · "}<span>{editForm.primary_category}</span></>}
                 {editForm.take_rate ? <>{" · "}<span>take rate {editForm.take_rate}%</span></> : null}
                 {editForm.credits_plan ? <>{" · "}<span>Credits: {editForm.credits_plan}</span></> : null}
+                {editForm.offline_credits_plan ? <>{" · "}<span>Offline: {editForm.offline_credits_plan} {getOfflinePlanPrice(editForm.offline_credits_plan) ? `(${getOfflinePlanPrice(editForm.offline_credits_plan)})` : ""}</span></> : null}
                 {editForm.contract_ends ? <>{" · "}<span>contract ends {editForm.contract_ends}</span></> : null}
                 {editForm.gst ? <>{" · "}<span>GST: {maskGstNumber(editForm.gst)}</span></> : null}
                 {(editForm.useCompanyGst || activeDesigner.useCompanyGst) && (
@@ -1803,6 +1854,24 @@ Login requires approval and completed KYC verification.`;
                   </div>
 
                   <div className="crm-edit-dropdown-field">
+                    <label className="crm-edit-dropdown-label">FULFILLMENT</label>
+                    <div className="crm-edit-select-wrap">
+                      <select
+                        className="crm-edit-dropdown-select"
+                        value={editForm.fulfillment || ""}
+                        onChange={(e) => handleAutoSaveEdit("fulfillment", e.target.value)}
+                      >
+                        <option value="">Select Fulfillment</option>
+                        <option value="Both">Both</option>
+                        <option value="Dropship">Dropship</option>
+                        <option value="Direct Dispatch">Direct Dispatch</option>
+                        <option value="B2B Wholesale">B2B Wholesale</option>
+                        <option value="Zenve Direct">Zenve Direct</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="crm-edit-dropdown-field">
                     <label className="crm-edit-dropdown-label">GIVEN CREDITS PLAN</label>
                     <div className="crm-edit-select-wrap">
                       <select
@@ -1814,6 +1883,24 @@ Login requires approval and completed KYC verification.`;
                         {FASHION_CREDIT_PLANS.map((plan) => (
                           <option key={plan.id} value={plan.id.toUpperCase()}>
                             {plan.name} ({plan.points} Pts)
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="crm-edit-dropdown-field">
+                    <label className="crm-edit-dropdown-label">OFFLINE MEMBERSHIP PLAN</label>
+                    <div className="crm-edit-select-wrap">
+                      <select
+                        className="crm-edit-dropdown-select"
+                        value={(editForm.offline_credits_plan || "").toUpperCase()}
+                        onChange={(e) => handleAutoSaveEdit("offline_credits_plan", e.target.value, { offline_membership_plan: e.target.value || null })}
+                      >
+                        <option value="">Select Offline Plan</option>
+                        {OFFLINE_FASHION_CREDIT_PLANS.map((plan) => (
+                          <option key={plan.id} value={plan.id.toUpperCase()}>
+                            {plan.name} ({plan.price})
                           </option>
                         ))}
                       </select>
@@ -1835,24 +1922,6 @@ Login requires approval and completed KYC verification.`;
                         <option value="Medium">Medium</option>
                         <option value="Low">Low</option>
                         <option value="Under Discussion">Under Discussion</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="crm-edit-dropdown-field">
-                    <label className="crm-edit-dropdown-label">FULFILLMENT</label>
-                    <div className="crm-edit-select-wrap">
-                      <select
-                        className="crm-edit-dropdown-select"
-                        value={editForm.fulfillment || ""}
-                        onChange={(e) => handleAutoSaveEdit("fulfillment", e.target.value)}
-                      >
-                        <option value="">Select Fulfillment</option>
-                        <option value="Both">Both</option>
-                        <option value="Dropship">Dropship</option>
-                        <option value="Direct Dispatch">Direct Dispatch</option>
-                        <option value="B2B Wholesale">B2B Wholesale</option>
-                        <option value="Zenve Direct">Zenve Direct</option>
                       </select>
                     </div>
                   </div>

@@ -86,6 +86,7 @@ class Designer(models.Model):
         GOLD = "GOLD", "Gold"
         PLATINUM = "PLATINUM", "Platinum"
         PALLADIUM = "PALLADIUM", "Palladium"
+        PALLADIUM_PLUS = "PALLADIUM++", "Palladium++"
 
     # =====================================================
     # BASIC DESIGNER INFORMATION

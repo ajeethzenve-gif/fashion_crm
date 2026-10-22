@@ -31,7 +31,7 @@ export default function DesignerKYC() {
   const [consent, setConsent] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [notes, setNotes] = useState("");
-  
+
   // Link sharing state
   const [copiedLink, setCopiedLink] = useState(false);
   const [generatedLink, setGeneratedLink] = useState("");
@@ -167,7 +167,7 @@ export default function DesignerKYC() {
         const latest = await request();
         setData(latest);
         setRecord(latest.submissions.find((item) => item.id === record.id) || record);
-      } catch {}
+      } catch { }
     } finally {
       setBusy(false);
     }
@@ -250,7 +250,7 @@ export default function DesignerKYC() {
   const namesMatch =
     panChecked &&
     normalizedName(submittedDetails?.name || record?.holder_name || ownerName) ===
-      normalizedName(panResult.name);
+    normalizedName(panResult.name);
 
   const returnedBirthDates = [
     panResult?.date_of_birth,
@@ -278,7 +278,7 @@ export default function DesignerKYC() {
         <div className="kyc-banner-content">
           <span className="kyc-hero-badge">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
             LAYER 17 · COMPLIANCE DESK
           </span>
@@ -619,8 +619,8 @@ export default function DesignerKYC() {
               {query
                 ? `No designers match your search query "${query}".`
                 : unverified.length
-                ? "No designers match the selected status filter."
-                : "All designers in your registry are currently KYC verified."}
+                  ? "No designers match the selected status filter."
+                  : "All designers in your registry are currently KYC verified."}
             </p>
           </div>
         )}
@@ -702,7 +702,7 @@ export default function DesignerKYC() {
             <div style={{ textAlign: "center", padding: "40px 20px" }}>
               <div style={{ display: "inline-flex", alignItems: "center", gap: "10px", color: "#8d551b", fontWeight: "600", fontSize: "14px" }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ animation: "spin 1s linear infinite" }}>
-                  <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                  <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                 </svg>
                 <span>{busy ? "Loading verification record..." : "Initializing compliance desk..."}</span>
               </div>
@@ -889,14 +889,14 @@ export default function DesignerKYC() {
                     {busy ? (
                       <>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ animation: "spin 1s linear infinite" }}>
-                          <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                         </svg>
                         <span>Querying APITXT Engine...</span>
                       </>
                     ) : (
                       <>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                         </svg>
                         <span>Check PAN with APITXT Engine</span>
                       </>
@@ -907,8 +907,8 @@ export default function DesignerKYC() {
                     {!consent
                       ? "Requires consent checkbox acknowledgment above."
                       : !panFormatValid
-                      ? "Enter 10-character alphanumeric PAN format."
-                      : "Ready to query Income Tax Department records."}
+                        ? "Enter 10-character alphanumeric PAN format."
+                        : "Ready to query Income Tax Department records."}
                   </span>
                 </div>
 
@@ -1218,7 +1218,7 @@ export default function DesignerKYC() {
                     {busy ? (
                       <>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ animation: "spin 1s linear infinite" }}>
-                          <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                         </svg>
                         <span>Processing Clearance...</span>
                       </>

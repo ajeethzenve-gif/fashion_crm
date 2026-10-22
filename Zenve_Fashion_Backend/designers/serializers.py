@@ -216,9 +216,20 @@ class DesignerSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         if validated_data.pop("request_company_gst", False) and not instance.gst_requested_at:
             validated_data["gst_requested_at"] = timezone.now()
-        return super().update(instance, validated_data)
+        instance = super().update(instance, validated_data)
+        try:
+            from credits.views import get_or_create_designer_wallet
+            get_or_create_designer_wallet(instance)
+        except Exception:
+            pass
+        return instance
 
     def validate_online_membership_plan(self, value):
+        if value:
+            return value.strip().upper()
+        return value
+
+    def validate_offline_membership_plan(self, value):
         if value:
             return value.strip().upper()
         return value

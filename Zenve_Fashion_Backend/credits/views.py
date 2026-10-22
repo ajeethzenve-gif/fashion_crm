@@ -91,15 +91,22 @@ def get_or_create_designer_wallet(designer):
 
     # Sync Offline Credits & Plan
     if designer.offline_membership_plan and offline_allocated > 0:
-        if wallet.offline_credits == 0:
-            wallet.offline_credits = offline_allocated
-            updated = True
         if wallet.offline_plan != offline_plan_title:
             wallet.offline_plan = offline_plan_title
+            wallet.offline_credits = offline_allocated
+            wallet.offline_pack_expiry = offline_expiry
+            updated = True
+        elif wallet.offline_credits == 0:
+            wallet.offline_credits = offline_allocated
             updated = True
         if not wallet.offline_pack_expiry and offline_expiry:
             wallet.offline_pack_expiry = offline_expiry
             updated = True
+    elif not designer.offline_membership_plan and wallet.offline_plan not in ("—", "None", ""):
+        wallet.offline_plan = "—"
+        wallet.offline_credits = 0
+        wallet.offline_pack_expiry = None
+        updated = True
 
     if updated:
         wallet.save()
