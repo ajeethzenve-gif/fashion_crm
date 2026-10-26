@@ -31,7 +31,7 @@ export const ROLES = [
     description: "Supply layer partner portal, SKU uploads, live inventory, and settlements.",
     badgeClass: "designer",
     clearance: ["02", "03", "06"],
-  },
+  },                                                                                                                                                                                                                                                                                                     
   {
     id: "merchandiser",
     name: "Merchandising & CRM",
