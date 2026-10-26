@@ -20,3 +20,8 @@ def designer_for_request(request):
 def scoped_products(request, queryset):
     designer = designer_for_request(request)
     return queryset.filter(designer=designer) if designer else queryset
+
+
+def require_verified_product_designer(designer):
+    if designer and designer.kyc_status != Designer.KYCStatus.VERIFIED:
+        raise PermissionDenied("PAN KYC verification is required before adding products. Please submit your KYC details and wait for staff approval.")

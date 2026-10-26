@@ -728,7 +728,7 @@ class ProductSerializer(serializers.ModelSerializer):
     # =====================================================
 
     def validate(self, attrs):
-        from .access import designer_for_request
+        from .access import designer_for_request, require_verified_product_designer
         request = self.context.get("request")
         designer = designer_for_request(request) if request else None
         if designer:
@@ -736,6 +736,8 @@ class ProductSerializer(serializers.ModelSerializer):
             if selected.pk != designer.pk:
                 raise serializers.ValidationError({"designer": "You can manage only your own products."})
             attrs["designer"] = designer
+        if self.instance is None:
+            require_verified_product_designer(attrs.get("designer"))
 
         mrp = attrs.get(
             "mrp",
@@ -983,6 +985,13 @@ class ProductSerializer(serializers.ModelSerializer):
         self,
         validated_data,
     ):
+
+        from .access import require_verified_product_designer
+        designer = validated_data.get("designer")
+        if designer:
+            designer = Designer.objects.select_for_update().get(pk=designer.pk)
+            require_verified_product_designer(designer)
+            validated_data["designer"] = designer
 
         images = validated_data.pop(
             "images",

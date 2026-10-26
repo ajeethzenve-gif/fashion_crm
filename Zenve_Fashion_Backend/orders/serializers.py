@@ -1,3 +1,4 @@
+from django.db import transaction
 from decimal import Decimal
 from rest_framework import serializers
 from .models import Order, OrderItem, ReturnRequest, Settlement, Shipment
@@ -122,6 +123,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "is_fast_delivery",
         ]
 
+    @transaction.atomic
     def create(self, validated_data):
         items_data = self.initial_data.get("items", [])
         if "items" in validated_data:

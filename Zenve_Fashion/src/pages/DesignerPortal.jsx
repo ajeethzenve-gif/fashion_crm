@@ -932,6 +932,10 @@ export default function DesignerPortal() {
     (currentUser?.designerId ? designers.find((d) => String(d.id) === String(currentUser.designerId)) : null) ||
     null;
 
+  const designerKycVerified = activeDesigner?.kyc_status
+    ? activeDesigner.kyc_status === "VERIFIED"
+    : activeDesigner?.kyc === true;
+
   const designerPrimaryCategory = String(
     activeDesigner?.primary_category ||
     portalData?.designer?.primary_category ||
@@ -1306,6 +1310,11 @@ export default function DesignerPortal() {
         type: "error",
         text: "Please select a valid designer first.",
       });
+      return;
+    }
+
+    if (!designerKycVerified) {
+      Swal.fire({ icon: "warning", title: "PAN KYC verification required", text: "Submit your PAN KYC details and wait for staff approval before adding products.", confirmButtonText: "OK" });
       return;
     }
 
@@ -4930,12 +4939,14 @@ export default function DesignerPortal() {
       SUBMIT
   ===================================================== */}
 
+                        {!designerKycVerified && <p role="status">PAN KYC verification is required before adding products. Please complete KYC and wait for staff approval.</p>}
                         <div className="ZENVE-form-actions">
                           <button
                             type="submit"
                             className="ZENVE-btn-primary"
                             disabled={
                               submittingSku ||
+                              !designerKycVerified ||
                               !activeDesigner ||
                               !form.selectedSizes?.length ||
                               totalInventoryQuantity <= 0

@@ -363,19 +363,18 @@ GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 # EMAIL CONFIGURATION
 # =====================================================
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
-EMAIL_HOST = "smtp.gmail.com"
-
-EMAIL_PORT = 587
-
-EMAIL_USE_TLS = True
-
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "true").lower() == "true"
+EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "false").lower() == "true"
+EMAIL_TIMEOUT = int(os.getenv("EMAIL_TIMEOUT", "10"))
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
+DESIGNER_FROM_EMAIL = os.getenv("DESIGNER_FROM_EMAIL", DEFAULT_FROM_EMAIL)
+DESIGNER_EMAIL_ENABLED = os.getenv("DESIGNER_EMAIL_ENABLED", "false").lower() == "true"
+DESIGNER_EMAIL_LOGIN_URL = os.getenv("DESIGNER_EMAIL_LOGIN_URL", "https://zenvefashioncrm.zenvevet.com/designer-login/")
 
 
 # =====================================================
@@ -442,3 +441,13 @@ SMS_ROUTE = os.getenv("SMS_ROUTE", "otp")
 DESIGNER_OTP_SMS_SENDER = os.getenv(
     "DESIGNER_OTP_SMS_SENDER", "accounts.sms.send_designer_otp"
 )
+
+# Designer onboarding messages (separate from login OTP templates).
+DESIGNER_SMS_ENABLED = os.getenv("DESIGNER_SMS_ENABLED", "false").lower() == "true"
+DESIGNER_SMS_SENDER_ID = os.getenv("DESIGNER_SMS_SENDER_ID", "")
+DESIGNER_SMS_PE_ID = os.getenv("DESIGNER_SMS_PE_ID", "")
+DESIGNER_SMS_ROUTE = os.getenv("DESIGNER_SMS_ROUTE", "4")
+DESIGNER_SMS_WELCOME_TEMPLATE_ID = os.getenv("DESIGNER_SMS_WELCOME_TEMPLATE_ID", "")
+DESIGNER_SMS_APPROVAL_TEMPLATE_ID = os.getenv("DESIGNER_SMS_APPROVAL_TEMPLATE_ID", "")
+DESIGNER_SMS_WELCOME_TEXT = os.getenv("DESIGNER_SMS_WELCOME_TEXT", "Welcome to Zenve Fashion, {name}. Your designer registration is received and waiting for team approval. We will notify you once approved.")
+DESIGNER_SMS_APPROVAL_TEXT = os.getenv("DESIGNER_SMS_APPROVAL_TEXT", "Zenve Fashion: Your designer account is approved. Username: {username}. Password: {password}. You can also login with registered mobile {mobile} and OTP. Login: {login_url}")

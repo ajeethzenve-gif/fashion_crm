@@ -18,7 +18,7 @@ from .models import (
 
 from .serializers import ProductSerializer
 from .social_serializers import SocialMediaProductSerializer
-from .access import scoped_products
+from .access import scoped_products, designer_for_request, require_verified_product_designer
 
 
 # =========================================================
@@ -227,6 +227,8 @@ class ProductListCreateAPIView(APIView):
     # =====================================================
 
     def post(self, request):
+
+        require_verified_product_designer(designer_for_request(request))
 
         # -------------------------------------------------
         # FILES
