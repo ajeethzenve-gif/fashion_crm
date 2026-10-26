@@ -217,6 +217,12 @@ class ProductSizeStockSerializer(
 ):
 
     total_quantity = serializers.ReadOnlyField()
+    offline_franchise = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        default="",
+    )
 
     class Meta:
         model = ProductSizeStock
@@ -227,6 +233,7 @@ class ProductSizeStockSerializer(
             "online_quantity",
             "offline_quantity",
             "total_quantity",
+            "offline_franchise",
         ]
 
         read_only_fields = [

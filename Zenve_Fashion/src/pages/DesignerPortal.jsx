@@ -20,6 +20,7 @@ import {
   getDesignerCredits,
   getOfflineCreditPlans,
   buyOfflineCreditPack,
+  requestOfflineCreditPack,
 } from "../services/api";
 
 /* =========================================================
@@ -357,7 +358,7 @@ export default function DesignerPortal() {
   const [showMediaReviews, setShowMediaReviews] = useState(false);
   const [showProfileAndAccount, setShowProfileAndAccount] = useState(false);
   const hasPromptedAccountRef = useRef({});
-  
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -492,13 +493,13 @@ export default function DesignerPortal() {
   ];
 
   const createEmptySizeStocks = () => ({
-    XS: { online_quantity: "", offline_quantity: "" },
-    S: { online_quantity: "", offline_quantity: "" },
-    M: { online_quantity: "", offline_quantity: "" },
-    L: { online_quantity: "", offline_quantity: "" },
-    XL: { online_quantity: "", offline_quantity: "" },
-    XXL: { online_quantity: "", offline_quantity: "" },
-    FREE: { online_quantity: "", offline_quantity: "" },
+    XS: { online_quantity: "", offline_quantity: "", offline_franchise: "Mumbai FC" },
+    S: { online_quantity: "", offline_quantity: "", offline_franchise: "Mumbai FC" },
+    M: { online_quantity: "", offline_quantity: "", offline_franchise: "Mumbai FC" },
+    L: { online_quantity: "", offline_quantity: "", offline_franchise: "Mumbai FC" },
+    XL: { online_quantity: "", offline_quantity: "", offline_franchise: "Mumbai FC" },
+    XXL: { online_quantity: "", offline_quantity: "", offline_franchise: "Mumbai FC" },
+    FREE: { online_quantity: "", offline_quantity: "", offline_franchise: "Mumbai FC" },
   });
 
   const [form, setForm] = useState({
@@ -514,6 +515,7 @@ export default function DesignerPortal() {
       "No loose beads. Breathable fabric. Supervised wear recommended.",
 
     location: "MUMBAI_FC",
+    offlineFranchise: "Mumbai FC",
 
     fastDelivery: true,
     returnable: true,
@@ -555,10 +557,10 @@ export default function DesignerPortal() {
     field,
     value
   ) => {
-    const cleanValue = String(value).replace(
-      /[^0-9]/g,
-      ""
-    );
+    const cleanValue =
+      field === "offline_franchise"
+        ? value
+        : String(value).replace(/[^0-9]/g, "");
 
     setForm((prev) => ({
       ...prev,
@@ -575,12 +577,6 @@ export default function DesignerPortal() {
   };
 
 
-  const handleOfflineToggle = () => {
-    setForm((prev) => ({
-      ...prev,
-      offlineEnabled: !prev.offlineEnabled,
-    }));
-  };
 
 
   const selectedSizeStocks = useMemo(() => {
@@ -599,11 +595,19 @@ export default function DesignerPortal() {
               ?.offline_quantity
           ) || 0
           : 0,
+
+      offline_franchise:
+        form.offlineEnabled
+          ? form.sizeStocks[size]?.offline_franchise ||
+            form.offlineFranchise ||
+            "Mumbai FC"
+          : "",
     }));
   }, [
     form.selectedSizes,
     form.sizeStocks,
     form.offlineEnabled,
+    form.offlineFranchise,
   ]);
 
 
@@ -924,7 +928,32 @@ export default function DesignerPortal() {
   const activeDesigner =
     portalData?.designer ||
     portalData?.designer_details ||
+    designers.find((d) => String(d.id) === String(selectedDesignerId)) ||
+    (currentUser?.designerId ? designers.find((d) => String(d.id) === String(currentUser.designerId)) : null) ||
     null;
+
+  const designerPrimaryCategory = String(
+    activeDesigner?.primary_category ||
+    portalData?.designer?.primary_category ||
+    designers.find((d) => String(d.id) === String(selectedDesignerId))?.primary_category ||
+    (currentUser?.designerId ? designers.find((d) => String(d.id) === String(currentUser.designerId))?.primary_category : "") ||
+    ""
+  ).trim().toLowerCase();
+
+  const isPetDesigner =
+    designerPrimaryCategory === "pets" ||
+    designerPrimaryCategory === "pet" ||
+    designerPrimaryCategory.includes("pet");
+
+  const isPeopleDesigner =
+    designerPrimaryCategory === "people" ||
+    designerPrimaryCategory === "person" ||
+    designerPrimaryCategory.includes("people") ||
+    designerPrimaryCategory.includes("human");
+
+  const isTwinDesigner =
+    designerPrimaryCategory === "twin" ||
+    designerPrimaryCategory.includes("twin");
 
   useEffect(() => {
     setProfileImageError(false);
@@ -955,6 +984,8 @@ export default function DesignerPortal() {
 
   const creditWallet = creditsData?.wallet || {
     online_credits: activeDesigner?.credit_points || 0,
+    allocated_online_credits: activeDesigner?.credit_points || 0,
+    remaining_online_credits: activeDesigner?.credit_points || 0,
     offline_credits: 0,
     points_used: 0,
     total_balance: activeDesigner?.credit_points || 0,
@@ -969,9 +1000,85 @@ export default function DesignerPortal() {
     online_listings_left: activeDesigner?.credit_points
       ? Math.floor(activeDesigner.credit_points / 500)
       : 0,
+    online_listings_total: activeDesigner?.credit_points
+      ? Math.floor(activeDesigner.credit_points / 500)
+      : 0,
     offline_listings_left: 0,
     offline_pack_expiry: "No active pack",
     points_used_subtitle: "0 points used",
+    offline_total_products: 0,
+    offline_given_products: 0,
+    offline_balance_products: 0,
+    offline_per_showroom: 0,
+    offline_average_sku: 0,
+  };
+
+  const offlineProductsQuota = creditsData?.offline_products_quota || {
+    total_products: creditWallet.offline_total_products ?? 0,
+    given_products: creditWallet.offline_given_products ?? 0,
+    balance_products: creditWallet.offline_balance_products ?? 0,
+    per_showroom: creditWallet.offline_per_showroom ?? 0,
+    average_sku: creditWallet.offline_average_sku ?? 0,
+    expiry_date: creditWallet.offline_pack_expiry ?? "No active pack",
+    plan_name: creditWallet.offline_plan ?? "No active pack",
+  };
+
+  const hasActiveOfflineSubscription = Boolean(
+    (activeDesigner?.offline_membership_plan &&
+      String(activeDesigner.offline_membership_plan).trim() !== "" &&
+      String(activeDesigner.offline_membership_plan).trim().toLowerCase() !== "none") ||
+    (creditWallet?.offline_plan &&
+      !["no active pack", "—", "none", ""].includes(
+        String(creditWallet.offline_plan).toLowerCase().trim()
+      )) ||
+    (Number(offlineProductsQuota?.total_products || 0) > 0) ||
+    (Number(creditWallet?.offline_credits || 0) > 0)
+  );
+
+  const handleOfflineToggle = () => {
+    // If enabling offline product, ensure designer has an active offline subscription plan
+    if (!form.offlineEnabled) {
+      if (!hasActiveOfflineSubscription) {
+        Swal.fire({
+          title: "Offline Subscription Plan Required",
+          html: `
+            <div class="zenve-swal-gateway-container">
+              <div class="zenve-swal-gateway-icon-badge" style="background: #FFF0F0; border-color: #FECACA;">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+              </div>
+              <div class="zenve-swal-gateway-highlight" style="color: #991b1b; background: #FEF2F2; border-color: #FCA5A5;">
+                The designer doesn't have an active offline subscription plan.
+              </div>
+              <p class="zenve-swal-gateway-desc" style="font-size: 14.5px; color: #44403c; line-height: 1.5; margin: 6px 0 4px 0; font-weight: 500;">
+                If you want to sell products offline, please subscribe to an offline plan from the My Credit Points section or contact our Zenve support team.
+              </p>
+            </div>
+          `,
+          showCloseButton: true,
+          showConfirmButton: true,
+          confirmButtonText: "Understood",
+          backdrop: "rgba(0, 0, 0, 0.45)",
+          focusConfirm: true,
+          customClass: {
+            popup: "zenve-swal-gateway-popup",
+            title: "zenve-swal-gateway-title",
+            closeButton: "zenve-swal-close-btn",
+            confirmButton: "zenve-swal-gateway-confirm-btn",
+            actions: "zenve-swal-actions",
+          },
+        });
+        return;
+      }
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      offlineEnabled: !prev.offlineEnabled,
+    }));
   };
 
   const activeSkusCount = skus.filter(
@@ -999,29 +1106,65 @@ export default function DesignerPortal() {
       : offlineCreditPlans;
   const creditStatements = creditsData?.statements || [];
 
-  const handleBuyOfflinePack = async (plan) => {
-    if (!selectedDesignerId) {
-      showErrorToast("Please select a designer first.");
-      return;
+  const handleRequestOfflinePack = async (plan) => {
+    const rawPlan = String(plan?.plan || plan?.name || "").trim().toUpperCase();
+    let planTitle = "Offline Plan";
+    if (rawPlan === "PALLADIUM_PLUS" || rawPlan === "PALLADIUM++" || rawPlan === "PALLADIUM +") {
+      planTitle = "Palladium++";
+    } else if (rawPlan) {
+      planTitle = rawPlan.charAt(0).toUpperCase() + rawPlan.slice(1).toLowerCase();
+    } else if (plan?.id) {
+      planTitle = `Plan ${plan.id}`;
     }
 
     try {
-      setBuyingPlanId(plan.id);
-      const res = await buyOfflineCreditPack(
-        selectedDesignerId,
-        plan.id,
-        plan.plan
-      );
-      if (res?.credits) {
-        setCreditsOverride(res.credits);
+      if (selectedDesignerId) {
+        await requestOfflineCreditPack(selectedDesignerId, plan?.id, planTitle);
       }
-      showToast(res?.detail || "Offline credit pack activated!");
+
+      Swal.fire({
+        title: "Offline Subscription Requested",
+        html: `
+          <div class="zenve-swal-gateway-container">
+            <div class="zenve-swal-gateway-icon-badge" style="background: #F0FDF4; border-color: #BBF7D0;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
+            <div class="zenve-swal-gateway-highlight" style="color: #166534; background: #DCFCE7; border-color: #86EFAC;">
+              The designer needs offline subscription plan
+            </div>
+            <p class="zenve-swal-gateway-desc" style="font-size: 14.5px; color: #44403c; line-height: 1.5; margin: 6px 0 4px 0; font-weight: 500;">
+              Your request for the <strong>${planTitle}</strong> offline subscription plan has been registered. Offline access will remain disabled until authorized by the operations team.
+            </p>
+          </div>
+        `,
+        showCloseButton: true,
+        showConfirmButton: true,
+        confirmButtonText: "Understood",
+        backdrop: "rgba(0, 0, 0, 0.45)",
+        focusConfirm: true,
+        customClass: {
+          popup: "zenve-swal-gateway-popup",
+          title: "zenve-swal-gateway-title",
+          closeButton: "zenve-swal-close-btn",
+          confirmButton: "zenve-swal-gateway-confirm-btn",
+          actions: "zenve-swal-actions",
+        },
+      });
+
+      if (selectedDesignerId) {
+        loadDashboard(selectedDesignerId);
+      }
     } catch (err) {
-      showErrorToast(
-        err.message || "Failed to purchase offline credit pack"
-      );
-    } finally {
-      setBuyingPlanId(null);
+      console.error("Failed to request offline plan:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Request Error",
+        text: err.message || "Failed to submit offline plan request.",
+        confirmButtonText: "Close",
+      });
     }
   };
 
@@ -1240,6 +1383,42 @@ export default function DesignerPortal() {
 
 
     if (form.offlineEnabled) {
+      if (!hasActiveOfflineSubscription) {
+        Swal.fire({
+          title: "Offline Subscription Plan Required",
+          html: `
+            <div class="zenve-swal-gateway-container">
+              <div class="zenve-swal-gateway-icon-badge" style="background: #FFF0F0; border-color: #FECACA;">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+              </div>
+              <div class="zenve-swal-gateway-highlight" style="color: #991b1b; background: #FEF2F2; border-color: #FCA5A5;">
+                The designer doesn't have an active offline subscription plan.
+              </div>
+              <p class="zenve-swal-gateway-desc" style="font-size: 14.5px; color: #44403c; line-height: 1.5; margin: 6px 0 4px 0; font-weight: 500;">
+                If you want to sell products offline, please subscribe to an offline plan from the My Credit Points section or contact our Zenve support team.
+              </p>
+            </div>
+          `,
+          showCloseButton: true,
+          showConfirmButton: true,
+          confirmButtonText: "Understood",
+          backdrop: "rgba(0, 0, 0, 0.45)",
+          focusConfirm: true,
+          customClass: {
+            popup: "zenve-swal-gateway-popup",
+            title: "zenve-swal-gateway-title",
+            closeButton: "zenve-swal-close-btn",
+            confirmButton: "zenve-swal-gateway-confirm-btn",
+            actions: "zenve-swal-actions",
+          },
+        });
+        return;
+      }
+
       const missingOfflineQuantity =
         form.selectedSizes.find(
           (size) =>
@@ -1305,12 +1484,23 @@ export default function DesignerPortal() {
 
     const fulfilmentLocationMap = {
       "Mumbai FC": "MUMBAI_FC",
-      "Bangalore FC": "BANGALORE_FC",
+      "Bengaluru FC": "BENGALURU_FC",
+      "Bangalore FC": "BENGALURU_FC",
+      "Kochi FC": "KOCHI_FC",
+      "Chennai FC": "CHENNAI_FC",
       "Delhi FC": "DELHI_FC",
       "Designer Studio": "DESIGNER_STUDIO",
     };
 
+    const chosenLocation =
+      form.offlineEnabled
+        ? (form.selectedSizes.length > 0 && form.sizeStocks[form.selectedSizes[0]]?.offline_franchise) ||
+          form.offlineFranchise ||
+          form.location
+        : form.location;
+
     const fulfilmentLocation =
+      fulfilmentLocationMap[chosenLocation] ||
       fulfilmentLocationMap[form.location] ||
       form.location ||
       "MUMBAI_FC";
@@ -1332,6 +1522,14 @@ export default function DesignerPortal() {
       "category",
       form.category.trim()
     );
+
+    const primCat = activeDesigner?.primary_category || (isPetDesigner ? "pets" : isPeopleDesigner ? "people" : isTwinDesigner ? "twin" : "");
+    if (primCat) {
+      payload.append(
+        "primary_category",
+        primCat
+      );
+    }
 
     payload.append(
       "colour",
@@ -1516,7 +1714,7 @@ export default function DesignerPortal() {
 
     payload.append(
       "occasion",
-      "Festive"
+      form.category && form.category !== "All" ? form.category : "Festive"
     );
 
     payload.append(
@@ -1604,6 +1802,7 @@ export default function DesignerPortal() {
         ...prev,
 
         name: "",
+        category: "",
         colour: "",
         mrp: "",
         price: "",
@@ -1615,6 +1814,7 @@ export default function DesignerPortal() {
 
         selectedSizes: [],
         offlineEnabled: false,
+        offlineFranchise: "Mumbai FC",
         sizeStocks: createEmptySizeStocks(),
       }));
 
@@ -2219,7 +2419,7 @@ export default function DesignerPortal() {
       <header className="ZENVE-portal-header">
         <div className="ZENVE-header-left">
           <div className="ZENVE-header-title-block">
-            <h1 
+            <h1
               className="ZENVE-portal-title"
               style={{ cursor: "pointer" }}
               onClick={() => {
@@ -2309,2457 +2509,2804 @@ export default function DesignerPortal() {
         <>
 
 
-      {/* =====================================================
+          {/* =====================================================
           EMPTY DESIGNER
       ===================================================== */}
 
-      {!activeDesigner &&
-        !loadingPortal &&
-        !loadingDesigners ? (
-        <div className="ZENVE-empty-state-card">
-          <h3>
-            Create a designer in the Designer CRM
-            first.
-          </h3>
+          {!activeDesigner &&
+            !loadingPortal &&
+            !loadingDesigners ? (
+            <div className="ZENVE-empty-state-card">
+              <h3>
+                Create a designer in the Designer CRM
+                first.
+              </h3>
 
-          <p>
-            You need a registered designer brand
-            to access the portal dashboard.
-          </p>
+              <p>
+                You need a registered designer brand
+                to access the portal dashboard.
+              </p>
 
-          <Link
-            to="/designer-crm"
-            className="ZENVE-btn-primary"
-          >
-            Open 01 Designer CRM →
-          </Link>
-        </div>
-      ) : (
-        <main className="ZENVE-portal-main">
-          {showMediaReviews && selectedDesignerId && (
-            <MediaWorkspace 
-              key={selectedDesignerId} 
-              designerId={selectedDesignerId} 
-              designerReviewOnly={true} 
-              hideHeroBar={true}
-            />
-          )}
-          {/* ===================================================
+              <Link
+                to="/designer-crm"
+                className="ZENVE-btn-primary"
+              >
+                Open 01 Designer CRM →
+              </Link>
+            </div>
+          ) : (
+            <main className="ZENVE-portal-main">
+              {showMediaReviews && selectedDesignerId && (
+                <MediaWorkspace
+                  key={selectedDesignerId}
+                  designerId={selectedDesignerId}
+                  designerReviewOnly={true}
+                  hideHeroBar={true}
+                />
+              )}
+              {/* ===================================================
               DASHBOARD
           =================================================== */}
 
-          {!showProfileAndAccount && !showMediaReviews && (
-            <section className="ZENVE-portal-card">
-              <div className="ZENVE-card-header">
-                <div>
-                  <h2 className="ZENVE-card-title">
-                    My dashboard
-                  </h2>
+              {!showProfileAndAccount && !showMediaReviews && (
+                <section className="ZENVE-portal-card">
+                  <div className="ZENVE-card-header">
+                    <div>
+                      <h2 className="ZENVE-card-title">
+                        My dashboard
+                      </h2>
 
-                  <p className="ZENVE-card-description">
-                    This month at a glance, straight
-                    from the live order and settlement
-                    ledgers.
-                  </p>
-                </div>
-              </div>
-
-              <div className="ZENVE-kpi-grid">
-                <div className="ZENVE-kpi-tile">
-                  <div className="ZENVE-tile-label">
-                    Sales this month
+                      <p className="ZENVE-card-description">
+                        This month at a glance, straight
+                        from the live order and settlement
+                        ledgers.
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="ZENVE-tile-value">
-                    {loadingPortal
-                      ? "—"
-                      : formatInr(
-                        kpis.monthlyGmv
-                      )}
+                  <div className="ZENVE-kpi-grid">
+                    <div className="ZENVE-kpi-tile">
+                      <div className="ZENVE-tile-label">
+                        Sales this month
+                      </div>
+
+                      <div className="ZENVE-tile-value">
+                        {loadingPortal
+                          ? "—"
+                          : formatInr(
+                            kpis.monthlyGmv
+                          )}
+                      </div>
+
+                      <div className="ZENVE-tile-hint">
+                        Delivered GMV
+                      </div>
+                    </div>
+
+                    <div className="ZENVE-kpi-tile">
+                      <div className="ZENVE-tile-label">
+                        Orders
+                      </div>
+
+                      <div className="ZENVE-tile-value">
+                        {loadingPortal
+                          ? "—"
+                          : kpis.orders ?? 0}
+                      </div>
+
+                      <div className="ZENVE-tile-hint">
+                        {loadingPortal
+                          ? "..."
+                          : `${kpis.units ?? 0
+                          } units sold`}
+                      </div>
+                    </div>
+
+                    <div className="ZENVE-kpi-tile">
+                      <div className="ZENVE-tile-label">
+                        Commission
+                      </div>
+
+                      <div className="ZENVE-tile-value">
+                        {loadingPortal
+                          ? "—"
+                          : formatInr(
+                            kpis.commission
+                          )}
+                      </div>
+
+                      <div className="ZENVE-tile-hint">
+                        Take rate{" "}
+                        {activeDesigner?.takeRate ??
+                          0}
+                        %
+                      </div>
+                    </div>
+
+                    <div className="ZENVE-kpi-tile">
+                      <div className="ZENVE-tile-label">
+                        Net payable
+                      </div>
+
+                      <div className="ZENVE-tile-value">
+                        {loadingPortal
+                          ? "—"
+                          : formatInr(
+                            kpis.netPayable
+                          )}
+                      </div>
+
+                      <div className="ZENVE-tile-hint">
+                        {formatInr(kpis.paid)} already
+                        paid
+                      </div>
+                    </div>
+
+                    <div className="ZENVE-kpi-tile">
+                      <div className="ZENVE-tile-label">
+                        Conversion
+                      </div>
+
+                      <div className="ZENVE-tile-value">
+                        {loadingPortal
+                          ? "—"
+                          : `${kpis.conversion ??
+                          0.1
+                          }%`}
+                      </div>
+
+                      <div className="ZENVE-tile-hint">
+                        Units per 100 views
+                      </div>
+                    </div>
+
+                    <div className="ZENVE-kpi-tile">
+                      <div className="ZENVE-tile-label">
+                        Best seller
+                      </div>
+
+                      <div
+                        className="ZENVE-tile-value ZENVE-truncate"
+                        title={
+                          kpis.bestSeller?.name ||
+                          "—"
+                        }
+                      >
+                        {loadingPortal
+                          ? "—"
+                          : kpis.bestSeller?.name ||
+                          "—"}
+                      </div>
+
+                      <div className="ZENVE-tile-hint">
+                        {kpis.bestSeller
+                          ? `${kpis.bestSeller.units} units`
+                          : "No sales yet"}
+                      </div>
+                    </div>
+
+                    <div className="ZENVE-kpi-tile">
+                      <div className="ZENVE-tile-label">
+                        Returns
+                      </div>
+
+                      <div className="ZENVE-tile-value">
+                        {loadingPortal
+                          ? "—"
+                          : kpis.returns ?? 0}
+                      </div>
+
+                      <div className="ZENVE-tile-hint">
+                        {kpis.returnRate ?? 0}% of
+                        units
+                      </div>
+                    </div>
+
+                    <div className="ZENVE-kpi-tile">
+                      <div className="ZENVE-tile-label">
+                        Live SKUs
+                      </div>
+
+                      <div className="ZENVE-tile-value">
+                        {loadingPortal
+                          ? "—"
+                          : kpis.liveSkus ?? 0}
+                      </div>
+
+                      <div className="ZENVE-tile-hint">
+                        {kpis.totalSkus ?? 0} total
+                      </div>
+                    </div>
+
+                    <div className="ZENVE-kpi-tile">
+                      <div className="ZENVE-tile-label">
+                        Inventory alerts
+                      </div>
+
+                      <div className="ZENVE-tile-value">
+                        {loadingPortal
+                          ? "—"
+                          : kpis.inventoryAlerts ??
+                          0}
+                      </div>
+
+                      <div className="ZENVE-tile-hint">
+                        At or below reorder point
+                      </div>
+                    </div>
+
+                    <div className="ZENVE-kpi-tile">
+                      <div className="ZENVE-tile-label">
+                        Health score
+                      </div>
+
+                      <div className="ZENVE-tile-value">
+                        {loadingPortal
+                          ? "—"
+                          : `${kpis.health ?? "—"
+                          }/100`}
+                      </div>
+
+                      <div className="ZENVE-tile-hint">
+                        Zenve partner score
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="ZENVE-tile-hint">
-                    Delivered GMV
-                  </div>
-                </div>
+                  <div className="ZENVE-pending-actions-wrap">
+                    <span className="ZENVE-label-caps">
+                      Pending actions
+                    </span>
 
-                <div className="ZENVE-kpi-tile">
-                  <div className="ZENVE-tile-label">
-                    Orders
-                  </div>
-
-                  <div className="ZENVE-tile-value">
-                    {loadingPortal
-                      ? "—"
-                      : kpis.orders ?? 0}
-                  </div>
-
-                  <div className="ZENVE-tile-hint">
-                    {loadingPortal
-                      ? "..."
-                      : `${kpis.units ?? 0
-                      } units sold`}
-                  </div>
-                </div>
-
-                <div className="ZENVE-kpi-tile">
-                  <div className="ZENVE-tile-label">
-                    Commission
-                  </div>
-
-                  <div className="ZENVE-tile-value">
-                    {loadingPortal
-                      ? "—"
-                      : formatInr(
-                        kpis.commission
-                      )}
-                  </div>
-
-                  <div className="ZENVE-tile-hint">
-                    Take rate{" "}
-                    {activeDesigner?.takeRate ??
-                      0}
-                    %
-                  </div>
-                </div>
-
-                <div className="ZENVE-kpi-tile">
-                  <div className="ZENVE-tile-label">
-                    Net payable
-                  </div>
-
-                  <div className="ZENVE-tile-value">
-                    {loadingPortal
-                      ? "—"
-                      : formatInr(
-                        kpis.netPayable
-                      )}
-                  </div>
-
-                  <div className="ZENVE-tile-hint">
-                    {formatInr(kpis.paid)} already
-                    paid
-                  </div>
-                </div>
-
-                <div className="ZENVE-kpi-tile">
-                  <div className="ZENVE-tile-label">
-                    Conversion
-                  </div>
-
-                  <div className="ZENVE-tile-value">
-                    {loadingPortal
-                      ? "—"
-                      : `${kpis.conversion ??
-                      0.1
-                      }%`}
-                  </div>
-
-                  <div className="ZENVE-tile-hint">
-                    Units per 100 views
-                  </div>
-                </div>
-
-                <div className="ZENVE-kpi-tile">
-                  <div className="ZENVE-tile-label">
-                    Best seller
-                  </div>
-
-                  <div
-                    className="ZENVE-tile-value ZENVE-truncate"
-                    title={
-                      kpis.bestSeller?.name ||
-                      "—"
-                    }
-                  >
-                    {loadingPortal
-                      ? "—"
-                      : kpis.bestSeller?.name ||
-                      "—"}
-                  </div>
-
-                  <div className="ZENVE-tile-hint">
-                    {kpis.bestSeller
-                      ? `${kpis.bestSeller.units} units`
-                      : "No sales yet"}
-                  </div>
-                </div>
-
-                <div className="ZENVE-kpi-tile">
-                  <div className="ZENVE-tile-label">
-                    Returns
-                  </div>
-
-                  <div className="ZENVE-tile-value">
-                    {loadingPortal
-                      ? "—"
-                      : kpis.returns ?? 0}
-                  </div>
-
-                  <div className="ZENVE-tile-hint">
-                    {kpis.returnRate ?? 0}% of
-                    units
-                  </div>
-                </div>
-
-                <div className="ZENVE-kpi-tile">
-                  <div className="ZENVE-tile-label">
-                    Live SKUs
-                  </div>
-
-                  <div className="ZENVE-tile-value">
-                    {loadingPortal
-                      ? "—"
-                      : kpis.liveSkus ?? 0}
-                  </div>
-
-                  <div className="ZENVE-tile-hint">
-                    {kpis.totalSkus ?? 0} total
-                  </div>
-                </div>
-
-                <div className="ZENVE-kpi-tile">
-                  <div className="ZENVE-tile-label">
-                    Inventory alerts
-                  </div>
-
-                  <div className="ZENVE-tile-value">
-                    {loadingPortal
-                      ? "—"
-                      : kpis.inventoryAlerts ??
-                      0}
-                  </div>
-
-                  <div className="ZENVE-tile-hint">
-                    At or below reorder point
-                  </div>
-                </div>
-
-                <div className="ZENVE-kpi-tile">
-                  <div className="ZENVE-tile-label">
-                    Health score
-                  </div>
-
-                  <div className="ZENVE-tile-value">
-                    {loadingPortal
-                      ? "—"
-                      : `${kpis.health ?? "—"
-                      }/100`}
-                  </div>
-
-                  <div className="ZENVE-tile-hint">
-                    Zenve partner score
-                  </div>
-                </div>
-              </div>
-
-              <div className="ZENVE-pending-actions-wrap">
-                <span className="ZENVE-label-caps">
-                  Pending actions
-                </span>
-
-                {pendingActions.length ===
-                  0 ? (
-                  <p className="ZENVE-pending-empty">
-                    Nothing needs your attention.
-                  </p>
-                ) : (
-                  <ul className="ZENVE-pending-list">
-                    {pendingActions.map(
-                      (action, idx) => (
-                        <li key={idx}>
-                          • {action}
-                        </li>
-                      )
+                    {pendingActions.length ===
+                      0 ? (
+                      <p className="ZENVE-pending-empty">
+                        Nothing needs your attention.
+                      </p>
+                    ) : (
+                      <ul className="ZENVE-pending-list">
+                        {pendingActions.map(
+                          (action, idx) => (
+                            <li key={idx}>
+                              • {action}
+                            </li>
+                          )
+                        )}
+                      </ul>
                     )}
-                  </ul>
-                )}
-              </div>
-            </section>
-          )}
+                  </div>
+                </section>
+              )}
 
-          {/* ===================================================
+              {/* ===================================================
               CREDIT POINTS SECTION
           =================================================== */}
 
-          {!showProfileAndAccount && !showMediaReviews && (
-            <section
-              className="ZENVE-portal-card ZENVE-credits-section-card"
-              id="zenve-credits-section"
-            >
-              <div className="ZENVE-card-header">
-                <div>
-                  <h2 className="ZENVE-card-title">My credit points</h2>
-                  <p className="ZENVE-card-description">
-                    Free online credits come with your joining plan. Offline credits are bought to keep stock in the Zenve store. Every catalogue listing costs 500 points.
-                  </p>
-                </div>
-              </div>
-
-              {/* 4 KPI TILES */}
-              <div className="ZENVE-credits-kpi-grid">
-                <div className="ZENVE-credits-kpi-tile">
-                  <div className="ZENVE-credits-tile-label">ONLINE CREDITS (FREE)</div>
-                  <div className="ZENVE-credits-tile-value">
-                    {formatPoints(creditWallet.online_credits)}{" "}
-                    <span className="ZENVE-pts-unit">pts</span>
+              {!showProfileAndAccount && !showMediaReviews && (
+                <section
+                  className="ZENVE-portal-card ZENVE-credits-section-card"
+                  id="zenve-credits-section"
+                >
+                  <div className="ZENVE-card-header">
+                    <div>
+                      <h2 className="ZENVE-card-title">My credit points</h2>
+                      <p className="ZENVE-card-description">
+                        Free online credits come with your joining plan. Every catalogue listing costs 500 points. Offline subscription plans allow stock placement in Zenve stores.
+                      </p>
+                    </div>
                   </div>
-                  <div className="ZENVE-credits-tile-subtext">
-                    {creditWallet.online_plan} · {creditWallet.online_listings_left} listings left
-                  </div>
-                </div>
 
-                <div className="ZENVE-credits-kpi-tile">
-                  <div className="ZENVE-credits-tile-label">OFFLINE CREDITS (PAID)</div>
-                  <div className="ZENVE-credits-tile-value">
-                    {formatPoints(creditWallet.offline_credits)}{" "}
-                    <span className="ZENVE-pts-unit">pts</span>
-                  </div>
-                  <div className="ZENVE-credits-tile-subtext">
-                    {creditWallet.offline_plan} · {creditWallet.offline_listings_left} listings left
-                  </div>
-                </div>
-
-                <div className="ZENVE-credits-kpi-tile">
-                  <div className="ZENVE-credits-tile-label">POINTS USED</div>
-                  <div className="ZENVE-credits-tile-value">
-                    {formatPoints(creditWallet.points_used)}{" "}
-                    <span className="ZENVE-pts-unit">pts</span>
-                  </div>
-                  <div className="ZENVE-credits-tile-subtext">
-                    {creditWallet.points_used_subtitle || "5 catalogue listings at 500 pts each"}
-                  </div>
-                </div>
-
-                <div className="ZENVE-credits-kpi-tile">
-                  <div className="ZENVE-credits-tile-label">TOTAL BALANCE</div>
-                  <div className="ZENVE-credits-tile-value">
-                    {formatPoints(creditWallet.total_balance)}{" "}
-                    <span className="ZENVE-pts-unit">pts</span>
-                  </div>
-                  <div className="ZENVE-credits-tile-subtext">
-                    Offline pack valid to {creditWallet.offline_pack_expiry}
-                  </div>
-                </div>
-              </div>
-
-              {/* DAILY POINT BURN */}
-              <div className="ZENVE-daily-burn-banner">
-                <div className="ZENVE-daily-burn-label">DAILY POINT BURN</div>
-                <div className="ZENVE-daily-burn-calc">
-                  {dailyBurn.online_count} product(s) listed online × {dailyBurn.online_pts_each} pts = {dailyBurn.online_subtotal} pts per day · {dailyBurn.store_count} product(s) in a Zenve store × {dailyBurn.store_pts_each} pts = {dailyBurn.store_subtotal} pts per day
-                </div>
-                <div className="ZENVE-daily-burn-total">
-                  Total {dailyBurn.total_burn_per_day} pts per day
-                </div>
-                <div className="ZENVE-daily-burn-rates">
-                  {dailyBurn.rates_text}
-                </div>
-              </div>
-
-              {/* BUY OFFLINE CREDITS */}
-              <div className="ZENVE-credits-section-block">
-                <div className="ZENVE-credits-block-heading">BUY OFFLINE CREDITS (VALID 30 DAYS)</div>
-                <div className="ZENVE-offline-packs-grid">
-                  {offlinePlans.map((plan) => {
-                    const rawPlan = String(plan.plan || plan.name || "").trim().toUpperCase();
-                    let planTitle = "Plan";
-                    if (rawPlan === "PALLADIUM_PLUS" || rawPlan === "PALLADIUM++" || rawPlan === "PALLADIUM +") {
-                      planTitle = "Palladium++";
-                    } else if (rawPlan) {
-                      planTitle = rawPlan.charAt(0).toUpperCase() + rawPlan.slice(1).toLowerCase();
-                    } else {
-                      planTitle = `Plan ${plan.id}`;
-                    }
-
-                    const price = Number(plan.membership_price || 0);
-                    const originalPrice = Number(plan.original_membership_price || 0);
-                    const catalogue = plan.included_catalogue ?? 0;
-                    const showroom = plan.per_showroom ?? 0;
-                    const points = Number(plan.credit_points || 0);
-
-                    return (
-                      <div key={plan.id} className="ZENVE-offline-pack-card">
-                        <div className="ZENVE-pack-name">{planTitle}</div>
-                        <div className="ZENVE-pack-pricing">
-                          <span className="ZENVE-pack-price">
-                            ₹{price.toLocaleString("en-IN")}
-                          </span>
-                          {originalPrice > price && (
-                            <span className="ZENVE-pack-original-price">
-                              ₹{originalPrice.toLocaleString("en-IN")}
-                            </span>
-                          )}
-                        </div>
-                        <div className="ZENVE-pack-details">
-                          {catalogue} catalogue · {showroom} per showroom · {points.toLocaleString("en-IN")} pts
-                        </div>
-                        <button
-                          type="button"
-                          className="ZENVE-btn-buy-pack"
-                          disabled={buyingPlanId === plan.id}
-                          onClick={() => handleBuyOfflinePack(plan)}
-                        >
-                          {buyingPlanId === plan.id ? "Activating..." : `Buy ${planTitle}`}
-                        </button>
+                  {/* 4 KPI TILES */}
+                  <div className="ZENVE-credits-kpi-grid">
+                    <div className="ZENVE-credits-kpi-tile">
+                      <div className="ZENVE-credits-tile-label">ONLINE CREDITS (FREE)</div>
+                      <div className="ZENVE-credits-tile-value">
+                        {formatPoints(creditWallet.allocated_online_credits ?? creditWallet.online_credits)}{" "}
+                        <span className="ZENVE-pts-unit">pts</span>
                       </div>
-                    );
-                  })}
-                  {offlinePlans.length === 0 && (
-                    <div
-                      style={{
-                        padding: "20px",
-                        background: "#FFFCF5",
-                        borderRadius: "8px",
-                        border: "1px solid var(--ZENVE-line, #e2ddd5)",
-                        fontSize: "13px",
-                        color: "var(--ZENVE-muted, #746a60)",
-                        textAlign: "center",
-                        gridColumn: "1 / -1",
-                      }}
-                    >
-                      Loading offline credit plans from database...
+                      <div className="ZENVE-credits-tile-subtext">
+                        {creditWallet.online_plan} · {creditWallet.online_listings_left}{creditWallet.online_listings_total ? ` / ${creditWallet.online_listings_total}` : ""} listings left
+                      </div>
+                    </div>
+
+                    <div className="ZENVE-credits-kpi-tile">
+                      <div className="ZENVE-credits-tile-label">POINTS USED</div>
+                      <div className="ZENVE-credits-tile-value">
+                        {formatPoints(creditWallet.points_used)}{" "}
+                        <span className="ZENVE-pts-unit">pts</span>
+                      </div>
+                      <div className="ZENVE-credits-tile-subtext">
+                        {creditWallet.points_used_subtitle || "0 points used"}
+                      </div>
+                    </div>
+
+                    <div className="ZENVE-credits-kpi-tile">
+                      <div className="ZENVE-credits-tile-label">TOTAL BALANCE</div>
+                      <div className="ZENVE-credits-tile-value">
+                        {formatPoints(creditWallet.total_balance)}{" "}
+                        <span className="ZENVE-pts-unit">pts</span>
+                      </div>
+                      <div className="ZENVE-credits-tile-subtext">
+                        Net available credit balance
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* OFFLINE PRODUCTS QUOTA KPI TILES (SHOWN ONLY IF DESIGNER HAS PURCHASED AN OFFLINE SUBSCRIPTION) */}
+                  {hasActiveOfflineSubscription && (
+                    <div className="ZENVE-credits-kpi-grid ZENVE-products-kpi-grid">
+                      <div className="ZENVE-credits-kpi-tile">
+                        <div className="ZENVE-credits-tile-label">TOTAL PRODUCTS</div>
+                        <div className="ZENVE-credits-tile-value">
+                          {formatPoints(offlineProductsQuota.total_products)}{" "}
+                          <span className="ZENVE-pts-unit">products</span>
+                        </div>
+                        <div className="ZENVE-credits-tile-subtext">
+                          {creditWallet.offline_plan} · {offlineProductsQuota.total_products} catalogue included
+                        </div>
+                      </div>
+
+                      <div className="ZENVE-credits-kpi-tile">
+                        <div className="ZENVE-credits-tile-label">GIVEN PRODUCTS COUNT</div>
+                        <div className="ZENVE-credits-tile-value">
+                          {formatPoints(offlineProductsQuota.given_products)}{" "}
+                          <span className="ZENVE-pts-unit">products</span>
+                        </div>
+                        <div className="ZENVE-credits-tile-subtext">
+                          {offlineProductsQuota.given_products} product(s) submitted for offline store
+                        </div>
+                      </div>
+
+                      <div className="ZENVE-credits-kpi-tile">
+                        <div className="ZENVE-credits-tile-label">BALANCE PRODUCTS</div>
+                        <div className="ZENVE-credits-tile-value">
+                          {formatPoints(offlineProductsQuota.balance_products)}{" "}
+                          <span className="ZENVE-pts-unit">products</span>
+                        </div>
+                        <div className="ZENVE-credits-tile-subtext">
+                          Offline pack valid to {creditWallet.offline_pack_expiry}
+                        </div>
+                      </div>
                     </div>
                   )}
-                </div>
-              </div>
 
-              {/* CREDIT STATEMENT */}
-              <div className="ZENVE-credits-section-block" style={{ marginBottom: 0 }}>
-                <div className="ZENVE-credits-block-heading">CREDIT STATEMENT</div>
-                {creditStatements.length === 0 ? (
-                  <div
-                    style={{
-                      padding: "20px",
-                      background: "#FFFCF5",
-                      borderRadius: "8px",
-                      border: "1px solid var(--ZENVE-line, #e2ddd5)",
-                      fontSize: "13px",
-                      color: "var(--ZENVE-muted, #746a60)",
-                      textAlign: "center",
-                    }}
-                  >
-                    No credit transactions recorded yet for this designer.
+                  {/* DAILY POINT BURN */}
+                  <div className="ZENVE-daily-burn-banner">
+                    <div className="ZENVE-daily-burn-label">DAILY POINT BURN</div>
+                    <div className="ZENVE-daily-burn-calc">
+                      {dailyBurn.online_count} product(s) listed online × {dailyBurn.online_pts_each} pts = {dailyBurn.online_subtotal} pts per day · {dailyBurn.store_count} product(s) in a Zenve store × {dailyBurn.store_pts_each} pts = {dailyBurn.store_subtotal} pts per day
+                    </div>
+                    <div className="ZENVE-daily-burn-total">
+                      Total {dailyBurn.total_burn_per_day} pts per day
+                    </div>
+                    <div className="ZENVE-daily-burn-rates">
+                      {dailyBurn.rates_text}
+                    </div>
                   </div>
-                ) : (
-                  <div className="ZENVE-statement-list">
-                    {creditStatements.map((stmt, sIdx) => {
-                      const isPositive = Number(stmt.points) >= 0;
-                      const ptsDisplay = isPositive
-                        ? `+${Number(stmt.points).toLocaleString("en-IN")} pts`
-                        : `-${Number(Math.abs(stmt.points)).toLocaleString("en-IN")} pts`;
 
-                      return (
-                        <div key={stmt.id || sIdx} className="ZENVE-statement-row">
-                          <div className="ZENVE-statement-desc">{stmt.description}</div>
-                          <div className="ZENVE-statement-meta">
-                            <span
-                              className={`ZENVE-channel-tag tag-${(stmt.channel || "ONLINE").toLowerCase()}`}
+                  {/* BUY OFFLINE PLANS */}
+                  <div className="ZENVE-credits-section-block">
+                    <div className="ZENVE-credits-block-heading">BUY OFFLINE PLANS (VALID 30 DAYS)</div>
+                    <div className="ZENVE-offline-packs-grid">
+                      {offlinePlans.map((plan) => {
+                        const rawPlan = String(plan.plan || plan.name || "").trim().toUpperCase();
+                        let planTitle = "Plan";
+                        if (rawPlan === "PALLADIUM_PLUS" || rawPlan === "PALLADIUM++" || rawPlan === "PALLADIUM +") {
+                          planTitle = "Palladium++";
+                        } else if (rawPlan) {
+                          planTitle = rawPlan.charAt(0).toUpperCase() + rawPlan.slice(1).toLowerCase();
+                        } else {
+                          planTitle = `Plan ${plan.id}`;
+                        }
+
+                        const price = Number(plan.membership_price || 0);
+                        const originalPrice = Number(plan.original_membership_price || 0);
+                        const catalogue = plan.included_catalogue ?? 0;
+                        const showroom = plan.per_showroom ?? 0;
+
+                        return (
+                          <div key={plan.id} className="ZENVE-offline-pack-card">
+                            <div className="ZENVE-pack-name">{planTitle}</div>
+                            <div className="ZENVE-pack-pricing">
+                              <span className="ZENVE-pack-price">
+                                ₹{price.toLocaleString("en-IN")}
+                              </span>
+                              {originalPrice > price && (
+                                <span className="ZENVE-pack-original-price">
+                                  ₹{originalPrice.toLocaleString("en-IN")}
+                                </span>
+                              )}
+                            </div>
+                            <div className="ZENVE-pack-details">
+                              {catalogue} catalogue · {showroom} per showroom
+                            </div>
+                            <button
+                              type="button"
+                              className="ZENVE-btn-buy-pack"
+                              onClick={() => handleRequestOfflinePack(plan)}
                             >
-                              {stmt.channel || "ONLINE"}
-                            </span>
-                            <span
-                              className={`ZENVE-statement-pts ${isPositive ? "positive" : "negative"}`}
-                            >
-                              {ptsDisplay}
-                            </span>
-                            <span className="ZENVE-statement-date">{stmt.date_str || "—"}</span>
+                              Request
+                            </button>
                           </div>
+                        );
+                      })}
+                      {offlinePlans.length === 0 && (
+                        <div
+                          style={{
+                            padding: "20px",
+                            background: "#FFFCF5",
+                            borderRadius: "8px",
+                            border: "1px solid var(--ZENVE-line, #e2ddd5)",
+                            fontSize: "13px",
+                            color: "var(--ZENVE-muted, #746a60)",
+                            textAlign: "center",
+                            gridColumn: "1 / -1",
+                          }}
+                        >
+                          Loading offline credit plans from database...
                         </div>
-                      );
-                    })}
+                      )}
+                    </div>
                   </div>
-                )}
-              </div>
-            </section>
-          )}
 
-          {/* ===================================================
+                  {/* CREDIT STATEMENT */}
+                  <div className="ZENVE-credits-section-block" style={{ marginBottom: 0 }}>
+                    <div className="ZENVE-credits-block-heading">CREDIT STATEMENT</div>
+                    {creditStatements.length === 0 ? (
+                      <div
+                        style={{
+                          padding: "20px",
+                          background: "#FFFCF5",
+                          borderRadius: "8px",
+                          border: "1px solid var(--ZENVE-line, #e2ddd5)",
+                          fontSize: "13px",
+                          color: "var(--ZENVE-muted, #746a60)",
+                          textAlign: "center",
+                        }}
+                      >
+                        No credit transactions recorded yet for this designer.
+                      </div>
+                    ) : (
+                      <div className="ZENVE-statement-list">
+                        {creditStatements.map((stmt, sIdx) => {
+                          const isPositive = Number(stmt.points) >= 0;
+                          const ptsDisplay = isPositive
+                            ? `+${Number(stmt.points).toLocaleString("en-IN")} pts`
+                            : `-${Number(Math.abs(stmt.points)).toLocaleString("en-IN")} pts`;
+
+                          return (
+                            <div key={stmt.id || sIdx} className="ZENVE-statement-row">
+                              <div className="ZENVE-statement-desc">{stmt.description}</div>
+                              <div className="ZENVE-statement-meta">
+                                <span
+                                  className={`ZENVE-channel-tag tag-${(stmt.channel || "ONLINE").toLowerCase()}`}
+                                >
+                                  {stmt.channel || "ONLINE"}
+                                </span>
+                                <span
+                                  className={`ZENVE-statement-pts ${isPositive ? "positive" : "negative"}`}
+                                >
+                                  {ptsDisplay}
+                                </span>
+                                <span className="ZENVE-statement-date">{stmt.date_str || "—"}</span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </section>
+              )}
+
+              {/* ===================================================
               PROFILE + ACCOUNT
           =================================================== */}
 
-          {showProfileAndAccount && (
-            <div
-              id="zenve-profile-account-section"
-              className="ZENVE-profile-account-exclusive-view"
-            >
-              {/* =================================================
+              {showProfileAndAccount && (
+                <div
+                  id="zenve-profile-account-section"
+                  className="ZENVE-profile-account-exclusive-view"
+                >
+                  {/* =================================================
                   PROFILE
               ================================================= */}
 
-              <section className="ZENVE-portal-card">
-                <div className="ZENVE-card-header">
-                  <div>
-                    <h2 className="ZENVE-card-title">
-                      My profile
-                    </h2>
+                  <section className="ZENVE-portal-card">
+                    <div className="ZENVE-card-header">
+                      <div>
+                        <h2 className="ZENVE-card-title">
+                          My profile
+                        </h2>
 
-                    <p className="ZENVE-card-description">
-                      Maintained by the acquisition
-                      team in the CRM.
-                    </p>
-                  </div>
-
-                  <div className="ZENVE-profile-header-actions">
-                    {!isEditingProfile ? (
-                      <button
-                        type="button"
-                        className="ZENVE-btn-edit-profile"
-                        onClick={
-                          handleStartEditProfile
-                        }
-                        disabled={!activeDesigner}
-                        title="Edit profile information"
-                      >
-                        <EditPencilIcon />
-                        <span>
-                          Edit profile
-                        </span>
-                      </button>
-                    ) : (
-                      <div className="ZENVE-edit-actions-row">
-                        <button
-                          type="button"
-                          className="ZENVE-btn-secondary-sm"
-                          onClick={
-                            handleCancelEditProfile
-                          }
-                          disabled={
-                            savingProfile
-                          }
-                        >
-                          Cancel
-                        </button>
-
-                        <button
-                          type="button"
-                          className="ZENVE-btn-save-sm"
-                          onClick={
-                            handleSaveProfile
-                          }
-                          disabled={
-                            savingProfile
-                          }
-                        >
-                          {savingProfile
-                            ? "Saving..."
-                            : "Save changes"}
-                        </button>
-                      </div>
-                    )}
-
-                    <button
-                      type="button"
-                      className="ZENVE-btn-hide-profile-section"
-                      onClick={() =>
-                        setShowProfileAndAccount(
-                          false
-                        )
-                      }
-                      title="Hide My Profile and Account Details"
-                    >
-                      ✕ Hide
-                    </button>
-                  </div>
-                </div>
-
-                {!isEditingProfile ? (
-                  <div className="ZENVE-profile-card-body">
-                    <dl className="ZENVE-profile-dl">
-                      <div className="ZENVE-profile-item">
-                        <dt className="ZENVE-label-caps">
-                          Brand
-                        </dt>
-                        <dd>
-                          {activeDesigner?.brand ||
-                            "—"}
-                        </dd>
+                        <p className="ZENVE-card-description">
+                          Maintained by the acquisition
+                          team in the CRM.
+                        </p>
                       </div>
 
-                      <div className="ZENVE-profile-item">
-                        <dt className="ZENVE-label-caps">
-                          Owner
-                        </dt>
-                        <dd>
-                          {activeDesigner?.name ||
-                            "—"}
-                        </dd>
-                      </div>
-
-                      <div className="ZENVE-profile-item">
-                        <dt className="ZENVE-label-caps">
-                          Contact
-                        </dt>
-                        <dd>
-                          {activeDesigner?.contact ||
-                            "—"}
-                        </dd>
-                      </div>
-
-                      <div className="ZENVE-profile-item">
-                        <dt className="ZENVE-label-caps">
-                          City
-                        </dt>
-                        <dd>
-                          {activeDesigner?.city ||
-                            "—"}
-                        </dd>
-                      </div>
-
-                      <div className="ZENVE-profile-item">
-                        <dt className="ZENVE-label-caps">
-                          Stage
-                        </dt>
-                        <dd>
-                          {activeDesigner?.stage ||
-                            "—"}
-                        </dd>
-                      </div>
-
-                      <div className="ZENVE-profile-item">
-                        <dt className="ZENVE-label-caps">
-                          KYC
-                        </dt>
-                        <dd>
-                          {activeDesigner?.kyc
-                            ? "Verified"
-                            : "Pending"}
-                        </dd>
-                      </div>
-
-                      <div className="ZENVE-profile-item">
-                        <dt className="ZENVE-label-caps">
-                          GST
-                        </dt>
-                        <dd>
-                          {activeDesigner?.gst ||
-                            "—"}
-                        </dd>
-                      </div>
-
-                      <div className="ZENVE-profile-item">
-                        <dt className="ZENVE-label-caps">
-                          Contract ends
-                        </dt>
-                        <dd>
-                          {activeDesigner?.contractEnds ||
-                            "—"}
-                        </dd>
-                      </div>
-
-                      <div className="ZENVE-profile-item">
-                        <dt className="ZENVE-label-caps">
-                          Take rate
-                        </dt>
-                        <dd>
-                          {activeDesigner?.takeRate ??
-                            0}
-                          %
-                        </dd>
-                      </div>
-                    </dl>
-
-                    <aside className="ZENVE-profile-image-aside">
-                      <span className="ZENVE-label-caps" style={{ marginBottom: "10px" }}>
-                        Profile image
-                      </span>
-                      <div className="ZENVE-profile-avatar-wrapper">
-                        {activeDesigner?.profile_image && !profileImageError ? (
-                          <img
-                            src={activeDesigner.profile_image}
-                            alt={
-                              activeDesigner?.brand ||
-                              activeDesigner?.brand_name ||
-                              "Designer"
+                      <div className="ZENVE-profile-header-actions">
+                        {!isEditingProfile ? (
+                          <button
+                            type="button"
+                            className="ZENVE-btn-edit-profile"
+                            onClick={
+                              handleStartEditProfile
                             }
-                            className="ZENVE-profile-avatar-img"
-                            onError={() => setProfileImageError(true)}
-                          />
+                            disabled={!activeDesigner}
+                            title="Edit profile information"
+                          >
+                            <EditPencilIcon />
+                            <span>
+                              Edit profile
+                            </span>
+                          </button>
                         ) : (
-                          <div className="ZENVE-profile-avatar-fallback">
-                            {getDesignerInitials(
-                              activeDesigner?.name,
-                              activeDesigner?.brand || activeDesigner?.brand_name
-                            )}
+                          <div className="ZENVE-edit-actions-row">
+                            <button
+                              type="button"
+                              className="ZENVE-btn-secondary-sm"
+                              onClick={
+                                handleCancelEditProfile
+                              }
+                              disabled={
+                                savingProfile
+                              }
+                            >
+                              Cancel
+                            </button>
+
+                            <button
+                              type="button"
+                              className="ZENVE-btn-save-sm"
+                              onClick={
+                                handleSaveProfile
+                              }
+                              disabled={
+                                savingProfile
+                              }
+                            >
+                              {savingProfile
+                                ? "Saving..."
+                                : "Save changes"}
+                            </button>
                           </div>
                         )}
-                      </div>
-                      <span className="ZENVE-profile-avatar-caption">
-                        {activeDesigner?.brand || "Designer"}
-                      </span>
-                    </aside>
-                  </div>
-                ) : (
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      handleSaveProfile();
-                    }}
-                    className="ZENVE-profile-card-body"
-                  >
-                    <div className="ZENVE-profile-dl">
-                      <div className="ZENVE-profile-item">
-                        <label className="ZENVE-label-caps">
-                          Brand
-                        </label>
 
-                        <input
-                          type="text"
-                          className="ZENVE-profile-input"
-                          value={
-                            profileForm.brand
+                        <button
+                          type="button"
+                          className="ZENVE-btn-hide-profile-section"
+                          onClick={() =>
+                            setShowProfileAndAccount(
+                              false
+                            )
                           }
-                          onChange={(e) =>
-                            setProfileForm({
-                              ...profileForm,
-                              brand:
-                                e.target.value,
-                            })
-                          }
-                          placeholder="e.g. Velvet Canine"
-                          required
-                        />
-                      </div>
-
-                      <div className="ZENVE-profile-item">
-                        <label className="ZENVE-label-caps">
-                          Owner
-                        </label>
-
-                        <input
-                          type="text"
-                          className="ZENVE-profile-input"
-                          value={
-                            profileForm.name
-                          }
-                          onChange={(e) =>
-                            setProfileForm({
-                              ...profileForm,
-                              name:
-                                e.target.value,
-                            })
-                          }
-                          placeholder="e.g. Rohini Sharma"
-                          required
-                        />
-                      </div>
-
-                      <div className="ZENVE-profile-item">
-                        <label className="ZENVE-label-caps">
-                          Contact
-                        </label>
-
-                        <input
-                          type="text"
-                          className="ZENVE-profile-input"
-                          value={
-                            profileForm.contact
-                          }
-                          onChange={(e) =>
-                            setProfileForm({
-                              ...profileForm,
-                              contact:
-                                e.target.value,
-                            })
-                          }
-                          placeholder="email@brand.com or 9876543210"
-                        />
-                      </div>
-
-                      <div className="ZENVE-profile-item">
-                        <label className="ZENVE-label-caps">
-                          City
-                        </label>
-
-                        <input
-                          type="text"
-                          className="ZENVE-profile-input"
-                          value={
-                            profileForm.city
-                          }
-                          onChange={(e) =>
-                            setProfileForm({
-                              ...profileForm,
-                              city:
-                                e.target.value,
-                            })
-                          }
-                          placeholder="e.g. Mumbai"
-                        />
-                      </div>
-
-                      <div className="ZENVE-profile-item">
-                        <span className="ZENVE-label-caps">
-                          Stage
-                        </span>
-
-                        <div className="ZENVE-profile-readonly-box">
-                          <span className="ZENVE-profile-readonly-val">
-                            {activeDesigner?.stage ||
-                              "—"}
-                          </span>
-
-                          <span className="ZENVE-profile-lock-badge">
-                            CRM Controlled
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="ZENVE-profile-item">
-                        <span className="ZENVE-label-caps">
-                          KYC
-                        </span>
-
-                        <div className="ZENVE-profile-readonly-box">
-                          <span className="ZENVE-profile-readonly-val">
-                            {activeDesigner?.kyc
-                              ? "Verified"
-                              : "Pending"}
-                          </span>
-
-                          <span className="ZENVE-profile-lock-badge">
-                            Verified in CRM
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="ZENVE-profile-item">
-                        <label className="ZENVE-label-caps">
-                          GST
-                        </label>
-
-                        <input
-                          type="text"
-                          className="ZENVE-profile-input"
-                          value={
-                            profileForm.gst
-                          }
-                          onChange={(e) =>
-                            setProfileForm({
-                              ...profileForm,
-                              gst:
-                                e.target.value,
-                            })
-                          }
-                          placeholder="27AAAAA0000A1Z5"
-                        />
-                      </div>
-
-                      <div className="ZENVE-profile-item">
-                        <span className="ZENVE-label-caps">
-                          Contract ends
-                        </span>
-
-                        <div className="ZENVE-profile-readonly-box">
-                          <span className="ZENVE-profile-readonly-val">
-                            {activeDesigner?.contractEnds ||
-                              "—"}
-                          </span>
-
-                          <span className="ZENVE-profile-lock-badge">
-                            CRM Contract
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="ZENVE-profile-item">
-                        <span className="ZENVE-label-caps">
-                          Take rate
-                        </span>
-
-                        <div className="ZENVE-profile-readonly-box">
-                          <span className="ZENVE-profile-readonly-val">
-                            {activeDesigner?.takeRate ??
-                              0}
-                            %
-                          </span>
-
-                          <span className="ZENVE-profile-lock-badge">
-                            Fixed Agreement
-                          </span>
-                        </div>
+                          title="Hide My Profile and Account Details"
+                        >
+                          ✕ Hide
+                        </button>
                       </div>
                     </div>
 
-                    <aside className="ZENVE-profile-image-aside edit-mode">
-                      <span className="ZENVE-label-caps" style={{ marginBottom: "10px" }}>
-                        Profile image
-                      </span>
+                    {!isEditingProfile ? (
+                      <div className="ZENVE-profile-card-body">
+                        <dl className="ZENVE-profile-dl">
+                          <div className="ZENVE-profile-item">
+                            <dt className="ZENVE-label-caps">
+                              Brand
+                            </dt>
+                            <dd>
+                              {activeDesigner?.brand ||
+                                "—"}
+                            </dd>
+                          </div>
 
-                      <div
-                        className="ZENVE-profile-avatar-wrapper editable"
-                        onClick={() => profileFileInputRef.current?.click()}
-                        title="Click to select a new profile photo"
-                      >
-                        {profileImagePreview ? (
-                          <img
-                            src={profileImagePreview}
-                            alt="Designer profile"
-                            className="ZENVE-profile-avatar-img"
-                          />
-                        ) : activeDesigner?.profile_image && !profileImageError ? (
-                          <img
-                            src={activeDesigner.profile_image}
-                            alt="Designer profile"
-                            className="ZENVE-profile-avatar-img"
-                            onError={() => setProfileImageError(true)}
-                          />
-                        ) : (
-                          <div className="ZENVE-profile-avatar-fallback">
-                            {getDesignerInitials(
-                              profileForm.name || activeDesigner?.name,
-                              profileForm.brand || activeDesigner?.brand
+                          <div className="ZENVE-profile-item">
+                            <dt className="ZENVE-label-caps">
+                              Owner
+                            </dt>
+                            <dd>
+                              {activeDesigner?.name ||
+                                "—"}
+                            </dd>
+                          </div>
+
+                          <div className="ZENVE-profile-item">
+                            <dt className="ZENVE-label-caps">
+                              Contact
+                            </dt>
+                            <dd>
+                              {activeDesigner?.contact ||
+                                "—"}
+                            </dd>
+                          </div>
+
+                          <div className="ZENVE-profile-item">
+                            <dt className="ZENVE-label-caps">
+                              City
+                            </dt>
+                            <dd>
+                              {activeDesigner?.city ||
+                                "—"}
+                            </dd>
+                          </div>
+
+                          <div className="ZENVE-profile-item">
+                            <dt className="ZENVE-label-caps">
+                              Stage
+                            </dt>
+                            <dd>
+                              {activeDesigner?.stage ||
+                                "—"}
+                            </dd>
+                          </div>
+
+                          <div className="ZENVE-profile-item">
+                            <dt className="ZENVE-label-caps">
+                              KYC
+                            </dt>
+                            <dd>
+                              {activeDesigner?.kyc
+                                ? "Verified"
+                                : "Pending"}
+                            </dd>
+                          </div>
+
+                          <div className="ZENVE-profile-item">
+                            <dt className="ZENVE-label-caps">
+                              GST
+                            </dt>
+                            <dd>
+                              {activeDesigner?.gst ||
+                                "—"}
+                            </dd>
+                          </div>
+
+                          <div className="ZENVE-profile-item">
+                            <dt className="ZENVE-label-caps">
+                              Contract ends
+                            </dt>
+                            <dd>
+                              {activeDesigner?.contractEnds ||
+                                "—"}
+                            </dd>
+                          </div>
+
+                          <div className="ZENVE-profile-item">
+                            <dt className="ZENVE-label-caps">
+                              Take rate
+                            </dt>
+                            <dd>
+                              {activeDesigner?.takeRate ??
+                                0}
+                              %
+                            </dd>
+                          </div>
+                        </dl>
+
+                        <aside className="ZENVE-profile-image-aside">
+                          <span className="ZENVE-label-caps" style={{ marginBottom: "10px" }}>
+                            Profile image
+                          </span>
+                          <div className="ZENVE-profile-avatar-wrapper">
+                            {activeDesigner?.profile_image && !profileImageError ? (
+                              <img
+                                src={activeDesigner.profile_image}
+                                alt={
+                                  activeDesigner?.brand ||
+                                  activeDesigner?.brand_name ||
+                                  "Designer"
+                                }
+                                className="ZENVE-profile-avatar-img"
+                                onError={() => setProfileImageError(true)}
+                              />
+                            ) : (
+                              <div className="ZENVE-profile-avatar-fallback">
+                                {getDesignerInitials(
+                                  activeDesigner?.name,
+                                  activeDesigner?.brand || activeDesigner?.brand_name
+                                )}
+                              </div>
                             )}
                           </div>
-                        )}
-
-                        <div className="ZENVE-profile-avatar-overlay">
-                          <span>Change</span>
-                        </div>
+                          <span className="ZENVE-profile-avatar-caption">
+                            {activeDesigner?.brand || "Designer"}
+                          </span>
+                        </aside>
                       </div>
-
-                      <input
-                        ref={profileFileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleProfileImageChange}
-                        disabled={savingProfile}
-                        style={{ display: "none" }}
-                      />
-
-                      <button
-                        type="button"
-                        className="ZENVE-btn-upload-photo"
-                        onClick={() => profileFileInputRef.current?.click()}
-                        disabled={savingProfile}
+                    ) : (
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          handleSaveProfile();
+                        }}
+                        className="ZENVE-profile-card-body"
                       >
-                        📷 {profileImage || (activeDesigner?.profile_image && !profileImageError) ? "Change photo" : "Upload photo"}
-                      </button>
+                        <div className="ZENVE-profile-dl">
+                          <div className="ZENVE-profile-item">
+                            <label className="ZENVE-label-caps">
+                              Brand
+                            </label>
 
-                      {profileImage && (
-                        <button
-                          type="button"
-                          className="ZENVE-btn-remove-photo-link"
-                          onClick={() => {
-                            if (profileImagePreview && profileImagePreview.startsWith("blob:")) {
-                              URL.revokeObjectURL(profileImagePreview);
-                            }
-                            setProfileImage(null);
-                            setProfileImagePreview(activeDesigner?.profile_image || "");
-                          }}
-                        >
-                          Remove selected
-                        </button>
-                      )}
+                            <input
+                              type="text"
+                              className="ZENVE-profile-input"
+                              value={
+                                profileForm.brand
+                              }
+                              onChange={(e) =>
+                                setProfileForm({
+                                  ...profileForm,
+                                  brand:
+                                    e.target.value,
+                                })
+                              }
+                              placeholder="e.g. Velvet Canine"
+                              required
+                            />
+                          </div>
 
-                      <small className="ZENVE-profile-image-help">
-                        Image only · Max 5 MB
-                      </small>
-                    </aside>
-                  </form>
-                )}
-              </section>
+                          <div className="ZENVE-profile-item">
+                            <label className="ZENVE-label-caps">
+                              Owner
+                            </label>
 
-              {/* =================================================
+                            <input
+                              type="text"
+                              className="ZENVE-profile-input"
+                              value={
+                                profileForm.name
+                              }
+                              onChange={(e) =>
+                                setProfileForm({
+                                  ...profileForm,
+                                  name:
+                                    e.target.value,
+                                })
+                              }
+                              placeholder="e.g. Rohini Sharma"
+                              required
+                            />
+                          </div>
+
+                          <div className="ZENVE-profile-item">
+                            <label className="ZENVE-label-caps">
+                              Contact
+                            </label>
+
+                            <input
+                              type="text"
+                              className="ZENVE-profile-input"
+                              value={
+                                profileForm.contact
+                              }
+                              onChange={(e) =>
+                                setProfileForm({
+                                  ...profileForm,
+                                  contact:
+                                    e.target.value,
+                                })
+                              }
+                              placeholder="email@brand.com or 9876543210"
+                            />
+                          </div>
+
+                          <div className="ZENVE-profile-item">
+                            <label className="ZENVE-label-caps">
+                              City
+                            </label>
+
+                            <input
+                              type="text"
+                              className="ZENVE-profile-input"
+                              value={
+                                profileForm.city
+                              }
+                              onChange={(e) =>
+                                setProfileForm({
+                                  ...profileForm,
+                                  city:
+                                    e.target.value,
+                                })
+                              }
+                              placeholder="e.g. Mumbai"
+                            />
+                          </div>
+
+                          <div className="ZENVE-profile-item">
+                            <span className="ZENVE-label-caps">
+                              Stage
+                            </span>
+
+                            <div className="ZENVE-profile-readonly-box">
+                              <span className="ZENVE-profile-readonly-val">
+                                {activeDesigner?.stage ||
+                                  "—"}
+                              </span>
+
+                              <span className="ZENVE-profile-lock-badge">
+                                CRM Controlled
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="ZENVE-profile-item">
+                            <span className="ZENVE-label-caps">
+                              KYC
+                            </span>
+
+                            <div className="ZENVE-profile-readonly-box">
+                              <span className="ZENVE-profile-readonly-val">
+                                {activeDesigner?.kyc
+                                  ? "Verified"
+                                  : "Pending"}
+                              </span>
+
+                              <span className="ZENVE-profile-lock-badge">
+                                Verified in CRM
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="ZENVE-profile-item">
+                            <label className="ZENVE-label-caps">
+                              GST
+                            </label>
+
+                            <input
+                              type="text"
+                              className="ZENVE-profile-input"
+                              value={
+                                profileForm.gst
+                              }
+                              onChange={(e) =>
+                                setProfileForm({
+                                  ...profileForm,
+                                  gst:
+                                    e.target.value,
+                                })
+                              }
+                              placeholder="27AAAAA0000A1Z5"
+                            />
+                          </div>
+
+                          <div className="ZENVE-profile-item">
+                            <span className="ZENVE-label-caps">
+                              Contract ends
+                            </span>
+
+                            <div className="ZENVE-profile-readonly-box">
+                              <span className="ZENVE-profile-readonly-val">
+                                {activeDesigner?.contractEnds ||
+                                  "—"}
+                              </span>
+
+                              <span className="ZENVE-profile-lock-badge">
+                                CRM Contract
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="ZENVE-profile-item">
+                            <span className="ZENVE-label-caps">
+                              Take rate
+                            </span>
+
+                            <div className="ZENVE-profile-readonly-box">
+                              <span className="ZENVE-profile-readonly-val">
+                                {activeDesigner?.takeRate ??
+                                  0}
+                                %
+                              </span>
+
+                              <span className="ZENVE-profile-lock-badge">
+                                Fixed Agreement
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <aside className="ZENVE-profile-image-aside edit-mode">
+                          <span className="ZENVE-label-caps" style={{ marginBottom: "10px" }}>
+                            Profile image
+                          </span>
+
+                          <div
+                            className="ZENVE-profile-avatar-wrapper editable"
+                            onClick={() => profileFileInputRef.current?.click()}
+                            title="Click to select a new profile photo"
+                          >
+                            {profileImagePreview ? (
+                              <img
+                                src={profileImagePreview}
+                                alt="Designer profile"
+                                className="ZENVE-profile-avatar-img"
+                              />
+                            ) : activeDesigner?.profile_image && !profileImageError ? (
+                              <img
+                                src={activeDesigner.profile_image}
+                                alt="Designer profile"
+                                className="ZENVE-profile-avatar-img"
+                                onError={() => setProfileImageError(true)}
+                              />
+                            ) : (
+                              <div className="ZENVE-profile-avatar-fallback">
+                                {getDesignerInitials(
+                                  profileForm.name || activeDesigner?.name,
+                                  profileForm.brand || activeDesigner?.brand
+                                )}
+                              </div>
+                            )}
+
+                            <div className="ZENVE-profile-avatar-overlay">
+                              <span>Change</span>
+                            </div>
+                          </div>
+
+                          <input
+                            ref={profileFileInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleProfileImageChange}
+                            disabled={savingProfile}
+                            style={{ display: "none" }}
+                          />
+
+                          <button
+                            type="button"
+                            className="ZENVE-btn-upload-photo"
+                            onClick={() => profileFileInputRef.current?.click()}
+                            disabled={savingProfile}
+                          >
+                            📷 {profileImage || (activeDesigner?.profile_image && !profileImageError) ? "Change photo" : "Upload photo"}
+                          </button>
+
+                          {profileImage && (
+                            <button
+                              type="button"
+                              className="ZENVE-btn-remove-photo-link"
+                              onClick={() => {
+                                if (profileImagePreview && profileImagePreview.startsWith("blob:")) {
+                                  URL.revokeObjectURL(profileImagePreview);
+                                }
+                                setProfileImage(null);
+                                setProfileImagePreview(activeDesigner?.profile_image || "");
+                              }}
+                            >
+                              Remove selected
+                            </button>
+                          )}
+
+                          <small className="ZENVE-profile-image-help">
+                            Image only · Max 5 MB
+                          </small>
+                        </aside>
+                      </form>
+                    )}
+                  </section>
+
+                  {/* =================================================
                   ACCOUNT DETAILS
               ================================================= */}
 
-              <section
-                id="zenve-account-section"
-                className="ZENVE-portal-card"
-              >
-                <div className="ZENVE-card-header">
-                  <div>
-                    <h2 className="ZENVE-card-title">
-                      Account Details
-                    </h2>
+                  <section
+                    id="zenve-account-section"
+                    className="ZENVE-portal-card"
+                  >
+                    <div className="ZENVE-card-header">
+                      <div>
+                        <h2 className="ZENVE-card-title">
+                          Account Details
+                        </h2>
 
-                    <p className="ZENVE-card-description">
-                      Bank settlement account, IFSC
-                      routing, and PAN card records
-                      for payouts and disbursements.
-                    </p>
-                  </div>
+                        <p className="ZENVE-card-description">
+                          Bank settlement account, IFSC
+                          routing, and PAN card records
+                          for payouts and disbursements.
+                        </p>
+                      </div>
 
-                  <div className="ZENVE-profile-header-actions">
-                    {!isEditingAccount ? (
-                      hasAccountDetails ? (
+                      <div className="ZENVE-profile-header-actions">
+                        {!isEditingAccount ? (
+                          hasAccountDetails ? (
+                            <button
+                              type="button"
+                              className="ZENVE-btn-edit-profile"
+                              onClick={
+                                handleStartEditAccount
+                              }
+                              disabled={
+                                !activeDesigner ||
+                                loadingAccount
+                              }
+                              title="Edit banking and account details"
+                            >
+                              <EditPencilIcon />
+
+                              <span>
+                                Edit account
+                              </span>
+                            </button>
+                          ) : null
+                        ) : (
+                          <div className="ZENVE-edit-actions-row">
+                            <button
+                              type="button"
+                              className="ZENVE-btn-secondary-sm"
+                              onClick={
+                                handleCancelEditAccount
+                              }
+                              disabled={
+                                savingAccount
+                              }
+                            >
+                              Cancel
+                            </button>
+
+                            <button
+                              type="button"
+                              className="ZENVE-btn-save-sm"
+                              onClick={
+                                handleSaveAccountDetails
+                              }
+                              disabled={
+                                savingAccount
+                              }
+                            >
+                              {savingAccount
+                                ? "Saving..."
+                                : "Save changes"}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* ACCOUNT LOADING */}
+
+                    {loadingAccount ? (
+                      <div className="ZENVE-item-empty">
+                        Loading account details...
+                      </div>
+                    ) : !hasAccountDetails &&
+                      !isEditingAccount ? (
+                      /* =================================================
+                         NO ACCOUNT DETAILS
+                      ================================================= */
+
+                      <div className="ZENVE-item-empty">
+                        <strong>
+                          Account details not available.
+                        </strong>
+
+                        <p>
+                          This designer has not provided
+                          account and banking details yet.
+                        </p>
+
                         <button
                           type="button"
-                          className="ZENVE-btn-edit-profile"
+                          className="ZENVE-btn-primary"
                           onClick={
                             handleStartEditAccount
                           }
-                          disabled={
-                            !activeDesigner ||
-                            loadingAccount
-                          }
-                          title="Edit banking and account details"
                         >
-                          <EditPencilIcon />
-
-                          <span>
-                            Edit account
-                          </span>
+                          Add Account Details
                         </button>
-                      ) : null
+                      </div>
+                    ) : !isEditingAccount ? (
+                      /* =================================================
+                         DISPLAY ACCOUNT DETAILS
+                      ================================================= */
+
+                      <dl className="ZENVE-profile-dl">
+                        {/* ACCOUNT HOLDER */}
+
+                        <div className="ZENVE-profile-item">
+                          <dt className="ZENVE-label-caps">
+                            Account Holder Name
+                          </dt>
+
+                          <dd className="ZENVE-account-holder-dd">
+                            <span>
+                              {accountForm.accountHolderName ||
+                                "—"}
+                            </span>
+
+                            <span className="ZENVE-verified-mini-pill">
+                              Primary
+                            </span>
+                          </dd>
+                        </div>
+
+                        {/* ACCOUNT NUMBER */}
+
+                        <div className="ZENVE-profile-item">
+                          <dt className="ZENVE-label-caps">
+                            Account Number
+                          </dt>
+
+                          <dd className="ZENVE-account-num-dd">
+                            <span>
+                              {isAccountMasked &&
+                                accountForm.accountNumber
+                                ? accountForm
+                                  .accountNumber
+                                  .length > 4
+                                  ? "•••• •••• " +
+                                  accountForm.accountNumber.slice(
+                                    -4
+                                  )
+                                  : accountForm.accountNumber
+                                : accountForm.accountNumber ||
+                                "—"}
+                            </span>
+
+                            {accountForm.accountNumber && (
+                              <button
+                                type="button"
+                                className="ZENVE-mask-toggle-btn"
+                                onClick={() =>
+                                  setIsAccountMasked(
+                                    (prev) =>
+                                      !prev
+                                  )
+                                }
+                                title={
+                                  isAccountMasked
+                                    ? "Reveal full account number"
+                                    : "Mask account number"
+                                }
+                              >
+                                <EyeIcon
+                                  off={
+                                    !isAccountMasked
+                                  }
+                                />
+                              </button>
+                            )}
+                          </dd>
+                        </div>
+
+                        {/* IFSC */}
+
+                        <div className="ZENVE-profile-item">
+                          <dt className="ZENVE-label-caps">
+                            IFSC Code
+                          </dt>
+
+                          <dd className="ZENVE-ifsc-dd">
+                            <code>
+                              {accountForm.ifscCode ||
+                                "—"}
+                            </code>
+
+                            {accountForm.ifscCode && (
+                              <span className="ZENVE-bank-tag">
+                                {getBankNameFromIfsc(
+                                  accountForm.ifscCode
+                                )}
+                              </span>
+                            )}
+                          </dd>
+                        </div>
+
+                        {/* PAN */}
+
+                        <div className="ZENVE-profile-item">
+                          <dt className="ZENVE-label-caps">
+                            PAN Card Details
+                          </dt>
+
+                          <dd className="ZENVE-pan-dd">
+                            <code>
+                              {accountForm.panNumber ||
+                                "—"}
+                            </code>
+
+                            {accountForm.panNumber && (
+                              <span className="ZENVE-verified-mini-pill">
+                                PAN Provided
+                              </span>
+                            )}
+                          </dd>
+                        </div>
+                      </dl>
                     ) : (
-                      <div className="ZENVE-edit-actions-row">
-                        <button
-                          type="button"
-                          className="ZENVE-btn-secondary-sm"
-                          onClick={
-                            handleCancelEditAccount
-                          }
-                          disabled={
-                            savingAccount
-                          }
-                        >
-                          Cancel
-                        </button>
+                      /* =================================================
+                         EDIT ACCOUNT FORM
+                      ================================================= */
 
-                        <button
-                          type="button"
-                          className="ZENVE-btn-save-sm"
-                          onClick={
-                            handleSaveAccountDetails
-                          }
-                          disabled={
-                            savingAccount
-                          }
-                        >
-                          {savingAccount
-                            ? "Saving..."
-                            : "Save changes"}
-                        </button>
-                      </div>
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          handleSaveAccountDetails();
+                        }}
+                        className="ZENVE-profile-dl"
+                      >
+                        {/* ACCOUNT HOLDER */}
+
+                        <div className="ZENVE-profile-item">
+                          <label className="ZENVE-label-caps">
+                            Account Holder Name
+                          </label>
+
+                          <input
+                            type="text"
+                            className="ZENVE-profile-input"
+                            value={
+                              accountForm.accountHolderName
+                            }
+                            onChange={(e) =>
+                              setAccountForm(
+                                (prev) => ({
+                                  ...prev,
+                                  accountHolderName:
+                                    e.target.value,
+                                })
+                              )
+                            }
+                            placeholder="Name as per bank records"
+                            required
+                          />
+
+                          <span className="ZENVE-field-hint">
+                            Name as per bank records
+                          </span>
+                        </div>
+
+                        {/* ACCOUNT NUMBER */}
+
+                        <div className="ZENVE-profile-item">
+                          <label className="ZENVE-label-caps">
+                            Account Number
+                          </label>
+
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            className="ZENVE-profile-input"
+                            value={
+                              accountForm.accountNumber
+                            }
+                            onChange={(e) =>
+                              setAccountForm(
+                                (prev) => ({
+                                  ...prev,
+                                  accountNumber:
+                                    e.target.value
+                                      .replace(
+                                        /[^0-9]/g,
+                                        ""
+                                      )
+                                      .slice(
+                                        0,
+                                        18
+                                      ),
+                                })
+                              )
+                            }
+                            placeholder="e.g. 50100234567890"
+                            maxLength={18}
+                            required
+                          />
+
+                          <span className="ZENVE-field-hint">
+                            9 to 18 digit beneficiary
+                            account number
+                          </span>
+                        </div>
+
+                        {/* IFSC */}
+
+                        <div className="ZENVE-profile-item">
+                          <div className="ZENVE-field-title-row">
+                            <label className="ZENVE-label-caps">
+                              IFSC Code
+                            </label>
+
+                            {accountForm.ifscCode && (
+                              <span className="ZENVE-bank-tag">
+                                {getBankNameFromIfsc(
+                                  accountForm.ifscCode
+                                )}
+                              </span>
+                            )}
+                          </div>
+
+                          <input
+                            type="text"
+                            className="ZENVE-profile-input uppercase-code"
+                            value={
+                              accountForm.ifscCode
+                            }
+                            onChange={(e) =>
+                              handleIfscChange(
+                                e.target.value
+                              )
+                            }
+                            placeholder="e.g. HDFC0001206"
+                            maxLength={11}
+                            required
+                          />
+
+                          <span className="ZENVE-field-hint">
+                            11-character bank branch
+                            code
+                          </span>
+                        </div>
+
+                        {/* PAN */}
+
+                        <div className="ZENVE-profile-item">
+                          <label className="ZENVE-label-caps">
+                            PAN Card Details
+                          </label>
+
+                          <input
+                            type="text"
+                            className="ZENVE-profile-input uppercase-code"
+                            value={
+                              accountForm.panNumber
+                            }
+                            onChange={(e) =>
+                              setAccountForm(
+                                (prev) => ({
+                                  ...prev,
+                                  panNumber:
+                                    e.target.value
+                                      .toUpperCase()
+                                      .replace(
+                                        /[^A-Z0-9]/g,
+                                        ""
+                                      )
+                                      .slice(
+                                        0,
+                                        10
+                                      ),
+                                })
+                              )
+                            }
+                            placeholder="e.g. AAACC1206D"
+                            maxLength={10}
+                            required
+                          />
+
+                          <span className="ZENVE-field-hint">
+                            10-character Income Tax
+                            Permanent Account Number
+                          </span>
+                        </div>
+                      </form>
                     )}
-                  </div>
+                  </section>
                 </div>
+              )}
 
-                {/* ACCOUNT LOADING */}
-
-                {loadingAccount ? (
-                  <div className="ZENVE-item-empty">
-                    Loading account details...
-                  </div>
-                ) : !hasAccountDetails &&
-                  !isEditingAccount ? (
-                  /* =================================================
-                     NO ACCOUNT DETAILS
-                  ================================================= */
-
-                  <div className="ZENVE-item-empty">
-                    <strong>
-                      Account details not available.
-                    </strong>
-
-                    <p>
-                      This designer has not provided
-                      account and banking details yet.
-                    </p>
-
-                    <button
-                      type="button"
-                      className="ZENVE-btn-primary"
-                      onClick={
-                        handleStartEditAccount
-                      }
-                    >
-                      Add Account Details
-                    </button>
-                  </div>
-                ) : !isEditingAccount ? (
-                  /* =================================================
-                     DISPLAY ACCOUNT DETAILS
-                  ================================================= */
-
-                  <dl className="ZENVE-profile-dl">
-                    {/* ACCOUNT HOLDER */}
-
-                    <div className="ZENVE-profile-item">
-                      <dt className="ZENVE-label-caps">
-                        Account Holder Name
-                      </dt>
-
-                      <dd className="ZENVE-account-holder-dd">
-                        <span>
-                          {accountForm.accountHolderName ||
-                            "—"}
-                        </span>
-
-                        <span className="ZENVE-verified-mini-pill">
-                          Primary
-                        </span>
-                      </dd>
-                    </div>
-
-                    {/* ACCOUNT NUMBER */}
-
-                    <div className="ZENVE-profile-item">
-                      <dt className="ZENVE-label-caps">
-                        Account Number
-                      </dt>
-
-                      <dd className="ZENVE-account-num-dd">
-                        <span>
-                          {isAccountMasked &&
-                            accountForm.accountNumber
-                            ? accountForm
-                              .accountNumber
-                              .length > 4
-                              ? "•••• •••• " +
-                              accountForm.accountNumber.slice(
-                                -4
-                              )
-                              : accountForm.accountNumber
-                            : accountForm.accountNumber ||
-                            "—"}
-                        </span>
-
-                        {accountForm.accountNumber && (
-                          <button
-                            type="button"
-                            className="ZENVE-mask-toggle-btn"
-                            onClick={() =>
-                              setIsAccountMasked(
-                                (prev) =>
-                                  !prev
-                              )
-                            }
-                            title={
-                              isAccountMasked
-                                ? "Reveal full account number"
-                                : "Mask account number"
-                            }
-                          >
-                            <EyeIcon
-                              off={
-                                !isAccountMasked
-                              }
-                            />
-                          </button>
-                        )}
-                      </dd>
-                    </div>
-
-                    {/* IFSC */}
-
-                    <div className="ZENVE-profile-item">
-                      <dt className="ZENVE-label-caps">
-                        IFSC Code
-                      </dt>
-
-                      <dd className="ZENVE-ifsc-dd">
-                        <code>
-                          {accountForm.ifscCode ||
-                            "—"}
-                        </code>
-
-                        {accountForm.ifscCode && (
-                          <span className="ZENVE-bank-tag">
-                            {getBankNameFromIfsc(
-                              accountForm.ifscCode
-                            )}
-                          </span>
-                        )}
-                      </dd>
-                    </div>
-
-                    {/* PAN */}
-
-                    <div className="ZENVE-profile-item">
-                      <dt className="ZENVE-label-caps">
-                        PAN Card Details
-                      </dt>
-
-                      <dd className="ZENVE-pan-dd">
-                        <code>
-                          {accountForm.panNumber ||
-                            "—"}
-                        </code>
-
-                        {accountForm.panNumber && (
-                          <span className="ZENVE-verified-mini-pill">
-                            PAN Provided
-                          </span>
-                        )}
-                      </dd>
-                    </div>
-                  </dl>
-                ) : (
-                  /* =================================================
-                     EDIT ACCOUNT FORM
-                  ================================================= */
-
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      handleSaveAccountDetails();
-                    }}
-                    className="ZENVE-profile-dl"
-                  >
-                    {/* ACCOUNT HOLDER */}
-
-                    <div className="ZENVE-profile-item">
-                      <label className="ZENVE-label-caps">
-                        Account Holder Name
-                      </label>
-
-                      <input
-                        type="text"
-                        className="ZENVE-profile-input"
-                        value={
-                          accountForm.accountHolderName
-                        }
-                        onChange={(e) =>
-                          setAccountForm(
-                            (prev) => ({
-                              ...prev,
-                              accountHolderName:
-                                e.target.value,
-                            })
-                          )
-                        }
-                        placeholder="Name as per bank records"
-                        required
-                      />
-
-                      <span className="ZENVE-field-hint">
-                        Name as per bank records
-                      </span>
-                    </div>
-
-                    {/* ACCOUNT NUMBER */}
-
-                    <div className="ZENVE-profile-item">
-                      <label className="ZENVE-label-caps">
-                        Account Number
-                      </label>
-
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        className="ZENVE-profile-input"
-                        value={
-                          accountForm.accountNumber
-                        }
-                        onChange={(e) =>
-                          setAccountForm(
-                            (prev) => ({
-                              ...prev,
-                              accountNumber:
-                                e.target.value
-                                  .replace(
-                                    /[^0-9]/g,
-                                    ""
-                                  )
-                                  .slice(
-                                    0,
-                                    18
-                                  ),
-                            })
-                          )
-                        }
-                        placeholder="e.g. 50100234567890"
-                        maxLength={18}
-                        required
-                      />
-
-                      <span className="ZENVE-field-hint">
-                        9 to 18 digit beneficiary
-                        account number
-                      </span>
-                    </div>
-
-                    {/* IFSC */}
-
-                    <div className="ZENVE-profile-item">
-                      <div className="ZENVE-field-title-row">
-                        <label className="ZENVE-label-caps">
-                          IFSC Code
-                        </label>
-
-                        {accountForm.ifscCode && (
-                          <span className="ZENVE-bank-tag">
-                            {getBankNameFromIfsc(
-                              accountForm.ifscCode
-                            )}
-                          </span>
-                        )}
-                      </div>
-
-                      <input
-                        type="text"
-                        className="ZENVE-profile-input uppercase-code"
-                        value={
-                          accountForm.ifscCode
-                        }
-                        onChange={(e) =>
-                          handleIfscChange(
-                            e.target.value
-                          )
-                        }
-                        placeholder="e.g. HDFC0001206"
-                        maxLength={11}
-                        required
-                      />
-
-                      <span className="ZENVE-field-hint">
-                        11-character bank branch
-                        code
-                      </span>
-                    </div>
-
-                    {/* PAN */}
-
-                    <div className="ZENVE-profile-item">
-                      <label className="ZENVE-label-caps">
-                        PAN Card Details
-                      </label>
-
-                      <input
-                        type="text"
-                        className="ZENVE-profile-input uppercase-code"
-                        value={
-                          accountForm.panNumber
-                        }
-                        onChange={(e) =>
-                          setAccountForm(
-                            (prev) => ({
-                              ...prev,
-                              panNumber:
-                                e.target.value
-                                  .toUpperCase()
-                                  .replace(
-                                    /[^A-Z0-9]/g,
-                                    ""
-                                  )
-                                  .slice(
-                                    0,
-                                    10
-                                  ),
-                            })
-                          )
-                        }
-                        placeholder="e.g. AAACC1206D"
-                        maxLength={10}
-                        required
-                      />
-
-                      <span className="ZENVE-field-hint">
-                        10-character Income Tax
-                        Permanent Account Number
-                      </span>
-                    </div>
-                  </form>
-                )}
-              </section>
-            </div>
-          )}
-
-          {/* ===================================================
+              {/* ===================================================
               SKU + ORDERS
           =================================================== */}
 
-          {!showProfileAndAccount && !showMediaReviews && (
-            <>
-              {/* =================================================
+              {!showProfileAndAccount && !showMediaReviews && (
+                <>
+                  {/* =================================================
                   UPLOAD SKU
               ================================================= */}
 
-              {currentUser?.id === "designer" && (
-              <section className="ZENVE-portal-card">
-                <div className="ZENVE-card-header">
-                  <div>
-                    <h2 className="ZENVE-card-title">
-                      Upload a SKU
-                    </h2>
+                  {currentUser?.id === "designer" && (
+                    <section className="ZENVE-portal-card">
+                      <div className="ZENVE-card-header">
+                        <div>
+                          <h2 className="ZENVE-card-title">
+                            Upload a SKU
+                          </h2>
 
-                    <p className="ZENVE-card-description">
-                      SKU ID is auto-generated and the
-                      row goes straight to QA.
-                    </p>
-                  </div>
-                </div>
+                          <p className="ZENVE-card-description">
+                            SKU ID is auto-generated and the
+                            row goes straight to QA.
+                          </p>
+                        </div>
+                      </div>
 
-                <form
-                  onSubmit={handleSkuSubmit}
-                  className="ZENVE-sku-form"
-                >
-                  <div className="ZENVE-form-grid">
+                      <form
+                        onSubmit={handleSkuSubmit}
+                        className="ZENVE-sku-form"
+                      >
+                        <div className="ZENVE-form-grid">
 
-                    {/* =====================================================
+                          {/* =====================================================
         PRODUCT NAME
     ===================================================== */}
 
-                    <div className="ZENVE-form-group">
-                      <label className="ZENVE-label-caps">
-                        Product name
-                      </label>
-
-                      <input
-                        type="text"
-                        placeholder="e.g. Ivory Silk Dog Kurta"
-                        value={form.name}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            name: e.target.value,
-                          })
-                        }
-                        required
-                      />
-                    </div>
-
-                    {/* =====================================================
-        CATEGORY
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group">
-                      <label className="ZENVE-label-caps">
-                        Category
-                      </label>
-
-                      <input
-                        type="text"
-                        placeholder="e.g. Pet Occasion Wear"
-                        value={form.category}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            category: e.target.value,
-                          })
-                        }
-                        required
-                      />
-                    </div>
-
-                    {/* =====================================================
-        COLOUR
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group">
-                      <label className="ZENVE-label-caps">
-                        Colour
-                      </label>
-
-                      <input
-                        type="text"
-                        placeholder="e.g. Ivory Gold"
-                        value={form.colour}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            colour: e.target.value,
-                          })
-                        }
-                        required
-                      />
-                    </div>
-
-                    {/* =====================================================
-        MULTIPLE SIZE SELECTION
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group span-3 full-width">
-                      <label className="ZENVE-label-caps">
-                        Product Sizes
-                      </label>
-
-                      <div
-                        style={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: "10px",
-                          marginTop: "10px",
-                        }}
-                      >
-                        {[
-                          "XS",
-                          "S",
-                          "M",
-                          "L",
-                          "XL",
-                          "XXL",
-                          "FREE",
-                        ].map((size) => {
-                          const selected =
-                            form.selectedSizes?.includes(size);
-
-                          return (
-                            <button
-                              key={size}
-                              type="button"
-                              onClick={() =>
-                                toggleProductSize(size)
-                              }
-                              style={{
-                                minWidth: "60px",
-                                padding: "10px 15px",
-
-                                borderRadius: "8px",
-
-                                border: selected
-                                  ? "2px solid #1b4dff"
-                                  : "1px solid #d8dce6",
-
-                                background: selected
-                                  ? "#eef3ff"
-                                  : "#FFFCF5",
-
-                                color: selected
-                                  ? "#1238c7"
-                                  : "#252b3a",
-
-                                fontWeight: "600",
-                                cursor: "pointer",
-                              }}
-                            >
-                              {size === "FREE"
-                                ? "Free Size"
-                                : size}
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      <div
-                        style={{
-                          marginTop: "8px",
-                          fontSize: "12px",
-                          color: "#666",
-                        }}
-                      >
-                        You can select multiple sizes.
-                      </div>
-                    </div>
-
-                    {/* =====================================================
-        ONLINE / OFFLINE PRODUCT OPTION
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group span-3 full-width">
-
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          flexWrap: "wrap",
-                          gap: "15px",
-                        }}
-                      >
-                        <div>
-                          <label className="ZENVE-label-caps">
-                            Product Stock
-                          </label>
-
-                          <div
-                            style={{
-                              marginTop: "5px",
-                              fontSize: "12px",
-                              color: "#666",
-                            }}
-                          >
-                            Online product is enabled by default.
-                            Offline product is optional.
-                          </div>
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={
-                            handleOfflineToggle
-                          }
-                          style={{
-                            padding: "10px 16px",
-
-                            borderRadius: "8px",
-
-                            border:
-                              form.offlineEnabled
-                                ? "1px solid #159447"
-                                : "1px solid #d8dce6",
-
-                            background:
-                              form.offlineEnabled
-                                ? "#edf9f1"
-                                : "#FFFCF5",
-
-                            color:
-                              form.offlineEnabled
-                                ? "#0d7435"
-                                : "#333333",
-
-                            fontWeight: "600",
-                            cursor: "pointer",
-                          }}
-                        >
-                          {form.offlineEnabled
-                            ? "✓ Offline Product Enabled"
-                            : "+ Add Offline Product"}
-                        </button>
-                      </div>
-
-                      {/* =================================================
-          SIZE-WISE QUANTITY
-      ================================================= */}
-
-                      {form.selectedSizes?.length === 0 && (
-                        <div
-                          style={{
-                            marginTop: "15px",
-                            padding: "12px",
-
-                            border:
-                              "1px dashed #d8dce6",
-
-                            borderRadius: "8px",
-
-                            color: "#777",
-                          }}
-                        >
-                          Please select at least one product
-                          size.
-                        </div>
-                      )}
-
-                      {form.selectedSizes?.map(
-                        (size) => {
-                          const onlineQuantity =
-                            Number(
-                              form.sizeStocks?.[size]
-                                ?.online_quantity
-                            ) || 0;
-
-                          const offlineQuantity =
-                            form.offlineEnabled
-                              ? Number(
-                                form.sizeStocks?.[size]
-                                  ?.offline_quantity
-                              ) || 0
-                              : 0;
-
-                          const sizeTotal =
-                            onlineQuantity +
-                            offlineQuantity;
-
-                          return (
-                            <div
-                              key={size}
-                              style={{
-                                display: "flex",
-                                alignItems: "flex-end",
-                                gap: "28px",
-                                flexWrap: "wrap",
-                                marginTop: "12px",
-                                padding: "14px 18px",
-                                border: "1px solid #e4e7ee",
-                                borderRadius: "10px",
-                                background: "#FFFCF5",
-                              }}
-                            >
-                              {/* SIZE */}
-                              <div style={{ minWidth: "60px" }}>
-                                <label className="ZENVE-label-caps">
-                                  Size
-                                </label>
-                                <div
-                                  style={{
-                                    height: "44px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    fontWeight: "700",
-                                    fontSize: "16px",
-                                    color: "#1F2937",
-                                  }}
-                                >
-                                  {size === "FREE" ? "Free" : size}
-                                </div>
-                              </div>
-
-                              {/* ONLINE QUANTITY */}
-                              <div style={{ width: "180px" }}>
-                                <label className="ZENVE-label-caps">
-                                  Online Quantity
-                                </label>
-                                <input
-                                  type="number"
-                                  min="0"
-                                  step="1"
-                                  placeholder="Enter quantity"
-                                  style={{ width: "180px", maxWidth: "100%" }}
-                                  value={
-                                    form.sizeStocks?.[
-                                      size
-                                    ]?.online_quantity ?? ""
-                                  }
-                                  onChange={(e) =>
-                                    handleSizeQuantityChange(
-                                      size,
-                                      "online_quantity",
-                                      e.target.value
-                                    )
-                                  }
-                                  required
-                                />
-                              </div>
-
-                              {/* OFFLINE QUANTITY */}
-                              {form.offlineEnabled && (
-                                <div style={{ width: "180px" }}>
-                                  <label className="ZENVE-label-caps">
-                                    Offline Quantity
-                                  </label>
-                                  <input
-                                    type="number"
-                                    min="0"
-                                    step="1"
-                                    placeholder="Store quantity"
-                                    style={{ width: "180px", maxWidth: "100%" }}
-                                    value={
-                                      form.sizeStocks?.[
-                                        size
-                                      ]?.offline_quantity ?? ""
-                                    }
-                                    onChange={(e) =>
-                                      handleSizeQuantityChange(
-                                        size,
-                                        "offline_quantity",
-                                        e.target.value
-                                      )
-                                    }
-                                    required
-                                  />
-                                </div>
-                              )}
-
-                              {/* SIZE TOTAL */}
-                              <div style={{ minWidth: "60px" }}>
-                                <label className="ZENVE-label-caps">
-                                  Total
-                                </label>
-                                <div
-                                  style={{
-                                    height: "44px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    fontWeight: "700",
-                                    fontSize: "17px",
-                                    color: "#1F2937",
-                                  }}
-                                >
-                                  {sizeTotal}
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        }
-                      )}
-
-                      {/* =================================================
-          STOCK TOTALS
-      ================================================= */}
-
-                      {form.selectedSizes?.length >
-                        0 && (
-                          <div
-                            style={{
-                              display: "flex",
-                              flexWrap: "wrap",
-                              gap: "25px",
-
-                              marginTop: "18px",
-
-                              padding: "15px",
-
-                              background: "#f7f8fb",
-
-                              borderRadius: "10px",
-
-                              border:
-                                "1px solid #e8eaf0",
-                            }}
-                          >
-                            <span>
-                              Online Stock:{" "}
-                              <strong>
-                                {totalOnlineQuantity}
-                              </strong>
-                            </span>
-
-                            {form.offlineEnabled && (
-                              <span>
-                                Offline Stock:{" "}
-                                <strong>
-                                  {totalOfflineQuantity}
-                                </strong>
-                              </span>
-                            )}
-
-                            <span>
-                              Total Stock:{" "}
-                              <strong>
-                                {totalInventoryQuantity}
-                              </strong>
-                            </span>
-                          </div>
-                        )}
-                    </div>
-
-                    {/* =====================================================
-        MRP
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group">
-                      <label className="ZENVE-label-caps">
-                        MRP
-                      </label>
-
-                      <input
-                        type="number"
-                        min="0"
-                        placeholder="e.g. 4500"
-                        value={form.mrp}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            mrp: e.target.value,
-                          })
-                        }
-                        required
-                      />
-                    </div>
-
-                    {/* =====================================================
-        SELLING PRICE
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group">
-                      <label className="ZENVE-label-caps">
-                        Selling price
-                      </label>
-
-                      <input
-                        type="number"
-                        min="0"
-                        placeholder="e.g. 3499"
-                        value={form.price}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            price: e.target.value,
-                          })
-                        }
-                        required
-                      />
-                    </div>
-
-                    {/* =====================================================
-        FABRIC
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group">
-                      <label className="ZENVE-label-caps">
-                        Fabric / material
-                      </label>
-
-                      <input
-                        type="text"
-                        placeholder="e.g. Pure Raw Silk"
-                        value={form.fabric}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            fabric: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-
-                    {/* =====================================================
-        PET SAFETY
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group span-2 col-span-2">
-                      <label className="ZENVE-label-caps">
-                        Pet safety information
-                      </label>
-
-                      <input
-                        type="text"
-                        value={form.petSafety}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            petSafety:
-                              e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-
-                    {/* =====================================================
-        STOCKING LOCATION
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group">
-                      <label className="ZENVE-label-caps">
-                        Stocking location
-                      </label>
-
-                      <select
-                        value={form.location}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            location:
-                              e.target.value,
-                          })
-                        }
-                      >
-                        <option value="MUMBAI_FC">
-                          Mumbai FC
-                        </option>
-
-                        <option value="BENGALURU_FC">
-                          Bengaluru FC
-                        </option>
-
-                        <option value="KOCHI_FC">
-                          Kochi FC
-                        </option>
-
-                        <option value="CHENNAI_FC">
-                          Chennai FC
-                        </option>
-
-                        <option value="DELHI_FC">
-                          Delhi FC
-                        </option>
-
-                        <option value="DESIGNER_STUDIO">
-                          Designer Studio
-                        </option>
-                      </select>
-                    </div>
-
-                    {/* =====================================================
-        PRODUCT IMAGES
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group span-3 full-width">
-                      <label className="ZENVE-label-caps">
-                        Product images
-                      </label>
-
-                      <div
-                        style={{
-                          border:
-                            "1px dashed #cfcfcf",
-
-                          borderRadius:
-                            "12px",
-
-                          padding:
-                            "16px",
-
-                          background:
-                            "#fafafa",
-                        }}
-                      >
-                        <input
-                          id="zenve-product-images"
-                          type="file"
-                          accept="image/*"
-                          multiple
-                          onChange={
-                            handleProductImageChange
-                          }
-                          disabled={
-                            productImages.length >=
-                            MAX_PRODUCT_IMAGES
-                          }
-                        />
-
-                        <div
-                          style={{
-                            marginTop:
-                              "8px",
-
-                            fontSize:
-                              "12px",
-
-                            color:
-                              "#666",
-                          }}
-                        >
-                          Upload 1 to 4 images (at least 1 required).{" "}
-
-                          {productImages.length}/4
-                          selected.
-                        </div>
-
-                        {productImages.length >
-                          0 && (
-                            <div
-                              style={{
-                                display:
-                                  "grid",
-
-                                gridTemplateColumns:
-                                  "repeat(auto-fill, minmax(120px, 1fr))",
-
-                                gap:
-                                  "12px",
-
-                                marginTop:
-                                  "14px",
-                              }}
-                            >
-                              {productImages.map(
-                                (
-                                  file,
-                                  index
-                                ) => (
-                                  <div
-                                    key={`${file.name}-${file.lastModified}-${index}`}
-                                    style={{
-                                      position:
-                                        "relative",
-
-                                      border:
-                                        "1px solid #e5e5e5",
-
-                                      borderRadius:
-                                        "10px",
-
-                                      overflow:
-                                        "hidden",
-
-                                      background:
-                                        "#FFFCF5",
-                                    }}
-                                  >
-                                    <img
-                                      src={
-                                        URL.createObjectURL(
-                                          file
-                                        )
-                                      }
-                                      alt={`Product ${index + 1
-                                        }`}
-                                      style={{
-                                        width:
-                                          "100%",
-
-                                        height:
-                                          "110px",
-
-                                        objectFit:
-                                          "cover",
-
-                                        display:
-                                          "block",
-                                      }}
-                                    />
-
-                                    <button
-                                      type="button"
-                                      onClick={() =>
-                                        removeProductImage(
-                                          index
-                                        )
-                                      }
-                                      aria-label={`Remove product image ${index + 1
-                                        }`}
-                                      style={{
-                                        position:
-                                          "absolute",
-
-                                        top:
-                                          "6px",
-
-                                        right:
-                                          "6px",
-
-                                        width:
-                                          "26px",
-
-                                        height:
-                                          "26px",
-
-                                        border:
-                                          "none",
-
-                                        borderRadius:
-                                          "50%",
-
-                                        background:
-                                          "rgba(0,0,0,0.7)",
-
-                                        color:
-                                          "#FFFCF5",
-
-                                        cursor:
-                                          "pointer",
-
-                                        fontSize:
-                                          "16px",
-
-                                        lineHeight:
-                                          "26px",
-                                      }}
-                                    >
-                                      ×
-                                    </button>
-
-                                    <div
-                                      style={{
-                                        padding:
-                                          "6px 8px",
-
-                                        fontSize:
-                                          "11px",
-
-                                        whiteSpace:
-                                          "nowrap",
-
-                                        overflow:
-                                          "hidden",
-
-                                        textOverflow:
-                                          "ellipsis",
-                                      }}
-                                      title={
-                                        file.name
-                                      }
-                                    >
-                                      {index + 1}.{" "}
-                                      {file.name}
-                                    </div>
-                                  </div>
-                                )
-                              )}
-                            </div>
-                          )}
-                      </div>
-                    </div>
-
-                    {/* =====================================================
-        FAST DELIVERY & RETURNABLE TOGGLES
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group span-3 full-width">
-                      <div className="ZENVE-toggles-grid">
-                        <div className="ZENVE-form-toggle-row">
-                          <span className="ZENVE-label-caps">
-                            Fast delivery eligible
-                          </span>
-
-                          <Switch
-                            checked={
-                              form.fastDelivery
-                            }
-                            onChange={(val) =>
-                              setForm({
-                                ...form,
-                                fastDelivery:
-                                  val,
-                              })
-                            }
-                          />
-                        </div>
-
-                        <div className="ZENVE-form-toggle-row">
-                          <span className="ZENVE-label-caps">
-                            Returnable
-                          </span>
-
-                          <Switch
-                            checked={
-                              form.returnable
-                            }
-                            onChange={(val) =>
-                              setForm({
-                                ...form,
-                                returnable:
-                                  val,
-                              })
-                            }
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* =====================================================
-                        GROWTH ADD-ONS (CHARGED IN CREDIT POINTS)
-                    ===================================================== */}
-                    <div className="ZENVE-form-group span-3 full-width">
-                      <div className="ZENVE-growth-addons-container">
-                        <div className="ZENVE-growth-addons-title">
-                          GROWTH ADD-ONS (CHARGED IN CREDIT POINTS)
-                        </div>
-                        <div className="ZENVE-growth-addons-row">
-                          <div className="ZENVE-growth-addon-card">
-                            <div className="ZENVE-growth-addon-info">
-                              <span className="ZENVE-growth-addon-name">
-                                Exclusive video &amp; photo shoot
-                              </span>
-                              <span className="ZENVE-growth-addon-subtext">
-                                Our team visits you · 5,000 pts
-                              </span>
-                            </div>
-                            <Switch
-                              checked={form.growthVideoShoot}
-                              onChange={(val) =>
-                                setForm({
-                                  ...form,
-                                  growthVideoShoot: val,
-                                })
-                              }
-                            />
-                          </div>
-
-                          <div className="ZENVE-growth-addon-card">
-                            <div className="ZENVE-growth-addon-info">
-                              <span className="ZENVE-growth-addon-name">
-                                Exclusive social media promotion
-                              </span>
-                              <span className="ZENVE-growth-addon-subtext">
-                                Boosts product sales · 5,000 pts
-                              </span>
-                            </div>
-                            <Switch
-                              checked={form.growthSocialPromotion}
-                              onChange={(val) =>
-                                setForm({
-                                  ...form,
-                                  growthSocialPromotion: val,
-                                })
-                              }
-                            />
-                          </div>
-
-                          <div className="ZENVE-growth-addon-dropdown">
-                            <label className="ZENVE-growth-addon-dropdown-label">
-                              PUSH TO ZENVE STORE
+                          <div className="ZENVE-form-group">
+                            <label className="ZENVE-label-caps">
+                              Product name
                             </label>
-                            <select
-                              className="ZENVE-growth-addon-select"
-                              value={form.pushToStore}
+
+                            <input
+                              type="text"
+                              placeholder="e.g. Ivory Silk Dog Kurta"
+                              value={form.name}
                               onChange={(e) =>
                                 setForm({
                                   ...form,
-                                  pushToStore: e.target.value,
+                                  name: e.target.value,
+                                })
+                              }
+                              required
+                            />
+                          </div>
+
+                          {/* =====================================================
+                        CATEGORY
+                    ===================================================== */}
+
+                          <div className="ZENVE-form-group">
+                            <label className="ZENVE-label-caps">
+                              Category
+                            </label>
+
+                            {isPetDesigner ? (
+                              <select
+                                value={form.category}
+                                onChange={(e) =>
+                                  setForm({
+                                    ...form,
+                                    category: e.target.value,
+                                  })
+                                }
+                                required
+                              >
+                                <option value="">-- Select Category --</option>
+                                <option value="All">All</option>
+                                <option value="Accessories">Accessories</option>
+                                <option value="Everyday">Everyday</option>
+                                <option value="Festive">Festive</option>
+                                <option value="Monsoon">Monsoon</option>
+                                <option value="Party">Party</option>
+                                <option value="Resort">Resort</option>
+                                <option value="Wedding">Wedding</option>
+                                <option value="Winter">Winter</option>
+                              </select>
+                            ) : isPeopleDesigner ? (
+                              <select
+                                value={form.category}
+                                onChange={(e) =>
+                                  setForm({
+                                    ...form,
+                                    category: e.target.value,
+                                  })
+                                }
+                                required
+                              >
+                                <option value="">-- Select Category --</option>
+                                <option value="All">All</option>
+                                <option value="Evening">Evening</option>
+                                <option value="Everyday">Everyday</option>
+                                <option value="Festive">Festive</option>
+                                <option value="Monsoon">Monsoon</option>
+                                <option value="Party">Party</option>
+                                <option value="Resort">Resort</option>
+                                <option value="Wedding">Wedding</option>
+                                <option value="Workwear">Workwear</option>
+                              </select>
+                            ) : isTwinDesigner ? (
+                              <select
+                                value={form.category}
+                                onChange={(e) =>
+                                  setForm({
+                                    ...form,
+                                    category: e.target.value,
+                                  })
+                                }
+                                required
+                              >
+                                <option value="">-- Select Category --</option>
+                                <option value="All">All</option>
+                                <option value="Accessories">Accessories</option>
+                                <option value="Evening">Evening</option>
+                                <option value="Everyday">Everyday</option>
+                                <option value="Festive">Festive</option>
+                                <option value="Monsoon">Monsoon</option>
+                                <option value="Party">Party</option>
+                                <option value="Resort">Resort</option>
+                                <option value="Wedding">Wedding</option>
+                                <option value="Winter">Winter</option>
+                              </select>
+                            ) : (
+                              <input
+                                type="text"
+                                placeholder="e.g. Occasion Wear, Kurtas, Dresses"
+                                value={form.category}
+                                onChange={(e) =>
+                                  setForm({
+                                    ...form,
+                                    category: e.target.value,
+                                  })
+                                }
+                                required
+                              />
+                            )}
+                          </div>
+
+                          {/* =====================================================
+        COLOUR
+    ===================================================== */}
+
+                          <div className="ZENVE-form-group">
+                            <label className="ZENVE-label-caps">
+                              Colour
+                            </label>
+
+                            <input
+                              type="text"
+                              placeholder="e.g. Ivory Gold"
+                              value={form.colour}
+                              onChange={(e) =>
+                                setForm({
+                                  ...form,
+                                  colour: e.target.value,
+                                })
+                              }
+                              required
+                            />
+                          </div>
+
+                          {/* =====================================================
+        MULTIPLE SIZE SELECTION
+    ===================================================== */}
+
+                          <div className="ZENVE-form-group span-3 full-width">
+                            <label className="ZENVE-label-caps">
+                              Product Sizes
+                            </label>
+
+                            <div
+                              style={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                                gap: "10px",
+                                marginTop: "10px",
+                              }}
+                            >
+                              {[
+                                "XS",
+                                "S",
+                                "M",
+                                "L",
+                                "XL",
+                                "XXL",
+                                "FREE",
+                              ].map((size) => {
+                                const selected =
+                                  form.selectedSizes?.includes(size);
+
+                                return (
+                                  <button
+                                    key={size}
+                                    type="button"
+                                    onClick={() =>
+                                      toggleProductSize(size)
+                                    }
+                                    style={{
+                                      minWidth: "60px",
+                                      padding: "10px 15px",
+
+                                      borderRadius: "8px",
+
+                                      border: selected
+                                        ? "2px solid #1b4dff"
+                                        : "1px solid #d8dce6",
+
+                                      background: selected
+                                        ? "#eef3ff"
+                                        : "#FFFCF5",
+
+                                      color: selected
+                                        ? "#1238c7"
+                                        : "#252b3a",
+
+                                      fontWeight: "600",
+                                      cursor: "pointer",
+                                    }}
+                                  >
+                                    {size === "FREE"
+                                      ? "Free Size"
+                                      : size}
+                                  </button>
+                                );
+                              })}
+                            </div>
+
+                            <div
+                              style={{
+                                marginTop: "8px",
+                                fontSize: "12px",
+                                color: "#666",
+                              }}
+                            >
+                              You can select multiple sizes.
+                            </div>
+                          </div>
+
+                          {/* =====================================================
+        ONLINE / OFFLINE PRODUCT OPTION
+    ===================================================== */}
+
+                          <div className="ZENVE-form-group span-3 full-width">
+
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                flexWrap: "wrap",
+                                gap: "15px",
+                              }}
+                            >
+                              <div>
+                                <label className="ZENVE-label-caps">
+                                  Product Stock
+                                </label>
+
+                                <div
+                                  style={{
+                                    marginTop: "5px",
+                                    fontSize: "12px",
+                                    color: "#666",
+                                  }}
+                                >
+                                  Online product is enabled by default.
+                                  Offline product is optional.
+                                </div>
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={
+                                  handleOfflineToggle
+                                }
+                                style={{
+                                  padding: "10px 16px",
+
+                                  borderRadius: "8px",
+
+                                  border:
+                                    form.offlineEnabled
+                                      ? "1px solid #159447"
+                                      : "1px solid #d8dce6",
+
+                                  background:
+                                    form.offlineEnabled
+                                      ? "#edf9f1"
+                                      : "#FFFCF5",
+
+                                  color:
+                                    form.offlineEnabled
+                                      ? "#0d7435"
+                                      : "#333333",
+
+                                  fontWeight: "600",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                {form.offlineEnabled
+                                  ? "✓ Offline Product Enabled"
+                                  : "+ Add Offline Product"}
+                              </button>
+                            </div>
+
+                            {/* =================================================
+          SIZE-WISE QUANTITY
+      ================================================= */}
+
+                            {form.selectedSizes?.length === 0 && (
+                              <div
+                                style={{
+                                  marginTop: "15px",
+                                  padding: "12px",
+
+                                  border:
+                                    "1px dashed #d8dce6",
+
+                                  borderRadius: "8px",
+
+                                  color: "#777",
+                                }}
+                              >
+                                Please select at least one product
+                                size.
+                              </div>
+                            )}
+
+                            {form.selectedSizes?.map(
+                              (size) => {
+                                const onlineQuantity =
+                                  Number(
+                                    form.sizeStocks?.[size]
+                                      ?.online_quantity
+                                  ) || 0;
+
+                                const offlineQuantity =
+                                  form.offlineEnabled
+                                    ? Number(
+                                      form.sizeStocks?.[size]
+                                        ?.offline_quantity
+                                    ) || 0
+                                    : 0;
+
+                                const sizeTotal =
+                                  onlineQuantity +
+                                  offlineQuantity;
+
+                                return (
+                                  <div
+                                    key={size}
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "flex-end",
+                                      gap: "28px",
+                                      flexWrap: "wrap",
+                                      marginTop: "12px",
+                                      padding: "14px 18px",
+                                      border: "1px solid #e4e7ee",
+                                      borderRadius: "10px",
+                                      background: "#FFFCF5",
+                                    }}
+                                  >
+                                    {/* SIZE */}
+                                    <div style={{ minWidth: "60px" }}>
+                                      <label className="ZENVE-label-caps">
+                                        Size
+                                      </label>
+                                      <div
+                                        style={{
+                                          height: "44px",
+                                          display: "flex",
+                                          alignItems: "center",
+                                          fontWeight: "700",
+                                          fontSize: "16px",
+                                          color: "#1F2937",
+                                        }}
+                                      >
+                                        {size === "FREE" ? "Free" : size}
+                                      </div>
+                                    </div>
+
+                                    {/* ONLINE QUANTITY */}
+                                    <div style={{ width: "180px" }}>
+                                      <label className="ZENVE-label-caps">
+                                        Online Quantity
+                                      </label>
+                                      <input
+                                        type="number"
+                                        min="0"
+                                        step="1"
+                                        placeholder="Enter quantity"
+                                        style={{ width: "180px", maxWidth: "100%" }}
+                                        value={
+                                          form.sizeStocks?.[
+                                            size
+                                          ]?.online_quantity ?? ""
+                                        }
+                                        onChange={(e) =>
+                                          handleSizeQuantityChange(
+                                            size,
+                                            "online_quantity",
+                                            e.target.value
+                                          )
+                                        }
+                                        required
+                                      />
+                                    </div>
+
+                                    {/* OFFLINE QUANTITY */}
+                                    {form.offlineEnabled && (
+                                      <div style={{ width: "180px" }}>
+                                        <label className="ZENVE-label-caps">
+                                          Offline Quantity
+                                        </label>
+                                        <input
+                                          type="number"
+                                          min="0"
+                                          step="1"
+                                          placeholder="Store quantity"
+                                          style={{ width: "180px", maxWidth: "100%" }}
+                                          value={
+                                            form.sizeStocks?.[
+                                              size
+                                            ]?.offline_quantity ?? ""
+                                          }
+                                          onChange={(e) =>
+                                            handleSizeQuantityChange(
+                                              size,
+                                              "offline_quantity",
+                                              e.target.value
+                                            )
+                                          }
+                                          required
+                                        />
+                                      </div>
+                                    )}
+
+                                    {/* OFFLINE FRANCHISE */}
+                                    {form.offlineEnabled && (
+                                      <div style={{ width: "180px" }}>
+                                        <label className="ZENVE-label-caps">
+                                          Offline Franchise
+                                        </label>
+                                        <select
+                                          className="ZENVE-form-select"
+                                          style={{
+                                            width: "180px",
+                                            maxWidth: "100%",
+                                            height: "44px",
+                                            background: "#FFFCF5",
+                                            border: "1px solid #d8dce6",
+                                            borderRadius: "8px",
+                                            padding: "0 12px",
+                                            fontSize: "14px",
+                                            color: "#1F2937",
+                                            cursor: "pointer",
+                                          }}
+                                          value={
+                                            form.sizeStocks?.[
+                                              size
+                                            ]?.offline_franchise ||
+                                            form.offlineFranchise ||
+                                            "Mumbai FC"
+                                          }
+                                          onChange={(e) =>
+                                            handleSizeQuantityChange(
+                                              size,
+                                              "offline_franchise",
+                                              e.target.value
+                                            )
+                                          }
+                                        >
+                                          <option value="Mumbai FC">Mumbai FC</option>
+                                          <option value="Bengaluru FC">Bengaluru FC</option>
+                                          <option value="Kochi FC">Kochi FC</option>
+                                          <option value="Chennai FC">Chennai FC</option>
+                                        </select>
+                                      </div>
+                                    )}
+
+                                    {/* SIZE TOTAL */}
+                                    <div style={{ minWidth: "60px" }}>
+                                      <label className="ZENVE-label-caps">
+                                        Total
+                                      </label>
+                                      <div
+                                        style={{
+                                          height: "44px",
+                                          display: "flex",
+                                          alignItems: "center",
+                                          fontWeight: "700",
+                                          fontSize: "17px",
+                                          color: "#1F2937",
+                                        }}
+                                      >
+                                        {sizeTotal}
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              }
+                            )}
+
+                            {/* =================================================
+          STOCK TOTALS
+      ================================================= */}
+
+                            {form.selectedSizes?.length >
+                              0 && (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    gap: "25px",
+
+                                    marginTop: "18px",
+
+                                    padding: "15px",
+
+                                    background: "#f7f8fb",
+
+                                    borderRadius: "10px",
+
+                                    border:
+                                      "1px solid #e8eaf0",
+                                  }}
+                                >
+                                  <span>
+                                    Online Stock:{" "}
+                                    <strong>
+                                      {totalOnlineQuantity}
+                                    </strong>
+                                  </span>
+
+                                  {form.offlineEnabled && (
+                                    <span>
+                                      Offline Stock:{" "}
+                                      <strong>
+                                        {totalOfflineQuantity}
+                                      </strong>
+                                    </span>
+                                  )}
+
+                                  <span>
+                                    Total Stock:{" "}
+                                    <strong>
+                                      {totalInventoryQuantity}
+                                    </strong>
+                                  </span>
+                                </div>
+                              )}
+                          </div>
+
+                          {/* =====================================================
+        MRP
+    ===================================================== */}
+
+                          <div className="ZENVE-form-group">
+                            <label className="ZENVE-label-caps">
+                              MRP
+                            </label>
+
+                            <input
+                              type="number"
+                              min="0"
+                              placeholder="e.g. 4500"
+                              value={form.mrp}
+                              onChange={(e) =>
+                                setForm({
+                                  ...form,
+                                  mrp: e.target.value,
+                                })
+                              }
+                              required
+                            />
+                          </div>
+
+                          {/* =====================================================
+        SELLING PRICE
+    ===================================================== */}
+
+                          <div className="ZENVE-form-group">
+                            <label className="ZENVE-label-caps">
+                              Selling price
+                            </label>
+
+                            <input
+                              type="number"
+                              min="0"
+                              placeholder="e.g. 3499"
+                              value={form.price}
+                              onChange={(e) =>
+                                setForm({
+                                  ...form,
+                                  price: e.target.value,
+                                })
+                              }
+                              required
+                            />
+                          </div>
+
+                          {/* =====================================================
+        FABRIC
+    ===================================================== */}
+
+                          <div className="ZENVE-form-group">
+                            <label className="ZENVE-label-caps">
+                              Fabric / material
+                            </label>
+
+                            <input
+                              type="text"
+                              placeholder="e.g. Pure Raw Silk"
+                              value={form.fabric}
+                              onChange={(e) =>
+                                setForm({
+                                  ...form,
+                                  fabric: e.target.value,
+                                })
+                              }
+                            />
+                          </div>
+
+                          {/* =====================================================
+        PET SAFETY
+    ===================================================== */}
+
+                          <div className="ZENVE-form-group span-2 col-span-2">
+                            <label className="ZENVE-label-caps">
+                              Pet safety information
+                            </label>
+
+                            <input
+                              type="text"
+                              value={form.petSafety}
+                              onChange={(e) =>
+                                setForm({
+                                  ...form,
+                                  petSafety:
+                                    e.target.value,
+                                })
+                              }
+                            />
+                          </div>
+
+                          {/* =====================================================
+        STOCKING LOCATION
+    ===================================================== */}
+
+                          <div className="ZENVE-form-group">
+                            <label className="ZENVE-label-caps">
+                              Stocking location
+                            </label>
+
+                            <select
+                              value={form.location}
+                              onChange={(e) =>
+                                setForm({
+                                  ...form,
+                                  location:
+                                    e.target.value,
                                 })
                               }
                             >
-                              <option value="ONLINE_ONLY">Online only (3 pts/day)</option>
-                              <option value="STORE_HOLDING">Zenve store holding (5 pts/day)</option>
-                              <option value="BOTH">Online + Zenve store (8 pts/day)</option>
+                              <option value="MUMBAI_FC">
+                                Mumbai FC
+                              </option>
+
+                              <option value="BENGALURU_FC">
+                                Bengaluru FC
+                              </option>
+
+                              <option value="KOCHI_FC">
+                                Kochi FC
+                              </option>
+
+                              <option value="CHENNAI_FC">
+                                Chennai FC
+                              </option>
+
+                              <option value="DELHI_FC">
+                                Delhi FC
+                              </option>
+
+                              <option value="DESIGNER_STUDIO">
+                                Designer Studio
+                              </option>
                             </select>
+                          </div>
+
+                          {/* =====================================================
+        PRODUCT IMAGES
+    ===================================================== */}
+
+                          <div className="ZENVE-form-group span-3 full-width">
+                            <label className="ZENVE-label-caps">
+                              Product images
+                            </label>
+
+                            <div
+                              style={{
+                                border:
+                                  "1px dashed #cfcfcf",
+
+                                borderRadius:
+                                  "12px",
+
+                                padding:
+                                  "16px",
+
+                                background:
+                                  "#fafafa",
+                              }}
+                            >
+                              <input
+                                id="zenve-product-images"
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                onChange={
+                                  handleProductImageChange
+                                }
+                                disabled={
+                                  productImages.length >=
+                                  MAX_PRODUCT_IMAGES
+                                }
+                              />
+
+                              <div
+                                style={{
+                                  marginTop:
+                                    "8px",
+
+                                  fontSize:
+                                    "12px",
+
+                                  color:
+                                    "#666",
+                                }}
+                              >
+                                Upload 1 to 4 images (at least 1 required).{" "}
+
+                                {productImages.length}/4
+                                selected.
+                              </div>
+
+                              {productImages.length >
+                                0 && (
+                                  <div
+                                    style={{
+                                      display:
+                                        "grid",
+
+                                      gridTemplateColumns:
+                                        "repeat(auto-fill, minmax(120px, 1fr))",
+
+                                      gap:
+                                        "12px",
+
+                                      marginTop:
+                                        "14px",
+                                    }}
+                                  >
+                                    {productImages.map(
+                                      (
+                                        file,
+                                        index
+                                      ) => (
+                                        <div
+                                          key={`${file.name}-${file.lastModified}-${index}`}
+                                          style={{
+                                            position:
+                                              "relative",
+
+                                            border:
+                                              "1px solid #e5e5e5",
+
+                                            borderRadius:
+                                              "10px",
+
+                                            overflow:
+                                              "hidden",
+
+                                            background:
+                                              "#FFFCF5",
+                                          }}
+                                        >
+                                          <img
+                                            src={
+                                              URL.createObjectURL(
+                                                file
+                                              )
+                                            }
+                                            alt={`Product ${index + 1
+                                              }`}
+                                            style={{
+                                              width:
+                                                "100%",
+
+                                              height:
+                                                "110px",
+
+                                              objectFit:
+                                                "cover",
+
+                                              display:
+                                                "block",
+                                            }}
+                                          />
+
+                                          <button
+                                            type="button"
+                                            onClick={() =>
+                                              removeProductImage(
+                                                index
+                                              )
+                                            }
+                                            aria-label={`Remove product image ${index + 1
+                                              }`}
+                                            style={{
+                                              position:
+                                                "absolute",
+
+                                              top:
+                                                "6px",
+
+                                              right:
+                                                "6px",
+
+                                              width:
+                                                "26px",
+
+                                              height:
+                                                "26px",
+
+                                              border:
+                                                "none",
+
+                                              borderRadius:
+                                                "50%",
+
+                                              background:
+                                                "rgba(0,0,0,0.7)",
+
+                                              color:
+                                                "#FFFCF5",
+
+                                              cursor:
+                                                "pointer",
+
+                                              fontSize:
+                                                "16px",
+
+                                              lineHeight:
+                                                "26px",
+                                            }}
+                                          >
+                                            ×
+                                          </button>
+
+                                          <div
+                                            style={{
+                                              padding:
+                                                "6px 8px",
+
+                                              fontSize:
+                                                "11px",
+
+                                              whiteSpace:
+                                                "nowrap",
+
+                                              overflow:
+                                                "hidden",
+
+                                              textOverflow:
+                                                "ellipsis",
+                                            }}
+                                            title={
+                                              file.name
+                                            }
+                                          >
+                                            {index + 1}.{" "}
+                                            {file.name}
+                                          </div>
+                                        </div>
+                                      )
+                                    )}
+                                  </div>
+                                )}
+                            </div>
+                          </div>
+
+                          {/* =====================================================
+        FAST DELIVERY & RETURNABLE TOGGLES
+    ===================================================== */}
+
+                          <div className="ZENVE-form-group span-3 full-width">
+                            <div className="ZENVE-toggles-grid">
+                              <div className="ZENVE-form-toggle-row">
+                                <span className="ZENVE-label-caps">
+                                  Fast delivery eligible
+                                </span>
+
+                                <Switch
+                                  checked={
+                                    form.fastDelivery
+                                  }
+                                  onChange={(val) =>
+                                    setForm({
+                                      ...form,
+                                      fastDelivery:
+                                        val,
+                                    })
+                                  }
+                                />
+                              </div>
+
+                              <div className="ZENVE-form-toggle-row">
+                                <span className="ZENVE-label-caps">
+                                  Returnable
+                                </span>
+
+                                <Switch
+                                  checked={
+                                    form.returnable
+                                  }
+                                  onChange={(val) =>
+                                    setForm({
+                                      ...form,
+                                      returnable:
+                                        val,
+                                    })
+                                  }
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* =====================================================
+                        GROWTH ADD-ONS (CHARGED IN CREDIT POINTS)
+                    ===================================================== */}
+                          <div className="ZENVE-form-group span-3 full-width">
+                            <div className="ZENVE-growth-addons-container">
+                              <div className="ZENVE-growth-addons-title">
+                                GROWTH ADD-ONS (CHARGED IN CREDIT POINTS)
+                              </div>
+                              <div className="ZENVE-growth-addons-row">
+                                <div className="ZENVE-growth-addon-card">
+                                  <div className="ZENVE-growth-addon-info">
+                                    <span className="ZENVE-growth-addon-name">
+                                      Exclusive video &amp; photo shoot
+                                    </span>
+                                    <span className="ZENVE-growth-addon-subtext">
+                                      Our team visits you · 5,000 pts
+                                    </span>
+                                  </div>
+                                  <Switch
+                                    checked={form.growthVideoShoot}
+                                    onChange={(val) =>
+                                      setForm({
+                                        ...form,
+                                        growthVideoShoot: val,
+                                      })
+                                    }
+                                  />
+                                </div>
+
+                                <div className="ZENVE-growth-addon-card">
+                                  <div className="ZENVE-growth-addon-info">
+                                    <span className="ZENVE-growth-addon-name">
+                                      Exclusive social media promotion
+                                    </span>
+                                    <span className="ZENVE-growth-addon-subtext">
+                                      Boosts product sales · 5,000 pts
+                                    </span>
+                                  </div>
+                                  <Switch
+                                    checked={form.growthSocialPromotion}
+                                    onChange={(val) =>
+                                      setForm({
+                                        ...form,
+                                        growthSocialPromotion: val,
+                                      })
+                                    }
+                                  />
+                                </div>
+
+                                <div className="ZENVE-growth-addon-dropdown">
+                                  <label className="ZENVE-growth-addon-dropdown-label">
+                                    PUSH TO ZENVE STORE
+                                  </label>
+                                  <select
+                                    className="ZENVE-growth-addon-select"
+                                    value={form.pushToStore}
+                                    onChange={(e) =>
+                                      setForm({
+                                        ...form,
+                                        pushToStore: e.target.value,
+                                      })
+                                    }
+                                  >
+                                    <option value="ONLINE_ONLY">Online only (3 pts/day)</option>
+                                    <option value="STORE_HOLDING">Zenve store holding (5 pts/day)</option>
+                                    <option value="BOTH">Online + Zenve store (8 pts/day)</option>
+                                  </select>
+                                </div>
+                              </div>
+
+                              {(form.growthVideoShoot || form.growthSocialPromotion) && (
+                                <div className="ZENVE-growth-addons-routed-notice">
+                                  <span className="notice-icon">✨</span>
+                                  <span>
+                                    <strong>Layer 14 (Social Media) Activated:</strong> Our creative production team will directly approach your atelier to coordinate on-site shoots and social campaigns upon SKU submission.
+                                  </span>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
 
-                        {(form.growthVideoShoot || form.growthSocialPromotion) && (
-                          <div className="ZENVE-growth-addons-routed-notice">
-                            <span className="notice-icon">✨</span>
-                            <span>
-                              <strong>Layer 14 (Social Media) Activated:</strong> Our creative production team will directly approach your atelier to coordinate on-site shoots and social campaigns upon SKU submission.
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* =====================================================
+                        {/* =====================================================
       SKU PREVIEW
   ===================================================== */}
 
-                  <div className="ZENVE-sku-preview-row">
-                    <span className="ZENVE-preview-text">
-                      SKU ID preview:
-                    </span>
+                        <div className="ZENVE-sku-preview-row">
+                          <span className="ZENVE-preview-text">
+                            SKU ID preview:
+                          </span>
 
-                    <span className="ZENVE-sku-mono">
-                      {skuPreview}
-                    </span>
-                  </div>
+                          <span className="ZENVE-sku-mono">
+                            {skuPreview}
+                          </span>
+                        </div>
 
-                  {/* =====================================================
+                        {/* =====================================================
       SUBMIT
   ===================================================== */}
 
-                  <div className="ZENVE-form-actions">
-                    <button
-                      type="submit"
-                      className="ZENVE-btn-primary"
-                      disabled={
-                        submittingSku ||
-                        !activeDesigner ||
-                        !form.selectedSizes?.length ||
-                        totalInventoryQuantity <= 0
-                      }
-                    >
-                      {submittingSku
-                        ? "Submitting..."
-                        : "Submit to QA"}
-                    </button>
-                  </div>
-                </form>
-              </section>
-              )}
+                        <div className="ZENVE-form-actions">
+                          <button
+                            type="submit"
+                            className="ZENVE-btn-primary"
+                            disabled={
+                              submittingSku ||
+                              !activeDesigner ||
+                              !form.selectedSizes?.length ||
+                              totalInventoryQuantity <= 0
+                            }
+                          >
+                            {submittingSku
+                              ? "Submitting..."
+                              : "Submit to QA"}
+                          </button>
+                        </div>
+                      </form>
+                    </section>
+                  )}
 
-              {/* =================================================
+                  {/* =================================================
                   SKUS
               ================================================= */}
 
-              <section className="ZENVE-portal-card">
-                <div className="ZENVE-card-header">
-                  <div>
-                    <h2 className="ZENVE-card-title">
-                      My SKUs &amp; stock
-                    </h2>
+                  <section className="ZENVE-portal-card">
+                    <div className="ZENVE-card-header">
+                      <div>
+                        <h2 className="ZENVE-card-title">
+                          My SKUs &amp; stock
+                        </h2>
 
-                    <p className="ZENVE-card-description">
-                      Live availability the
-                      storefront can sell, with
-                      cover in days.
-                    </p>
-                  </div>
-                </div>
+                        <p className="ZENVE-card-description">
+                          Live availability the
+                          storefront can sell, with
+                          cover in days.
+                        </p>
+                      </div>
+                    </div>
 
-                {skus.length === 0 ? (
-                  <div className="ZENVE-item-empty">
-                    No SKUs uploaded yet.
-                  </div>
-                ) : (
-                  <div className="ZENVE-table-responsive">
-                    <table className="ZENVE-table">
-                      <thead>
-                        <tr>
-                          <th className="ZENVE-label-caps">
-                            SKU
-                          </th>
-                          <th className="ZENVE-label-caps">
-                            Price
-                          </th>
-                          <th className="ZENVE-label-caps">
-                            QA
-                          </th>
-                          <th className="ZENVE-label-caps">
-                            Available
-                          </th>
-                          <th className="ZENVE-label-caps">
-                            Reserved
-                          </th>
-                          <th className="ZENVE-label-caps">
-                            Sold
-                          </th>
-                          <th className="ZENVE-label-caps">
-                            Days of cover
-                          </th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {skus.map((skuItem) => {
-                          const qaStatus = skuItem.status || "PENDING_QA";
-                          const qaClass = qaStatus.toLowerCase();
-                          return (
-                            <tr key={skuItem.id}>
-                              <td>
-                                <div className="ZENVE-sku-name">{skuItem.product_name}</div>
-                                <div className="ZENVE-sku-id-mono">{skuItem.sku}</div>
-                              </td>
-                              <td>{formatInr(skuItem.selling_price)}</td>
-                              <td>
-                                <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                                  <span className={`ZENVE-qa-badge tone-${qaClass}`}>
-                                    {qaStatus}
-                                  </span>
-                                  {skuItem.qa_score !== undefined && skuItem.qa_score !== null && (
-                                    <span
-                                      style={{ fontSize: "11px", color: "var(--text-muted, #8e8e93)" }}
-                                      title={skuItem.qa_note ? `Note: ${skuItem.qa_note}` : "QA Reference Score"}
-                                    >
-                                      Ref: {skuItem.qa_score}/100
-                                    </span>
-                                  )}
-                                </div>
-                              </td>
-                              <td>{skuItem.inventory_quantity ?? 0}</td>
-                              <td>{skuItem.reserved_quantity ?? 0}</td>
-                              <td>{skuItem.units_sold ?? 0}</td>
-                              <td>
-                                {skuItem.days_of_stock ? `${skuItem.days_of_stock} d` : "—"}
-                              </td>
+                    {skus.length === 0 ? (
+                      <div className="ZENVE-item-empty">
+                        No SKUs uploaded yet.
+                      </div>
+                    ) : (
+                      <div className="ZENVE-table-responsive">
+                        <table className="ZENVE-table">
+                          <thead>
+                            <tr>
+                              <th className="ZENVE-label-caps">
+                                SKU
+                              </th>
+                              <th className="ZENVE-label-caps">
+                                Price
+                              </th>
+                              <th className="ZENVE-label-caps">
+                                QA
+                              </th>
+                              <th className="ZENVE-label-caps">
+                                Available
+                              </th>
+                              <th className="ZENVE-label-caps">
+                                Reserved
+                              </th>
+                              <th className="ZENVE-label-caps">
+                                Sold
+                              </th>
+                              <th className="ZENVE-label-caps">
+                                Days of cover
+                              </th>
                             </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </section>
+                          </thead>
 
-              {/* =================================================
+                          <tbody>
+                            {skus.map((skuItem) => {
+                              const qaStatus = skuItem.status || "PENDING_QA";
+                              const qaClass = qaStatus.toLowerCase();
+                              return (
+                                <tr key={skuItem.id}>
+                                  <td>
+                                    <div className="ZENVE-sku-name">{skuItem.product_name}</div>
+                                    <div className="ZENVE-sku-id-mono">{skuItem.sku}</div>
+                                  </td>
+                                  <td>{formatInr(skuItem.selling_price)}</td>
+                                  <td>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                                      <span className={`ZENVE-qa-badge tone-${qaClass}`}>
+                                        {qaStatus}
+                                      </span>
+                                      {skuItem.qa_score !== undefined && skuItem.qa_score !== null && (
+                                        <span
+                                          style={{ fontSize: "11px", color: "var(--text-muted, #8e8e93)" }}
+                                          title={skuItem.qa_note ? `Note: ${skuItem.qa_note}` : "QA Reference Score"}
+                                        >
+                                          Ref: {skuItem.qa_score}/100
+                                        </span>
+                                      )}
+                                    </div>
+                                  </td>
+                                  <td>{skuItem.inventory_quantity ?? 0}</td>
+                                  <td>{skuItem.reserved_quantity ?? 0}</td>
+                                  <td>{skuItem.units_sold ?? 0}</td>
+                                  <td>
+                                    {skuItem.days_of_stock ? `${skuItem.days_of_stock} d` : "—"}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </section>
+
+                  {/* =================================================
                   ORDERS
               ================================================= */}
 
-              <section className="ZENVE-portal-card">
-                <div className="ZENVE-card-header">
-                  <div>
-                    <h2 className="ZENVE-card-title">
-                      My orders &amp; settlements
-                    </h2>
+                  <section className="ZENVE-portal-card">
+                    <div className="ZENVE-card-header">
+                      <div>
+                        <h2 className="ZENVE-card-title">
+                          My orders &amp; settlements
+                        </h2>
+                      </div>
+                    </div>
+
+                    <div className="ZENVE-orders-block">
+                      {orders.length ===
+                        0 ? (
+                        <div className="ZENVE-item-empty">
+                          No orders yet — sell something
+                          from the Storefront layer.
+                        </div>
+                      ) : (
+                        <div className="ZENVE-orders-list">
+                          {orders.map(
+                            (ord) => (
+                              <div
+                                key={ord.id}
+                                className="ZENVE-order-row"
+                              >
+                                <span className="ZENVE-order-id">
+                                  {ord.id}
+                                </span>
+
+                                <span className="ZENVE-order-customer">
+                                  {
+                                    ord.customer
+                                  }
+                                </span>
+
+                                <span className="ZENVE-order-amt">
+                                  {formatInr(
+                                    ord.amount
+                                  )}
+                                </span>
+
+                                <span
+                                  className={`ZENVE-order-badge tone-${String(
+                                    ord.status ||
+                                    ""
+                                  ).toLowerCase()}`}
+                                >
+                                  {
+                                    ord.status
+                                  }
+                                </span>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {settlements.length >
+                      0 && (
+                        <div className="ZENVE-settlements-block">
+                          <div className="ZENVE-settlements-list">
+                            {settlements.map(
+                              (stl) => (
+                                <div
+                                  key={stl.id}
+                                  className="ZENVE-settlement-row"
+                                >
+                                  <span className="ZENVE-stl-id">
+                                    {stl.id}
+                                  </span>
+
+                                  <span className="ZENVE-stl-breakdown">
+                                    GMV{" "}
+                                    {formatInr(
+                                      stl.gmv
+                                    )}{" "}
+                                    − commission{" "}
+                                    {formatInr(
+                                      stl.commission
+                                    )}
+                                  </span>
+
+                                  <span className="ZENVE-stl-net">
+                                    {formatInr(
+                                      stl.net
+                                    )}
+                                  </span>
+
+                                  <span
+                                    className={`ZENVE-order-badge tone-${String(
+                                      stl.status ||
+                                      ""
+                                    ).toLowerCase()}`}
+                                  >
+                                    {
+                                      stl.status
+                                    }
+                                  </span>
+                                </div>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      )}
+                  </section>
+                </>
+              )}
+            </main>
+          )}
+
+          {/* =====================================================
+          NOTIFICATION SIDEBAR
+      ===================================================== */}
+
+          {notifSidebarOpen && (
+            <div
+              className="ZENVE-notif-backdrop"
+              onClick={() =>
+                setNotifSidebarOpen(false)
+              }
+              aria-hidden="true"
+            >
+              <div
+                className="ZENVE-notif-sidebar"
+                onClick={(e) =>
+                  e.stopPropagation()
+                }
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="notif-sidebar-title"
+              >
+                <div className="ZENVE-notif-sidebar-header">
+                  <div className="ZENVE-notif-sidebar-title-wrap">
+                    <div className="ZENVE-notif-sidebar-title-row">
+                      <h2
+                        id="notif-sidebar-title"
+                        className="ZENVE-notif-sidebar-title"
+                      >
+                        Notifications
+                      </h2>
+
+                      {unreadNotifications >
+                        0 ? (
+                        <span className="ZENVE-notif-count-pill">
+                          {
+                            unreadNotifications
+                          }{" "}
+                          unread
+                        </span>
+                      ) : (
+                        <span className="ZENVE-notif-count-pill subtle">
+                          All caught up
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="ZENVE-notif-sidebar-sub">
+                      QA outcomes, orders, low stock,
+                      returns, payouts and campaigns.
+                    </p>
                   </div>
+
+                  <button
+                    type="button"
+                    className="ZENVE-notif-sidebar-close"
+                    onClick={() =>
+                      setNotifSidebarOpen(
+                        false
+                      )
+                    }
+                    aria-label="Close notifications sidebar"
+                  >
+                    ×
+                  </button>
                 </div>
 
-                <div className="ZENVE-orders-block">
-                  {orders.length ===
+                <div className="ZENVE-notif-sidebar-actions">
+                  <span className="ZENVE-label-caps">
+                    {notifications.length}{" "}
+                    {notifications.length ===
+                      1
+                      ? "Update"
+                      : "Updates"}
+                  </span>
+
+                  {unreadNotifications >
+                    0 && (
+                      <button
+                        type="button"
+                        className="ZENVE-btn-outline-sm"
+                        onClick={
+                          handleMarkNotificationsRead
+                        }
+                      >
+                        Mark all as read
+                      </button>
+                    )}
+                </div>
+
+                <div className="ZENVE-notif-sidebar-body">
+                  {notifications.length ===
                     0 ? (
                     <div className="ZENVE-item-empty">
-                      No orders yet — sell something
-                      from the Storefront layer.
+                      No notifications yet.
                     </div>
                   ) : (
-                    <div className="ZENVE-orders-list">
-                      {orders.map(
-                        (ord) => (
+                    <div className="ZENVE-notifications-list">
+                      {notifications.map(
+                        (n) => (
                           <div
-                            key={ord.id}
-                            className="ZENVE-order-row"
+                            key={n.id}
+                            className={`ZENVE-notification-row ${!n.read
+                              ? "unread"
+                              : ""
+                              }`}
+                            role={n.action_url ? "link" : undefined}
+                            tabIndex={n.action_url ? 0 : undefined}
+                            onKeyDown={(event) => { if (n.action_url && event.key === "Enter") { setNotifSidebarOpen(false); navigate(n.action_url); } }}
+                            onClick={() => {
+                              if (!n.read) handleMarkSingleNotificationRead(n.id);
+                              if (n.action_url) { setNotifSidebarOpen(false); navigate(n.action_url); }
+                            }}
+                            style={{ cursor: n.action_url || !n.read ? "pointer" : "default" }}
+                            title={n.action_url ? "Open KYC details form" : !n.read ? "Click to mark as read" : undefined}
                           >
-                            <span className="ZENVE-order-id">
-                              {ord.id}
-                            </span>
-
-                            <span className="ZENVE-order-customer">
-                              {
-                                ord.customer
-                              }
-                            </span>
-
-                            <span className="ZENVE-order-amt">
-                              {formatInr(
-                                ord.amount
+                            <div className="ZENVE-notif-left">
+                              {!n.read && (
+                                <span className="ZENVE-unread-dot" />
                               )}
-                            </span>
 
-                            <span
-                              className={`ZENVE-order-badge tone-${String(
-                                ord.status ||
-                                ""
-                              ).toLowerCase()}`}
-                            >
-                              {
-                                ord.status
-                              }
-                            </span>
+                              <span className="ZENVE-notif-msg">
+                                {
+                                  n.message
+                                }
+                                {n.action_url && <strong> Submit KYC details →</strong>}
+                              </span>
+                            </div>
+
+                            <div className="ZENVE-notif-right">
+                              <span className="ZENVE-tone-badge info">
+                                {String(
+                                  n.kind || ""
+                                ).replaceAll(
+                                  "_",
+                                  " "
+                                )}
+                              </span>
+
+                              <span className="ZENVE-notif-date">
+                                {new Date(
+                                  n.at
+                                ).toLocaleDateString(
+                                  "en-IN",
+                                  {
+                                    timeZone:
+                                      "Asia/Kolkata",
+                                  }
+                                )}
+                              </span>
+                            </div>
                           </div>
                         )
                       )}
@@ -4767,337 +5314,127 @@ export default function DesignerPortal() {
                   )}
                 </div>
 
-                {settlements.length >
-                  0 && (
-                    <div className="ZENVE-settlements-block">
-                      <div className="ZENVE-settlements-list">
-                        {settlements.map(
-                          (stl) => (
-                            <div
-                              key={stl.id}
-                              className="ZENVE-settlement-row"
-                            >
-                              <span className="ZENVE-stl-id">
-                                {stl.id}
-                              </span>
-
-                              <span className="ZENVE-stl-breakdown">
-                                GMV{" "}
-                                {formatInr(
-                                  stl.gmv
-                                )}{" "}
-                                − commission{" "}
-                                {formatInr(
-                                  stl.commission
-                                )}
-                              </span>
-
-                              <span className="ZENVE-stl-net">
-                                {formatInr(
-                                  stl.net
-                                )}
-                              </span>
-
-                              <span
-                                className={`ZENVE-order-badge tone-${String(
-                                  stl.status ||
-                                  ""
-                                ).toLowerCase()}`}
-                              >
-                                {
-                                  stl.status
-                                }
-                              </span>
-                            </div>
-                          )
-                        )}
-                      </div>
-                    </div>
-                  )}
-              </section>
-            </>
-          )}
-        </main>
-      )}
-
-      {/* =====================================================
-          NOTIFICATION SIDEBAR
-      ===================================================== */}
-
-      {notifSidebarOpen && (
-        <div
-          className="ZENVE-notif-backdrop"
-          onClick={() =>
-            setNotifSidebarOpen(false)
-          }
-          aria-hidden="true"
-        >
-          <div
-            className="ZENVE-notif-sidebar"
-            onClick={(e) =>
-              e.stopPropagation()
-            }
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="notif-sidebar-title"
-          >
-            <div className="ZENVE-notif-sidebar-header">
-              <div className="ZENVE-notif-sidebar-title-wrap">
-                <div className="ZENVE-notif-sidebar-title-row">
-                  <h2
-                    id="notif-sidebar-title"
-                    className="ZENVE-notif-sidebar-title"
-                  >
-                    Notifications
-                  </h2>
-
-                  {unreadNotifications >
-                    0 ? (
-                    <span className="ZENVE-notif-count-pill">
-                      {
-                        unreadNotifications
-                      }{" "}
-                      unread
-                    </span>
-                  ) : (
-                    <span className="ZENVE-notif-count-pill subtle">
-                      All caught up
-                    </span>
-                  )}
-                </div>
-
-                <p className="ZENVE-notif-sidebar-sub">
-                  QA outcomes, orders, low stock,
-                  returns, payouts and campaigns.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                className="ZENVE-notif-sidebar-close"
-                onClick={() =>
-                  setNotifSidebarOpen(
-                    false
-                  )
-                }
-                aria-label="Close notifications sidebar"
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="ZENVE-notif-sidebar-actions">
-              <span className="ZENVE-label-caps">
-                {notifications.length}{" "}
-                {notifications.length ===
-                  1
-                  ? "Update"
-                  : "Updates"}
-              </span>
-
-              {unreadNotifications >
-                0 && (
+                <div className="ZENVE-notif-sidebar-footer">
                   <button
                     type="button"
                     className="ZENVE-btn-outline-sm"
-                    onClick={
-                      handleMarkNotificationsRead
+                    onClick={() =>
+                      setNotifSidebarOpen(
+                        false
+                      )
                     }
                   >
-                    Mark all as read
+                    Close Side Bar
                   </button>
-                )}
-            </div>
-
-            <div className="ZENVE-notif-sidebar-body">
-              {notifications.length ===
-                0 ? (
-                <div className="ZENVE-item-empty">
-                  No notifications yet.
                 </div>
-              ) : (
-                <div className="ZENVE-notifications-list">
-                  {notifications.map(
-                    (n) => (
-                      <div
-                        key={n.id}
-                        className={`ZENVE-notification-row ${!n.read
-                          ? "unread"
-                          : ""
-                          }`}
-                        role={n.action_url ? "link" : undefined}
-                        tabIndex={n.action_url ? 0 : undefined}
-                        onKeyDown={(event) => { if (n.action_url && event.key === "Enter") { setNotifSidebarOpen(false); navigate(n.action_url); } }}
-                        onClick={() => {
-                          if (!n.read) handleMarkSingleNotificationRead(n.id);
-                          if (n.action_url) { setNotifSidebarOpen(false); navigate(n.action_url); }
-                        }}
-                        style={{ cursor: n.action_url || !n.read ? "pointer" : "default" }}
-                        title={n.action_url ? "Open KYC details form" : !n.read ? "Click to mark as read" : undefined}
-                      >
-                        <div className="ZENVE-notif-left">
-                          {!n.read && (
-                            <span className="ZENVE-unread-dot" />
-                          )}
-
-                          <span className="ZENVE-notif-msg">
-                            {
-                              n.message
-                            }
-                            {n.action_url && <strong> Submit KYC details →</strong>}
-                          </span>
-                        </div>
-
-                        <div className="ZENVE-notif-right">
-                          <span className="ZENVE-tone-badge info">
-                            {String(
-                              n.kind || ""
-                            ).replaceAll(
-                              "_",
-                              " "
-                            )}
-                          </span>
-
-                          <span className="ZENVE-notif-date">
-                            {new Date(
-                              n.at
-                            ).toLocaleDateString(
-                              "en-IN",
-                              {
-                                timeZone:
-                                  "Asia/Kolkata",
-                              }
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                    )
-                  )}
-                </div>
-              )}
+              </div>
             </div>
+          )}
 
-            <div className="ZENVE-notif-sidebar-footer">
-              <button
-                type="button"
-                className="ZENVE-btn-outline-sm"
-                onClick={() =>
-                  setNotifSidebarOpen(
-                    false
-                  )
-                }
-              >
-                Close Side Bar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* =====================================================
+          {/* =====================================================
           IMAGE WARNING
       ===================================================== */}
 
-      {imageWarningOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="zenve-image-warning-title"
-          onClick={() =>
-            setImageWarningOpen(false)
-          }
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 99999,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "20px",
-            background:
-              "rgba(0, 0, 0, 0.55)",
-          }}
-        >
-          <div
-            onClick={(e) =>
-              e.stopPropagation()
-            }
-            style={{
-              width: "100%",
-              maxWidth: "430px",
-              background: "#FFFCF5",
-              borderRadius: "16px",
-              padding: "26px",
-              boxShadow:
-                "0 20px 60px rgba(0,0,0,0.25)",
-              textAlign: "center",
-            }}
-          >
+          {imageWarningOpen && (
             <div
-              style={{
-                width: "52px",
-                height: "52px",
-                margin: "0 auto 14px",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "#fff4e5",
-                color: "#c76b00",
-                fontSize: "28px",
-                fontWeight: 700,
-              }}
-            >
-              !
-            </div>
-
-            <h3
-              id="zenve-image-warning-title"
-              style={{
-                margin: "0 0 8px",
-                fontSize: "20px",
-                color: "#171717",
-              }}
-            >
-              Maximum 4 Images Allowed
-            </h3>
-
-            <p
-              style={{
-                margin: "0 0 20px",
-                color: "#666",
-                fontSize: "14px",
-                lineHeight: 1.6,
-              }}
-            >
-              {imageWarningText ||
-                "You can upload a maximum of 4 product images."}
-            </p>
-
-            <button
-              type="button"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="zenve-image-warning-title"
               onClick={() =>
                 setImageWarningOpen(false)
               }
               style={{
-                minWidth: "110px",
-                border: "none",
-                borderRadius: "8px",
-                padding: "10px 20px",
-                background: "#171717",
-                color: "#FFFCF5",
-                fontWeight: 600,
-                cursor: "pointer",
+                position: "fixed",
+                inset: 0,
+                zIndex: 99999,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "20px",
+                background:
+                  "rgba(0, 0, 0, 0.55)",
               }}
             >
-              OK
-            </button>
-          </div>
-        </div>
-      )}
-    
+              <div
+                onClick={(e) =>
+                  e.stopPropagation()
+                }
+                style={{
+                  width: "100%",
+                  maxWidth: "430px",
+                  background: "#FFFCF5",
+                  borderRadius: "16px",
+                  padding: "26px",
+                  boxShadow:
+                    "0 20px 60px rgba(0,0,0,0.25)",
+                  textAlign: "center",
+                }}
+              >
+                <div
+                  style={{
+                    width: "52px",
+                    height: "52px",
+                    margin: "0 auto 14px",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "#fff4e5",
+                    color: "#c76b00",
+                    fontSize: "28px",
+                    fontWeight: 700,
+                  }}
+                >
+                  !
+                </div>
+
+                <h3
+                  id="zenve-image-warning-title"
+                  style={{
+                    margin: "0 0 8px",
+                    fontSize: "20px",
+                    color: "#171717",
+                  }}
+                >
+                  Maximum 4 Images Allowed
+                </h3>
+
+                <p
+                  style={{
+                    margin: "0 0 20px",
+                    color: "#666",
+                    fontSize: "14px",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {imageWarningText ||
+                    "You can upload a maximum of 4 product images."}
+                </p>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setImageWarningOpen(false)
+                  }
+                  style={{
+                    minWidth: "110px",
+                    border: "none",
+                    borderRadius: "8px",
+                    padding: "10px 20px",
+                    background: "#171717",
+                    color: "#FFFCF5",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          )}
+
         </>
       )}
-</div>
+    </div>
   );
 }
