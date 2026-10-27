@@ -131,3 +131,49 @@ class DesignerEmailTests(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         sms.refresh_from_db()
         self.assertEqual(sms.status, "SENT")
+
+    def test_kyc_start_sends_secure_submission_link_once(self):
+        import re
+        from django.contrib.auth.models import User
+        from rest_framework.test import APIClient
+        client = APIClient()
+        client.force_authenticate(User.objects.create_user("email-kyc-reviewer", is_staff=True))
+        url = f"/api/designers/kyc/designer/{self.designer.pk}/start/"
+        with self.captureOnCommitCallbacks(execute=True):
+            response = client.post(url)
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+        self.assertEqual(email.to, [self.designer.email])
+        self.assertIn("PAN number", email.body)
+        self.assertIn("48 hours", email.body)
+        link = re.search(r"https://[^\s]+/designer-kyc-details#([^\s]+)", email.body)
+        self.assertIsNotNone(link)
+        public = APIClient()
+        body = {"token": link.group(1), "name": "First", "pan": "ABCDE1234F", "dob": "1990-01-01", "consent": True}
+        self.assertEqual(public.post("/api/designers/kyc/requested-details/", body, format="json").status_code, 200)
+        self.assertEqual(public.post("/api/designers/kyc/requested-details/", body, format="json").status_code, 400)
+        with self.captureOnCommitCallbacks(execute=True):
+            client.post(url)
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_opening_existing_kyc_request_does_not_send_duplicate_email(self):
+        from django.contrib.auth.models import User
+        from rest_framework.test import APIClient
+        client = APIClient()
+        client.force_authenticate(User.objects.create_user("email-kyc-repeat", is_staff=True))
+        url = f"/api/designers/kyc/designer/{self.designer.pk}/start/"
+        with self.captureOnCommitCallbacks(execute=True):
+            client.post(url)
+        with self.captureOnCommitCallbacks(execute=True):
+            client.post(url)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(DesignerEmail.objects.filter(kind="KYC").count(), 1)
+
+    def test_outdated_kyc_request_email_is_not_sent_on_retry(self):
+        from .models import DesignerKYC
+        from .emails import queue_kyc_request
+        record = DesignerKYC.objects.create(designer=self.designer, holder_name="First", verification_method="APITXT", api_checks={"details_request": {"nonce": "latest", "requested_at": "2026-10-27"}})
+        queue_kyc_request(record.pk, "replaced")
+        self.assertEqual(len(mail.outbox), 0)
+        self.assertEqual(DesignerEmail.objects.get(kind="KYC").status, "PENDING")

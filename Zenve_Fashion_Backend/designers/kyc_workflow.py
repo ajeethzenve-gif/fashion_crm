@@ -48,6 +48,10 @@ class KYCCallStartAPIView(APIView):
             record.api_checks = {}
             record.aadhaar_status = record.pan_status = "PENDING"
             record.save()
+        invitation = record.api_checks.get("details_request", {})
+        if not invitation.get("requested_at"):
+            from .kyc_requests import create_kyc_invitation
+            create_kyc_invitation(record, request.user)
         return Response(KYCSerializer(record).data)
 
 

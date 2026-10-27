@@ -179,7 +179,6 @@ export default function DesignerCRM() {
     category: "",
     tier: "EMERGING",
     fashionCreditPlan: "",
-    offlineCreditPlan: "",
     creditPoints: 0,
     takeRate: "",
     gst: "",
@@ -564,7 +563,6 @@ export default function DesignerCRM() {
       sales_owner: modalNewLead.owner,
       lead_source: modalNewLead.source,
       online_membership_plan: modalNewLead.fashionCreditPlan ? modalNewLead.fashionCreditPlan.toUpperCase() : null,
-      offline_membership_plan: modalNewLead.offlineCreditPlan ? modalNewLead.offlineCreditPlan.toUpperCase() : null,
       credit_points: Number(modalNewLead.creditPoints) || 0,
       take_rate: modalNewLead.takeRate ? Number(modalNewLead.takeRate) : 0,
       gst_number: useCompanyGst ? COMPANY_GST_INFO.gstNumber : (modalNewLead.gst || null),
@@ -593,8 +591,7 @@ export default function DesignerCRM() {
         category: "",
         tier: "EMERGING",
         fashionCreditPlan: "",
-        offlineCreditPlan: "",
-        creditPoints: 0,
+            creditPoints: 0,
         takeRate: "",
         gst: "",
         contractEnds: contractEndDate(),
@@ -1297,29 +1294,6 @@ Login requires approval and completed KYC verification.`;
                       <option value="Gold">Gold — 3,00,000 Points</option>
                       <option value="Platinum">Platinum — 4,50,000 Points</option>
                       <option value="Palladium">Palladium — 7,00,000 Points</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="crm-lead-field">
-                  <label className="crm-field-label">OFFLINE MEMBERSHIP PLAN</label>
-                  <div className="crm-select-wrap">
-                    <select
-                      className="crm-lead-select"
-                      value={modalNewLead.offlineCreditPlan || ""}
-                      onChange={(e) => {
-                        setModalNewLead({
-                          ...modalNewLead,
-                          offlineCreditPlan: e.target.value,
-                        });
-                      }}
-                    >
-                      <option value="">Select offline plan...</option>
-                      {OFFLINE_FASHION_CREDIT_PLANS.map((plan) => (
-                        <option key={plan.id} value={plan.id}>
-                          {plan.name} — {plan.price}
-                        </option>
-                      ))}
                     </select>
                   </div>
                 </div>

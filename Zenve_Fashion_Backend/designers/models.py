@@ -524,6 +524,8 @@ class Designer(models.Model):
         from django.db import transaction
         from .authentication import provision_designer_user
         with transaction.atomic():
+            is_new = self.pk is None
+            previous_stage = type(self).objects.filter(pk=self.pk).values_list("stage", flat=True).first() if self.pk else None
             if self.pk:
                 linked_user_id = type(self).objects.select_for_update().filter(
                     pk=self.pk
@@ -531,8 +533,13 @@ class Designer(models.Model):
                 if linked_user_id:
                     self.user_id = linked_user_id
             super().save(*args, **kwargs)
+            from .emails import queue_welcome, queue_approval
+            if is_new:
+                transaction.on_commit(lambda designer_id=self.pk: queue_welcome(designer_id), robust=True)
             if self.stage == self.Stage.APPROVED:
                 provision_designer_user(self)
+                if previous_stage != self.Stage.APPROVED:
+                    transaction.on_commit(lambda designer_id=self.pk: queue_approval(designer_id), robust=True)
 
     def __str__(self):
         return (
@@ -824,3 +831,16 @@ class DesignerAccountDetails(models.Model):
             f"{self.designer.brand_name} - "
             f"{self.account_holder_name}"
         )
+
+
+class DesignerEmail(models.Model):
+    event_key = models.CharField(max_length=160, unique=True)
+    kind = models.CharField(max_length=12, choices=[("WELCOME", "Welcome"), ("APPROVAL", "Approval"), ("ORDER", "Order"), ("KYC", "KYC request")])
+    channel = models.CharField(max_length=5, choices=[("EMAIL", "Email"), ("SMS", "SMS")], default="EMAIL")
+    designer = models.ForeignKey(Designer, on_delete=models.CASCADE, related_name="email_deliveries")
+    order = models.ForeignKey("orders.Order", null=True, blank=True, on_delete=models.CASCADE)
+    status = models.CharField(max_length=12, default="PENDING", choices=[("PENDING", "Pending"), ("SENT", "Sent")])
+    attempts = models.PositiveIntegerField(default=0)
+    last_error = models.CharField(max_length=100, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    sent_at = models.DateTimeField(null=True, blank=True)

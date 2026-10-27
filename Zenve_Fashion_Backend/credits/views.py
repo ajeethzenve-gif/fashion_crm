@@ -80,20 +80,14 @@ def get_or_create_designer_wallet(designer):
         wallet.online_plan = online_plan_title
         updated = True
 
-    # Sync Offline Credits & Plan
-    if designer.offline_membership_plan and offline_allocated > 0:
-        if wallet.offline_credits == 0:
-            wallet.offline_credits = offline_allocated
-            updated = True
+    # Keep offline plan metadata in sync. Balance changes belong to purchases
+    # and deductions; loading the dashboard must never replenish credits.
+    if designer.offline_membership_plan and offline_plan_title != "No active pack":
         if wallet.offline_plan != offline_plan_title:
             wallet.offline_plan = offline_plan_title
-            wallet.offline_credits = offline_allocated
             wallet.offline_pack_expiry = offline_expiry
             updated = True
-        elif wallet.offline_credits == 0:
-            wallet.offline_credits = offline_allocated
-            updated = True
-        if not wallet.offline_pack_expiry and offline_expiry:
+        elif not wallet.offline_pack_expiry and offline_expiry:
             wallet.offline_pack_expiry = offline_expiry
             updated = True
 

@@ -58,3 +58,10 @@ DESIGNER_SMS_APPROVAL_TEMPLATE_ID=YOUR_APPROVAL_TEMPLATE_ID
 `SMS_AUTH_KEY` or `SMS_API_KEY` supplies authentication. No keys are placed in the frontend. `DESIGNER_SMS_WELCOME_TEXT` and `DESIGNER_SMS_APPROVAL_TEXT` can override message text so it exactly matches the approved provider templates. Supported variables: welcome `{name}`, `{login_url}`; approval also `{username}`, `{password}`, `{mobile}`. Do not reuse the login OTP endpoint or OTP template for these messages. The existing retry command now retries both channels independently, without resending successful deliveries.
 
 New migration: `0016_designeremail_channel_alter_designeremail_kind`. Run `python manage.py migrate` before restarting the backend. Email and SMS delivery remain disabled by default. No production message was sent during tests.
+
+
+## KYC-start emails
+
+Starting verification in Layer 17 now creates the portal request and queues a PAN-only KYC email. The email includes a signed, single-submission link valid for 48 hours. Opening the same active verification again does not send another email. The Send KYC notification action generates a new request/link and email; the earlier link stops working. Retries do not send outdated or already submitted requests. SMS remains disabled until templates are approved.
+
+Apply migration `0017_alter_designeremail_kind` for the KYC delivery type. Creation, approval and order emails remain automatic after transaction commit.

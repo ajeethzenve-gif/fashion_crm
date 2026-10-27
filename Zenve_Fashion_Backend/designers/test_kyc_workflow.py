@@ -67,7 +67,7 @@ class KYCCallWorkflowTests(TestCase):
         response = self.check({"action": "pan", "pan_number": "ABCDE1234F"})
         self.assertEqual(response.status_code, 503)
         self.record.refresh_from_db()
-        self.assertEqual(self.record.api_checks, {})
+        self.assertNotIn("pan", self.record.api_checks)
 
     def test_pan_check_sends_holder_name_and_rejects_blank_name(self):
         with patch("designers.kyc_workflow.verify_identity", return_value={"verified": True, "name": "Holder Name", "reference": "name-ref"}) as provider:

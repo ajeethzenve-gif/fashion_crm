@@ -22,6 +22,13 @@ def queue_approval(designer_id):
     queue_onboarding(designer_id, "APPROVAL")
 
 
+def queue_kyc_request(record_id, nonce):
+    from .models import DesignerKYC
+    record = DesignerKYC.objects.get(pk=record_id)
+    job, _ = DesignerEmail.objects.get_or_create(event_key=f"kyc:{record_id}:{nonce}", defaults={"designer_id": record.designer_id, "kind": "KYC", "channel": "EMAIL"})
+    deliver_email(job.pk)
+
+
 def login_details(designer):
     import re
     from .authentication import normalize_phone
@@ -68,6 +75,20 @@ def email_content(job):
     designer = job.designer
     login_url = settings.DESIGNER_EMAIL_LOGIN_URL
     greeting = f"Hello {designer.owner_name or designer.designer_name},"
+    if job.kind == "KYC":
+        from django.core import signing
+        from .models import DesignerKYC
+        from .kyc_requests import SALT
+        from urllib.parse import urlsplit, urlunsplit
+        _, record_id, nonce = job.event_key.split(":", 2)
+        record = DesignerKYC.objects.filter(pk=record_id, designer=designer).first()
+        invitation = record.api_checks.get("details_request", {}) if record else {}
+        if not record or designer.kyc_status == "VERIFIED" or invitation.get("nonce") != nonce or invitation.get("submitted_at"):
+            return None
+        token = signing.dumps({"id": record.pk, "nonce": nonce}, salt=SALT)
+        parsed = urlsplit(login_url)
+        link = urlunsplit((parsed.scheme, parsed.netloc, "/designer-kyc-details", "", token))
+        return "Your Zenve Fashion PAN KYC verification has started", f"{greeting}\n\nOur team has started your designer KYC verification. Please provide your name exactly as printed on PAN, date of birth and PAN number using this secure link:\n{link}\n\nThis link is valid for 48 hours and accepts one submission. Do not forward it. No Aadhaar number or OTP is required.\n\nOur team will verify your PAN details and notify you after review. Product uploads become available after KYC approval.\n\nDesigner login: {login_url}\n\nZenve Fashion Team"
     if job.kind == "WELCOME":
         return "Welcome to Zenve Fashion - registration received", f"{greeting}\n\nWelcome to Zenve Fashion! Your designer registration has been received. Our team will review your details and notify you after approval. Login becomes available once approved.\n\nZenve Fashion Team"
     if job.kind == "APPROVAL":

@@ -15,6 +15,16 @@ from .models import DesignerKYC
 
 SALT = "designer-kyc-request"
 
+def create_kyc_invitation(record, user):
+    from .emails import queue_kyc_request
+    nonce = secrets.token_urlsafe(24)
+    record.api_checks = {**record.api_checks, "details_request": {
+        "nonce": nonce, "requested_at": timezone.now().isoformat(), "requested_by": user.pk}}
+    record.save(update_fields=["api_checks", "updated_at"])
+    transaction.on_commit(lambda: queue_kyc_request(record.pk, nonce), robust=True)
+    return signing.dumps({"id": record.pk, "nonce": nonce}, salt=SALT)
+
+
 class KYCRequestAPIView(APIView):
     permission_classes = [KYCStaffAccess]
 
@@ -23,11 +33,7 @@ class KYCRequestAPIView(APIView):
         record = get_object_or_404(DesignerKYC.objects.select_for_update().select_related("designer"), pk=pk)
         if record.designer.kyc_status == "VERIFIED":
             return Response({"detail": "This designer is already verified."}, status=400)
-        nonce = secrets.token_urlsafe(24)
-        record.api_checks = {**record.api_checks, "details_request": {
-            "nonce": nonce, "requested_at": timezone.now().isoformat(), "requested_by": request.user.pk}}
-        record.save(update_fields=["api_checks", "updated_at"])
-        token = signing.dumps({"id": record.pk, "nonce": nonce}, salt=SALT)
+        token = create_kyc_invitation(record, request.user)
         return Response({"token": token, "phone": record.designer.phone})
 
 class KYCDetailsThrottle(AnonRateThrottle):
