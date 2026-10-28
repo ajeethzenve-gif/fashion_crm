@@ -463,7 +463,7 @@ export default function DesignerCRM() {
   };
 
   const handleCopyVendorLoginLink = () => {
-    const portalUrl = "https://zenvefashioncrm.zenvevet.com/designer-login/";
+    const portalUrl = "https://fashionzenve.com";
     if (navigator.clipboard?.writeText) {
       navigator.clipboard.writeText(portalUrl);
     }
@@ -659,7 +659,7 @@ export default function DesignerCRM() {
       showSuccessToast("Approve the designer before sending login credentials.");
       return;
     }
-    const portalUrl = "https://zenvefashioncrm.zenvevet.com/designer-login/";
+    const portalUrl = "https://fashionzenve.com";
     const credentialName = name.toLowerCase().replace(/[^a-z0-9]/g, "") || "designer";
     const initialPassword = `${credentialName}@zf${phone.slice(-4)}`;
     const message = `Hello ${name}, welcome to ZENVE Fashion.

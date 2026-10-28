@@ -1,3 +1,4 @@
+import PortalTitle from "./components/PortalTitle.jsx";
 import DesignerKYCDetails from "./pages/DesignerKYCDetails.jsx";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
@@ -30,6 +31,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
+        <PortalTitle />
         <Routes>
           <Route path="/designer-kyc-submit" element={<RequireAuth><DesignerKYCDetails authenticated /></RequireAuth>} />
           <Route path="/designer-kyc-details" element={<DesignerKYCDetails />} />
