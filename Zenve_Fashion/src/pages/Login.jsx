@@ -62,7 +62,7 @@ export default function Login() {
       return;
     }
 
-    navigate("/", { replace: true });
+    navigate(result.user?.id === "designer" ? "/designer-portal" : "/home", { replace: true });
   };
 
   return (

@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { tokenExpiry, SESSION_EXPIRED_EVENT } from "../services/sessionExpiry";
-import React, { createContext, useContext, useState, useEffect, useLayoutEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useLayoutEffect, useRef } from "react";
 import { loginRequest, normalizeSession, saveTokens, clearTokens, getAccessToken } from "../services/authApi";
 
 const SESSION_KEY = "zenve_session";
 const LEGACY_KEY = "zenve_auth_user";
+const LOGIN_PATH_KEY = "zenve_login_path";
 
 export const ROLES = [
   {
@@ -151,7 +152,9 @@ export function AuthProvider({ children }) {
     }
   }, [currentUser]);
 
-  const loginPath = currentUser?.id === "designer" ? "/designer-login" : "/login";
+  const previousLoginPath = useRef(["/", "/designer-login"].includes(sessionStorage.getItem(LOGIN_PATH_KEY)) ? "/" : "/crm");
+  if (currentUser) previousLoginPath.current = currentUser.id === "designer" ? "/" : "/crm";
+  const loginPath = previousLoginPath.current;
   const accessToken = () => getAccessToken() || localStorage.getItem("access_token");
 
   useLayoutEffect(() => {
@@ -161,6 +164,7 @@ export function AuthProvider({ children }) {
       clearTimeout(timer);
       clearTokens();
       sessionStorage.removeItem(SESSION_KEY);
+      sessionStorage.setItem(LOGIN_PATH_KEY, loginPath);
       localStorage.removeItem(LEGACY_KEY);
       setCurrentUser(null);
       navigate(loginPath, { replace: true });
@@ -212,8 +216,10 @@ export function AuthProvider({ children }) {
   const logout = () => {
     clearTokens();
     sessionStorage.removeItem(SESSION_KEY);
+    sessionStorage.setItem(LOGIN_PATH_KEY, loginPath);
     localStorage.removeItem(LEGACY_KEY);
     setCurrentUser(null);
+    navigate(loginPath, { replace: true });
   };
 
   const hasAccess = (layerNum) => {

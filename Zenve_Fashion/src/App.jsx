@@ -1,7 +1,7 @@
 import PortalTitle from "./components/PortalTitle.jsx";
 import DesignerKYCDetails from "./pages/DesignerKYCDetails.jsx";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext.jsx";
+import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import AppLayout from "./components/AppLayout.jsx";
 import Home from "./pages/Home.jsx";
 import MediaStudio from "./pages/MediaStudio.jsx";
@@ -27,6 +27,14 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import RequireAuth from "./components/RequireAuth.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
 
+function PortalEntry() {
+  const { currentUser, isLoggedIn } = useAuth();
+  if (isLoggedIn) {
+    return <Navigate to={currentUser?.id === "designer" ? "/designer-portal" : "/home"} replace />;
+  }
+  return <DesignerLogin />;
+}
+
 export default function App() {
   return (
     <ErrorBoundary>
@@ -36,14 +44,15 @@ export default function App() {
           <Route path="/designer-kyc-submit" element={<RequireAuth><DesignerKYCDetails authenticated /></RequireAuth>} />
           <Route path="/designer-kyc-details" element={<DesignerKYCDetails />} />
           {/* Role-Based Staff Login */}
+          <Route path="/crm" element={<Login />} />
           <Route path="/login" element={<Login />} />
 
         {/* Exclusive Brand Designer Login */}
         <Route path="/designer-login" element={<DesignerLogin />}  name="vendor login"/>
-
+          <Route path="/" element={<PortalEntry />} />
         <Route element={<AppLayout />}>
           {/* Main (layers) page — only after login */}
-          <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
+          <Route path="/home" element={<RequireAuth><Home /></RequireAuth>} />
 
           {/* Operational Layers (Role Clearance Protected) */}
           <Route path="/designer-kyc" element={<ProtectedRoute layer="17"><DesignerKYC /></ProtectedRoute>} />

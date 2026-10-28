@@ -188,7 +188,7 @@ function DesignerImageIcon() {
 export default function Sidebar({ mobileOpen = false, onCloseMobile = () => {} }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { currentUser, logout, hasAccess } = useAuth();
+  const { currentUser, logout, hasAccess, loginPath } = useAuth();
 
   const [designerProfileActive, setDesignerProfileActive] = React.useState(false);
   const [designerReviewsActive, setDesignerReviewsActive] = React.useState(false);
@@ -233,9 +233,7 @@ export default function Sidebar({ mobileOpen = false, onCloseMobile = () => {} }
   };
 
   const handleLogout = () => {
-    const loginPath = currentUser?.id === "designer" ? "/designer-login" : "/login";
     logout();
-    navigate(loginPath, { replace: true });
   };
 
   // Close mobile drawer on route change
@@ -425,7 +423,7 @@ export default function Sidebar({ mobileOpen = false, onCloseMobile = () => {} }
             </>
           ) : (
             <Link
-              to="/login"
+              to={loginPath}
               onClick={onCloseMobile}
               className="sidebar-signout-btn"
               title="Sign in"
