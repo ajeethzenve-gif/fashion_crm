@@ -668,7 +668,7 @@ Sign in to your Designer Portal:
 ${portalUrl}
 
 Username: ${designer.login_username}
-Initial password: ${initialPassword}
+Password: ${initialPassword}
 
 You can also log in using your registered mobile number and OTP.
 Login requires approval and completed KYC verification.`;

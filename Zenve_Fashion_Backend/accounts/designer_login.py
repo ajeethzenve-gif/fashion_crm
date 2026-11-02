@@ -86,9 +86,11 @@ class DesignerOTPAPIView(DesignerLoginAPIView):
             current_designer = find_designer(phone)
             if not current_designer:
                 return Response({"detail": "Designer account is not eligible for login."}, status=400)
-            challenge, _ = DesignerLoginOTP.objects.get_or_create(designer=designer)
             now = timezone.now()
-            if challenge.sent_at and now < challenge.sent_at + timedelta(seconds=30):
+            previous_challenge = DesignerLoginOTP.objects.filter(
+                designer=designer, phone=phone
+            ).order_by("-sent_at", "-pk").first()
+            if previous_challenge and previous_challenge.sent_at and now < previous_challenge.sent_at + timedelta(seconds=30):
                 return Response({"detail": "Wait 30 seconds before requesting another OTP."}, status=429)
             otp = f"{secrets.randbelow(1000000):06d}"
             try:
@@ -100,12 +102,16 @@ class DesignerOTPAPIView(DesignerLoginAPIView):
                 return Response({"detail": str(exc)}, status=503)
             except Exception:
                 return Response({"detail": "Unable to send OTP. Please try again."}, status=503)
-            challenge.phone = phone
-            challenge.otp_hash = make_password(otp)
-            challenge.sent_at = now
-            challenge.expires_at = now + timedelta(minutes=5)
-            challenge.attempts = 0
-            challenge.save()
+            # Insert-only challenge records avoid UPDATE grants on the OTP table.
+            # Older active challenges are invalidated by the newer sent_at row.
+            challenge = DesignerLoginOTP.objects.create(
+                designer=designer,
+                phone=phone,
+                otp_hash=make_password(otp),
+                sent_at=now,
+                expires_at=now + timedelta(minutes=5),
+                attempts=0,
+            )
         return Response({"message": "OTP sent to your mobile number.", "retry_after": 30})
 
 
@@ -129,14 +135,15 @@ class DesignerVerifyOTPAPIView(DesignerLoginAPIView):
             current_designer = find_designer(phone)
             if not current_designer:
                 return Response({"detail": "Designer account is not eligible for login."}, status=400)
-            challenge = DesignerLoginOTP.objects.filter(designer=designer, phone=phone).first()
+            challenge = DesignerLoginOTP.objects.filter(
+                designer=designer, phone=phone
+            ).order_by("-sent_at", "-pk").first()
             if not challenge or not challenge.otp_hash or challenge.expires_at <= timezone.now() or challenge.attempts >= 5:
                 return Response({"detail": "OTP expired or unavailable. Request a new OTP."}, status=400)
             challenge.attempts += 1
             valid = check_password(otp, challenge.otp_hash)
-            if valid:
-                challenge.otp_hash = ""
-            challenge.save()
+            if not valid:
+                challenge.save(update_fields=["attempts"])
             if not valid:
                 return Response({"detail": "Invalid OTP."}, status=400)
             refresh = RefreshToken.for_user(designer.user)

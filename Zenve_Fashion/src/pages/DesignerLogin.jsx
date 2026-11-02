@@ -426,7 +426,11 @@ export default function DesignerLogin() {
           {/* Full-Screen Edge-to-Edge Atelier Background Stage */}
           {/* Automatic background slideshow */}
     <div className="designer-stage" aria-hidden="true">
-      {backgroundImages.map((image, index) => (
+      {backgroundImages.map((image, index) => {
+        const previousIndex = (currentBgIndex - 1 + backgroundImages.length) % backgroundImages.length;
+        const nextIndex = (currentBgIndex + 1) % backgroundImages.length;
+        if (index !== currentBgIndex && index !== previousIndex && index !== nextIndex) return null;
+        return (
         <img
           key={image}
           className={`designer-bg-img designer-bg-slide ${
@@ -436,7 +440,8 @@ export default function DesignerLogin() {
           alt=""
           draggable="false"
         />
-      ))}
+      );
+      })}
     </div>
 
       {/* Studio Luxury Vignette Overlay */}

@@ -51,6 +51,8 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
 
+    "zenvefashion.apps.ZenveFashionConfig",
+
     # Django
     "django.contrib.admin",
     "django.contrib.auth",
@@ -78,8 +80,13 @@ INSTALLED_APPS = [
     "products",
     "designers",
     "orders",
-    'credits'
+    'credits',
+    'maintenance',
 ]
+
+# Set DB_TABLE_PREFIX=zf_ only after running the one-time rename command.
+# Leaving it empty keeps the existing schema working during deployment.
+DB_TABLE_PREFIX = os.getenv("DB_TABLE_PREFIX", "")
 
 
 # =====================================================

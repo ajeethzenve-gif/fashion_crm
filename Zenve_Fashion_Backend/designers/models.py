@@ -726,12 +726,19 @@ class Designer(models.Model):
 # =========================================================
 
 class DesignerLoginOTP(models.Model):
-    designer = models.OneToOneField(Designer, on_delete=models.CASCADE)
+    designer = models.ForeignKey(
+        Designer,
+        on_delete=models.CASCADE,
+        related_name="login_otp_challenges",
+    )
     phone = models.CharField(max_length=15, blank=True)
     otp_hash = models.CharField(max_length=255, blank=True)
     sent_at = models.DateTimeField(null=True)
     expires_at = models.DateTimeField(null=True)
     attempts = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        db_table = "designers_designerloginotp"
 
 
 class DesignerAccountDetails(models.Model):
